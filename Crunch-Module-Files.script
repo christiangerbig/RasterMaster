@@ -1,0 +1,11 @@
+CD Daten:Asm-Sources.AGA/RasterMaster/modules
+
+stc mod.Gone(re-remix).song -fd -p0 -o0
+stc mod.Gone(re-remix).smps -fd -p0 -o0
+
+stc mod.CR78-Song.song -fd -p0 -o0
+stc mod.CR78-Song.smps -fd -p0 -o0
+
+CD /
+
+

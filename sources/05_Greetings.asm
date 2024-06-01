@@ -265,6 +265,18 @@ ss_text_columns_number        EQU visible_pixels_number/ss_text_columns_x_size
 ss_colorrun_height            EQU ss_text_character_y_size
 ss_colorrun_y_pos             EQU (wcb_bar_height-ss_text_character_y_size)/2
 
+ss_copy_character_blit_x_size EQU ss_text_character_x_size
+ss_copy_character_blit_y_size EQU ss_text_character_y_size*ss_text_character_depth
+
+ss_horiz_scroll_blit_x_size   EQU ss_horiz_scroll_window_x_size
+ss_horiz_scroll_blit_y_size   EQU ss_horiz_scroll_window_y_size*ss_horiz_scroll_window_depth
+
+ss_copy_column_blit_x_size1   EQU ss_sine_character_x_size
+ss_copy_column_blit_y_size1   EQU ss_sine_character_y_size1*ss_sine_character_depth
+
+ss_copy_column_blit_x_size2   EQU ss_sine_character_x_size
+ss_copy_column_blit_y_size2   EQU ss_sine_character_y_size2*ss_sine_character_depth
+
 ; **** Barfield ****
 bf_bars_planes_number         EQU 6
 bf_bars_per_plane             EQU 1
@@ -1062,7 +1074,7 @@ init_first_copperlist
   bsr.s   cl1_init_playfield_registers
   bsr.s   cl1_init_bitplane_pointers
   bsr     cl1_init_copperlist_branch
-  bsr     cl1_init_character_blit
+  bsr     cl1_init_copy_blit
   bsr     cl1_init_horiz_scroll_blit
   COPMOVEQ TRUE,COPJMP2
   bra     cl1_set_bitplane_pointers
@@ -1084,7 +1096,7 @@ cl1_init_copperlist_branch
   rts
 
   CNOP 0,4
-cl1_init_character_blit
+cl1_init_copy_blit
   COPWAITBLIT
   COPMOVEQ BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;Minterm D=A
   COPMOVEQ TRUE,BLTCON1
@@ -1101,7 +1113,7 @@ cl1_init_character_blit
   COPMOVE d0,BLTDPTL
   COPMOVEQ ss_image_plane_width-ss_text_character_width,BLTAMOD
   COPMOVEQ extra_pf1_plane_width-ss_text_character_width,BLTDMOD
-  COPMOVEQ (ss_text_character_y_size*ss_text_character_depth*64)+(ss_text_character_x_size/16),BLTSIZE
+  COPMOVEQ (ss_copy_character_blit_y_size*64)+(ss_copy_character_blit_x_size/16),BLTSIZE
   rts
 
   CNOP 0,4
@@ -1127,7 +1139,7 @@ cl1_init_horiz_scroll_blit
   COPMOVE d1,BLTDPTL
   COPMOVEQ extra_pf1_plane_width-ss_horiz_scroll_window_width,BLTAMOD
   COPMOVEQ extra_pf1_plane_width-ss_horiz_scroll_window_width,BLTDMOD
-  COPMOVEQ (ss_horiz_scroll_window_y_size*ss_horiz_scroll_window_depth*64)+(ss_horiz_scroll_window_x_size/16),BLTSIZE
+  COPMOVEQ (ss_horiz_scroll_blit_y_size*64)+(ss_horiz_scroll_blit_x_size/16),BLTSIZE
   rts
 
   COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
@@ -1206,7 +1218,7 @@ cl2_init_sine_scroll_blits_loop1
   COPMOVE d2,BLTAPTL
   COPMOVEQ TRUE,BLTDPTH
   COPMOVEQ TRUE,BLTDPTL
-  COPMOVEQ (ss_sine_character_y_size1*ss_sine_character_depth*64)+(ss_sine_character_x_size/16),BLTSIZE
+  COPMOVEQ (ss_copy_column_blit_y_size1*64)+(ss_copy_column_blit_x_size1/16),BLTSIZE
   COPWAITBLIT
 
   COPMOVEQ BC0F_SRCA+BC0F_SRCB+BC0F_DEST+NABNC+NABC+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;D=A+B
@@ -1232,7 +1244,7 @@ cl2_init_sine_scroll_blits_loop2
   COPMOVE d3,BLTAPTL
   COPMOVEQ TRUE,BLTDPTH
   COPMOVEQ TRUE,BLTDPTL
-  COPMOVEQ (ss_sine_character_y_size2*ss_sine_character_depth*64)+(ss_sine_character_x_size/16),BLTSIZE
+  COPMOVEQ (ss_copy_column_blit_y_size2*64)+(ss_copy_column_blit_x_size2/16),BLTSIZE
   COPWAITBLIT
   dbf     d6,cl2_init_sine_scroll_blits_loop2
   subq.l  #ss_sine_character_width,d3 ;nächster Char in Quellbild-2
@@ -1388,7 +1400,7 @@ ss_no_horiz_scrolltext
 
 ; ** Neues Image für Character ermitteln **
 ; -----------------------------------------
-  GET_NEW_CHARACTER_IMAGE ss
+  GET_NEW_CHARACTER_IMAGE.W ss
 
 ; ** Copperliste löschen **
 ; -------------------------

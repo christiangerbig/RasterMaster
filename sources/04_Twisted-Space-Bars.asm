@@ -257,18 +257,25 @@ hst_text_characters_number     EQU hst_horiz_scroll_window_x_size/hst_text_chara
 hst_text_x_position            EQU 32
 hst_text_y_position            EQU (visible_lines_number-hst_text_character_y_size)/2
 
+hst_copy_blit_x_size           EQU hst_text_character_x_size
+hst_copy_blit_y_size           EQU hst_text_character_y_size*hst_text_character_depth
+
+hst_horiz_scroll_blit_x_size   EQU hst_horiz_scroll_window_x_size
+hst_horiz_scroll_blit_y_size   EQU hst_horiz_scroll_window_y_size*hst_horiz_scroll_window_depth
+
 ; **** Sprites-Fader ****
-sprf_colors_number               EQU spr_colors_number-1
+sprf_start_color               EQU 01
+sprf_colors_number             EQU spr_colors_number-1
 
-sprfi_fader_speed_max            EQU 4
-sprfi_fader_radius               EQU sprfi_fader_speed_max
-sprfi_fader_center               EQU sprfi_fader_speed_max+1
-sprfi_fader_angle_speed          EQU 2
+sprfi_fader_speed_max          EQU 4
+sprfi_fader_radius             EQU sprfi_fader_speed_max
+sprfi_fader_center             EQU sprfi_fader_speed_max+1
+sprfi_fader_angle_speed        EQU 2
 
-sprfo_fader_speed_max            EQU 10
-sprfo_fader_radius               EQU sprfo_fader_speed_max
-sprfo_fader_center               EQU sprfo_fader_speed_max+1
-sprfo_fader_angle_speed          EQU 1
+sprfo_fader_speed_max          EQU 10
+sprfo_fader_radius             EQU sprfo_fader_speed_max
+sprfo_fader_center             EQU sprfo_fader_speed_max+1
+sprfo_fader_angle_speed        EQU 1
 
 ; **** Chunky-Columns-Fader ****
 ccfi_mode1                     EQU 0
@@ -756,7 +763,7 @@ init_own_variables
 ; ---------------------------------------------
   CNOP 0,4
 init_all
-  bsr.s   tb_init_bar_color_table
+  bsr.s   tb_init_color_table
   bsr.s   init_color_registers
   bsr     init_sprites
   bsr     hst_init_characters_offsets
@@ -768,19 +775,19 @@ init_all
 ; ** Farbwerte der Bar initialisieren **
 ; --------------------------------------
   CNOP 0,4
-tb_init_bar_color_table
+tb_init_color_table
   move.l  #COLOR00BITS,d1
-  lea     tb_color_table(pc),a0 ;Quelle Farbverlauf
-  lea     tb_bar_color_table(pc),a1 ;Ziel
+  lea     tb_color_gradient(pc),a0 ;Quelle Farbverlauf
+  lea     tb_color_table(pc),a1 ;Ziel
   moveq   #tb_bar_height-1,d7 ;Anzahl der Zeilen
-tb_init_bar_color_table_loop1
+tb_init_color_table_loop1
+  move.l  (a0)+,d0           ;RGB8-Farbwert
   move.l  d1,(a1)+           ;COLOR00
   moveq   #(spr_colors_number-1)-1,d6 ;Anzahl der Farbwerte pro Palettenabschnitt
-  move.l  (a0)+,d0           ;RGB8-Farbwert
-tb_init_bar_color_table_loop2
+tb_init_color_table_loop2
   move.l  d0,(a1)+           ;Farbwert eintragen
-  dbf     d6,tb_init_bar_color_table_loop2
-  dbf     d7,tb_init_bar_color_table_loop1
+  dbf     d6,tb_init_color_table_loop2
+  dbf     d7,tb_init_color_table_loop1
   rts
 
 ; ** Farbregister initialisieren **
@@ -790,7 +797,7 @@ init_color_registers
   CPU_SELECT_COLORHI_BANK 0
   CPU_INIT_COLORHI COLOR00,16,pf1_color_table
   CPU_SELECT_COLORHI_BANK 1
-  CPU_INIT_COLORHI COLOR00,32,tb_bar_color_table
+  CPU_INIT_COLORHI COLOR00,32,tb_color_table
   CPU_SELECT_COLORHI_BANK 2
   CPU_INIT_COLORHI COLOR00,32
   CPU_SELECT_COLORHI_BANK 3
@@ -807,7 +814,7 @@ init_color_registers
   CPU_SELECT_COLORLO_BANK 0
   CPU_INIT_COLORLO COLOR00,16,pf1_color_table
   CPU_SELECT_COLORLO_BANK 1
-  CPU_INIT_COLORLO COLOR00,32,tb_bar_color_table
+  CPU_INIT_COLORLO COLOR00,32,tb_color_table
   CPU_SELECT_COLORLO_BANK 2
   CPU_INIT_COLORLO COLOR00,32
   CPU_SELECT_COLORLO_BANK 3
@@ -950,8 +957,8 @@ no_horiz_scrolltext
   IFNE tb_quick_clear
     bsr     restore_second_copperlist
   ENDC
-  bsr     image_fader_in
-  bsr     image_fader_out
+  bsr     sprite_fader_in
+  bsr     sprite_fader_out
   bsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
@@ -976,8 +983,8 @@ fast_exit
   CNOP 0,4
 horiz_scrolltext
   movem.l a4-a5,-(a7)
-  bsr.s   hst_init_character_blit
-  move.w  #(hst_text_character_y_size*hst_text_character_depth*64)+(hst_text_character_x_size/16),d4 ;BLTSIZE
+  bsr.s   hst_init_copy_blit
+  move.w  #(hst_copy_blit_y_size*64)+(hst_copy_blit_x_size/16),d4 ;BLTSIZE
   move.w  #hst_text_character_x_restart,d5
   lea     hst_characters_x_positions(pc),a0 ;X-Positionen der Chars
   lea     hst_characters_image_pointers(pc),a1 ;Zeiger auf Adressen der Chars-Images
@@ -1013,11 +1020,8 @@ hst_no_new_character_image
   movem.l (a7)+,a4-a5
   move.w  #DMAF_BLITHOG,DMACON-DMACONR(a6) ;BLTPRI aus
   rts
-
-; ** konstante Blitterregister initialisieren **
-; ----------------------------------------------
   CNOP 0,4
-hst_init_character_blit
+hst_init_copy_blit
   move.w  #DMAF_BLITHOG+DMAF_SETCLR,DMACON-DMACONR(a6) ;BLTPRI an
   WAITBLITTER
   move.l  #(BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC)<<16,BLTCON0-DMACONR(a6) ;Minterm D=A
@@ -1039,7 +1043,7 @@ hst_get_text_softscroll
 
 ; ** Neues Image für Character ermitteln **
 ; -----------------------------------------
-  GET_NEW_CHARACTER_IMAGE hst,hst_check_control_codes,NORESTART
+  GET_NEW_CHARACTER_IMAGE.W hst,hst_check_control_codes,NORESTART
 
   CNOP 0,4
 hst_check_control_codes
@@ -1066,7 +1070,7 @@ hst_horiz_scroll
   addq.w  #2,a0              ;16 Pixel überspringen
   move.l  a0,BLTDPT-DMACONR(a6) ;Ziel
   move.l  #((pf1_plane_width-hst_horiz_scroll_window_width)<<16)+(pf1_plane_width-hst_horiz_scroll_window_width),BLTAMOD-DMACONR(a6) ;A-Mod + D-Mod
-  move.w  #(hst_horiz_scroll_window_y_size*hst_horiz_scroll_window_depth*64)+(hst_horiz_scroll_window_x_size/16),BLTSIZE-DMACONR(a6) ;Blitter starten
+  move.w  #(hst_horiz_scroll_blit_y_size*64)+(hst_horiz_scroll_blit_x_size/16),BLTSIZE-DMACONR(a6) ;Blitter starten
   rts
 
 ; ** Copperliste löschen **
@@ -1246,12 +1250,12 @@ tb312_no_get_yz_coordinates
   ENDC
 
 
-; ** Grafik einblenden **
-; -----------------------
+; ** Hintergrundbild einblenden **
+; --------------------------------
   CNOP 0,4
-image_fader_in
+sprite_fader_in
   tst.w   sprfi_state(a3)      ;Sprites-Fader-In an ?
-  bne.s   no_image_fader_in  ;Nein -> verzweige
+  bne.s   no_sprite_fader_in   ;Nein -> verzweige
   movem.l a4-a6,-(a7)
   move.w  sprfi_fader_angle(a3),d2 ;Fader-Winkel holen
   move.w  d2,d0
@@ -1267,8 +1271,8 @@ sprfi_no_restart_fader_angle
   MULUF.L sprfi_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
   ADDF.W  sprfi_fader_center,d0 ;+ Fader-Mittelpunkt
-  lea     spr_color_table+(1*LONGWORDSIZE)(pc),a0 ;Puffer für Farbwerte
-  lea     sprfi_color_table+(1*LONGWORDSIZE)(pc),a1 ;Sollwerte
+  lea     spr_color_table+(sprf_start_color*LONGWORDSIZE)(pc),a0 ;Puffer für Farbwerte
+  lea     sprfi_color_table+(sprf_start_color*LONGWORDSIZE)(pc),a1 ;Sollwerte
   move.w  d0,a5              ;Additions-/Subtraktionswert für Blau
   swap    d0                 ;WORDSHIFT
   clr.w   d0                 ;Bits 0-15 löschen
@@ -1279,18 +1283,18 @@ sprfi_no_restart_fader_angle
   bsr     sprf_fader_loop
   movem.l (a7)+,a4-a6
   move.w  d6,sprf_colors_counter(a3) ;Sprites-Fader-In fertig ?
-  bne.s   no_image_fader_in  ;Nein -> verzweige
+  bne.s   no_sprite_fader_in ;Nein -> verzweige
   moveq   #FALSE,d0
-  move.w  d0,sprfi_state(a3)   ;Sprites-Fader-In aus
-no_image_fader_in
+  move.w  d0,sprfi_state(a3) ;Sprites-Fader-In aus
+no_sprite_fader_in
   rts
 
-; ** Grafik ausblenden **
-; -----------------------
+; ** Hintergrundbild ausblenden **
+; --------------------------------
   CNOP 0,4
-image_fader_out
+sprite_fader_out
   tst.w   sprfo_state(a3)      ;Sprites-Fader-Out an ?
-  bne.s   no_image_fader_out ;Nein -> verzweige
+  bne.s   no_sprite_fader_out  ;Nein -> verzweige
   movem.l a4-a6,-(a7)
   move.w  sprfo_fader_angle(a3),d2 ;Fader-Winkel holen
   move.w  d2,d0
@@ -1306,8 +1310,8 @@ sprfo_no_restart_fader_angle
   MULUF.L sprfo_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
   ADDF.W  sprfo_fader_center,d0 ;+ Fader-Mittelpunkt
-  lea     spr_color_table+(1*LONGWORDSIZE)(pc),a0 ;Puffer für Farbwerte
-  lea     sprfo_color_table+(1*LONGWORDSIZE)(pc),a1 ;Sollwerte
+  lea     spr_color_table+(sprf_start_color*LONGWORDSIZE)(pc),a0 ;Puffer für Farbwerte
+  lea     sprfo_color_table+(sprf_start_color*LONGWORDSIZE)(pc),a1 ;Sollwerte
   move.w  d0,a5              ;Additions-/Subtraktionswert für Blau
   swap    d0                 ;WORDSHIFT
   clr.w   d0                 ;Bits 0-15 löschen
@@ -1318,83 +1322,15 @@ sprfo_no_restart_fader_angle
   bsr.s   sprf_fader_loop
   movem.l (a7)+,a4-a6
   move.w  d6,sprf_colors_counter(a3) ;Sprites-Fader-Out fertig ?
-  bne.s   no_image_fader_out ;Nein -> verzweige
+  bne.s   no_sprite_fader_out ;Nein -> verzweige
   moveq   #FALSE,d0
-  move.w  d0,sprfo_state(a3)   ;Sprites-Fader-Out aus
-no_image_fader_out
+  move.w  d0,sprfo_state(a3) ;Sprites-Fader-Out aus
+no_sprite_fader_out
   rts
 
   COLOR_FADER sprf
 
-; ** Farbwerte in Copperliste kopieren **
-; ---------------------------------------
-  CNOP 0,4
-sprf_copy_color_table
-  IFNE cl1_size2
-    move.l  a4,-(a7)
-  ENDC
-  tst.w   sprf_copy_colors_state(a3)  ;Kopieren der Farbwerte beendet ?
-  bne.s   sprf_no_copy_color_table ;Ja -> verzweige
-  move.w  #$0f0f,d3          ;Maske für RGB-Nibbles
-  IFGT sprf_colors_number-32
-    moveq   #1*8,d4          ;Color-Bank Farbregisterzähler
-  ENDC
-  lea     spr_color_table+(1*LONGWORDSIZE)(pc),a0 ;Puffer für Farbwerte
-  move.l  cl1_display(a3),a1 ;CL
-  ADDF.W  cl1_COLOR17_high1+2,a1
-  IFNE cl1_size1
-    move.l  cl1_construction1(a3),a2 ;CL
-    ADDF.W  cl1_COLOR17_high1+2,a2
-  ENDC
-  IFNE cl1_size2
-    move.l  cl1_construction2(a3),a4 ;CL
-    ADDF.W  cl1_COLOR17_high1+2,a4
-  ENDC
-  MOVEF.W sprf_colors_number-1,d7 ;Anzahl der Farben
-sprf_copy_color_table_loop
-  move.l  (a0)+,d0           ;RGB8-Farbwert
-  move.l  d0,d2              ;retten
-  RGB8_TO_RGB4HI d0,d1,d3
-  move.w  d0,(a1)            ;COLORxx High-Bits
-  IFNE cl1_size1
-    move.w  d0,(a2)          ;COLORxx High-Bits
-  ENDC
-  IFNE cl1_size2
-    move.w  d0,(a4)          ;COLORxx High-Bits
-  ENDC
-  RGB8_TO_RGB4LO d2,d1,d3
-  move.w  d2,cl1_COLOR17_low1-cl1_COLOR17_high1(a1) ;Low-Bits COLORxx
-  addq.w  #4,a1              ;nächstes Farbregister
-  IFNE cl1_size1
-    move.w  d2,cl1_COLOR17_low1-cl1_COLOR17_high1(a2) ;Low-Bits COLORxx
-    addq.w  #4,a2            ;nächstes Farbregister
-  ENDC
-  IFNE cl1_size2
-    move.w  d2,cl1_COLOR17_low1-cl1_COLOR17_high1(a4) ;Low-Bits COLORxx
-    addq.w  #4,a4            ;nächstes Farbregister
-  ENDC
-  IFGT sprf_colors_number-32
-    addq.b  #1*8,d4          ;Farbregister-Zähler erhöhen
-    bne.s   sprf_no_restart_color_bank ;Nein -> verzweige
-    addq.w  #4,a1            ;CMOVE überspringen
-    IFNE cl1_size1
-      addq.w  #4,a2          ;CMOVE überspringen
-    ENDC
-    IFNE cl1_size2
-      addq.w  #4,a4          ;CMOVE überspringen
-    ENDC
-sprf_no_restart_color_bank
-  ENDC
-  dbf     d7,sprf_copy_color_table_loop
-  tst.w   sprf_colors_counter(a3) ;Fading beendet ?
-  bne.s   sprf_no_copy_color_table ;Nein -> verzweige
-  moveq   #FALSE,d0
-  move.w  d0,sprf_copy_colors_state(a3) ;Kopieren beendet
-sprf_no_copy_color_table
-  IFNE cl1_size2
-    move.l  (a7)+,a4
-  ENDC
-  rts
+  COPY_COLOR_TABLE_TO_COPPERLIST sprf,spr,cl1,cl1_COLOR17_high1,cl1_COLOR17_low1
 
 ; ** Spalten einblenden **
 ; ------------------------
@@ -1556,7 +1492,7 @@ effects_handler
   bgt.s   no_effects_handler ;Ja -> verzweige
   move.w  d1,INTREQ-DMACONR(a6) ;SOFTINT-Interrupt löschen
   subq.w  #1,d0
-  beq.s   eh_start_image_fader_in
+  beq.s   eh_start_sprite_fader_in
   subq.w  #1,d0
   beq.s   eh_start_twisted_bars313
   subq.w  #1,d0
@@ -1568,13 +1504,13 @@ effects_handler
   subq.w  #1,d0
   beq.s   eh_stop_twisted_bars312
   subq.w  #1,d0
-  beq.s   eh_start_image_fader_out
+  beq.s   eh_start_sprite_fader_out
   subq.w  #1,d0
   beq     eh_stop_all
 no_effects_handler
   rts
   CNOP 0,4
-eh_start_image_fader_in
+eh_start_sprite_fader_in
   move.w  #sprf_colors_number*3,sprf_colors_counter(a3)
   moveq   #TRUE,d0
   move.w  d0,sprfi_state(a3)   ;Sprites-Fader-In an
@@ -1618,7 +1554,7 @@ eh_stop_twisted_bars312
   move.w  d2,ccfo_delay_counter(a3) ;Verzögerungszähler aktivieren
   rts
   CNOP 0,4
-eh_start_image_fader_out
+eh_start_sprite_fader_out
   move.w  #sprf_colors_number*3,sprf_colors_counter(a3)
   moveq   #TRUE,d0
   move.w  d0,sprfo_state(a3)   ;Sprites-Fader-Out an
@@ -1680,21 +1616,18 @@ spr_color_table
 
 ; ** Adressen der Sprites **
 ; --------------------------
-spr_pointers_construction
-  DS.L spr_number
-
 spr_pointers_display
   DS.L spr_number
 
 ; **** Twisted-Bars ****
 ; ** Farbverlauf **
 ; -----------------
-tb_color_table
+tb_color_gradient
   INCLUDE "Daten:Asm-Sources.AGA/RasterMaster/colortables/05_tb_Colorgradient.ct"
 
 ; ** Farben der Bar **
 ; --------------------
-tb_bar_color_table
+tb_color_table
   DS.L spr_colors_number*tb_bar_height
 
 ; ** Tabellen mit Switchwerten der Bar **

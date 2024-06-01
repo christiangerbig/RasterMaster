@@ -562,13 +562,13 @@ VERTB_int_server
 ; ** PT-replay routine **
 ; -----------------------
   IFD pt_v2.3a
-    PT2_REPLAY
+    PT2_REPLAY pt_SetSoftInterrupt
   ENDC
   IFD pt_v3.0b
     PT3_REPLAY pt_SetSoftInterrupt
   ENDC
 
-; ** Effect command 800 "Set Soft Interrupt" **
+; ** 800 "Set Soft Interrupt" **
   CNOP 0,4
 pt_SetSoftInterrupt
   move.w  #INTF_SOFTINT+INTF_SETCLR,_CUSTOM+INTREQ
@@ -645,7 +645,7 @@ pf1_color_table
 ; -------------------------
   INCLUDE "music-tracker/pt-sample-starts-table.i"
 
-; ** Pionters to priod tables for different tuning **
+; ** Pointers to priod tables for different tuning **
 ; ---------------------------------------------------
   INCLUDE "music-tracker/pt-finetune-starts-table.i"
 

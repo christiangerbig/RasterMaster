@@ -733,7 +733,7 @@ vert_colorscroll3112
   movem.l a3-a6,-(a7)
   move.l  a7,save_a7(a3)     ;Stackpointer retten
   move.w  vcs3112_switch_table_start(a3),d2 ;Startwert in Farbtabelle holen
-  move.w  d2,d0              ;retten
+  move.w  d2,d0              
   move.w  vcs3112_step1_angle(a3),d4 ;Y-Step-Winkel holen
   IFEQ vcs3112_switch_table_length_256
     addq.b  #vcs3112_speed,d0 ;Startwert der Switchtabelle erhöhen
@@ -742,13 +742,13 @@ vert_colorscroll3112
     addq.w  #vcs3112_speed,d0 ;Startwert der Farbtabelle erhöhen
     and.w   d3,d0            ;Überlauf entfernen
   ENDC
-  move.w  d0,vcs3112_switch_table_start(a3) ;retten
-  move.w  d4,d0              ;retten
+  move.w  d0,vcs3112_switch_table_start(a3) 
+  move.w  d4,d0              
   addq.b  #vcs3112_step1_angle_speed,d0 ;nächster Y-Winkel
-  move.w  d0,vcs3112_step1_angle(a3) ;retten
+  move.w  d0,vcs3112_step1_angle(a3) 
   MOVEF.L (cl2_extension1_SIZE*(cl2_display_y_size/2))+4,d5
   move.l  extra_memory(a3),a0 ;Tabelle mit Switchwerten
-  move.l  cl2_construction2(a3),a1 ;CL
+  move.l  cl2_construction2(a3),a1 
   ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2+(((cl2_display_width/2)-1)*LONGWORDSIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ;Start in CL 2. Quadrant
   lea     LONGWORDSIZE(a1),a2 ;Start in CL 1. Quadrant
   lea     sine_table(pc),a3 
@@ -807,7 +807,7 @@ vert_colorscroll3121
   movem.l a3-a6,-(a7)
   move.l  a7,save_a7(a3)     ;Stackpointer retten
   move.w  vcs3121_switch_table_start(a3),d2 ;Startwert in Farbtabelle holen
-  move.w  d2,d0              ;retten
+  move.w  d2,d0              
   move.w  vcs3121_step1_angle(a3),d4 ;Y-Step-Winkel holen
   IFEQ vcs3121_switch_table_length_256
     addq.b  #vcs3121_speed,d0 ;Startwert der Switchtabelle erhöhen
@@ -816,13 +816,13 @@ vert_colorscroll3121
     addq.w  #vcs3121_speed,d0 ;Startwert der Farbtabelle erhöhen
     and.w   d3,d0            ;Überlauf entfernen
   ENDC
-  move.w  d0,vcs3121_switch_table_start(a3) ;retten
-  move.w  d4,d0              ;retten
+  move.w  d0,vcs3121_switch_table_start(a3) 
+  move.w  d4,d0              
   addq.b  #vcs3121_step1_angle_speed,d0 ;nächster Y-Winkel
-  move.w  d0,vcs3121_step1_angle(a3) ;retten
+  move.w  d0,vcs3121_step1_angle(a3) 
   MOVEF.L (cl2_extension1_SIZE*(cl2_display_y_size/2))+4,d5
   move.l  extra_memory(a3),a0 ;Tabelle mit Switchwerten
-  move.l  cl2_construction2(a3),a1 ;CL
+  move.l  cl2_construction2(a3),a1 
   ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2+(((cl2_display_width/2)-1)*LONGWORDSIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ;Start in CL 2. Quadrant
   lea     LONGWORDSIZE(a1),a2 ;Start in CL 1. Quadrant
   lea     sine_table(pc),a3  
@@ -881,7 +881,7 @@ vert_colorscroll3122
   movem.l a3-a6,-(a7)
   move.l  a7,save_a7(a3)     ;Stackpointer retten
   move.w  vcs3122_switch_table_start(a3),d2 ;Startwert in Farbtabelle holen
-  move.w  d2,d0              ;retten
+  move.w  d2,d0              
   move.w  vcs3122_step2_angle(a3),d4 ;Y-Step-Winkel holen
   IFEQ vcs3122_switch_table_length_256
     addq.b  #vcs3122_speed,d0 ;Startwert der Switchtabelle erhöhen
@@ -890,13 +890,13 @@ vert_colorscroll3122
     addq.w  #vcs3122_speed,d0 ;Startwert der Farbtabelle erhöhen
     and.w   d3,d0            ;Überlauf entfernen
   ENDC
-  move.w  d0,vcs3122_switch_table_start(a3) ;retten
-  move.w  d4,d0              ;retten
+  move.w  d0,vcs3122_switch_table_start(a3) 
+  move.w  d4,d0              
   addq.b  #vcs3122_step2_angle_speed,d0 ;nächster Y-Winkel
-  move.w  d0,vcs3122_step2_angle(a3) ;retten
+  move.w  d0,vcs3122_step2_angle(a3) 
   MOVEF.L (cl2_extension1_SIZE*(cl2_display_y_size/2))+4,d5
   move.l  extra_memory(a3),a0 ;Tabelle mit Switchwerten
-  move.l  cl2_construction2(a3),a1 ;CL
+  move.l  cl2_construction2(a3),a1 
   ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2+(((cl2_display_width/2)-1)*LONGWORDSIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ;Start in CL 2. Quadrant
   lea     LONGWORDSIZE(a1),a2 ;Start in CL 1. Quadrant
   lea     sine_table(pc),a3  
@@ -955,7 +955,7 @@ vert_colorscroll3111
   movem.l a3-a6,-(a7)
   move.l  a7,save_a7(a3)     ;Stackpointer retten
   move.w  vcs3111_switch_table_start(a3),d2 ;Startwert in Farbtabelle holen
-  move.w  d2,d0              ;retten
+  move.w  d2,d0              
   move.w  vcs3111_step2_angle(a3),d4 ;Y-Step-Winkel holen
   IFEQ vcs3111_switch_table_length_256
     addq.b  #vcs3111_speed,d0 ;Startwert der Farbtabelle erhöhen
@@ -964,13 +964,13 @@ vert_colorscroll3111
     addq.w  #vcs3111_speed,d0 ;Startwert der Farbtabelle erhöhen
     and.w   d3,d0            ;Überlauf entfernen
   ENDC
-  move.w  d0,vcs3111_switch_table_start(a3) ;retten
-  move.w  d4,d0              ;retten
+  move.w  d0,vcs3111_switch_table_start(a3) 
+  move.w  d4,d0              
   addq.b  #vcs3111_step2_angle_speed,d0 ;nächster Y-Winkel
-  move.w  d0,vcs3111_step2_angle(a3) ;retten
+  move.w  d0,vcs3111_step2_angle(a3) 
   MOVEF.L (cl2_extension1_SIZE*(cl2_display_y_size/2))+4,d5
   move.l  extra_memory(a3),a0 ;Tabelle mit Switchwerten
-  move.l  cl2_construction2(a3),a1 ;CL
+  move.l  cl2_construction2(a3),a1 
   ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2+(((cl2_display_width/2)-1)*LONGWORDSIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ;Start in CL 2. Quadrant
   lea     LONGWORDSIZE(a1),a2 ;Start in CL 1. Quadrant
   lea     sine_table(pc),a3 
@@ -1030,14 +1030,14 @@ blind_fader_in
     bne.s   no_blind_fader_in ;Nein -> verzweige
     move.l  a4,-(a7)
     move.w  bf_registers_table_start(a3),d2 ;Registeradresse holen
-    move.w  d2,d0            ;retten
+    move.w  d2,d0            
     addq.w  #bf_speed,d0     ;Startwert der Tabelle erhöhen
     cmp.w   #bf_registers_table_length/2,d0 ;Ende der Tabelle erreicht ?
     ble.s   bfi_not_finished ;Nein -> verzweige
     moveq   #FALSE,d1
     move.w  d1,bfi_state(a3) ;Blind-Fader-In aus
 bfi_not_finished
-    move.w  d0,bf_registers_table_start(a3) ;retten
+    move.w  d0,bf_registers_table_start(a3) 
     MOVEF.W bf_registers_table_length,d3
     MOVEF.W cl2_extension1_SIZE,d4
     lea     bf_registers_table(pc),a0 ;Tabelle mit Registeradressen
@@ -1091,13 +1091,13 @@ blind_fader_out
     bne.s   no_blind_fader_out ;Nein -> verzweige
     move.l  a4,-(a7)
     move.w  bf_registers_table_start(a3),d2 ;Startwert der Tabelle holen
-    move.w  d2,d0            ;retten
+    move.w  d2,d0            
     subq.w  #bf_speed,d0     ;Startwert der Tabelle verringern
     bpl.s   bfo_not_finished ;Wenn positiv -> verzweige
     moveq   #FALSE,d1
     move.w  d1,bfo_state(a3) ;Blind-Fader-Out aus
 bfo_not_finished
-    move.w  d0,bf_registers_table_start(a3) ;retten
+    move.w  d0,bf_registers_table_start(a3) 
     MOVEF.W bf_registers_table_length,d3
     MOVEF.W cl2_extension1_SIZE,d4
     moveq   #bf_step2,d5

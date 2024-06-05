@@ -1089,7 +1089,7 @@ vss_clear_switch_buffer
 vss_copy_switch_buffer
   move.l  vss_switch_buffer_construction2(a3),a0 ;Tabelle mit Switchwerten
   add.l   #vss_switch_buffer_x_size*vss_star_y_size3,a0 ;n Zeilen überspringen
-  move.l  cl2_construction2(a3),a1 ;CL
+  move.l  cl2_construction2(a3),a1 
   ADDF.W cl2_extension1_entry+cl2_ext1_BPLCON4_1+2,a1
   move.w  #cl2_extension1_SIZE,a2
   MOVEF.W cl2_display_y_size-1,d7 ;Effekt für x Zeilen

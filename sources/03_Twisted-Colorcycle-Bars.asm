@@ -661,7 +661,7 @@ fast_exit
 colorcycle
   movem.l a4-a6,-(a7)
   move.l  cc_color_table_start(a3),d3 ;Startwert holen
-  move.l  d3,d0              ;retten
+  move.l  d3,d0              
   addq.l  #cc_speed,d0       ;nächster Farbwert
   cmp.l   #color_x_values_number*segments_number,d0
   blt.s   cc_no_restart_color_table1 ;Wenn >= NULL, dann verzweige
@@ -671,7 +671,7 @@ cc_no_restart_color_table1
   move.w  #$0f0f,d4          ;Maske für High/Low-Bits
   moveq   #1*8,d5            ;Farbregister-Zähler
   move.l  extra_memory(a3),a1 ;Zeiger auf Farbtabelle
-  move.l  cl1_construction2(a3),a2 ;CL
+  move.l  cl1_construction2(a3),a2 
   ADDF.W  cl1_COLOR01_high1+2,a2
   move.w  #(color_x_values_number*segments_number)*4,a4
   move.w  #cc_step,a5
@@ -709,18 +709,18 @@ twisted_colorcycle_bars
   movem.l a3-a6,-(a7)
   move.l  a7,save_a7(a3)     ;Stackpointer retten
   move.w  tccb_y_radius_angle(a3),d4 ;Y-Radius-Winkel holen
-  move.w  d4,d0              ;retten
+  move.w  d4,d0              
   MOVEF.W sine_table_length-1,d7 ;Überlauf
   addq.w  #tccb_y_radius_angle_speed,d0 ;nächster Y-Radius-Winkel
   move.w  tccb_y_angle(a3),d5 ;1. Y-Winkel
   and.w   d7,d0              ;Überlauf entfernen
-  move.w  d0,tccb_y_radius_angle(a3) ;retten
-  move.w  d5,d0              ;retten
+  move.w  d0,tccb_y_radius_angle(a3) 
+  move.w  d5,d0              
   addq.w  #tccb_y_angle_speed,d0 ;nächster Y-Winkel
   and.w   d7,d0              ;Überlauf entfernen
-  move.w  d0,tccb_y_angle(a3) ;retten
+  move.w  d0,tccb_y_angle(a3) 
   lea     sine_table_512(pc),a0 
-  move.l  cl1_construction2(a3),a2 ;CL
+  move.l  cl1_construction2(a3),a2 
   ADDF.W cl1_extension1_entry+cl1_ext1_BPLCON4_1+2,a2
   move.l  extra_memory(a3),a5
   move.w  #tccb_y_distance,a3
@@ -832,14 +832,14 @@ blind_fader_in
     bne.s   no_blind_fader_in ;Nein -> verzweige
     move.l  a4,-(a7)
     move.w  bf_registers_table_start(a3),d2 ;Registeradresse holen
-    move.w  d2,d0            ;retten
+    move.w  d2,d0            
     addq.w  #bf_speed,d0     ;Startwert der Tabelle erhöhen
     cmp.w   #bf_registers_table_length/2,d0 ;Ende der Tabelle erreicht ?
     ble.s   bf_no_restart_registers_table ;Nein -> verzweige
     moveq   #FALSE,d1
     move.w  d1,bfi_state(a3) ;Blind-Fader-In aus
 bf_no_restart_registers_table
-    move.w  d0,bf_registers_table_start(a3) ;retten
+    move.w  d0,bf_registers_table_start(a3) 
     MOVEF.W bf_registers_table_length,d3
     MOVEF.W cl1_extension1_SIZE,d4
     moveq   #bf_step2,d5
@@ -894,13 +894,13 @@ blind_fader_out
     bne.s   no_blind_fader_out ;Nein -> verzweige
     move.l  a4,-(a7)
     move.w  bf_registers_table_start(a3),d2 ;Startwert der Tabelle holen
-    move.w  d2,d0            ;retten
+    move.w  d2,d0            
     subq.w  #bf_speed,d0     ;Startwert der Tabelle verringern
     bpl.s   bfo_no_restart_registers_table ;Wenn positiv -> verzweige
     moveq   #FALSE,d1
     move.w  d1,bfo_state(a3) ;Blind-Fader-Out aus
 bfo_no_restart_registers_table
-    move.w  d0,bf_registers_table_start(a3) ;retten
+    move.w  d0,bf_registers_table_start(a3) 
     MOVEF.W bf_registers_table_length,d3
     MOVEF.W cl1_extension1_SIZE,d4
     moveq   #bf_step2,d5

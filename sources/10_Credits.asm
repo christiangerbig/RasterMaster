@@ -1102,7 +1102,7 @@ scroll_logo_left_in
   MOVEF.W lg_image_x_position*4,d0
   sub.w   d1,d0              ;X-Zentrierung
   addq.w  #slli_x_angle_speed,d2 ;nächsterX-Winkel
-  move.w  d2,slli_x_angle(a3);retten
+  move.w  d2,slli_x_angle(a3)
   moveq   #lg_image_y_position,d1 ;Y
   MOVEF.W lg_image_y_size,d2 ;Höhe
   add.w   d1,d2              ;Höhe zu Y addieren
@@ -1144,7 +1144,7 @@ scroll_logo_left_out
   MOVEF.W lg_image_x_position*4,d0
   sub.w   d1,d0              ;X-Zentrierung
   addq.w  #sllo_x_angle_speed,d2 ;nächsterX-Winkel
-  move.w  d2,sllo_x_angle(a3) ;retten
+  move.w  d2,sllo_x_angle(a3) 
   moveq   #lg_image_y_position,d1 ;Y
   MOVEF.W lg_image_y_size,d2 ;Höhe
   add.w   d1,d2              ;Höhe zu Y addieren

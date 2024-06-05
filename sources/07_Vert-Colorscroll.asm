@@ -614,19 +614,19 @@ vert_colorscroll4
   bne.s   no_vert_colorscroll4
   movem.l a4-a5,-(a7)
   move.w  vcs4_switch_table_start(a3),d1 ;Startwert holen
-  move.w  d1,d0              ;retten
+  move.w  d1,d0              
   addq.b  #vcs4_speed,d0     ;Startwert der Tabelle erhöhen
   move.w  d0,vcs4_switch_table_start(a3) ;Startwert retten
   moveq   #vcs4_step1,d2
   MOVEF.L cl2_extension1_SIZE,d3
   move.l  extra_memory(a3),a0 ;Tabelle mit Switchwerten
-  move.l  cl2_construction2(a3),a2 ;CL
+  move.l  cl2_construction2(a3),a2 
   ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2,a2
   lea     (cl2_display_width-1)*4(a2),a5 ;Ende einer Copperzeile
   moveq   #(cl2_display_width/2)-1,d7 ;Anzahl der Spalten
 vert_colorscroll_loop1
-  move.l  a2,a1              ;CL
-  move.l  a5,a4              ;CL Ende der Copperzeile
+  move.l  a2,a1              
+  move.l  a5,a4               Ende der Copperzeile
   MOVEF.W cl2_display_y_size-1,d6 ;Effekt für x Zeilen
 vert_colorscroll_loop2
   move.b  (a0,d1.w),d0       ;Switchwert auslesen
@@ -650,9 +650,9 @@ no_vert_colorscroll4
   CNOP 0,4
 vert_colorscroll5_1
   move.w  vcs5_switch_table_start1(a3),d2 ;Startwert in Farbtabelle holen
-  move.w  d2,d0              ;retten
+  move.w  d2,d0              
   addq.b  #vcs5_twist_speed,d0 ;nächster Startwert
-  move.w  d0,vcs5_switch_table_start1(a3) ;retten
+  move.w  d0,vcs5_switch_table_start1(a3) 
   move.l  extra_memory(a3),a0 ;Switchtabelle
   move.l  cl2_construction2(a3),a1 ;Copperliste
   ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2,a1
@@ -685,9 +685,9 @@ vert_colorscroll5_1_loop2
   CNOP 0,4
 vert_colorscroll5_2
   move.w  vcs5_switch_table_start2(a3),d2 ;Startwert in Farbtabelle holen
-  move.w  d2,d0              ;retten
+  move.w  d2,d0              
   subq.b  #vcs5_twist_speed,d0 ;nächster Startwert
-  move.w  d0,vcs5_switch_table_start2(a3) ;retten
+  move.w  d0,vcs5_switch_table_start2(a3) 
   move.l  extra_memory(a3),a0 ;Switchtabelle
   move.l  cl2_construction2(a3),a1 ;Copperliste
   ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2+(cl2_extension1_SIZE*vcs5_twist_lines_number*1),a1
@@ -727,14 +727,14 @@ blind_fader_in
     bne.s   no_blind_fader_in ;Nein -> verzweige
     move.l  a4,-(a7)
     move.w  bf_registers_table_start(a3),d2 ;Registeradresse holen
-    move.w  d2,d0            ;retten
+    move.w  d2,d0            
     addq.w  #bf_speed,d0     ;Startwert der Tabelle erhöhen
     cmp.w   #bf_registers_table_length/2,d0 ;Ende der Tabelle erreicht ?
     ble.s   bf_no_restart_registers_table ;Nein -> verzweige
     moveq   #FALSE,d1
     move.w  d1,bfi_state(a3) ;Blind-Fader-In aus
 bf_no_restart_registers_table
-    move.w  d0,bf_registers_table_start(a3) ;retten
+    move.w  d0,bf_registers_table_start(a3) 
     MOVEF.W bf_registers_table_length,d3
     MOVEF.W cl2_extension1_SIZE,d4
     moveq   #bf_step2,d5
@@ -789,13 +789,13 @@ blind_fader_out
     bne.s   no_blind_fader_out ;Nein -> verzweige
     move.l  a4,-(a7)
     move.w  bf_registers_table_start(a3),d2 ;Startwert der Tabelle holen
-    move.w  d2,d0            ;retten
+    move.w  d2,d0            
     subq.w  #bf_speed,d0     ;Startwert der Tabelle verringern
     bpl.s   bfo_no_restart_registers_table ;Wenn positiv -> verzweige
     moveq   #FALSE,d1
     move.w  d1,bfo_state(a3) ;Blind-Fader-Out aus
 bfo_no_restart_registers_table
-    move.w  d0,bf_registers_table_start(a3) ;retten
+    move.w  d0,bf_registers_table_start(a3) 
     MOVEF.W bf_registers_table_length,d3
     MOVEF.W cl2_extension1_SIZE,d4
     moveq   #bf_step2,d5

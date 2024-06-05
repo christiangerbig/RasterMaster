@@ -586,15 +586,15 @@ fast_exit
 blind_colorcycle5242
   movem.l a4-a6,-(a7)
   move.w  bcc_5242_step2_angle(a3),d3 ;Winkel holen
-  move.w  d3,d0              ;retten
+  move.w  d3,d0              
   move.w  bcc_5242_switch_table_start(a3),d4 ;Startwert in Farbtabelle holen
   addq.b  #bcc_5242_step2_angle_speed,d0 ;nächster Winkel
   move.w  d0,bcc_5242_step2_angle(a3) ;neuen Winkel retten
-  move.w  d4,d0              ;retten
+  move.w  d4,d0              
   addq.b  #bcc_5242_speed,d0      ;Startwert der Farbtabelle erhöhen
-  move.w  d0,bcc_5242_switch_table_start(a3) ;retten
+  move.w  d0,bcc_5242_switch_table_start(a3) 
   move.l  extra_memory(a3),a0 ;Tabelle mit Switchwerten
-  move.l  cl2_construction2(a3),a2 ;CL
+  move.l  cl2_construction2(a3),a2 
   ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2,a2
   move.w  #cl2_extension1_SIZE,a4
   lea     sine_table,a5      ;Sinus-Tabelle
@@ -602,7 +602,7 @@ blind_colorcycle5242
   moveq   #cl2_display_width-1,d7 ;Anzahl der Spalten in CL
 blind_colorcycle5242_loop1
   move.w  d4,d2              ;Startwert holen
-  move.l  a2,a1              ;CL
+  move.l  a2,a1              
   moveq   #bcc_5242_lamellas_number-1,d6 ;Anzahl der Lamellen
 blind_colorcycle5242_loop2
   move.w  d2,d1              ;Startwert holen
@@ -635,14 +635,14 @@ blind_fader_in
     bne.s   no_blind_fader_in ;Nein -> verzweige
     move.l  a4,-(a7)
     move.w  bf_registers_table_start(a3),d2 ;Registeradresse holen
-    move.w  d2,d0            ;retten
+    move.w  d2,d0            
     addq.w  #bf_speed,d0     ;Startwert der Tabelle erhöhen
     cmp.w   #bf_registers_table_length/2,d0 ;Ende der Tabelle erreicht ?
     ble.s   bf_no_restart_registers_table ;Nein -> verzweige
     moveq   #FALSE,d1
     move.w  d1,bfi_state(a3) ;Blind-Fader-In aus
 bf_no_restart_registers_table
-    move.w  d0,bf_registers_table_start(a3) ;retten
+    move.w  d0,bf_registers_table_start(a3) 
     MOVEF.W bf_registers_table_length,d3
     MOVEF.W cl2_extension1_SIZE,d4
     moveq   #bf_step2,d5
@@ -697,13 +697,13 @@ blind_fader_out
     bne.s   no_blind_fader_out ;Nein -> verzweige
     move.l  a4,-(a7)
     move.w  bf_registers_table_start(a3),d2 ;Startwert der Tabelle holen
-    move.w  d2,d0            ;retten
+    move.w  d2,d0            
     subq.w  #bf_speed,d0     ;Startwert der Tabelle verringern
     bpl.s   bfo_no_restart_registers_table ;Wenn positiv -> verzweige
     moveq   #FALSE,d1
     move.w  d1,bfo_state(a3) ;Blind-Fader-Out aus
 bfo_no_restart_registers_table
-    move.w  d0,bf_registers_table_start(a3) ;retten
+    move.w  d0,bf_registers_table_start(a3) 
     MOVEF.W bf_registers_table_length,d3
     MOVEF.W cl2_extension1_SIZE,d4
     moveq   #bf_step2,d5

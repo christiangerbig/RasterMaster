@@ -1039,7 +1039,7 @@ hst_get_text_softscroll
   and.w   (a0),d0            ;X-Pos.&$f
   ror.w   #4,d0              ;Bits in richtige Position bringen
   or.w    #BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,d0 ;Minterm  D=A
-  move.w  d0,hst_text_BLTCON0BITS(a3) ;retten
+  move.w  d0,hst_text_BLTCON0BITS(a3) 
   rts
 
 ; ** Neues Image für Character ermitteln **
@@ -1084,7 +1084,7 @@ hst_horiz_scroll
 tb_set_background_bars
   movem.l a3-a6,-(a7)
   lea     tb_yz_coordinates(pc),a0 ;Zeiger auf YZ-Koords
-  move.l  cl2_construction2(a3),a2 ;CL
+  move.l  cl2_construction2(a3),a2 
   ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2,a2
   move.w  #tb_bars_number*LONGWORDSIZE,a3 ;Z + Y überspringen
   lea     tb_switch_table_background(pc),a5 ;Zeiger auf Tabelle mit Switchwerten
@@ -1119,7 +1119,7 @@ tb_skip_column1
 tb_set_foreground_bars
   movem.l a3-a6,-(a7)
   lea     tb_yz_coordinates(pc),a0 ;Zeiger auf YZ-Koords
-  move.l  cl2_construction2(a3),a2 ;CL
+  move.l  cl2_construction2(a3),a2 
   ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2,a2
   move.w  #tb_bars_number*LONGWORDSIZE,a3 ;Z + Y überspringen
   lea     tb_switch_table_foreground(pc),a5 ;Zeiger auf Tabelle mit Switchwerten
@@ -1158,13 +1158,13 @@ tb313_get_yz_coordinates2
   movem.l a4-a5,-(a7)
   moveq   #tb313_y_distance,d3
   move.w  tb313_y_angle(a3),d4 ;1. Y-Winkel
-  move.w  d4,d0              ;retten
+  move.w  d4,d0              
   move.w  tb313_y_radius_angle(a3),d5 ;1. Y-Radius-Winkel
   addq.b  #tb313_y_angle_speed,d0
-  move.w  d0,tb313_y_angle(a3) ;retten
+  move.w  d0,tb313_y_angle(a3) 
   move.w  d5,d0
   addq.b  #tb313_y_radius_speed,d0
-  move.w  d0,tb313_y_radius_angle(a3) ;retten
+  move.w  d0,tb313_y_radius_angle(a3) 
   lea     sine_table(pc),a0 
   lea     tb_yz_coordinates(pc),a1 ;Zeiger auf Y+Z-Koords-Tabelle
   move.w  #tb313_y_center,a2
@@ -1205,13 +1205,13 @@ tb312_get_yz_coordinates
   movem.l a4-a5,-(a7)
   moveq   #tb312_y_distance,d3
   move.w  tb312_y_angle(a3),d4 ;1. Y-Winkel
-  move.w  d4,d0              ;retten
+  move.w  d4,d0              
   move.w  tb312_y_radius_angle(a3),d5 ;1. Y-Radius-Winkel
   addq.b  #tb312_y_angle_speed,d0
-  move.w  d0,tb312_y_angle(a3) ;retten
+  move.w  d0,tb312_y_angle(a3) 
   move.w  d5,d0
   addq.b  #tb312_y_radius_speed,d0
-  move.w  d0,tb312_y_radius_angle(a3) ;retten
+  move.w  d0,tb312_y_radius_angle(a3) 
   lea     sine_table(pc),a0 
   lea     tb_yz_coordinates(pc),a1 ;Zeiger auf Y+Z-Koords-Tabelle
   move.w  #tb312_y_center,a2

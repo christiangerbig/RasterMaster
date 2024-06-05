@@ -1377,7 +1377,7 @@ ss_horiz_scrolltext
 ss_horiz_scrolltext_init
   move.w  ss_text_character_x_shift(a3),d2 ;X-Shift-Wert
   MOVEF.L cl1_extension3_entry,d3 ;Einsprung bei Vertical-Scroll-Blit
-  move.l  cl1_display(a3),a2 ;CL
+  move.l  cl1_display(a3),a2 
   addq.w  #ss_horiz_scroll_speed,d2 ;erhöhen
   cmp.w   #ss_text_character_x_shift_max,d2 ;X-Shift-Wert < Maximum ?
   blt.s   ss_set_character_x_shift ;Ja -> verzweige
@@ -1389,7 +1389,7 @@ ss_new_character_image
   move.w  d0,cl1_extension2_entry+cl1_ext2_BLTAPTH+2(a2)
   MOVEF.L cl1_extension2_entry,d3 ;Einsprung bei Charset-Blit
 ss_set_character_x_shift
-  move.w  d2,ss_text_character_x_shift(a3) ;retten
+  move.w  d2,ss_text_character_x_shift(a3) 
 ss_set_copper_jump_entry
   add.l   a2,d3
   move.w  d3,cl1_extension1_entry+cl1_ext1_COP1LCL+2(a2) ;Sprungadresse eintragen
@@ -1468,7 +1468,7 @@ tb31612_set_background_bars
   move.l  a7,save_a7(a3)
   moveq   #tb31612_bar_height,d4
   lea     tb31612_yz_coordinates(pc),a0 ;Zeiger auf YZ-Koords
-  move.l  cl2_construction2(a3),a2 ;CL
+  move.l  cl2_construction2(a3),a2 
   ADDF.W  cl2_extension7_entry+cl2_ext7_BPLCON4_1+2,a2
   move.l  extra_memory(a3),a5 ;Zeiger auf Tabelle mit Switchwerten
   lea     tb31612_fader_columns_mask(pc),a6
@@ -1513,8 +1513,8 @@ set_wave_center_bar
   moveq   #wcb_y_center,d4
   MOVEF.L cl2_extension7_SIZE*40,d5
   lea     we_y_coordinates_end(pc),a0 ;Ende der Y-Koords-Tab.
-  move.l  cl2_construction2(a3),a2 ;CL
-  ADDF.W  cl2_extension7_entry+cl2_ext7_BPLCON4_1+2,a2 ;CL
+  move.l  cl2_construction2(a3),a2 
+  ADDF.W  cl2_extension7_entry+cl2_ext7_BPLCON4_1+2,a2 
   move.l  extra_memory(a3),a5
   add.l   #em_switch_table2,a5 ;Zeiger auf Tabelle mit Switchwerten
   lea     wcb_fader_columns_mask(pc),a6
@@ -1618,7 +1618,7 @@ tb31612_set_foreground_bars
   move.l  a7,save_a7(a3)
   moveq   #tb31612_bar_height,d4
   lea     tb31612_yz_coordinates(pc),a0 ;Zeiger auf YZ-Koords
-  move.l  cl2_construction2(a3),a2 ;CL
+  move.l  cl2_construction2(a3),a2 
   ADDF.W  cl2_extension7_entry+cl2_ext7_BPLCON4_1+2,a2
   move.l  extra_memory(a3),a5 ;Zeiger auf Tabelle mit Switchwerten
   lea     tb31612_fader_columns_mask(pc),a6
@@ -1716,7 +1716,7 @@ bf_z_plane_found
 bf_set_bars_loop4
   move.l  (a1),d0            ;RGB8-Farbwert
   beq.s   bf_no_rgb8_value   ;Wenn Null -> verzweige
-  move.l  d0,(a4)+           ;retten
+  move.l  d0,(a4)+           
 bf_no_rgb8_value
   add.l   d4,a1              ;nächste Zeile in Farbtabelle
   dbf     d5,bf_set_bars_loop4
@@ -1743,7 +1743,7 @@ bf_copy_buffer
   move.w  #$0f0f,d3          ;Maske für High/Low-Bits
   move.l  extra_memory(a3),a0
   add.l   #em_color_buffer+(bf_bar_height*4),a0 ;Puffer
-  move.l  cl2_construction2(a3),a1 ;CL
+  move.l  cl2_construction2(a3),a1 
     IFEQ tb31612_quick_clear
       ADDF.W  cl2_extension7_entry+cl2_ext7_COLOR31_high+2,a1
       move.w  #BPLCON3BITS3,a2 ;High-RGB-Werte
@@ -1790,13 +1790,13 @@ bf_copy_buffer_loop
   CNOP 0,4
 we_get_y_coordinates
   move.w  we_radius_y_angle(a3),d2 ;1. Winkel Y-Radius
-  move.w  d2,d0              ;retten
+  move.w  d2,d0              
   move.w  we_y_angle(a3),d3  ;1. Y-Winkel
   addq.b  #we_y_radius_angle_speed,d0 ;nächster Y-Radius-Winkel
-  move.w  d0,we_radius_y_angle(a3) ;retten
-  move.w  d3,d0              ;retten
+  move.w  d0,we_radius_y_angle(a3) 
+  move.w  d3,d0              
   addq.b  #we_y_angle_speed,d0 ;nächster Y-Winkel
-  move.w  d0,we_y_angle(a3)  ;retten
+  move.w  d0,we_y_angle(a3)  
   lea     sine_table(pc),a0  ;Sinus-Tabelle
   lea     we_y_coordinates(pc),a1 ;Y-Koords.
   moveq   #cl2_display_width-1,d7 ;Anzahl der Spalten
@@ -1818,7 +1818,7 @@ we_get_y_coordinates_loop
     RESTORE_BPLCON4_CHUNKY_SCREEN tb,cl2,construction2,extension7,32,,tb31612_restore_blit
     IFEQ tb31612_restore_cl_by_blitter
 tb31612_restore_blit
-      move.l  cl2_construction1(a3),a0 ;CL
+      move.l  cl2_construction1(a3),a0 
       add.l   #cl2_extension8_entry+cl2_ext8_BLTDPTH+2,a0
       move.l  cl2_construction2(a3),d0
       add.l   #cl2_extension7_entry+cl2_ext7_WAIT+2,d0

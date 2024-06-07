@@ -668,7 +668,7 @@ colorcycle
   sub.l   #color_x_values_number*segments_number,d0 ;Neustart
 cc_no_restart_color_table1
   move.l  d0,cc_color_table_start(a3) ;Startwert retten
-  move.w  #$0f0f,d4          ;Maske für High/Low-Bits
+  move.w  #$0f0f,d4          ;Maske für RGB-Nibbles
   moveq   #1*8,d5            ;Farbregister-Zähler
   move.l  extra_memory(a3),a1 ;Zeiger auf Farbtabelle
   move.l  cl1_construction2(a3),a2 

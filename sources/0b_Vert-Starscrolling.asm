@@ -1189,9 +1189,9 @@ image_fader_in
   move.w  d2,d0
   addq.w  #ifi_fader_angle_speed,d0 ;nächster Fader-Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
-  ble.s   ifi_no_restart_fader_angle ;Ja -> verzweige
+  ble.s   ifi_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
-ifi_no_restart_fader_angle
+ifi_save_fader_angle
   move.w  d0,ifi_fader_angle(a3) ;Fader-Winkel retten
   MOVEF.W if_colors_number*3,d6 ;Zähler
   lea     sine_table,a0      ;Sinus-Tabelle
@@ -1228,9 +1228,9 @@ image_fader_out
   move.w  d2,d0
   addq.w  #ifo_fader_angle_speed,d0 ;nächster Fader-Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
-  ble.s   ifo_no_restart_fader_angle ;Ja -> verzweige
+  ble.s   ifo_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
-ifo_no_restart_fader_angle
+ifo_save_fader_angle
   move.w  d0,ifo_fader_angle(a3) ;Fader-Winkel retten
   MOVEF.W if_colors_number*3,d6 ;Zähler
   lea     sine_table,a0      ;Sinus-Tabelle
@@ -1274,9 +1274,9 @@ image_pixel_fader_in
   move.w  d2,d0
   addq.w  #ipfi_delay_angle_speed,d0 ;nächster Winkel
   cmp.w   #sine_table_length/2,d0 ;<= 180 Grad ?
-  ble.s   ipfi_no_restart_delay_angle ;Ja -> verzweige
+  ble.s   ipfi_save_delay_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
-ipfi_no_restart_delay_angle
+ipfi_save_delay_angle
   move.w  d0,ipfi_delay_angle(a3) ;Winkel retten
   lea     sine_table,a0      
   move.l  (a0,d2.w*4),d0     ;sin(w)
@@ -1326,9 +1326,9 @@ image_pixel_fader_out
   move.w  d2,d0
   addq.w  #ipfo_delay_angle_speed,d0 ;nächster Winkel
   cmp.w   #sine_table_length/2,d0 ;<= 180 Grad ?
-  ble.s   ipfo_no_restart_delay_angle ;Ja -> verzweige
+  ble.s   ipfo_save_delay_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
-ipfo_no_restart_delay_angle
+ipfo_save_delay_angle
   move.w  d0,ipfo_delay_angle(a3) ;Winkel retten
   lea     sine_table,a0      
   move.l  (a0,d2.w*4),d0     ;sin(w)

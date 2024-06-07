@@ -1262,9 +1262,9 @@ sprite_fader_in
   move.w  d2,d0
   ADDF.W  sprfi_fader_angle_speed,d0 ;nächster Fader-Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
-  ble.s   sprfi_no_restart_fader_angle ;Ja -> verzweige
+  ble.s   sprfi_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
-sprfi_no_restart_fader_angle
+sprfi_save_fader_angle
   move.w  d0,sprfi_fader_angle(a3) ;Fader-Winkel retten
   MOVEF.W sprf_colors_number*3,d6 ;Zähler
   lea     sine_table(pc),a0  ;Sinus-Tabelle
@@ -1301,9 +1301,9 @@ sprite_fader_out
   move.w  d2,d0
   ADDF.W  sprfo_fader_angle_speed,d0 ;nächster Fader-Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
-  ble.s   sprfo_no_restart_fader_angle ;Ja -> verzweige
+  ble.s   sprfo_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
-sprfo_no_restart_fader_angle
+sprfo_save_fader_angle
   move.w  d0,sprfo_fader_angle(a3) ;Fader-Winkel retten
   MOVEF.W sprf_colors_number*3,d6 ;Zähler
   lea     sine_table(pc),a0  ;Sinus-Tabelle

@@ -1740,7 +1740,7 @@ bf_restart_z_plane
   CNOP 0,4
 bf_copy_buffer
   movem.l a4-a5,-(a7)
-  move.w  #$0f0f,d3          ;Maske für High/Low-Bits
+  move.w  #$0f0f,d3          ;Maske für RGB-Nibbles
   move.l  extra_memory(a3),a0
   add.l   #em_color_buffer+(bf_bar_height*4),a0 ;Puffer
   move.l  cl2_construction2(a3),a1 

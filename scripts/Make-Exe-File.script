@@ -1,6 +1,6 @@
 Copy RAM:#?.obj TO Daten:Asm-Sources.AGA/RasterMaster/linker
 CD Daten:Asm-Sources.AGA/RasterMaster/linker
 
-dlink main.obj 0.obj 00.obj 01.obj 02.obj 03.obj 04.obj 05.obj 06.obj 07.obj 08.obj 09.obj 0a.obj 0b.obj 1.obj 10.obj TO Programme:RSE-RasterMaster VER RAM:linker-output.asc NOCASE
+dlink main.obj 0.obj 00.obj 01.obj 02.obj 03.obj 04.obj 05.obj 06.obj 07.obj 08.obj 09.obj 0a.obj 0b.obj 1.obj 10.obj TO Programme:RSE-RasterMaster VER RAM:make-output.txt NOCASE
 
 CD /

@@ -520,7 +520,7 @@ free_custom_memory
 free_custom_memory_loop
   move.l  (a2),d0            ;Größe der Speicherbereiches
   addq.w  #8,a2              ;Speicherattribute überspringen
-  move.l  (a2)+,d1           ;Zeiger auf Speicherbereich holen
+  move.l  (a2)+,d1           ;Zeiger auf Speicherbereich 
   beq.s   free_next_custom_memory ;Wenn NULL -> verzweige
   move.l  d1,a1              ;Zeiger auf Speicherbereich
   CALLEXEC FreeMem           ;Speicher freigeben

@@ -905,14 +905,14 @@ get_channels_data
 get_sample_data
   tst.b   n_note_trigger(a0) ;Neue Note angespielt ?
   bne.s   cs_no_new_note     ;Nein -> verzweige
-  move.l  n_start(a0),n_current_start(a0) ;Aktuelle Startadresse des Samples retten
-  move.l  n_length(a0),n_current_length(a0) ;Aktuelle Länge und Periode retten
+  move.l  n_start(a0),n_current_start(a0) ;Aktuelle Startadresse des Samples
+  move.l  n_length(a0),n_current_length(a0) ;Aktuelle Länge und Periode
   moveq   #TRUE,d0
   move.w  d0,n_channel_data_position(a0) ;Position in Sampledaten zurücksetzen
   moveq   #FALSE,d0
   move.b  d0,n_note_trigger(a0) ;Note Trigger Flag zurücksetzen
 cs_no_new_note
-  move.w  n_current_period(a0),d0 ;Aktuelle Periode holen
+  move.w  n_current_period(a0),d0 ;Aktuelle Periode 
   beq.s   no_get_sample_data ;Wenn NULL -> verzweige
   moveq   #TRUE,d2           ;Langwort-Zugriff
   move.w  n_channel_data_position(a0),d2 ;Position in Sampledaten
@@ -931,7 +931,7 @@ get_sample_data_loop
   ext.w   d0                 ;Auf 16 Bit erweitern
   muls.w  d1,d0              ;Audiowert * aktuelle Lautstärke
   asr.w   #6,d0              ;/ maximale Lautstärke
-  move.w  d0,(a2)+           ;Amplitudenwert retten
+  move.w  d0,(a2)+           ;Amplitudenwert
   addq.w  #1,d2              ;nächstes Samplebyte
   cmp.w   d4,d2              ;Ende des Samples erreicht ?
   blo.s   cs_no_read_restart ;Nein -> verzweige
@@ -942,7 +942,7 @@ cs_no_read_restart
   cmp.l   d4,d5              ;Ende des Samples erreicht ?
   blt.s   cs_save_current_pos ;Nein -> verzweige
 cs_check_reapeat_length
-  move.w  n_replen(a0),d0    ;Wiederholungs-Länge holen
+  move.w  n_replen(a0),d0    ;Wiederholungs-Länge 
   cmp.w   #1,d0              ;Länge = 1 Wort = einmaliges Abspielen ?
   beq.s   cs_restart_sample  ;Ja -> verzweige
 cs_check_loop_start
@@ -1005,16 +1005,16 @@ image_fader_in
   tst.w   ifi_state(a3)      ;Image-Fader-In an ?
   bne.s   no_image_fader_in  ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  ifi_fader_angle(a3),d2 ;Fader-Winkel holen
+  move.w  ifi_fader_angle(a3),d2 ;Fader-Winkel 
   move.w  d2,d0
   ADDF.W  ifi_fader_angle_speed,d0 ;nächster Fader-Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
   ble.s   ifi_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
 ifi_save_fader_angle
-  move.w  d0,ifi_fader_angle(a3) ;Fader-Winkel retten
+  move.w  d0,ifi_fader_angle(a3) 
   MOVEF.W if_colors_number*3,d6 ;Zähler
-  lea     sine_table(pc),a0  ;Sinus-Tabelle
+  lea     sine_table(pc),a0  
   move.l  (a0,d2.w*4),d0     ;sin(w)
   MULUF.L ifi_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
@@ -1044,16 +1044,16 @@ image_fader_out
   tst.w   ifo_state(a3)      ;Image-Fader-Out an ?
   bne.s   no_image_fader_out ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  ifo_fader_angle(a3),d2 ;Fader-Winkel holen
+  move.w  ifo_fader_angle(a3),d2 ;Fader-Winkel 
   move.w  d2,d0
   ADDF.W  ifo_fader_angle_speed,d0 ;nächster Fader-Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
   ble.s   ifo_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
 ifo_save_fader_angle
-  move.w  d0,ifo_fader_angle(a3) ;Fader-Winkel retten
+  move.w  d0,ifo_fader_angle(a3) 
   MOVEF.W if_colors_number*3,d6 ;Zähler
-  lea     sine_table(pc),a0  ;Sinus-Tabelle
+  lea     sine_table(pc),a0  
   move.l  (a0,d2.w*4),d0     ;sin(w)
   MULUF.L ifo_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
@@ -1090,7 +1090,7 @@ image_pixel_fader_in
   bne.s   no_image_pixel_fader_in ;FALSE -> verzweige
   subq.w  #1,ipfi_delay_counter(a3) ;Zähler verringern
   bgt.s   no_image_pixel_fader_in ;Wenn > Null -> verzweige
-  move.w  ipfi_delay_angle(a3),d2 ;Winkel holen
+  move.w  ipfi_delay_angle(a3),d2 ;Winkel 
   move.w  d2,d0
   ADDF.W  ipfi_delay_angle_speed,d0 ;nächster Winkel
   cmp.w   #sine_table_length/2,d0 ;<= 180 Grad ?
@@ -1115,10 +1115,10 @@ ipfi_save_delay_angle
   moveq   #TRUE,d7           ;Größe des Quellbildes obere 32 Bit
   moveq   #TRUE,d5           ;Maske
   divu.l  d4,d7:d2           ;F=Breite des Quellbildes/Breite der Zielbildes
-  move.w  d4,d7              ;Breite des Zielbilds holen
+  move.w  d4,d7              ;Breite des Zielbilds 
   subq.w  #1,d7              ;wegen dbf
 image_pixel_fader_in_in_loop
-  move.l  d1,d0              ;F holen
+  move.l  d1,d0              ;F 
   add.l   d2,d1              ;F erhöhen (p*F)
   swap    d0                 ;/2^16 = Bitmapposition
   bset    d0,d5              ;Bit in Maske setzen
@@ -1142,7 +1142,7 @@ image_pixel_fader_out
   bne.s   no_image_pixel_fader_out ;FALSE -> verzweige
   subq.w  #1,ipfo_delay_counter(a3) ;Zähler verringern
   bgt.s   no_image_pixel_fader_out ;Wenn > Null -> verzweige
-  move.w  ipfo_delay_angle(a3),d2 ;Winkel holen
+  move.w  ipfo_delay_angle(a3),d2 ;Winkel 
   move.w  d2,d0
   ADDF.W  ipfo_delay_angle_speed,d0 ;nächster Winkel
   cmp.w   #sine_table_length/2,d0 ;<= 180 Grad ?
@@ -1166,10 +1166,10 @@ ipfo_save_delay_angle
   moveq   #TRUE,d7           ;Größe des Quellbildes obere 32 Bit
   moveq   #TRUE,d5           ;Maske
   divu.l  d4,d7:d2           ;F=Breite des Quellbildes/Breite der Zielbildes
-  move.w  d4,d7              ;Breite des Zielbilds holen
+  move.w  d4,d7              ;Breite des Zielbilds 
   subq.w  #1,d7              ;wegen dbf
 image_pixel_fader_out_loop
-  move.l  d1,d0              ;F holen
+  move.l  d1,d0              ;F 
   add.l   d2,d1              ;F erhöhen (p*F)
   swap    d0                 ;/2^16 = Bitmapposition
   bset    d0,d5              ;Bit in Maske setzen
@@ -1268,7 +1268,7 @@ effects_handler
   and.w   INTREQR-DMACONR(a6),d1   ;Wurde der SOFTINT-Interrupt gesetzt ?
   beq.s   no_check_effects_trigger ;Nein -> verzweige
   addq.w  #1,eh_trigger_number(a3) ;FX-Trigger-Zähler hochsetzen
-  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler holen
+  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler 
   cmp.w   #eh_trigger_number_max,d0 ;Maximalwert bereits erreicht ?
   bgt.s   no_check_effects_trigger ;Ja -> verzweige
   move.w  d1,INTREQ-DMACONR(a6) ;SOFTINT-Interrupt löschen

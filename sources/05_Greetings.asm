@@ -993,7 +993,7 @@ bf_scale_bar_size_loop1
   move.l  (a6),a4
   addq.w  #4,a4              ;Ziel Tabelle mit Farbwerten
   MOVEF.L bf_source_bar_y_size-2,d5 ;variable Höhe des Zielbildes
-  swap    d7                 ;Schleifenzähler retten
+  swap    d7                 
   move.w  #((bf_source_bar_y_size-bf_destination_bar_y_size)/2)-1,d7
 bf_scale_bar_size_loop2
   bsr.s   bf_refresh_bitmap_table
@@ -1039,10 +1039,10 @@ bf_init_bitmap_lines_table
   moveq   #TRUE,d6           ;Höhe des Quellbildes obere 32 Bit
   divu.l  d4,d6:d2           ;F=Höhe des Quellbildes/Höhe der Zielbildes
   moveq   #TRUE,d1
-  move.w  d4,d6              ;Höhe des Zielbilds holen
+  move.w  d4,d6              ;Höhe des Zielbilds 
   subq.w  #1,d6              ;wegen dbf
 bf_init_bitmap_lines_table_loop
-  move.l  d1,d0              ;F holen
+  move.l  d1,d0              ;F 
   swap    d0                 ;/2^16 = Bitmapposition
   add.l   d2,d1              ;F erhöhen (p*F)
   addq.b  #1,(a0,d0.w)       ;Pixel in Tabelle setzen
@@ -1520,7 +1520,7 @@ set_wave_center_bar
   lea     wcb_fader_columns_mask(pc),a6
   moveq   #cl2_display_width-1,d7 ;Anzahl der Spalten
 set_center_bar_loop1
-  move.w  -(a0),d0           ;Y-Pos. holen
+  move.w  -(a0),d0           ;Y-Pos. 
   tst.b   (a6)+
   bne     wcb_skip_column
   add.w   d4,d0              ;y' + Y-Mittelpunkt
@@ -1757,7 +1757,7 @@ bf_copy_buffer
   MOVEF.W visible_lines_number-1,d7 ;Anzahl der Zeilen
 bf_copy_buffer_loop
   move.l  (a0)+,d0
-  move.l  d0,d2              ;24 Bit-Farbwert retten
+  move.l  d0,d2              
     IFEQ tb31612_quick_clear
       move.w  a2,cl2_ext7_BPLCON3_1-cl2_ext7_COLOR31_high(a1) ;CMOVE wiederherstellen
     ELSE
@@ -1797,7 +1797,7 @@ we_get_y_coordinates
   move.w  d3,d0              
   addq.b  #we_y_angle_speed,d0 ;nächster Y-Winkel
   move.w  d0,we_y_angle(a3)  
-  lea     sine_table(pc),a0  ;Sinus-Tabelle
+  lea     sine_table(pc),a0  
   lea     we_y_coordinates(pc),a1 ;Y-Koords.
   moveq   #cl2_display_width-1,d7 ;Anzahl der Spalten
 we_get_y_coordinates_loop
@@ -1842,7 +1842,7 @@ chunky_columns_fader_in
   move.w  ccfi_start(a3),d1  ;Startwert in Spalten-Statustabelle
   moveq   #cl2_display_width-1,d2 ;Anzahl der Spalten
   move.l  ccf_fader_columns_mask(a3),a0 ;Tabelle mit Status der Spalten
-  move.w  ccfi_current_mode(a3),d0 ;Fader-In-Modus holen
+  move.w  ccfi_current_mode(a3),d0 ;Fader-In-Modus 
   beq.s   ccfi_mode1_column_fader_in ;Wenn Fader-In-Modus1 -> verzweige
   subq.w  #1,d0              ;Fader-In-Modus2 ?
   beq.s   ccfi_mode2_column_fader_in ;Ja -> verzweige
@@ -1915,7 +1915,7 @@ chunky_columns_fader_out
   move.w  ccfo_start(a3),d1  ;Startwert out Spalten-Statustabelle
   moveq   #cl2_display_width-1,d2 ;Anzahl der Spalten
   move.l  ccf_fader_columns_mask(a3),a0 ;Tabelle mit Status der Spalten
-  move.w  ccfo_current_mode(a3),d0 ;Fader-Out-Modus holen
+  move.w  ccfo_current_mode(a3),d0 ;Fader-Out-Modus 
   beq.s   ccfo_mode1_column_fader_out ;Wenn Fader-Out-Modus1 -> verzweige
   subq.w  #1,d0              ;Fader-Out-Modus2 ?
   beq.s   ccfo_mode2_column_fader_out ;Ja -> verzweige
@@ -1985,7 +1985,7 @@ effects_handler
   and.w   INTREQR-DMACONR(a6),d1   ;Wurde der SOFTINT-Interrupt gesetzt ?
   beq.s   no_effects_handler ;Nein -> verzweige
   addq.w  #1,eh_trigger_number(a3) ;FX-Trigger-Zähler hochsetzen
-  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler holen
+  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler 
   cmp.w   #eh_trigger_number_max,d0 ;Maximalwert bereits erreicht ?
   bgt.s   no_effects_handler ;Ja -> verzweige
   move.w  d1,INTREQ-DMACONR(a6) ;SOFTINT-Interrupt löschen

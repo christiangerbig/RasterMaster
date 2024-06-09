@@ -994,7 +994,7 @@ vss_swap_switch_buffers
   CNOP 0,4
 vert_starscrolling
   movem.l a3-a5,-(a7)
-  move.l  a7,save_a7(a3)     ;Stackpointer retten
+  move.l  a7,save_a7(a3)     
   bsr     vss_init_copy_blit      
   move.l  #((vss_switch_buffer_x_size-(vss_copy_blit_width+2))<<16)+(vss_image_x_size-(vss_copy_blit_width+2)),d2 ;Moduli
   moveq   #vss_z_plane1_speed,d3
@@ -1015,13 +1015,13 @@ vert_starscrolling_loop1
   move.l  d2,BLTCMOD-DMACONR(a6)
   swap    d2                 ;Moduli vertauschen
   move.l  d2,BLTAMOD-DMACONR(a6)
-  swap    d7                 ;Schleifenzähler retten
+  swap    d7                 
   moveq   #vss_stars_per_plane_number-1,d6 ;Anzahl der Sterne pro Ebene
 vert_starscrolling_loop2
   moveq   #TRUE,d0
-  move.w  (a0)+,d0           ;X-Koord. holen
+  move.w  (a0)+,d0           ;X-Koord. 
   moveq   #TRUE,d1
-  move.w  (a0),d1            ;Y-Koord. holen
+  move.w  (a0),d1            ;Y-Koord. 
   ror.l   #4,d0              ;Shift-Bits in richtige Position bringen
   sub.w   d3,d1              ;Y verringern
   bpl.s   vss_no_y_restart   ;Wenn positiv -> verzweige
@@ -1030,7 +1030,7 @@ vss_no_y_restart
   move.w  d1,(a0)+           ;Y retten
   MULUF.W vss_switch_buffer_x_size/2,d1,d7 ;Y-Offset in Puffer
   add.w   d0,d1              ;X+Y-Offset
-  swap    d0                 ;Shiftwert holen
+  swap    d0                 ;Shiftwert 
   add.w   d1,d1              ;*2 = XY-Offset
   add.l   a4,d1              ;+ Playfieldadresse
   WAITBLITTER
@@ -1052,7 +1052,7 @@ vss_no_y_restart
   sub.l   d5,a2              ;nächste Stern-Maske
   add.w   a7,a5              ;Blitgröße ändern
   dbf     d7,vert_starscrolling_loop1
-  move.l  variables+save_a7(pc),a7 ;Stackpointer holen
+  move.l  variables+save_a7(pc),a7 ;Stackpointer
   movem.l (a7)+,a3-a5
   move.w  #DMAF_BLITHOG,DMACON-DMACONR(a6) ;BLTPRI aus
   rts
@@ -1185,16 +1185,16 @@ image_fader_in
   tst.w   ifi_state(a3)      ;Image-Fader-In an ?
   bne.s   no_image_fader_in  ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  ifi_fader_angle(a3),d2 ;Fader-Winkel holen
+  move.w  ifi_fader_angle(a3),d2 ;Fader-Winkel 
   move.w  d2,d0
   addq.w  #ifi_fader_angle_speed,d0 ;nächster Fader-Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
   ble.s   ifi_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
 ifi_save_fader_angle
-  move.w  d0,ifi_fader_angle(a3) ;Fader-Winkel retten
+  move.w  d0,ifi_fader_angle(a3) 
   MOVEF.W if_colors_number*3,d6 ;Zähler
-  lea     sine_table,a0      ;Sinus-Tabelle
+  lea     sine_table,a0      
   move.l  (a0,d2.w*4),d0     ;sin(w)
   MULUF.L ifi_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
@@ -1224,16 +1224,16 @@ image_fader_out
   tst.w   ifo_state(a3)      ;Image-Fader-Out an ?
   bne.s   no_image_fader_out ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  ifo_fader_angle(a3),d2 ;Fader-Winkel holen
+  move.w  ifo_fader_angle(a3),d2 ;Fader-Winkel 
   move.w  d2,d0
   addq.w  #ifo_fader_angle_speed,d0 ;nächster Fader-Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
   ble.s   ifo_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
 ifo_save_fader_angle
-  move.w  d0,ifo_fader_angle(a3) ;Fader-Winkel retten
+  move.w  d0,ifo_fader_angle(a3) 
   MOVEF.W if_colors_number*3,d6 ;Zähler
-  lea     sine_table,a0      ;Sinus-Tabelle
+  lea     sine_table,a0      
   move.l  (a0,d2.w*4),d0     ;sin(w)
   MULUF.L ifo_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
@@ -1270,7 +1270,7 @@ image_pixel_fader_in
   bne.s   no_image_pixel_fader_in ;FALSE -> verzweige
   subq.w  #1,ipfi_delay_counter(a3) ;Zähler verringern
   bgt.s   no_image_pixel_fader_in ;Wenn > Null -> verzweige
-  move.w  ipfi_delay_angle(a3),d2 ;Winkel holen
+  move.w  ipfi_delay_angle(a3),d2 ;Winkel 
   move.w  d2,d0
   addq.w  #ipfi_delay_angle_speed,d0 ;nächster Winkel
   cmp.w   #sine_table_length/2,d0 ;<= 180 Grad ?
@@ -1295,10 +1295,10 @@ ipfi_save_delay_angle
   moveq   #TRUE,d7           ;Größe des Quellbildes obere 32 Bit
   moveq   #TRUE,d5           ;Maske
   divu.l  d4,d7:d2           ;F=Breite des Quellbildes/Breite der Zielbildes
-  move.w  d4,d7              ;Breite des Zielbilds holen
+  move.w  d4,d7              ;Breite des Zielbilds 
   subq.w  #1,d7              ;wegen dbf
 image_pixel_fader_in_in_loop
-  move.l  d1,d0              ;F holen
+  move.l  d1,d0              ;F 
   add.l   d2,d1              ;F erhöhen (p*F)
   swap    d0                 ;/2^16 = Bitmapposition
   bset    d0,d5              ;Bit in Maske setzen
@@ -1322,7 +1322,7 @@ image_pixel_fader_out
   bne.s   no_image_pixel_fader_out ;FALSE -> verzweige
   subq.w  #1,ipfo_delay_counter(a3) ;Zähler verringern
   bgt.s   no_image_pixel_fader_out ;Wenn > Null -> verzweige
-  move.w  ipfo_delay_angle(a3),d2 ;Winkel holen
+  move.w  ipfo_delay_angle(a3),d2 ;Winkel 
   move.w  d2,d0
   addq.w  #ipfo_delay_angle_speed,d0 ;nächster Winkel
   cmp.w   #sine_table_length/2,d0 ;<= 180 Grad ?
@@ -1346,10 +1346,10 @@ ipfo_save_delay_angle
   moveq   #TRUE,d7           ;Größe des Quellbildes obere 32 Bit
   moveq   #TRUE,d5           ;Maske
   divu.l  d4,d7:d2           ;F=Breite des Quellbildes/Breite der Zielbildes
-  move.w  d4,d7              ;Breite des Zielbilds holen
+  move.w  d4,d7              ;Breite des Zielbilds 
   subq.w  #1,d7              ;wegen dbf
 image_pixel_fader_out_loop
-  move.l  d1,d0              ;F holen
+  move.l  d1,d0              ;F 
   add.l   d2,d1              ;F erhöhen (p*F)
   swap    d0                 ;/2^16 = Bitmapposition
   bset    d0,d5              ;Bit in Maske setzen
@@ -1448,7 +1448,7 @@ effects_handler
   and.w   INTREQR-DMACONR(a6),d1   ;Wurde der SOFTINT-Interrupt gesetzt ?
   beq.s   no_effects_handler ;Nein -> verzweige
   addq.w  #1,eh_trigger_number(a3) ;FX-Trigger-Zähler hochsetzen
-  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler holen
+  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler 
   cmp.w   #eh_trigger_number_max,d0 ;Maximalwert bereits erreicht ?
   bgt.s   no_effects_handler ;Ja -> verzweige
   move.w  d1,INTREQ-DMACONR(a6) ;SOFTINT-Interrupt löschen

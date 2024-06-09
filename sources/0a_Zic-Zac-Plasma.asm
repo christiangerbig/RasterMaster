@@ -598,17 +598,17 @@ fast_exit
 vert_shade_bars
   tst.w   vsb_state(a3)
   bne     no_vert_shade_bars
-  move.w  vsb_y_radius_angle(a3),d2 ;Y-Radius-Winkel holen
+  move.w  vsb_y_radius_angle(a3),d2 ;Y-Radius-Winkel 
   move.w  d2,d0              
   MOVEF.W sine_table_length-1,d6 ;Überlauf
   addq.w  #vsb_y_radius_angle_speed,d0 ;nächster Y-Radius-Winkel
-  move.w  vsb_y_angle(a3),d3 ;Y-Winkel holen
+  move.w  vsb_y_angle(a3),d3 ;Y-Winkel
   and.w   d6,d0              ;Überlauf entfernen
   move.w  d0,vsb_y_radius_angle(a3) ;Y-Radius-Winkel retten
   move.w  d3,d0              
   addq.w  #vsb_y_angle_speed,d0 ;nächster Y-Winkel
   and.w   d6,d0              ;Überlauf entfernen
-  move.w  d0,vsb_y_angle(a3) ;Y-Winkel retten
+  move.w  d0,vsb_y_angle(a3) 
   MOVEF.W vsb_y_radius*4,d4
   MOVEF.W vsb_y_angle_step,d5
   lea     sine_table_512,a0 
@@ -651,12 +651,12 @@ no_vert_shade_bars
   CNOP 0,4
 zzp5_get_y_coordinates
   movem.l a3-a5,-(a7)
-  move.l  a7,save_a7(a3)     ;Stackpointer retten
+  move.l  a7,save_a7(a3)     
   bsr     zzp5_init_copy_blit
   MOVEF.W zzp5_y_center,d1
   move.w  zzp5_y_radius_angle(a3),d2 ;1. Winkel Y-Radius
   move.w  d2,d0              
-  lea     sine_table_512,a0  ;Sinus-Tabelle
+  lea     sine_table_512,a0  
   move.w  2(a0,d2.w*4),d2    ;sin(w)
   asr.w   #8,d2              ;yr'=(yr*sin(w))/2^15
   addq.w  #zzp5_y_radius_angle_speed,d0 ;nächster Y-Radius-Winkel
@@ -692,7 +692,7 @@ zzp5_get_y_coordinates_loop
   addq.w  #4,a2              ;nächste Spalte in CL
   and.w   d6,d3              ;Überlauf entfernen
   dbf     d7,zzp5_get_y_coordinates_loop
-  move.l  variables+save_a7(pc),a7 ;Stackpointer holen
+  move.l  variables+save_a7(pc),a7 ;Stackpointer
   movem.l (a7)+,a3-a5
   move.w  #DMAF_BLITHOG,DMACON-DMACONR(a6) ;BLTPRI aus
   rts
@@ -713,11 +713,11 @@ zzp5_init_copy_blit
 vert_border_fader_out
   tst.w   vbfo_state(a3)     ;Vert-Border-Fader an ?
   bne.s   no_vert_border_fader_out ;Nein -> verzweige
-  move.w  vbf_fader_angle(a3),d1 ;Fader-Winkel holen
+  move.w  vbf_fader_angle(a3),d1 ;Fader-Winkel 
   move.w  d1,d0              
   subq.w  #vbfo_fader_angle_speed,d0 ;nächster Fader-Winkel
-  move.w  d0,vbf_fader_angle(a3) ;Fader-Winkel retten
-  lea     sine_table_512,a0  ;Sinus-Tabelle
+  move.w  d0,vbf_fader_angle(a3) 
+  lea     sine_table_512,a0  
   move.l  (a0,d1.w*4),d0     ;sin(w)
   MULUF.L vbfo_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
@@ -740,7 +740,7 @@ vbfo_no_vert_stop_position_min
   move.w  d1,vbf_display_window_VSTOP(a3) retten
 vbfo_set_window_vert_positions
   move.l  cl1_display(a3),a0 
-  move.w  #DIWHIGHBITS&(~(DIWHIGHF_VSTART8+DIWHIGHF_VSTART9+DIWHIGHF_VSTART10+DIWHIGHF_VSTOP8+DIWHIGHF_VSTOP9+DIWHIGHF_VSTOP10)),d0 ;DIWHIGH-Bits holen
+  move.w  #DIWHIGHBITS&(~(DIWHIGHF_VSTART8+DIWHIGHF_VSTART9+DIWHIGHF_VSTART10+DIWHIGHF_VSTOP8+DIWHIGHF_VSTOP9+DIWHIGHF_VSTOP10)),d0 ;DIWHIGH-Bits 
   move.b  d2,cl1_DIWSTRT+2(a0) ;VSTART0-VSTART7 setzen
   lsr.w   #8,d2              ;VSTART8-VSTART10 in richtige Position bringen
   move.b  d1,cl1_DIWSTOP+2(a0) ;VSTOP0-VSTOP7 setzen
@@ -759,7 +759,7 @@ effects_handler
   and.w   INTREQR-DMACONR(a6),d1   ;Wurde der SOFTINT-Interrupt gesetzt ?
   beq.s   no_effects_handler ;Nein -> verzweige
   addq.w  #1,eh_trigger_number(a3) ;FX-Trigger-Zähler hochsetzen
-  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler holen
+  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler 
   cmp.w   #eh_trigger_number_max,d0 ;Maximalwert bereits erreicht ?
   bgt.s   no_effects_handler ;Ja -> verzweige
   move.w  d1,INTREQ-DMACONR(a6) ;SOFTINT-Interrupt löschen

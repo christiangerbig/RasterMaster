@@ -1007,16 +1007,16 @@ image_fader_in
   tst.w   ifi_state(a3)      ;Image-Fader-In an ?
   bne.s   no_image_fader_in  ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  ifi_fader_angle(a3),d2 ;Fader-Winkel holen
+  move.w  ifi_fader_angle(a3),d2 ;Fader-Winkel 
   move.w  d2,d0
   ADDF.W  ifi_fader_angle_speed,d0 ;nächster Fader-Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
   ble.s   ifi_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
 ifi_save_fader_angle
-  move.w  d0,ifi_fader_angle(a3) ;Fader-Winkel retten
+  move.w  d0,ifi_fader_angle(a3) 
   MOVEF.W if_colors_number*3,d6 ;Zähler
-  lea     sine_table,a0      ;Sinus-Tabelle
+  lea     sine_table,a0      
   move.l  (a0,d2.w*4),d0     ;sin(w)
   MULUF.L ifi_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
@@ -1046,16 +1046,16 @@ image_fader_out
   tst.w   ifo_state(a3)      ;Image-Fader-Out an ?
   bne.s   no_image_fader_out ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  ifo_fader_angle(a3),d2 ;Fader-Winkel holen
+  move.w  ifo_fader_angle(a3),d2 ;Fader-Winkel 
   move.w  d2,d0
   ADDF.W  ifo_fader_angle_speed,d0 ;nächster Fader-Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
   ble.s   ifo_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
 ifo_save_fader_angle
-  move.w  d0,ifo_fader_angle(a3) ;Fader-Winkel retten
+  move.w  d0,ifo_fader_angle(a3) 
   MOVEF.W if_colors_number*3,d6 ;Zähler
-  lea     sine_table,a0      ;Sinus-Tabelle
+  lea     sine_table,a0      
   move.l  (a0,d2.w*4),d0     ;sin(w)
   MULUF.L ifo_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
@@ -1090,7 +1090,7 @@ no_image_fader_out
 scroll_logo_left_in
   tst.w   slli_state(a3)     ;Scroll-Logo-Left-In an ?
   bne     no_scroll_logo_left_in  ;Nein -> verzweige
-  move.w  slli_x_angle(a3),d2 ;X-Winkel holen
+  move.w  slli_x_angle(a3),d2 ;X-Winkel
   cmp.w   #sine_table_length/4,d2 ;90 Grad erreicht ?
   bgt.s   no_scroll_logo_left_in  ;Ja -> verzweige
   movem.l a4-a5,-(a7)
@@ -1132,7 +1132,7 @@ no_scroll_logo_left_in
 scroll_logo_left_out
   tst.w   sllo_state(a3)     ;Scroll-Logo-Left-Out an ?
   bne     no_scroll_logo_left_out ;Nein -> verzweige
-  move.w  sllo_x_angle(a3),d2 ;X-Winkel holen
+  move.w  sllo_x_angle(a3),d2 ;X-Winkel
   cmp.w   #sine_table_length/2,d2 ;180 Grad erreicht ?
   bgt.s   no_scroll_logo_left_out ;Ja -> verzweige
   movem.l a4-a5,-(a7)
@@ -1177,7 +1177,7 @@ effects_handler
   and.w   INTREQR-DMACONR(a6),d1   ;Wurde der SOFTINT-Interrupt gesetzt ?
   beq.s   no_effects_handler ;Nein -> verzweige
   addq.w  #1,eh_trigger_number(a3) ;FX-Trigger-Zähler hochsetzen
-  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler holen
+  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler 
   cmp.w   #eh_trigger_number_max,d0 ;Maximalwert bereits erreicht ?
   bgt.s   no_effects_handler ;Ja -> verzweige
   move.w  d1,INTREQ-DMACONR(a6) ;SOFTINT-Interrupt löschen

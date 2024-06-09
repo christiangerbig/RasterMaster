@@ -660,7 +660,7 @@ fast_exit
   CNOP 0,4
 colorcycle
   movem.l a4-a6,-(a7)
-  move.l  cc_color_table_start(a3),d3 ;Startwert holen
+  move.l  cc_color_table_start(a3),d3 ;Startwert 
   move.l  d3,d0              
   addq.l  #cc_speed,d0       ;nächster Farbwert
   cmp.l   #color_x_values_number*segments_number,d0
@@ -682,7 +682,7 @@ colorcycle_loop1
   moveq   #(tccb_bar_height/2)-1,d6 ;halbe Höhe der Bar
 colorcycle_loop2
   move.l  (a0),d0            ;24 Bit-Farbwert
-  move.l  d0,d2              ;24 Bit-Farbwert retten
+  move.l  d0,d2              
   RGB8_TO_RGB4HI d0,d1,d4
   move.w  d0,(a2)            ;COLORxx High-Bits
   RGB8_TO_RGB4LO d2,d1,d4
@@ -707,8 +707,8 @@ cc_no_restart_color_table2
   CNOP 0,4
 twisted_colorcycle_bars
   movem.l a3-a6,-(a7)
-  move.l  a7,save_a7(a3)     ;Stackpointer retten
-  move.w  tccb_y_radius_angle(a3),d4 ;Y-Radius-Winkel holen
+  move.l  a7,save_a7(a3)     
+  move.w  tccb_y_radius_angle(a3),d4 ;Y-Radius-Winkel 
   move.w  d4,d0              
   MOVEF.W sine_table_length-1,d7 ;Überlauf
   addq.w  #tccb_y_radius_angle_speed,d0 ;nächster Y-Radius-Winkel
@@ -726,7 +726,7 @@ twisted_colorcycle_bars
   move.w  #tccb_y_distance,a3
   add.l   #em_switch_table,a5 ;Zeiger auf Tabelle mit Switchwerten
   move.w  #tccb_y_center,a6
-  move.w  d5,a7              ;Y-Winkel retten
+  move.w  d5,a7              
   swap    d7                 ;Überlauf retten
   move.w  #cl1_display_width-1,d7 ;Anzahl der Spalten
 tccb_get_y_coordinates_loop1
@@ -805,14 +805,14 @@ tccb_get_y_coordinates_loop2
   swap    d3
   move.b  d3,cl1_extension1_SIZE*30(a4)
   dbf     d6,tccb_get_y_coordinates_loop2
-  move.w  a7,d5              ;Y-Winkel holen
+  move.w  a7,d5              ;Y-Winkel
   addq.w  #tccb_y_angle_step,d5 ;nächste Spalte
   and.w   d7,d5              ;Überlauf entfernen
-  move.w  d5,a7              ;Y-Winkel retten
+  move.w  d5,a7              
   swap    d7                 ;Schleifenzähler
   addq.w  #4,a2              ;nächste Spalte in CL
   dbf     d7,tccb_get_y_coordinates_loop1
-  move.l  variables+save_a7(pc),a7 ;Stackpointer holen
+  move.l  variables+save_a7(pc),a7 ;Stackpointer
   movem.l (a7)+,a3-a6
   rts
 
@@ -831,7 +831,7 @@ blind_fader_in
     tst.w   bfi_state(a3)    ;Blind-Fader-In an ?
     bne.s   no_blind_fader_in ;Nein -> verzweige
     move.l  a4,-(a7)
-    move.w  bf_registers_table_start(a3),d2 ;Registeradresse holen
+    move.w  bf_registers_table_start(a3),d2 ;Registeradresse 
     move.w  d2,d0            
     addq.w  #bf_speed,d0     ;Startwert der Tabelle erhöhen
     cmp.w   #bf_registers_table_length/2,d0 ;Ende der Tabelle erreicht ?
@@ -856,7 +856,7 @@ bf_no_restart_registers_table
     ADDF.W  cl1_extension1_entry+cl1_ext1_BPL1DAT,a4
     moveq   #bf_lamellas_number-1,d7 ;Anzahl der Lamellen
 blind_fader_in_loop1
-    move.w  d2,d1            ;Startwert holen
+    move.w  d2,d1            ;Startwert 
     moveq   #bf_lamella_height-1,d6 ;Höhe der Lamelle
 blind_fader_in_loop2
     move.w  (a0,d1.w*2),d0   ;Registeradresse aus Tabelle lesen
@@ -893,7 +893,7 @@ blind_fader_out
     tst.w   bfo_state(a3)    ;Blind-Fader-Out an ?
     bne.s   no_blind_fader_out ;Nein -> verzweige
     move.l  a4,-(a7)
-    move.w  bf_registers_table_start(a3),d2 ;Startwert der Tabelle holen
+    move.w  bf_registers_table_start(a3),d2 ;Startwert der Tabelle 
     move.w  d2,d0            
     subq.w  #bf_speed,d0     ;Startwert der Tabelle verringern
     bpl.s   bfo_no_restart_registers_table ;Wenn positiv -> verzweige
@@ -917,7 +917,7 @@ bfo_no_restart_registers_table
     ADDF.W  cl1_extension1_entry+cl1_ext1_BPL1DAT,a4
     moveq   #bf_lamellas_number-1,d7 ;Anzahl der Lamellen
 blind_fader_out_loop1
-    move.w  d2,d1            ;Startwert holen
+    move.w  d2,d1            ;Startwert 
     moveq   #bf_lamella_height-1,d6 ;Höhe der Lamelle
 blind_fader_out_loop2
     move.w  (a0,d1.w*2),d0   ;Registeradresse aus Tabelle lesen
@@ -956,7 +956,7 @@ effects_handler
   and.w   INTREQR-DMACONR(a6),d1   ;Wurde der SOFTINT-Interrupt gesetzt ?
   beq.s   no_effects_handler ;Nein -> verzweige
   addq.w  #1,eh_trigger_number(a3) ;FX-Trigger-Zähler hochsetzen
-  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler holen
+  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler 
   cmp.w   #eh_trigger_number_max,d0 ;Maximalwert bereits erreicht ?
   bgt.s   no_effects_handler ;Ja -> verzweige
   move.w  d1,INTREQ-DMACONR(a6) ;SOFTINT-Interrupt löschen

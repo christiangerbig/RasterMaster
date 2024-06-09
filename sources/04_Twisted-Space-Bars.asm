@@ -1000,7 +1000,7 @@ horiz_scrolltext
 horiz_scrolltext_loop
   moveq   #TRUE,d0           ;Langwort-Zugriff
   move.w  (a0),d0            ;X-Position
-  move.w  d0,d2              ;X retten
+  move.w  d0,d2              
   lsr.w   #3,d0              ;X/8
   WAITBLITTER
   move.l  (a1)+,(a2)         ;Char-Image
@@ -1016,7 +1016,7 @@ hst_new_character_image
   add.w   d5,d2              ;X-Pos Neustart
   move.l  (a7)+,a0
 hst_no_new_character_image
-  move.w  d2,(a0)+           ;X-Pos retten
+  move.w  d2,(a0)+           
   dbf     d7,horiz_scrolltext_loop
   movem.l (a7)+,a4-a5
   move.w  #DMAF_BLITHOG,DMACON-DMACONR(a6) ;BLTPRI aus
@@ -1171,7 +1171,7 @@ tb313_get_yz_coordinates2
   move.w  #tb313_y_radius_center,a4
   moveq   #cl2_display_width-1,d7 ;Anzahl der Spalten
 tb313_get_yz_coordinates_loop1
-  move.w  d4,d2              ;Y-Winkel holen
+  move.w  d4,d2              ;Y-Winkel
   moveq   #tb_bars_number-1,d6 ;Anzahl der Stangen
 tb313_get_yz_coordinates_loop2
   moveq   #-(sine_table_length/4),d1 ;- 90 Grad
@@ -1220,7 +1220,7 @@ tb312_get_yz_coordinates
 tb312_get_yz_coordinates_loop1
   move.l  (a0,d5.w*4),d0     ;sin(w)
   MULUF.L tb312_y_radius*2,d0,d1
-  move.w  d4,d2              ;Y-Winkel holen
+  move.w  d4,d2              ;Y-Winkel
   swap    d0
   add.w   a4,d0              ;y' + Y-Radius-Mittelpunkt
   moveq   #tb_bars_number-1,d6 ;Anzahl der Stangen
@@ -1258,16 +1258,16 @@ sprite_fader_in
   tst.w   sprfi_state(a3)      ;Sprites-Fader-In an ?
   bne.s   no_sprite_fader_in   ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  sprfi_fader_angle(a3),d2 ;Fader-Winkel holen
+  move.w  sprfi_fader_angle(a3),d2 ;Fader-Winkel 
   move.w  d2,d0
   ADDF.W  sprfi_fader_angle_speed,d0 ;nächster Fader-Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
   ble.s   sprfi_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
 sprfi_save_fader_angle
-  move.w  d0,sprfi_fader_angle(a3) ;Fader-Winkel retten
+  move.w  d0,sprfi_fader_angle(a3) 
   MOVEF.W sprf_colors_number*3,d6 ;Zähler
-  lea     sine_table(pc),a0  ;Sinus-Tabelle
+  lea     sine_table(pc),a0  
   move.l  (a0,d2.w*4),d0     ;sin(w)
   MULUF.L sprfi_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
@@ -1297,16 +1297,16 @@ sprite_fader_out
   tst.w   sprfo_state(a3)      ;Sprites-Fader-Out an ?
   bne.s   no_sprite_fader_out  ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  sprfo_fader_angle(a3),d2 ;Fader-Winkel holen
+  move.w  sprfo_fader_angle(a3),d2 ;Fader-Winkel 
   move.w  d2,d0
   ADDF.W  sprfo_fader_angle_speed,d0 ;nächster Fader-Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
   ble.s   sprfo_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
 sprfo_save_fader_angle
-  move.w  d0,sprfo_fader_angle(a3) ;Fader-Winkel retten
+  move.w  d0,sprfo_fader_angle(a3) 
   MOVEF.W sprf_colors_number*3,d6 ;Zähler
-  lea     sine_table(pc),a0  ;Sinus-Tabelle
+  lea     sine_table(pc),a0  
   move.l  (a0,d2.w*4),d0     ;sin(w)
   MULUF.L sprfo_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
@@ -1347,7 +1347,7 @@ chunky_columns_fader_in
   move.w  ccfi_start(a3),d1  ;Startwert in Spalten-Statustabelle
   moveq   #cl2_display_width-1,d2 ;Anzahl der Spalten
   lea     ccf_fader_columns_mask(pc),a0 ;Tabelle mit Status der Spalten
-  move.w  ccfi_current_mode(a3),d0 ;Fader-In-Modus holen
+  move.w  ccfi_current_mode(a3),d0 ;Fader-In-Modus 
   beq.s   ccfi_mode1_column_fader_in ;Wenn Fader-In-Modus1 -> verzweige
   subq.w  #1,d0              ;Fader-In-Modus2 ?
   beq.s   ccfi_mode2_column_fader_in ;Ja -> verzweige
@@ -1420,7 +1420,7 @@ chunky_columns_fader_out
   move.w  ccfo_start(a3),d1  ;Startwert out Spalten-Statustabelle
   moveq   #cl2_display_width-1,d2 ;Anzahl der Spalten
   lea     ccf_fader_columns_mask(pc),a0 ;Tabelle mit Status der Spalten
-  move.w  ccfo_current_mode(a3),d0 ;Fader-Out-Modus holen
+  move.w  ccfo_current_mode(a3),d0 ;Fader-Out-Modus 
   beq.s   ccfo_mode1_column_fader_out ;Wenn Fader-Out-Modus1 -> verzweige
   subq.w  #1,d0              ;Fader-Out-Modus2 ?
   beq.s   ccfo_mode2_column_fader_out ;Ja -> verzweige
@@ -1490,7 +1490,7 @@ effects_handler
   and.w   INTREQR-DMACONR(a6),d1   ;Wurde der SOFTINT-Interrupt gesetzt ?
   beq.s   no_effects_handler ;Nein -> verzweige
   addq.w  #1,eh_trigger_number(a3) ;FX-Trigger-Zähler hochsetzen
-  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler holen
+  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler 
   cmp.w   #eh_trigger_number_max,d0 ;Maximalwert bereits erreicht ?
   bgt.s   no_effects_handler ;Ja -> verzweige
   move.w  d1,INTREQ-DMACONR(a6) ;SOFTINT-Interrupt löschen

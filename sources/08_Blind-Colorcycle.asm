@@ -617,15 +617,15 @@ blind_colorcycle5212
   tst.w   bcc5212_state(a3)
   bne.s   no_blind_colorcycle5212
   move.l  a4,-(a7)
-  move.w  bcc5212_speed_angle(a3),d1 ;Winkel holen
+  move.w  bcc5212_speed_angle(a3),d1 ;Winkel 
   move.w  d1,d0              
   addq.b  #bcc5212_speed_angle_speed,d0 ;nächster Winkel
   move.w  d0,bcc5212_speed_angle(a3) ;neuen Winkel retten
-  lea     sine_table,a0      ;Sinus-Tabelle (d32!)
+  lea     sine_table,a0       (d32!)
   move.l  (a0,d1.w*4),d3     ;cos(w)
   MULUF.L bcc5212_speed_radius*2,d3,d1 ;r'=r*cow(w)/2^15
   swap    d3
-  move.w  bcc5212_switch_table_start(a3),d4 ;Startwert in Farbtabelle holen
+  move.w  bcc5212_switch_table_start(a3),d4 ;Startwert in Farbtabelle 
   move.w  d4,d0              
   add.b   d3,d0              ;Startwert der Farbtabelle erhöhen
   move.w  d0,bcc5212_switch_table_start(a3) 
@@ -635,11 +635,11 @@ blind_colorcycle5212
   move.w  #cl2_extension1_SIZE,a4
   moveq   #cl2_display_width-1,d7 ;Anzahl der Spalten in CL
 blind_colorcycle5212_loop1
-  move.w  d4,d2              ;Startwert holen
+  move.w  d4,d2              ;Startwert 
   move.l  a2,a1              
   moveq   #bcc5212_lamellas_number-1,d6 ;Anzahl der Lamellen
 blind_colorcycle5212_loop2
-  move.w  d2,d1              ;Startwert holen
+  move.w  d2,d1              ;Startwert 
   moveq   #bcc5212_lamella_height-1,d5 ;Höhe der Lamelle
 blind_colorcycle5212_loop3
   move.b  (a0,d1.w),(a1)     ;Switchwert in CL kopieren
@@ -662,16 +662,16 @@ blind_colorcycle523
   tst.w   bcc523_state(a3)
   bne.s   no_blind_colorcycle523
   move.l  a4,-(a7)
-  move.w  bcc523_step2_angle(a3),d1 ;Winkel holen
+  move.w  bcc523_step2_angle(a3),d1 ;Winkel 
   move.w  d1,d0              
   addq.b  #bcc523_step2_angle_speed,d0 ;nächster Winkel
   move.w  d0,bcc523_step2_angle(a3) ;neuen Winkel retten
-  lea     sine_table,a0      ;Sinus-Tabelle (d32!)
+  lea     sine_table,a0       (d32!)
   move.l  (a0,d1.w*4),d3     ;cos(w)
   MULUF.L bcc523_step2_radius*2,d3,d1 ;r'=r*cow(w)/2^15
   swap    d3
   ADDF.W  bcc523_step2_center,d3 ;+ Mittelpunkt
-  move.w  bcc523_switch_table_start(a3),d4 ;Startwert in Farbtabelle holen
+  move.w  bcc523_switch_table_start(a3),d4 ;Startwert in Farbtabelle 
   move.w  d4,d0              
   addq.b  #bcc523_speed,d0   ;Startwert der Farbtabelle erhöhen
   move.w  d0,bcc523_switch_table_start(a3) 
@@ -681,11 +681,11 @@ blind_colorcycle523
   move.w  #cl2_extension1_SIZE,a4
   moveq   #cl2_display_width-1,d7 ;Anzahl der Spalten in CL
 blind_colorcycle523_loop1
-  move.w  d4,d2              ;Startwert holen
+  move.w  d4,d2              ;Startwert 
   move.l  a2,a1              
   moveq   #bcc523_lamellas_number-1,d6 ;Anzahl der Lamellen
 blind_colorcycle523_loop2
-  move.w  d2,d1              ;Startwert holen
+  move.w  d2,d1              ;Startwert 
   moveq   #bcc523_lamella_height-1,d5 ;Höhe der Lamelle
 blind_colorcycle523_loop3
   move.b  (a0,d1.w),(a1)     ;Switchwert in CL kopieren
@@ -710,7 +710,7 @@ blind_fader_in
     tst.w   bfi_state(a3)    ;Blind-Fader-In an ?
     bne.s   no_blind_fader_in ;Nein -> verzweige
     move.l  a4,-(a7)
-    move.w  bf_registers_table_start(a3),d2 ;Registeradresse holen
+    move.w  bf_registers_table_start(a3),d2 ;Registeradresse 
     move.w  d2,d0            
     addq.w  #bf_speed,d0     ;Startwert der Tabelle erhöhen
     cmp.w   #bf_registers_table_length/2,d0 ;Ende der Tabelle erreicht ?
@@ -735,7 +735,7 @@ bf_no_restart_registers_table
     ADDF.W  cl2_extension1_entry+cl2_ext1_BPL1DAT,a4
     moveq   #bf_lamellas_number-1,d7 ;Anzahl der Lamellen
 blind_fader_in_loop1
-    move.w  d2,d1            ;Startwert holen
+    move.w  d2,d1            ;Startwert 
     moveq   #bf_lamella_height-1,d6 ;Höhe der Lamelle
 blind_fader_in_loop2
     move.w  (a0,d1.w*2),d0   ;Registeradresse aus Tabelle lesen
@@ -772,7 +772,7 @@ blind_fader_out
     tst.w   bfo_state(a3)    ;Blind-Fader-Out an ?
     bne.s   no_blind_fader_out ;Nein -> verzweige
     move.l  a4,-(a7)
-    move.w  bf_registers_table_start(a3),d2 ;Startwert der Tabelle holen
+    move.w  bf_registers_table_start(a3),d2 ;Startwert der Tabelle 
     move.w  d2,d0            
     subq.w  #bf_speed,d0     ;Startwert der Tabelle verringern
     bpl.s   bfo_no_restart_registers_table ;Wenn positiv -> verzweige
@@ -796,7 +796,7 @@ bfo_no_restart_registers_table
     ADDF.W  cl2_extension1_entry+cl2_ext1_BPL1DAT,a4
     moveq   #bf_lamellas_number-1,d7 ;Anzahl der Lamellen
 blind_fader_out_loop1
-    move.w  d2,d1            ;Startwert holen
+    move.w  d2,d1            ;Startwert 
     moveq   #bf_lamella_height-1,d6 ;Höhe der Lamelle
 blind_fader_out_loop2
     move.w  (a0,d1.w*2),d0   ;Registeradresse aus Tabelle lesen
@@ -836,7 +836,7 @@ effects_handler
   and.w   INTREQR-DMACONR(a6),d1   ;Wurde der SOFTINT-Interrupt gesetzt ?
   beq.s   no_effects_handler ;Nein -> verzweige
   addq.w  #1,eh_trigger_number(a3) ;FX-Trigger-Zähler hochsetzen
-  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler holen
+  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler 
   cmp.w   #eh_trigger_number_max,d0 ;Maximalwert bereits erreicht ?
   bgt.s   no_effects_handler ;Ja -> verzweige
   move.w  d1,INTREQ-DMACONR(a6) ;SOFTINT-Interrupt löschen

@@ -731,10 +731,10 @@ vert_colorscroll3112
   tst.w   vcs3112_state(a3) ;Vert-Colorscroll3.1.1.2 an ?
   bne     no_vert_colorscroll3112 ;Nein -> verzweige
   movem.l a3-a6,-(a7)
-  move.l  a7,save_a7(a3)     ;Stackpointer retten
-  move.w  vcs3112_switch_table_start(a3),d2 ;Startwert in Farbtabelle holen
+  move.l  a7,save_a7(a3)     
+  move.w  vcs3112_switch_table_start(a3),d2 ;Startwert in Farbtabelle 
   move.w  d2,d0              
-  move.w  vcs3112_step1_angle(a3),d4 ;Y-Step-Winkel holen
+  move.w  vcs3112_step1_angle(a3),d4 ;Y-Step-Winkel 
   IFEQ vcs3112_switch_table_length_256
     addq.b  #vcs3112_speed,d0 ;Startwert der Switchtabelle erhöhen
   ELSE
@@ -758,7 +758,7 @@ vert_colorscroll3112
   move.w  #(cl2_extension1_SIZE*(cl2_display_y_size/2))-4,a7
   moveq   #(cl2_display_width/2)-1,d7 ;Anzahl der Spalten
 vert_colorscroll3112_loop1
-  move.w  d2,d1              ;Startwert holen
+  move.w  d2,d1              ;Startwert 
   MOVEF.W (cl2_display_y_size/2)-1,d6 ;Effekt für x Zeilen
 vert_colorscroll3112_loop2
   move.b  (a0,d1.w),d0       ;Switchwert aus Tabelle
@@ -805,10 +805,10 @@ vert_colorscroll3121
   tst.w   vcs3121_state(a3) ;Vert-Colorscroll3.1.2.1 an ?
   bne     no_vert_colorscroll3121 ;Nein -> verzweige
   movem.l a3-a6,-(a7)
-  move.l  a7,save_a7(a3)     ;Stackpointer retten
-  move.w  vcs3121_switch_table_start(a3),d2 ;Startwert in Farbtabelle holen
+  move.l  a7,save_a7(a3)     
+  move.w  vcs3121_switch_table_start(a3),d2 ;Startwert in Farbtabelle 
   move.w  d2,d0              
-  move.w  vcs3121_step1_angle(a3),d4 ;Y-Step-Winkel holen
+  move.w  vcs3121_step1_angle(a3),d4 ;Y-Step-Winkel 
   IFEQ vcs3121_switch_table_length_256
     addq.b  #vcs3121_speed,d0 ;Startwert der Switchtabelle erhöhen
   ELSE
@@ -832,7 +832,7 @@ vert_colorscroll3121
   move.w  #(cl2_extension1_SIZE*(cl2_display_y_size/2))-4,a7
   moveq   #(cl2_display_width/2)-1,d7 ;Anzahl der Spalten
 vert_colorscroll3121_loop1
-  move.w  d2,d1              ;Startwert holen
+  move.w  d2,d1              ;Startwert 
   MOVEF.W (cl2_display_y_size/2)-1,d6 ;Effekt für x Zeilen
 vert_colorscroll3121_loop2
   move.b  (a0,d1.w),d0       ;Switchwert aus Tabelle
@@ -879,10 +879,10 @@ vert_colorscroll3122
   tst.w   vcs3122_state(a3) ;Vert-Colorscroll3.1.2.2 an ?
   bne     no_vert_colorscroll3122 ;Nein -> verzweige
   movem.l a3-a6,-(a7)
-  move.l  a7,save_a7(a3)     ;Stackpointer retten
-  move.w  vcs3122_switch_table_start(a3),d2 ;Startwert in Farbtabelle holen
+  move.l  a7,save_a7(a3)     
+  move.w  vcs3122_switch_table_start(a3),d2 ;Startwert in Farbtabelle 
   move.w  d2,d0              
-  move.w  vcs3122_step2_angle(a3),d4 ;Y-Step-Winkel holen
+  move.w  vcs3122_step2_angle(a3),d4 ;Y-Step-Winkel 
   IFEQ vcs3122_switch_table_length_256
     addq.b  #vcs3122_speed,d0 ;Startwert der Switchtabelle erhöhen
   ELSE
@@ -906,7 +906,7 @@ vert_colorscroll3122
   move.w  #(cl2_extension1_SIZE*(cl2_display_y_size/2))-4,a7
   moveq   #(cl2_display_width/2)-1,d7 ;Anzahl der Spalten
 vert_colorscroll3122_loop1
-  move.w  d2,d1              ;Startwert holen
+  move.w  d2,d1              ;Startwert 
   MOVEF.W (cl2_display_y_size/2)-1,d6 ;Effekt für x Zeilen
 vert_colorscroll3122_loop2
   move.b  (a0,d1.w),d0       ;Switchwert aus Tabelle
@@ -953,10 +953,10 @@ vert_colorscroll3111
   tst.w   vcs3111_state(a3)  ;Vert-Colorscroll3.1.1.2 an ?
   bne     no_vert_colorscroll3111 ;Nein -> verzweige
   movem.l a3-a6,-(a7)
-  move.l  a7,save_a7(a3)     ;Stackpointer retten
-  move.w  vcs3111_switch_table_start(a3),d2 ;Startwert in Farbtabelle holen
+  move.l  a7,save_a7(a3)     
+  move.w  vcs3111_switch_table_start(a3),d2 ;Startwert in Farbtabelle 
   move.w  d2,d0              
-  move.w  vcs3111_step2_angle(a3),d4 ;Y-Step-Winkel holen
+  move.w  vcs3111_step2_angle(a3),d4 ;Y-Step-Winkel 
   IFEQ vcs3111_switch_table_length_256
     addq.b  #vcs3111_speed,d0 ;Startwert der Farbtabelle erhöhen
   ELSE
@@ -980,7 +980,7 @@ vert_colorscroll3111
   move.w  #(cl2_extension1_SIZE*(cl2_display_y_size/2))-4,a7
   moveq   #(cl2_display_width/2)-1,d7 ;Anzahl der Spalten
 vert_colorscroll_loop1
-  move.w  d2,d1              ;Startwert holen
+  move.w  d2,d1              ;Startwert 
   MOVEF.W (cl2_display_y_size/2)-1,d6 ;Effekt für x Zeilen
 vert_colorscroll_loop2
   move.b  (a0,d1.w),d0       ;Switchwert aus Tabelle
@@ -1029,7 +1029,7 @@ blind_fader_in
     tst.w   bfi_state(a3)    ;Blind-Fader-In an ?
     bne.s   no_blind_fader_in ;Nein -> verzweige
     move.l  a4,-(a7)
-    move.w  bf_registers_table_start(a3),d2 ;Registeradresse holen
+    move.w  bf_registers_table_start(a3),d2 ;Registeradresse 
     move.w  d2,d0            
     addq.w  #bf_speed,d0     ;Startwert der Tabelle erhöhen
     cmp.w   #bf_registers_table_length/2,d0 ;Ende der Tabelle erreicht ?
@@ -1053,7 +1053,7 @@ bfi_not_finished
     ADDF.W  cl2_extension1_entry+cl2_ext1_BPL1DAT,a4
     moveq   #bf_lamellas_number-1,d7 ;Anzahl der Lamellen
 blind_fader_in_loop1
-    move.w  d2,d1            ;Startwert holen
+    move.w  d2,d1            ;Startwert 
     moveq   #bf_lamella_height-1,d6 ;Höhe der Lamelle
 blind_fader_in_loop2
     move.w  (a0,d1.w*2),d0   ;Registeradresse aus Tabelle lesen
@@ -1090,7 +1090,7 @@ blind_fader_out
     tst.w   bfo_state(a3)    ;Blind-Fader-Out an ?
     bne.s   no_blind_fader_out ;Nein -> verzweige
     move.l  a4,-(a7)
-    move.w  bf_registers_table_start(a3),d2 ;Startwert der Tabelle holen
+    move.w  bf_registers_table_start(a3),d2 ;Startwert der Tabelle 
     move.w  d2,d0            
     subq.w  #bf_speed,d0     ;Startwert der Tabelle verringern
     bpl.s   bfo_not_finished ;Wenn positiv -> verzweige
@@ -1114,7 +1114,7 @@ bfo_not_finished
     ADDF.W  cl2_extension1_entry+cl2_ext1_BPL1DAT,a4
     moveq   #bf_lamellas_number-1,d7 ;Anzahl der Lamellen
 blind_fader_out_loop1
-    move.w  d2,d1            ;Startwert holen
+    move.w  d2,d1            ;Startwert 
     moveq   #bf_lamella_height-1,d6 ;Höhe der Lamelle
 blind_fader_out_loop2
     move.w  (a0,d1.w*2),d0   ;Registeradresse aus Tabelle lesen
@@ -1154,7 +1154,7 @@ effects_handler
   and.w   INTREQR-DMACONR(a6),d1   ;Wurde der SOFTINT-Interrupt gesetzt ?
   beq.s   no_effects_handler ;Nein -> verzweige
   addq.w  #1,eh_trigger_number(a3) ;FX-Trigger-Zähler hochsetzen
-  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler holen
+  move.w  eh_trigger_number(a3),d0 ;FX-Trigger-Zähler 
   cmp.w   #eh_trigger_number_max,d0 ;Maximalwert bereits erreicht ?
   bgt.s   no_effects_handler ;Ja -> verzweige
   move.w  d1,INTREQ-DMACONR(a6) ;SOFTINT-Interrupt löschen

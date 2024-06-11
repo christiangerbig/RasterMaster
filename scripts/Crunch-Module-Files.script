@@ -1,4 +1,4 @@
-CD Daten:Asm-Sources.AGA/RasterMaster/modules
+CD Daten:Asm-Sources.AGA/projects/RasterMaster/modules
 
 stc mod.Gone(re-remix).song -fd -p0 -o0
 stc mod.Gone(re-remix).smps -fd -p0 -o0

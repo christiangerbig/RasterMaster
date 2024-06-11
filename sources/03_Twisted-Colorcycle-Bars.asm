@@ -1031,7 +1031,7 @@ sine_table_512
 
 ; **** Twisted-Colorcycle-Bars ****
 tccb_color_gradient
-  INCLUDE "Daten:Asm-Sources.AGA/RasterMaster/colortables/04_tcb_Colorgradient.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/04_tcb_Colorgradient.ct"
 
 ; **** Blind-Fader ****
   IFEQ open_border

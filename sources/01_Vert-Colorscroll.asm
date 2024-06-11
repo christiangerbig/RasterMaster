@@ -1269,7 +1269,7 @@ NMI_int_server
 ; ----------------------------------
   CNOP 0,4
 pf1_color_table
-  INCLUDE "Daten:Asm-Sources.AGA/RasterMaster/colortables/02_vcs3112_Colorgradient.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/02_vcs3112_Colorgradient.ct"
 
 ; **** Blind-Fader ****
   IFEQ open_border

@@ -1542,7 +1542,7 @@ pf1_color_table
 ; ** Farben der Sprites **
 ; ------------------------
 spr_color_table
-  INCLUDE "Daten:Asm-Sources.AGA/RasterMaster/colortables/256x87x16-TheEnd.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/256x87x16-TheEnd.ct"
 
 ; ** Adressen der Sprites **
 ; --------------------------
@@ -1561,7 +1561,7 @@ vss_xy_coordinates
 ; ---------------------------------------
   CNOP 0,4
 ifi_color_table
-  INCLUDE "Daten:Asm-Sources.AGA/RasterMaster/colortables/0c_vss_Colorgradient.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/0c_vss_Colorgradient.ct"
 
 ; ** Zielfarbwerte für Image-Fader-Out **
 ; ---------------------------------------
@@ -1594,12 +1594,12 @@ ifo_color_table
 
 ; **** Vert-Starscrolling ****
 vss_image_data SECTION vss_gfx,DATA
-  INCBIN "Daten:Asm-Sources.AGA/RasterMaster/graphics/64x56x64-3D-Stars.rawblit"
+  INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/graphics/64x56x64-3D-Stars.rawblit"
 vss_image_mask
-  INCBIN "Daten:Asm-Sources.AGA/RasterMaster/graphics/64x56x64-3D-Stars-Mask.rawblit"
+  INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/graphics/64x56x64-3D-Stars-Mask.rawblit"
 
 ; **** Logo ****
 lg_image_data SECTION lg_gfx,DATA
-  INCBIN "Daten:Asm-Sources.AGA/RasterMaster/graphics/256x87x16-TheEnd.rawblit"
+  INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/graphics/256x87x16-TheEnd.rawblit"
 
   END

@@ -1288,7 +1288,7 @@ pf1_color_table
 ; ------------------------
 spr_color_table_logo
 ; ** Sprite0/1 **
-  INCLUDE "Daten:Asm-Sources.AGA/RasterMaster/colortables/64x256x16-Resistance.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/64x256x16-Resistance.ct"
 
 spr_color_table_vert_text_scroll
 ; ** Sprite0 **
@@ -1296,17 +1296,17 @@ spr_color_table_vert_text_scroll
     DC.L COLOR00BITS
   ENDR
 ; ** Sprite2 **
-  INCLUDE "Daten:Asm-Sources.AGA/RasterMaster/colortables/16x15x2-Font.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/16x15x2-Font.ct"
   REPT 2
     DC.L COLOR00BITS
   ENDR
 ; ** Sprite4 **
-  INCLUDE "Daten:Asm-Sources.AGA/RasterMaster/colortables/16x15x2-Font.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/16x15x2-Font.ct"
   REPT 2
     DC.L COLOR00BITS
   ENDR
 ; ** Sprite6 **
-  INCLUDE "Daten:Asm-Sources.AGA/RasterMaster/colortables/16x15x2-Font.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/16x15x2-Font.ct"
   REPT 2
     DC.L COLOR00BITS
   ENDR
@@ -1354,7 +1354,7 @@ vts_characters_image_pointers
 ; --------------------------------------
   CNOP 0,4
 ifi_color_table
-  INCLUDE "Daten:Asm-Sources.AGA/RasterMaster/colortables/352x256x128-RasterMaster.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/352x256x128-RasterMaster.ct"
 
 ; ** Zielfarbwerte für Image-Fader-Out **
 ; ---------------------------------------
@@ -1625,11 +1625,11 @@ vts_text
 
 ; **** Logo ****
 lg_image_data SECTION lg_gfx,DATA
-  INCBIN "Daten:Asm-Sources.AGA/RasterMaster/graphics/64x256x16-Resistance.rawblit"
+  INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/graphics/64x256x16-Resistance.rawblit"
 
 ; **** Vert-Text-Scroll ****
 vts_image_data SECTION vts_gfx,DATA_C
-  INCBIN "Daten:Asm-Sources.AGA/RasterMaster/fonts/16x15x2-Font.rawblit"
+  INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/fonts/16x15x2-Font.rawblit"
   DS.B vts_image_plane_width*vts_image_depth ;Leerzeile
 
   END

@@ -2115,7 +2115,7 @@ pf1_color_table
 
 ; **** Twisted-Bars3.16.1.2 ****
 tb31612_bars_color_table
-  INCLUDE "Daten:Asm-Sources.AGA/RasterMaster/colortables/06_tb31612_Colorgradient.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/06_tb31612_Colorgradient.ct"
 
 ; ** YZ-Koordinatentabelle Twisted-Sine-Bars **
 ; ---------------------------------------------
@@ -2132,7 +2132,7 @@ tb31612_fader_columns_mask
 ; **** Wave-Center-Bar ****
   CNOP 0,4
 wcb_bar_color_table
-  INCLUDE "Daten:Asm-Sources.AGA/RasterMaster/colortables/06_wcb_Colorgradient.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/06_wcb_Colorgradient.ct"
 
 ; ** Maske für die Spalten **
 ; ---------------------------
@@ -2152,7 +2152,7 @@ we_y_coordinates_end
 ; **** Sine-Scrolltext ****
   CNOP 0,4
 ss_color_table
-  INCLUDE "Daten:Asm-Sources.AGA/RasterMaster/colortables/06_ss_Colorgradient.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/06_ss_Colorgradient.ct"
 
 ; ** ASCII-Buchstaben **
 ; ----------------------
@@ -2172,7 +2172,7 @@ ss_characters_offsets
 ; ---------------
   CNOP 0,4
 bf_color_table
-  INCLUDE "Daten:Asm-Sources.AGA/RasterMaster/colortables/06_bf_Colorgradient.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/06_bf_Colorgradient.ct"
 
 ; ** Tabelle mit Zeigern auf Farbtabelle **
 ; -----------------------------------------
@@ -2237,6 +2237,6 @@ ss_text
 
 ; **** Sine-Scrolltext ****
 ss_image_data SECTION ss_gfx,DATA_C
-  INCBIN "Daten:Asm-Sources.AGA/RasterMaster/fonts/32x32x2-Font.rawblit"
+  INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/fonts/32x32x2-Font.rawblit"
 
   END

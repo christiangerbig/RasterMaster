@@ -1382,7 +1382,7 @@ pf1_color_table
 ; ** Farben der Sprites **
 ; ------------------------
 spr_color_table
-  INCLUDE "Daten:Asm-Sources.AGA/RasterMaster/colortables/256x75x16-Resistance.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/256x75x16-Resistance.ct"
 
 ; ** Adressen der Sprites **
 ; --------------------------
@@ -1406,7 +1406,7 @@ cs_audio_channel_data
 ; --------------------------------------
   CNOP 0,4
 ifi_color_table
-  INCLUDE "Daten:Asm-Sources.AGA/RasterMaster/colortables/352x256x128-RasterMaster.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/352x256x128-RasterMaster.ct"
 
 ; ** Zielfarbwerte für Image-Fader-Out **
 ; ---------------------------------------
@@ -1439,10 +1439,10 @@ ifo_color_table
 
 ; **** Background-Image ****
 bg_image_data SECTION bg_gfx,DATA
-  INCBIN "Daten:Asm-Sources.AGA/RasterMaster/graphics/352x256x128-RasterMaster.rawblit"
+  INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/graphics/352x256x128-RasterMaster.rawblit"
 
 ; **** Logo ****
 lg_image_data SECTION lg_gfx,DATA
-  INCBIN "Daten:Asm-Sources.AGA/RasterMaster/graphics/256x75x16-Resistance.rawblit"
+  INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/graphics/256x75x16-Resistance.rawblit"
 
   END

@@ -987,7 +987,7 @@ NMI_int_server
 ; ----------------------------------
   CNOP 0,4
 pf1_color_table
-  INCLUDE "Daten:Asm-Sources.AGA/RasterMaster/colortables/03_tb_Colorgradient.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/03_tb_Colorgradient.ct"
 
 ; **** Twisted-Bars3.1.5 ****
 ; ** Y-Koordinatentabelle **

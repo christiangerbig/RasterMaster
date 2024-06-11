@@ -1608,7 +1608,7 @@ NMI_int_server
 ; ---------------------------
   CNOP 0,4
 pf1_color_table
-  INCLUDE "Daten:Asm-Sources.AGA/RasterMaster/colortables/32x32x16-Font.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/32x32x16-Font.ct"
 
 ; ** Farben der Sprites **
 ; -------------------------
@@ -1626,7 +1626,7 @@ spr_pointers_display
 ; ** Farbverlauf **
 ; -----------------
 tb_color_gradient
-  INCLUDE "Daten:Asm-Sources.AGA/RasterMaster/colortables/05_tb_Colorgradient.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/05_tb_Colorgradient.ct"
 
 ; ** Farben der Bar **
 ; --------------------
@@ -1676,7 +1676,7 @@ hst_characters_image_pointers
 ; ----------------------------------------
   CNOP 0,4
 sprfi_color_table
-  INCLUDE "Daten:Asm-Sources.AGA/RasterMaster/colortables/256x256x16-Nebula.ct"
+  INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/256x256x16-Nebula.ct"
 
 ; ** Zielfarbwerte für Sprites-Fader-Out **
 ; -----------------------------------------
@@ -1733,10 +1733,10 @@ hst_stop_text
 
 ; **** Background-Image ****
 bg_image_data SECTION bg_gfx,DATA
-  INCBIN "Daten:Asm-Sources.AGA/RasterMaster/graphics/256x256x16-Nebula.rawblit"
+  INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/graphics/256x256x16-Nebula.rawblit"
 
 ; **** Horiz-Scrolltext ****
 hst_image_data SECTION hst_gfx,DATA_C
-  INCBIN "Daten:Asm-Sources.AGA/RasterMaster/fonts/32x32x16-Font.rawblit"
+  INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/fonts/32x32x16-Font.rawblit"
 
   END

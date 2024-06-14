@@ -63,16 +63,16 @@ requires_68060              EQU FALSE
 requires_fast_memory        EQU FALSE
 requires_multiscan_monitor  EQU FALSE
 
-workbench_start             EQU FALSE
-workbench_fade              EQU FALSE
-text_output                 EQU FALSE
+workbench_start_enabled     EQU FALSE
+workbench_fade_enabled      EQU FALSE
+text_output_enabled         EQU FALSE
 
 sys_taken_over
 pass_global_references
 pass_return_code
-open_border                 EQU TRUE
+open_border_enabled         EQU TRUE
 
-  IFEQ open_border
+  IFEQ open_border_enabled
 DMABITS                     EQU DMAF_SPRITE+DMAF_BLITTER+DMAF_COPPER+DMAF_SETCLR
   ELSE
 DMABITS                     EQU DMAF_SPRITE+DMAF_BLITTER+DMAF_COPPER+DMAF_RASTER+DMAF_SETCLR
@@ -82,7 +82,7 @@ INTENABITS                  EQU INTF_SETCLR
 CIAAICRBITS                 EQU CIAICRF_SETCLR
 CIABICRBITS                 EQU CIAICRF_SETCLR
 
-COPCONBITS                  EQU TRUE
+COPCONBITS                  EQU 0
 
 pf1_x_size1                 EQU 0
 pf1_y_size1                 EQU 0
@@ -90,7 +90,7 @@ pf1_depth1                  EQU 0
 pf1_x_size2                 EQU 0
 pf1_y_size2                 EQU 0
 pf1_depth2                  EQU 0
-  IFEQ open_border
+  IFEQ open_border_enabled
 pf1_x_size3                 EQU 0
 pf1_y_size3                 EQU 0
 pf1_depth3                  EQU 0
@@ -133,25 +133,25 @@ extra_memory_size           EQU 0
 
 AGA_OS_Version              EQU 39
 
-CIAA_TA_value               EQU 0
-CIAA_TB_value               EQU 0
-CIAB_TA_value               EQU 0
-CIAB_TB_value               EQU 0
-CIAA_TA_continuous          EQU FALSE
-CIAA_TB_continuous          EQU FALSE
-CIAB_TA_continuous          EQU FALSE
-CIAB_TB_continuous          EQU FALSE
+CIAA_TA_time                EQU 0
+CIAA_TB_time                EQU 0
+CIAB_TA_time                EQU 0
+CIAB_TB_time                EQU 0
+CIAA_TA_continuous_enabled  EQU FALSE
+CIAA_TB_continuous_enabled  EQU FALSE
+CIAB_TA_continuous_enabled  EQU FALSE
+CIAB_TB_continuous_enabled  EQU FALSE
 
 beam_position               EQU $136
 
-  IFNE open_border 
+  IFNE open_border_enabled 
 pixel_per_line              EQU 32
  ENDC
 visible_pixels_number       EQU 352
 visible_lines_number        EQU 256
 MINROW                      EQU VSTART_256_lines
 
-  IFNE open_border 
+  IFNE open_border_enabled 
 pf_pixel_per_datafetch      EQU 16 ;1x
 DDFSTRTBITS                 EQU DDFSTART_overscan_32_pixel
 DDFSTOPBITS                 EQU DDFSTOP_overscan_32_pixel_min
@@ -165,16 +165,16 @@ display_window_HSTOP        EQU HSTOP_44_chunky_pixel
 display_window_VSTOP        EQU VSTOP_256_lines
 DIWSTOPBITS                 EQU ((display_window_VSTOP&$ff)*DIWSTOPF_V0)+(display_window_HSTOP&$ff)
 
-  IFNE open_border 
+  IFNE open_border_enabled 
 pf1_plane_width             EQU pf1_x_size3/8
 data_fetch_width            EQU pixel_per_line/8
 pf1_plane_moduli            EQU -(pf1_plane_width-(pf1_plane_width-data_fetch_width))
   ENDC
 
 BPLCON0BITS                 EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
-  IFNE open_border
-BPLCON1BITS                 EQU TRUE
-BPLCON2BITS                 EQU TRUE
+  IFNE open_border_enabled
+BPLCON1BITS                 EQU 0
+BPLCON2BITS                 EQU 0
   ENDC
 BPLCON3BITS1                EQU BPLCON3F_SPRES0
 BPLCON3BITS2                EQU BPLCON3BITS1+BPLCON3F_LOCT
@@ -187,7 +187,7 @@ FMODEBITS                   EQU FMODEF_SPR32+FMODEF_SPAGEM
 cl2_display_x_size          EQU 352
 cl2_display_width           EQU cl2_display_x_size/8
 cl2_display_y_size          EQU visible_lines_number
-  IFEQ open_border
+  IFEQ open_border_enabled
 cl2_HSTART1                 EQU display_window_HSTART-(1*CMOVE_slot_period)-4
   ELSE
 cl2_HSTART1                 EQU display_window_HSTART-4
@@ -211,7 +211,7 @@ lg_image_y_position         EQU display_window_VSTART+lg_image_y_center
 
 ; **** Vert-Starscrolling ****
 vss_image_x_size            EQU 64
-vss_image_plane_width             EQU vss_image_x_size/8
+vss_image_plane_width       EQU vss_image_x_size/8
 vss_image_y_size            EQU 56
 vss_image_depth             EQU 6
 
@@ -344,7 +344,7 @@ copperlist1_SIZE RS.B 0
 cl2_extension1        RS.B 0
 
 cl2_ext1_WAIT         RS.L 1
-  IFEQ open_border 
+  IFEQ open_border_enabled 
 cl2_ext1_BPL1DAT      RS.L 1
   ENDC
 cl2_ext1_BPLCON4_1    RS.L 1
@@ -658,23 +658,23 @@ vss_switch_buffer_display       RS.L 1
 
 ; **** Image-Fader ****
 if_colors_counter               RS.W 1
-if_copy_colors_state            RS.W 1
+if_copy_colors_active           RS.W 1
 
-ifi_state                       RS.W 1
+ifi_active                      RS.W 1
 ifi_fader_angle                 RS.W 1
 
-ifo_state                       RS.W 1
+ifo_active                      RS.W 1
 ifo_fader_angle                 RS.W 1
 
 ; **** Image-Pixel-Fader ****
 ipf_mask                        RS.L 1
 ipf_variable_destination_size   RS.W 1
 
-ipfi_state                      RS.W 1
+ipfi_active                     RS.W 1
 ipfi_delay_counter              RS.W 1
 ipfi_delay_angle                RS.W 1
 
-ipfo_state                      RS.W 1
+ipfo_active                     RS.W 1
 ipfo_delay_counter              RS.W 1
 ipfo_delay_angle                RS.W 1
 
@@ -682,7 +682,7 @@ ipfo_delay_angle                RS.W 1
 eh_trigger_number               RS.W 1
 
 ; **** Main ****
-fx_state                        RS.W 1
+fx_active                       RS.W 1
 
 variables_SIZE                  RS.B 0
 
@@ -712,33 +712,33 @@ init_own_variables
   move.l  a0,vss_switch_buffer_display(a3)
 
 ; **** Image-Fader ****
-  moveq   #TRUE,d0
+  moveq   #0,d0
   move.w  d0,if_colors_counter(a3)
   moveq   #FALSE,d1
-  move.w  d1,if_copy_colors_state(a3)
+  move.w  d1,if_copy_colors_active(a3)
 
 ; **** Image-Fader-In ****
-  move.w  d1,ifi_state(a3)
+  move.w  d1,ifi_active(a3)
   MOVEF.W sine_table_length/4,d2
   move.w  d2,ifi_fader_angle(a3) ;90 Grad
 
 ; **** Image-Fader-Out ****
-  move.w  d1,ifo_state(a3)
+  move.w  d1,ifo_active(a3)
   move.w  d2,ifo_fader_angle(a3) ;90 Grad
 
 ; **** Image-Pixel-Fader ****
-  moveq   #TRUE,d0
+  moveq   #0,d0
   move.l  d0,ipf_mask(a3)
   moveq   #ipf_destination_size,d2
   move.w  d2,ipf_variable_destination_size(a3)
 
 ; **** Image-Pixel-Fader-In ****
-  move.w  d1,ipfi_state(a3)
+  move.w  d1,ipfi_active(a3)
   move.w  d0,ipfi_delay_counter(a3)
   MOVEF.W sine_table_length/4,d2
   move.w  d2,ipfi_delay_angle(a3) ;90 Grad
 
-  move.w  d1,ipfo_state(a3)
+  move.w  d1,ipfo_active(a3)
   move.w  d0,ipfo_delay_counter(a3)
   move.w  d2,ipfo_delay_angle(a3) ;90 Grad
 
@@ -746,7 +746,7 @@ init_own_variables
   move.w  d0,eh_trigger_number(a3)
 
 ; **** Main ****
-  move.w  d1,fx_state(a3)
+  move.w  d1,fx_active(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
@@ -867,7 +867,7 @@ init_first_copperlist
   bsr.s   cl1_init_playfield_registers
   bsr.s   cl1_init_sprite_pointers
   bsr.s   cl1_init_color_registers
-  IFEQ open_border
+  IFEQ open_border_enabled
     COPMOVEQ TRUE,COPJMP2
     bsr     cl1_set_sprite_pointers
     rts
@@ -878,7 +878,7 @@ init_first_copperlist
     bra     cl1_set_bitplane_pointers
   ENDC
 
-  IFEQ open_border
+  IFEQ open_border_enabled
     COP_INIT_PLAYFIELD_REGISTERS cl1,NOBITPLANESSPR
   ELSE
     COP_INIT_PLAYFIELD_REGISTERS cl1
@@ -914,7 +914,7 @@ init_second_copperlist
   bsr     copy_second_copperlist
   bra     swap_second_copperlist
 
-  COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_HSTART1,cl2_VSTART1,cl2_display_x_size,cl2_display_y_size,open_border,FALSE,FALSE
+  COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_HSTART1,cl2_VSTART1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,FALSE,FALSE
 
   COP_INIT_COPINT cl2,cl2_HSTART2,cl2_VSTART2
 
@@ -966,7 +966,7 @@ beam_routines
   jsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   fx_state(a3)       ;Effekte beendet ?
+  tst.w   fx_active(a3)      ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
   move.w  custom_error_code(a3),d1
@@ -1018,7 +1018,7 @@ vert_starscrolling_loop1
   swap    d7                 
   moveq   #vss_stars_per_plane_number-1,d6 ;Anzahl der Sterne pro Ebene
 vert_starscrolling_loop2
-  moveq   #TRUE,d0
+  moveq   #0,d0
   move.w  (a0)+,d0           ;X-Koord. 
   moveq   #TRUE,d1
   move.w  (a0),d1            ;Y-Koord. 
@@ -1182,7 +1182,7 @@ vss_copy_switch_buffer_loop
 ; -----------------------
   CNOP 0,4
 image_fader_in
-  tst.w   ifi_state(a3)      ;Image-Fader-In an ?
+  tst.w   ifi_active(a3)     ;Image-Fader-In an ?
   bne.s   no_image_fader_in  ;Nein -> verzweige
   movem.l a4-a6,-(a7)
   move.w  ifi_fader_angle(a3),d2 ;Fader-Winkel 
@@ -1213,7 +1213,7 @@ ifi_save_fader_angle
   move.w  d6,if_colors_counter(a3) ;Image-Fader-In fertig ?
   bne.s   no_image_fader_in  ;Nein -> verzweige
   moveq   #FALSE,d0
-  move.w  d0,ifi_state(a3)   ;Image-Fader-In aus
+  move.w  d0,ifi_active(a3)  ;Image-Fader-In aus
 no_image_fader_in
   rts
 
@@ -1221,7 +1221,7 @@ no_image_fader_in
 ; -----------------------
   CNOP 0,4
 image_fader_out
-  tst.w   ifo_state(a3)      ;Image-Fader-Out an ?
+  tst.w   ifo_active(a3)     ;Image-Fader-Out an ?
   bne.s   no_image_fader_out ;Nein -> verzweige
   movem.l a4-a6,-(a7)
   move.w  ifo_fader_angle(a3),d2 ;Fader-Winkel 
@@ -1252,7 +1252,7 @@ ifo_save_fader_angle
   move.w  d6,if_colors_counter(a3) ;Image-Fader-Out fertig ?
   bne.s   no_image_fader_out ;Nein -> verzweige
   moveq   #FALSE,d0
-  move.w  d0,ifo_state(a3)   ;Image-Fader-Out aus
+  move.w  d0,ifo_active(a3)  ;Image-Fader-Out aus
 no_image_fader_out
   rts
 
@@ -1266,7 +1266,7 @@ no_image_fader_out
 ; --------------------------------
   CNOP 0,4
 image_pixel_fader_in
-  tst.w   ipfi_state(a3)     ;Image-Pixel-Fader-In an ?
+  tst.w   ipfi_active(a3)    ;Image-Pixel-Fader-In an ?
   bne.s   no_image_pixel_fader_in ;FALSE -> verzweige
   subq.w  #1,ipfi_delay_counter(a3) ;Zähler verringern
   bgt.s   no_image_pixel_fader_in ;Wenn > Null -> verzweige
@@ -1311,14 +1311,14 @@ no_image_pixel_fader_in
   CNOP 0,4
 ipfi_finished
   moveq   #FALSE,d0
-  move.w  d0,ipfi_state(a3)  ;Image-Pixel-Fader-In aus
+  move.w  d0,ipfi_active(a3) ;Image-Pixel-Fader-In aus
   rts
 
 ; ** Logo Pixelweise ausblenden **
 ; --------------------------------
   CNOP 0,4
 image_pixel_fader_out
-  tst.w   ipfo_state(a3)     ;Image-Pixel-Fader-Out an ?
+  tst.w   ipfo_active(a3)    ;Image-Pixel-Fader-Out an ?
   bne.s   no_image_pixel_fader_out ;FALSE -> verzweige
   subq.w  #1,ipfo_delay_counter(a3) ;Zähler verringern
   bgt.s   no_image_pixel_fader_out ;Wenn > Null -> verzweige
@@ -1362,8 +1362,8 @@ no_image_pixel_fader_out
   CNOP 0,4
 ipfo_finished
   moveq   #FALSE,d0
-  move.w  d0,ipfo_state(a3)  ;Image-Pixel-Fader-Out aus
-  moveq   #TRUE,d0
+  move.w  d0,ipfo_active(a3) ;Image-Pixel-Fader-Out aus
+  moveq   #0,d0
   move.l  d0,ipf_mask(a3)    ;Maske = NULL
   rts
 
@@ -1467,32 +1467,32 @@ no_effects_handler
   CNOP 0,4
 eh_start_image_fader_in
   move.w  #if_colors_number*3,if_colors_counter(a3)
-  moveq   #TRUE,d0
-  move.w  d0,ifi_state(a3) ;Image-Fader-In an
-  move.w  d0,if_copy_colors_state(a3) ;Kopieren der Farnwerte an
+  moveq   #0,d0
+  move.w  d0,ifi_active(a3) ;Image-Fader-In an
+  move.w  d0,if_copy_colors_active(a3) ;Kopieren der Farnwerte an
   rts
   CNOP 0,4
 eh_start_image_pixel_fader_in
-  clr.w   ipfi_state(a3)     ;Image-Pixel-Fader-In an
+  clr.w   ipfi_active(a3)    ;Image-Pixel-Fader-In an
   moveq   #1,d2
   move.w  d2,ipfi_delay_counter(a3) ;Verzögerungszähler aktivieren
   rts
   CNOP 0,4
 eh_start_image_fader_out
   move.w  #if_colors_number*3,if_colors_counter(a3)
-  moveq   #TRUE,d0
-  move.w  d0,ifo_state(a3)   ;Image-Fader-Out an
+  moveq   #0,d0
+  move.w  d0,ifo_active(a3)  ;Image-Fader-Out an
   moveq   #1,d2
   move.w  d2,ipfo_delay_counter(a3) ;Verzögerungszähler aktivieren
-  move.w  d0,if_copy_colors_state(a3) ;Kopieren der Farbwerte an
+  move.w  d0,if_copy_colors_active(a3) ;Kopieren der Farbwerte an
   rts
   CNOP 0,4
 eh_start_image_pixel_fader_out
-  clr.w   ipfo_state(a3)     ;Image-Pixel-Fader-Out an
+  clr.w   ipfo_active(a3)    ;Image-Pixel-Fader-Out an
   rts
   CNOP 0,4
 eh_stop_all
-  clr.w   fx_state(a3)       ;Effekt beenden
+  clr.w   fx_active(a3)      ;Effekt beenden
   rts
 
 

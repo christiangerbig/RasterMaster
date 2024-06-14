@@ -63,9 +63,9 @@ requires_68060             EQU FALSE
 requires_fast_memory       EQU FALSE
 requires_multiscan_monitor EQU FALSE
 
-workbench_start            EQU FALSE
-workbench_fade             EQU FALSE
-text_output                EQU FALSE
+workbench_start_enabled    EQU FALSE
+workbench_fade_enabled     EQU FALSE
+text_output_enabled        EQU FALSE
 
 sys_taken_over
 pass_global_references
@@ -77,7 +77,7 @@ INTENABITS                 EQU INTF_SETCLR
 CIAAICRBITS                EQU CIAICRF_SETCLR
 CIABICRBITS                EQU CIAICRF_SETCLR
 
-COPCONBITS                 EQU TRUE
+COPCONBITS                 EQU 0
 
 pf1_x_size1                EQU 0
 pf1_y_size1                EQU 0
@@ -121,14 +121,14 @@ extra_memory_size          EQU 0
 
 AGA_OS_Version             EQU 39
 
-CIAA_TA_value              EQU 0
-CIAA_TB_value              EQU 0
-CIAB_TA_value              EQU 0
-CIAB_TB_value              EQU 0
-CIAA_TA_continuous         EQU FALSE
-CIAA_TB_continuous         EQU FALSE
-CIAB_TA_continuous         EQU FALSE
-CIAB_TB_continuous         EQU FALSE
+CIAA_TA_time               EQU 0
+CIAA_TB_time               EQU 0
+CIAB_TA_time               EQU 0
+CIAB_TB_time               EQU 0
+CIAA_TA_continuous_enabled EQU FALSE
+CIAA_TB_continuous_enabled EQU FALSE
+CIAB_TA_continuous_enabled EQU FALSE
+CIAB_TB_continuous_enabled EQU FALSE
 
 beam_position              EQU $136
 
@@ -153,13 +153,13 @@ data_fetch_width           EQU pixel_per_line/8
 pf1_plane_moduli           EQU -pf1_plane_width+(pf1_plane_width-data_fetch_width)
 
 BPLCON0BITS                EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
-BPLCON1BITS                EQU TRUE
-BPLCON2BITS                EQU TRUE
-BPLCON3BITS1               EQU TRUE
+BPLCON1BITS                EQU 0
+BPLCON2BITS                EQU 0
+BPLCON3BITS1               EQU 0
 BPLCON3BITS2               EQU BPLCON3BITS1+BPLCON3F_LOCT
-BPLCON4BITS                EQU TRUE
+BPLCON4BITS                EQU 0
 DIWHIGHBITS                EQU (((display_window_HSTOP&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_VSTOP&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_HSTART&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_VSTART&$700)>>8)
-FMODEBITS                  EQU TRUE
+FMODEBITS                  EQU 0
 
 cl2_display_x_size         EQU 456
 cl2_display_width          EQU cl2_display_x_size/8
@@ -397,7 +397,7 @@ zzp5_y_radius_angle       RS.W 1
 zzp5_y_angle              RS.W 1
 
 ; **** Vert-Shade-Bars ****
-vsb_state                 RS.W 1
+vsb_active                RS.W 1
 vsb_y_radius_angle        RS.W 1
 vsb_y_angle               RS.W 1
 
@@ -406,13 +406,13 @@ vbf_fader_angle           RS.W 1
 vbf_display_window_VSTART RS.W 1
 vbf_display_window_VSTOP  RS.W 1
 
-vbfo_state                RS.W 1
+vbfo_active               RS.W 1
 
 ; **** Effects-Handler ****
 eh_trigger_number         RS.W 1
 
 ; **** Main ****
-fx_state                  RS.W 1
+fx_active                 RS.W 1
 
 variables_SIZE            RS.B 0
 
@@ -428,12 +428,12 @@ start_0a_zig_zag_plasma
 init_own_variables
 
 ; **** Zig-Zag-Plasma5 ****
-  moveq   #TRUE,d0
+  moveq   #0,d0
   move.w  d0,zzp5_y_radius_angle(a3)
   move.w  d0,zzp5_y_angle(a3)
 
 ; **** Vert-Shade-Bars ****
-  move.w  d0,vsb_state(a3)
+  move.w  d0,vsb_active(a3)
   move.w  #sine_table_length/4,vsb_y_radius_angle(a3)
   move.w  d0,vsb_y_angle(a3)
 
@@ -443,13 +443,13 @@ init_own_variables
   move.w  #display_window_VSTOP,vbf_display_window_VSTOP(a3)
 
   moveq   #FALSE,d1
-  move.w  d1,vbfo_state(a3)
+  move.w  d1,vbfo_active(a3)
 
 ; **** Effects-Handler ****
   move.w  d0,eh_trigger_number(a3)
 
 ; **** Main ****
-  move.w  d1,fx_state(a3)
+  move.w  d1,fx_active(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
@@ -580,7 +580,7 @@ beam_routines
   jsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   fx_state(a3)       ;Effekte beendet ?
+  tst.w   fx_active(a3)      ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
   move.w  custom_error_code(a3),d1
@@ -596,7 +596,7 @@ fast_exit
 ; -----------------------------
   CNOP 0,4
 vert_shade_bars
-  tst.w   vsb_state(a3)
+  tst.w   vsb_active(a3)
   bne     no_vert_shade_bars
   move.w  vsb_y_radius_angle(a3),d2 ;Y-Radius-Winkel 
   move.w  d2,d0              
@@ -711,7 +711,7 @@ zzp5_init_copy_blit
 ; ---------------------------
   CNOP 0,4
 vert_border_fader_out
-  tst.w   vbfo_state(a3)     ;Vert-Border-Fader an ?
+  tst.w   vbfo_active(a3)    ;Vert-Border-Fader an ?
   bne.s   no_vert_border_fader_out ;Nein -> verzweige
   move.w  vbf_fader_angle(a3),d1 ;Fader-Winkel 
   move.w  d1,d0              
@@ -734,7 +734,7 @@ vbfo_no_vert_start_position_max
   cmp.w   #vbf_y_position_center,d1 ;Zielwert erreicht ?
   bge.s   vbfo_no_vert_stop_position_min ;Nein -> verzweige
   moveq   #FALSE,d0
-  move.w  d0,vbfo_state(a3)  ;Vert-Border-Fader aus
+  move.w  d0,vbfo_active(a3) ;Vert-Border-Fader aus
   MOVEF.W vbf_y_position_center,d1 ;Zielwert
 vbfo_no_vert_stop_position_min
   move.w  d1,vbf_display_window_VSTOP(a3) retten
@@ -773,15 +773,15 @@ no_effects_handler
   rts
   CNOP 0,4
 eh_start_vert_shade_bars
-  clr.w   vsb_state(a3)      ;Vert-Shade-Bars an
+  clr.w   vsb_active(a3)     ;Vert-Shade-Bars an
   rts
   CNOP 0,4
 eh_start_vert_border_fader_out
-  clr.w   vbfo_state(a3)     ;Vert-Border-Fader-Out an
+  clr.w   vbfo_active(a3)    ;Vert-Border-Fader-Out an
   rts
   CNOP 0,4
 eh_stop_all
-  clr.w   fx_state(a3)       ;Effekt beenden
+  clr.w   fx_active(a3)      ;Effekt beenden
   rts
 
 

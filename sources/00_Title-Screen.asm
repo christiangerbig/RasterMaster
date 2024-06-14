@@ -14,8 +14,8 @@
   MC68040
 
   XREF COLOR00BITS
-  XREF pt_track_channel_volumes
-  XREF pt_track_channel_periods
+  XREF pt_track_volumes_enabled
+  XREF pt_track_periods_enabled
   XREF pt_audchan1temp
   XREF pt_audchan2temp
   XREF pt_audchan3temp
@@ -70,9 +70,9 @@ requires_68060              EQU FALSE
 requires_fast_memory        EQU FALSE
 requires_multiscan_monitor  EQU FALSE
 
-workbench_start             EQU FALSE
-workbench_fade              EQU FALSE
-text_output                 EQU FALSE
+workbench_start_enabled     EQU FALSE
+workbench_fade_enabled      EQU FALSE
+text_output_enabled         EQU FALSE
 
 sys_taken_over
 pass_global_references
@@ -84,7 +84,7 @@ INTENABITS                  EQU INTF_SETCLR
 CIAAICRBITS                 EQU CIAICRF_SETCLR
 CIABICRBITS                 EQU CIAICRF_SETCLR
 
-COPCONBITS                  EQU TRUE
+COPCONBITS                  EQU 0
 
 pf1_x_size1                 EQU 0
 pf1_y_size1                 EQU 0
@@ -131,14 +131,14 @@ chip_memory_size            EQU 0
 
 AGA_OS_Version              EQU 39
 
-CIAA_TA_value               EQU 0
-CIAA_TB_value               EQU 0
-CIAB_TA_value               EQU 0
-CIAB_TB_value               EQU 0
-CIAA_TA_continuous          EQU FALSE
-CIAA_TB_continuous          EQU FALSE
-CIAB_TA_continuous          EQU FALSE
-CIAB_TB_continuous          EQU FALSE
+CIAA_TA_time                EQU 0
+CIAA_TB_time                EQU 0
+CIAB_TA_time                EQU 0
+CIAB_TB_time                EQU 0
+CIAA_TA_continuous_enabled  EQU FALSE
+CIAA_TB_continuous_enabled  EQU FALSE
+CIAB_TA_continuous_enabled  EQU FALSE
+CIAB_TB_continuous_enabled  EQU FALSE
 
 beam_position               EQU $136
 
@@ -164,7 +164,7 @@ data_fetch_width            EQU pixel_per_line/8
 pf1_plane_moduli            EQU (pf1_plane_width*(pf1_depth3-1))+pf1_plane_width-data_fetch_width
 
 BPLCON0BITS                 EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
-BPLCON1BITS                 EQU TRUE
+BPLCON1BITS                 EQU 0
 BPLCON2BITS                 EQU BPLCON2F_PF2P2
 BPLCON3BITS1                EQU BPLCON3F_SPRES0
 BPLCON3BITS2                EQU BPLCON3BITS1+BPLCON3F_LOCT
@@ -552,16 +552,16 @@ spr7_y_size2     EQU sprite7_SIZE/(spr_x_size2/8)
   INCLUDE "variables-offsets.i"
 
 ; **** Wobble-Display ****
-wd_state                      RS.W 1
+wd_active                     RS.W 1
 
 ; **** Image-Fader ****
 if_colors_counter             RS.W 1
-if_copy_colors_state          RS.W 1
+if_copy_colors_active         RS.W 1
 
-ifi_state                     RS.W 1
+ifi_active                    RS.W 1
 ifi_fader_angle               RS.W 1
 
-ifo_state                     RS.W 1
+ifo_active                    RS.W 1
 ifo_fader_angle               RS.W 1
 
 ; **** Image-Pixel-Fader ****
@@ -569,11 +569,11 @@ ifo_fader_angle               RS.W 1
 ipf_mask                      RS.L 1
 ipf_variable_destination_size RS.W 1
 
-ipfi_state                    RS.W 1
+ipfi_active                   RS.W 1
 ipfi_delay_counter            RS.W 1
 ipfi_delay_angle              RS.W 1
 
-ipfo_state                    RS.W 1
+ipfo_active                   RS.W 1
 ipfo_delay_counter            RS.W 1
 ipfo_delay_angle              RS.W 1
 
@@ -581,7 +581,7 @@ ipfo_delay_angle              RS.W 1
 eh_trigger_number             RS.W 1
 
 ; **** Main ****
-fx_state                      RS.W 1
+fx_active                     RS.W 1
 
 variables_SIZE                RS.B 0
 
@@ -604,18 +604,18 @@ init_own_variables
 
 ; **** Wobble-Display ****
   moveq   #FALSE,d1
-  move.w  d1,wd_state(a3)
+  move.w  d1,wd_active(a3)
 
 ; **** Image-Fader ****
-  moveq   #TRUE,d0
+  moveq   #0,d0
   move.w  d0,if_colors_counter(a3)
-  move.w  d1,if_copy_colors_state(a3)
+  move.w  d1,if_copy_colors_active(a3)
 
-  move.w  d1,ifi_state(a3)
+  move.w  d1,ifi_active(a3)
   MOVEF.W sine_table_length/4,d2
   move.w  d2,ifi_fader_angle(a3) ;90 Grad
 
-  move.w  d1,ifo_state(a3)
+  move.w  d1,ifo_active(a3)
   move.w  d2,ifo_fader_angle(a3) ;90 Grad
 
 ; **** Image-Pixel-Fader ****
@@ -623,12 +623,12 @@ init_own_variables
   moveq   #ipf_destination_size,d2
   move.w  d2,ipf_variable_destination_size(a3)
 
-  move.w  d1,ipfi_state(a3)
+  move.w  d1,ipfi_active(a3)
   move.w  d0,ipfi_delay_counter(a3)
   MOVEF.W sine_table_length/4,d2
   move.w  d2,ipfi_delay_angle(a3) ;90 Grad
 
-  move.w  d1,ipfo_state(a3)
+  move.w  d1,ipfo_active(a3)
   move.w  d0,ipfo_delay_counter(a3)
   move.w  d2,ipfo_delay_angle(a3) ;90 Grad
 
@@ -636,7 +636,7 @@ init_own_variables
   move.w  d0,eh_trigger_number(a3)
 
 ; **** Main ****
-  move.w  d1,fx_state(a3)
+  move.w  d1,fx_active(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
@@ -859,7 +859,7 @@ beam_routines
   bsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   fx_state(a3)       ;Effekte beendet ?
+  tst.w   fx_active(a3)      ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
   move.w  custom_error_code(a3),d1
@@ -907,7 +907,7 @@ get_sample_data
   bne.s   cs_no_new_note     ;Nein -> verzweige
   move.l  n_start(a0),n_current_start(a0) ;Aktuelle Startadresse des Samples
   move.l  n_length(a0),n_current_length(a0) ;Aktuelle Länge und Periode
-  moveq   #TRUE,d0
+  moveq   #0,d0
   move.w  d0,n_channel_data_position(a0) ;Position in Sampledaten zurücksetzen
   moveq   #FALSE,d0
   move.b  d0,n_note_trigger(a0) ;Note Trigger Flag zurücksetzen
@@ -968,7 +968,7 @@ no_get_sample_data
 ; ----------------------
   CNOP 0,4
 wobble_display
-  tst.w   wd_state(a3)       ;Wobble-Display an ?
+  tst.w   wd_active(a3)      ;Wobble-Display an ?
   bne.s   no_wobble_display  ;Nein -> verweige
   MOVEF.W $ff,d3             ;Scrolling-Maske H0-H7
   moveq   #cl2_extension1_SIZE,d4
@@ -1002,7 +1002,7 @@ no_wobble_display
 ; -----------------------
   CNOP 0,4
 image_fader_in
-  tst.w   ifi_state(a3)      ;Image-Fader-In an ?
+  tst.w   ifi_active(a3)     ;Image-Fader-In an ?
   bne.s   no_image_fader_in  ;Nein -> verzweige
   movem.l a4-a6,-(a7)
   move.w  ifi_fader_angle(a3),d2 ;Fader-Winkel 
@@ -1033,7 +1033,7 @@ ifi_save_fader_angle
   move.w  d6,if_colors_counter(a3) ;Image-Fader-In fertig ?
   bne.s   no_image_fader_in  ;Nein -> verzweige
   moveq   #FALSE,d0
-  move.w  d0,ifi_state(a3)   ;Image-Fader-In aus
+  move.w  d0,ifi_active(a3)  ;Image-Fader-In aus
 no_image_fader_in
   rts
 
@@ -1041,7 +1041,7 @@ no_image_fader_in
 ; -----------------------
   CNOP 0,4
 image_fader_out
-  tst.w   ifo_state(a3)      ;Image-Fader-Out an ?
+  tst.w   ifo_active(a3)     ;Image-Fader-Out an ?
   bne.s   no_image_fader_out ;Nein -> verzweige
   movem.l a4-a6,-(a7)
   move.w  ifo_fader_angle(a3),d2 ;Fader-Winkel 
@@ -1072,7 +1072,7 @@ ifo_save_fader_angle
   move.w  d6,if_colors_counter(a3) ;Image-Fader-Out fertig ?
   bne.s   no_image_fader_out ;Nein -> verzweige
   moveq   #FALSE,d0
-  move.w  d0,ifo_state(a3)   ;Image-Fader-Out aus
+  move.w  d0,ifo_active(a3)  ;Image-Fader-Out aus
 no_image_fader_out
   rts
 
@@ -1086,7 +1086,7 @@ no_image_fader_out
 ; --------------------------------
   CNOP 0,4
 image_pixel_fader_in
-  tst.w   ipfi_state(a3)     ;Image-Pixel-Fader-In an ?
+  tst.w   ipfi_active(a3)    ;Image-Pixel-Fader-In an ?
   bne.s   no_image_pixel_fader_in ;FALSE -> verzweige
   subq.w  #1,ipfi_delay_counter(a3) ;Zähler verringern
   bgt.s   no_image_pixel_fader_in ;Wenn > Null -> verzweige
@@ -1131,14 +1131,14 @@ no_image_pixel_fader_in
   CNOP 0,4
 ipfi_finished
   moveq   #FALSE,d0
-  move.w  d0,ipfi_state(a3)  ;Image-Pixel-Fader-In aus
+  move.w  d0,ipfi_active(a3) ;Image-Pixel-Fader-In aus
   rts
 
 ; ** Logo Pixelweise ausblenden **
 ; --------------------------------
   CNOP 0,4
 image_pixel_fader_out
-  tst.w   ipfo_state(a3)     ;Image-Pixel-Fader-Out an ?
+  tst.w   ipfo_active(a3)    ;Image-Pixel-Fader-Out an ?
   bne.s   no_image_pixel_fader_out ;FALSE -> verzweige
   subq.w  #1,ipfo_delay_counter(a3) ;Zähler verringern
   bgt.s   no_image_pixel_fader_out ;Wenn > Null -> verzweige
@@ -1182,8 +1182,8 @@ no_image_pixel_fader_out
   CNOP 0,4
 ipfo_finished
   moveq   #FALSE,d0
-  move.w  d0,ipfo_state(a3)  ;Image-Pixel-Fader-Out aus
-  moveq   #TRUE,d0
+  move.w  d0,ipfo_active(a3) ;Image-Pixel-Fader-Out aus
+  moveq   #0,d0
   move.l  d0,ipf_mask(a3)    ;Maske = NULL
   rts
 
@@ -1289,36 +1289,36 @@ no_check_effects_trigger
   CNOP 0,4
 eh_start_image_fader_in
   move.w  #if_colors_number*3,if_colors_counter(a3)
-  moveq   #TRUE,d0
-  move.w  d0,ifi_state(a3)   ;Image-Fader-In an
-  move.w  d0,if_copy_colors_state(a3) ;Kopieren der Farben an
+  moveq   #0,d0
+  move.w  d0,ifi_active(a3)  ;Image-Fader-In an
+  move.w  d0,if_copy_colors_active(a3) ;Kopieren der Farben an
   rts
   CNOP 0,4
 eh_start_wobble_display
-  clr.w   wd_state(a3)       ;Wobble-Display an
+  clr.w   wd_active(a3)      ;Wobble-Display an
   rts
   CNOP 0,4
 eh_start_image_pixel_fader_in
-  clr.w   ipfi_state(a3)     ;Image-Pixel-Fader-In an
+  clr.w   ipfi_active(a3)    ;Image-Pixel-Fader-In an
   moveq   #1,d2
   move.w  d2,ipfi_delay_counter(a3) ;Verzögerungszähler aktivieren
   rts
   CNOP 0,4
 eh_start_image_pixel_fader_out
-  clr.w   ipfo_state(a3)     ;Image-Pixel-Fader-Out an
+  clr.w   ipfo_active(a3)    ;Image-Pixel-Fader-Out an
   moveq   #1,d2
   move.w  d2,ipfo_delay_counter(a3) ;Verzögerungszähler aktivieren
   rts
   CNOP 0,4
 eh_start_image_fader_out
   move.w  #if_colors_number*3,if_colors_counter(a3)
-  moveq   #TRUE,d0
-  move.w  d0,ifo_state(a3)   ;Image-Fader-Out an
-  move.w  d0,if_copy_colors_state(a3) ;Kopieren der Farben an
+  moveq   #0,d0
+  move.w  d0,ifo_active(a3)  ;Image-Fader-Out an
+  move.w  d0,if_copy_colors_active(a3) ;Kopieren der Farben an
   rts
   CNOP 0,4
 eh_stop_all
-  clr.w   fx_state(a3)       ;Effekte beendet
+  clr.w   fx_active(a3)      ;Effekte beendet
   rts
 
 ; ** Mouse-Handler **

@@ -63,9 +63,9 @@ requires_68060             EQU FALSE
 requires_fast_memory       EQU FALSE
 requires_multiscan_monitor EQU FALSE
 
-workbench_start            EQU FALSE
-workbench_fade             EQU FALSE
-text_output                EQU FALSE
+workbench_start_enabled    EQU FALSE
+workbench_fade_enabled     EQU FALSE
+text_output_enabled        EQU FALSE
 
 sys_taken_over
 wrapper
@@ -82,34 +82,34 @@ pt_v3.0b
   IFD pt_v3.0b
     INCLUDE "music-tracker/pt3-equals.i"
   ENDC
-pt_ciatiming               EQU TRUE
+pt_ciatiming_enabled       EQU TRUE
 pt_usedfx                  EQU %1001010100000000
 pt_usedefx                 EQU %0000000000000000
-pt_finetune                EQU FALSE
+pt_finetune_enabled        EQU FALSE
   IFD pt_v3.0b
-pt_metronome               EQU FALSE
+pt_metronome_enabled       EQU FALSE
   ENDC
-pt_track_channel_volumes   EQU FALSE
-pt_track_channel_periods   EQU FALSE
-pt_music_fader             EQU FALSE
-pt_split_module            EQU TRUE
+pt_track_volumes_enabled   EQU FALSE
+pt_track_periods_enabled   EQU FALSE
+pt_music_fader_enabled     EQU FALSE
+pt_split_module_enabled    EQU TRUE
 
 DMABITS                    EQU DMAF_COPPER+DMAF_SETCLR
 
-  IFEQ pt_ciatiming
+  IFEQ pt_ciatiming_enabled
 INTENABITS                 EQU INTF_EXTER+INTF_SETCLR
   ELSE
 INTENABITS                 EQU INTF_VERTB+INTF_EXTER+INTF_SETCLR
   ENDC
 
 CIAAICRBITS                EQU CIAICRF_SETCLR
-  IFEQ pt_ciatiming
+  IFEQ pt_ciatiming_enabled
 CIABICRBITS                EQU CIAICRF_TA+CIAICRF_TB+CIAICRF_SETCLR
   ELSE
 CIABICRBITS                EQU CIAICRF_TB+CIAICRF_SETCLR
   ENDC
 
-COPCONBITS                 EQU TRUE
+COPCONBITS                 EQU 0
 
 pf1_x_size1                EQU 0
 pf1_y_size1                EQU 0
@@ -160,35 +160,35 @@ chip_memory_size           EQU 0
 
 AGA_OS_Version             EQU 39
 
-  IFEQ pt_ciatiming
+  IFEQ pt_ciatiming_enabled
 CIABCRABITS                EQU CIACRBF_LOAD
   ENDC
 CIABCRBBITS                EQU CIACRBF_LOAD+CIACRBF_RUNMODE ;Oneshot mode
-CIAA_TA_value              EQU 0
-CIAA_TB_value              EQU 0
-  IFEQ pt_ciatiming
-CIAB_TA_value              EQU 14187 ;= 0.709379 MHz * [20000 µs = 50 Hz duration for one frame on a PAL machine]
-;CIAB_TA_value              EQU 14318 ;= 0.715909 MHz * [20000 µs = 50 Hz duration for one frame on a NTSC machine]
+CIAA_TA_time               EQU 0
+CIAA_TB_time               EQU 0
+  IFEQ pt_ciatiming_enabled
+CIAB_TA_time               EQU 14187 ;= 0.709379 MHz * [20000 µs = 50 Hz duration for one frame on a PAL machine]
+;CIAB_TA_time               EQU 14318 ;= 0.715909 MHz * [20000 µs = 50 Hz duration for one frame on a NTSC machine]
   ELSE
-CIAB_TA_value              EQU 0
+CIAB_TA_time               EQU 0
   ENDC
-CIAB_TB_value              EQU 362 ;= 0.709379 MHz * [511.43 µs = Lowest note period C1 with Tuning=-8 * 2 / PAL clock constant = 907*2/3546895 ticks per second]
-                                 ;= 0.715909 MHz * [506.76 µs = Lowest note period C1 with Tuning=-8 * 2 / NTSC clock constant = 907*2/3579545 ticks per second]
-CIAA_TA_continuous         EQU FALSE
-CIAA_TB_continuous         EQU FALSE
-  IFEQ pt_ciatiming
-CIAB_TA_continuous         EQU TRUE
+CIAB_TB_time               EQU 362 ;= 0.709379 MHz * [511.43 µs = Lowest note period C1 with Tuning=-8 * 2 / PAL clock constant = 907*2/3546895 ticks per second]
+                                   ;= 0.715909 MHz * [506.76 µs = Lowest note period C1 with Tuning=-8 * 2 / NTSC clock constant = 907*2/3579545 ticks per second]
+CIAA_TA_continuous_enabled EQU FALSE
+CIAA_TB_continuous_enabled EQU FALSE
+  IFEQ pt_ciatiming_enabled
+CIAB_TA_continuous_enabled EQU TRUE
   ELSE
-CIAB_TA_continuous         EQU FALSE
+CIAB_TA_continuous_enabled EQU FALSE
   ENDC
-CIAB_TB_continuous         EQU FALSE
+CIAB_TB_continuous_enabled EQU FALSE
 
 beam_position              EQU $136
 
 BPLCON0BITS                EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
-BPLCON3BITS1               EQU TRUE
+BPLCON3BITS1               EQU 0
 BPLCON3BITS2               EQU BPLCON3BITS1+BPLCON3F_LOCT
-BPLCON4BITS                EQU TRUE
+BPLCON4BITS                EQU 0
 
 cl1_HSTART                 EQU $00
 cl1_VSTART                 EQU beam_position&$ff
@@ -341,7 +341,7 @@ init_custom_memory_table
   move.l  #part_1_audio_memory_size1,(a0)+ ;Speichergröße
   moveq   #custom_memory_fast,d2
   move.l  d2,(a0)+           ;Speicherart: vorrangig fast-memory
-  moveq   #TRUE,d0
+  moveq   #0,d0
   move.l  d0,(a0)+           ;Zeiger auf Speicherbereich = Null
   move.l  #part_1_audio_memory_size2,(a0)+ ;Speichergröße
   move.l  d0,(a0)+           ;Speicherart: chip-memory
@@ -375,38 +375,21 @@ extend_global_references_table
   CNOP 0,4
 init_all
   bsr.s   pt_DetectSysFrequ
-  bsr.s   init_CIA_timers
-  bsr     init_color_registers
-  bsr     pt_decrunch_audio_data
+  bsr.s   pt_decrunch_audio_data
   bsr     pt_InitRegisters
   bsr     pt_InitAudTempStrucs
   bsr     pt_ExamineSongStruc
-  IFEQ pt_finetune
+  IFEQ pt_finetune_enabled
     bsr     pt_InitFtuPeriodTableStarts
   ENDC
+  bsr     init_color_registers
+  bsr     init_CIA_timers
   bra     init_first_copperlist
 
+; **** PT-Replay ****
 ; ** Detect system frequency NTSC/PAL **
 ; --------------------------------------
   PT_DETECT_SYS_FREQUENCY
-
-; ** CIA-Timer initialisieren **
-; ------------------------------
-  CNOP 0,4
-init_CIA_timers
-  PT_INIT_TIMERS
-  rts
-
-; ** Farbregister initialisieren **
-; ---------------------------------
-  CNOP 0,4
-init_color_registers
-  CPU_SELECT_COLORHI_BANK 0
-  CPU_INIT_COLORHI COLOR00,1,pf1_color_table
-
-  CPU_SELECT_COLORLO_BANK 0
-  CPU_INIT_COLORLO COLOR00,1,pf1_color_table
-  rts
 
 ; ** Audiodaten entpacken **
 ; --------------------------
@@ -440,12 +423,30 @@ pt_decrunch_audio_data
 ; -----------------------------------------------------------------------------------
    PT_EXAMINE_SONG_STRUCTURE
 
-  IFEQ pt_finetune
+  IFEQ pt_finetune_enabled
 ; ** FineTuning-Offset-Tabelle initialisieren **
 ; ----------------------------------------------
     PT_INIT_FINETUNING_PERIOD_TABLE_STARTS
   ENDC
 
+
+; ** Farbregister initialisieren **
+; ---------------------------------
+  CNOP 0,4
+init_color_registers
+  CPU_SELECT_COLORHI_BANK 0
+  CPU_INIT_COLORHI COLOR00,1,pf1_color_table
+
+  CPU_SELECT_COLORLO_BANK 0
+  CPU_INIT_COLORLO COLOR00,1,pf1_color_table
+  rts
+
+; ** CIA-Timer initialisieren **
+; ------------------------------
+  CNOP 0,4
+init_CIA_timers
+  PT_INIT_TIMERS
+  rts
 
 ; ** 1. Copperliste initialisieren **
 ; -----------------------------------
@@ -534,21 +535,21 @@ free_next_custom_memory
   
   INCLUDE "int-autovectors-handlers.i"
 
-  IFEQ pt_ciatiming
+  IFEQ pt_ciatiming_enabled
 ; ** CIA-B timer A interrupt server **
 ; ------------------------------------
   CNOP 0,4
 CIAB_TA_int_server
   ENDC
 
-  IFNE pt_ciatiming
+  IFNE pt_ciatiming_enabled
 ; ** Vertical blank interrupt server **
 ; -------------------------------------
   CNOP 0,4
 VERTB_int_server
   ENDC
 
-  IFEQ pt_music_fader
+  IFEQ pt_music_fader_enabled
     bsr.s   pt_fade_out_music
     bra.s   pt_PlayMusic
 
@@ -677,7 +678,7 @@ custom_memory_table
 ; --------------------------
 
 ; **** PT-Replay ****
-  IFEQ pt_split_module
+  IFEQ pt_split_module_enabled
 pt_auddata SECTION pt_audio,DATA
     INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/modules/mod.CR78-Song.song.stc"
 pt_audsmps SECTION pt_audio2,DATA_C

@@ -57,199 +57,196 @@
 
   INCLUDE "equals.i"
 
-requires_68030              EQU FALSE
-requires_68040              EQU FALSE
-requires_68060              EQU FALSE
-requires_fast_memory        EQU FALSE
-requires_multiscan_monitor  EQU FALSE
+requires_68030                  EQU FALSE
+requires_68040                  EQU FALSE
+requires_68060                  EQU FALSE
+requires_fast_memory            EQU FALSE
+requires_multiscan_monitor      EQU FALSE
 
-workbench_start             EQU FALSE
-workbench_fade              EQU FALSE
-text_output                 EQU FALSE
+workbench_start_enabled         EQU FALSE
+workbench_fade_enabled          EQU FALSE
+text_output_enabled             EQU FALSE
 
 sys_taken_over
 pass_global_references
 pass_return_code
 color_gradient_RGB8
-open_border                 EQU TRUE
+open_border_enabled             EQU TRUE
 
-tccb_quick_clear            EQU TRUE
-tccb_restore_cl_by_cpu      EQU TRUE
-tccb_restore_cl_by_blitter  EQU FALSE
+tccb_quick_clear_enabled        EQU TRUE
+tccb_restore_cl_cpu_enabled     EQU TRUE
+tccb_restore_cl_blitter_enabled EQU FALSE
 
-  IFEQ open_border
-DMABITS                     EQU DMAF_BLITTER+DMAF_COPPER+DMAF_SETCLR
+  IFEQ open_border_enabled
+DMABITS                         EQU DMAF_BLITTER+DMAF_COPPER+DMAF_SETCLR
   ELSE
-DMABITS                     EQU DMAF_BLITTER+DMAF_COPPER+DMAF_RASTER+MAF_SETCLR
+DMABITS                         EQU DMAF_BLITTER+DMAF_COPPER+DMAF_RASTER+MAF_SETCLR
   ENDC
-INTENABITS                  EQU INTF_SETCLR
+INTENABITS                      EQU INTF_SETCLR
 
-CIAAICRBITS                 EQU CIAICRF_SETCLR
-CIABICRBITS                 EQU CIAICRF_SETCLR
+CIAAICRBITS                     EQU CIAICRF_SETCLR
+CIABICRBITS                     EQU CIAICRF_SETCLR
 
-COPCONBITS                  EQU TRUE
+COPCONBITS                      EQU 0
 
-pf1_x_size1                 EQU 0
-pf1_y_size1                 EQU 0
-pf1_depth1                  EQU 0
-pf1_x_size2                 EQU 0
-pf1_y_size2                 EQU 0
-pf1_depth2                  EQU 0
-  IFEQ open_border
-pf1_x_size3                 EQU 0
-pf1_y_size3                 EQU 0
-pf1_depth3                  EQU 0
+pf1_x_size1                     EQU 0
+pf1_y_size1                     EQU 0
+pf1_depth1                      EQU 0
+pf1_x_size2                     EQU 0
+pf1_y_size2                     EQU 0
+pf1_depth2                      EQU 0
+  IFEQ open_border_enabled
+pf1_x_size3                     EQU 0
+pf1_y_size3                     EQU 0
+pf1_depth3                      EQU 0
   ELSE
-pf1_x_size3                 EQU 32
-pf1_y_size3                 EQU 1
-pf1_depth3                  EQU 1
+pf1_x_size3                     EQU 32
+pf1_y_size3                     EQU 1
+pf1_depth3                      EQU 1
   ENDC
-pf1_colors_number           EQU 161
+pf1_colors_number               EQU 161
 
-pf2_x_size1                 EQU 0
-pf2_y_size1                 EQU 0
-pf2_depth1                  EQU 0
-pf2_x_size2                 EQU 0
-pf2_y_size2                 EQU 0
-pf2_depth2                  EQU 0
-pf2_x_size3                 EQU 0
-pf2_y_size3                 EQU 0
-pf2_depth3                  EQU 0
-pf2_colors_number           EQU 0
-pf_colors_number            EQU pf1_colors_number+pf2_colors_number
-pf_depth                    EQU pf1_depth3+pf2_depth3
+pf2_x_size1                     EQU 0
+pf2_y_size1                     EQU 0
+pf2_depth1                      EQU 0
+pf2_x_size2                     EQU 0
+pf2_y_size2                     EQU 0
+pf2_depth2                      EQU 0
+pf2_x_size3                     EQU 0
+pf2_y_size3                     EQU 0
+pf2_depth3                      EQU 0
+pf2_colors_number               EQU 0
+pf_colors_number                EQU pf1_colors_number+pf2_colors_number
+pf_depth                        EQU pf1_depth3+pf2_depth3
 
-extra_pf_number             EQU 0
+extra_pf_number                 EQU 0
 
-spr_number                  EQU 0
-spr_x_size1                 EQU 0
-spr_y_size1                 EQU 0
-spr_x_size2                 EQU 0
-spr_y_size2                 EQU 0
-spr_depth                   EQU 0
-spr_colors_number           EQU 0
+spr_number                      EQU 0
+spr_x_size1                     EQU 0
+spr_y_size1                     EQU 0
+spr_x_size2                     EQU 0
+spr_y_size2                     EQU 0
+spr_depth                       EQU 0
+spr_colors_number               EQU 0
 
-audio_memory_size           EQU 0
+audio_memory_size               EQU 0
 
-disk_memory_size            EQU 0
+disk_memory_size                EQU 0
 
-chip_memory_size            EQU 0
+chip_memory_size                EQU 0
 
-AGA_OS_Version              EQU 39
+AGA_OS_Version                  EQU 39
 
-CIAA_TA_value               EQU 0
-CIAA_TB_value               EQU 0
-CIAB_TA_value               EQU 0
-CIAB_TB_value               EQU 0
-CIAA_TA_continuous          EQU FALSE
-CIAA_TB_continuous          EQU FALSE
-CIAB_TA_continuous          EQU FALSE
-CIAB_TB_continuous          EQU FALSE
+CIAA_TA_time                    EQU 0
+CIAA_TB_time                    EQU 0
+CIAB_TA_time                    EQU 0
+CIAB_TB_time                    EQU 0
+CIAA_TA_continuous_enabled      EQU FALSE
+CIAA_TB_continuous_enabled      EQU FALSE
+CIAB_TA_continuous_enabled      EQU FALSE
+CIAB_TB_continuous_enabled      EQU FALSE
 
-beam_position               EQU $136
+beam_position                   EQU $136
 
-  IFNE open_border 
-pixel_per_line              EQU 32
+  IFNE open_border_enabled 
+pixel_per_line                  EQU 32
   ENDC
-visible_pixels_number       EQU 352
-visible_lines_number        EQU 256
+visible_pixels_number           EQU 352
+visible_lines_number            EQU 256
 
-MINROW                      EQU VSTART_256_lines
+MINROW                          EQU VSTART_256_lines
 
-  IFNE open_border 
-pf_pixel_per_datafetch      EQU 16 ;1x
-DDFSTRTBITS                 EQU DDFSTART_overscan_32_pixel
-DDFSTOPBITS                 EQU DDFSTOP_overscan_32_pixel_min
-  ENDC
-
-display_window_HSTART       EQU HSTART_44_chunky_pixel
-display_window_VSTART       EQU MINROW
-DIWSTRTBITS                 EQU ((display_window_VSTART&$ff)*DIWSTRTF_V0)+(display_window_HSTART&$ff)
-display_window_HSTOP        EQU HSTOP_44_chunky_pixel
-display_window_VSTOP        EQU VSTOP_256_lines
-DIWSTOPBITS                 EQU ((display_window_VSTOP&$ff)*DIWSTOPF_V0)+(display_window_HSTOP&$ff)
-
-  IFNE open_border 
-pf1_plane_width             EQU pf1_x_size3/8
-data_fetch_width            EQU pixel_per_line/8
-pf1_plane_moduli            EQU -(pf1_plane_width-(pf1_plane_width-data_fetch_width))
+  IFNE open_border_enabled 
+pf_pixel_per_datafetch          EQU 16 ;1x
+DDFSTRTBITS                     EQU DDFSTART_overscan_32_pixel
+DDFSTOPBITS                     EQU DDFSTOP_overscan_32_pixel_min
   ENDC
 
-BPLCON0BITS                 EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
-;BPLCON1BITS                 EQU TRUE
-;BPLCON2BITS                 EQU TRUE
-BPLCON3BITS1                EQU TRUE
-BPLCON3BITS2                EQU BPLCON3BITS1+BPLCON3F_LOCT
-BPLCON3BITS3                EQU BPLCON3BITS1+BPLCON3F_BANK0+BPLCON3F_BANK1+BPLCON3F_BANK2
-BPLCON3BITS4                EQU BPLCON3BITS2+BPLCON3F_BANK0+BPLCON3F_BANK1+BPLCON3F_BANK2
-BPLCON4BITS                 EQU TRUE
-DIWHIGHBITS                 EQU (((display_window_HSTOP&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_VSTOP&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_HSTART&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_VSTART&$700)>>8)
-;FMODEBITS                   EQU TRUE
+display_window_HSTART           EQU HSTART_44_chunky_pixel
+display_window_VSTART           EQU MINROW
+DIWSTRTBITS                     EQU ((display_window_VSTART&$ff)*DIWSTRTF_V0)+(display_window_HSTART&$ff)
+display_window_HSTOP            EQU HSTOP_44_chunky_pixel
+display_window_VSTOP            EQU VSTOP_256_lines
+DIWSTOPBITS                     EQU ((display_window_VSTOP&$ff)*DIWSTOPF_V0)+(display_window_HSTOP&$ff)
 
-cl1_display_x_size          EQU 352
-cl1_display_width           EQU cl1_display_x_size/8
-cl1_display_y_size          EQU visible_lines_number
-  IFEQ open_border
-cl1_HSTART1                 EQU display_window_HSTART-(1*CMOVE_slot_period)-4
+  IFNE open_border_enabled 
+pf1_plane_width                 EQU pf1_x_size3/8
+data_fetch_width                EQU pixel_per_line/8
+pf1_plane_moduli                EQU -(pf1_plane_width-(pf1_plane_width-data_fetch_width))
+  ENDC
+
+BPLCON0BITS                     EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
+BPLCON3BITS1                    EQU 0
+BPLCON3BITS2                    EQU BPLCON3BITS1+BPLCON3F_LOCT
+BPLCON3BITS3                    EQU BPLCON3BITS1+BPLCON3F_BANK0+BPLCON3F_BANK1+BPLCON3F_BANK2
+BPLCON3BITS4                    EQU BPLCON3BITS2+BPLCON3F_BANK0+BPLCON3F_BANK1+BPLCON3F_BANK2
+BPLCON4BITS                     EQU 0
+DIWHIGHBITS                     EQU (((display_window_HSTOP&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_VSTOP&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_HSTART&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_VSTART&$700)>>8)
+
+cl1_display_x_size              EQU 352
+cl1_display_width               EQU cl1_display_x_size/8
+cl1_display_y_size              EQU visible_lines_number
+  IFEQ open_border_enabled
+cl1_HSTART1                     EQU display_window_HSTART-(1*CMOVE_slot_period)-4
   ELSE
-cl1_HSTART1                 EQU display_window_HSTART-4
+cl1_HSTART1                     EQU display_window_HSTART-4
   ENDC
-cl1_VSTART1                 EQU MINROW
-cl1_HSTART2                 EQU $00
-cl1_VSTART2                 EQU beam_position&$ff
+cl1_VSTART1                     EQU MINROW
+cl1_HSTART2                     EQU $00
+cl1_VSTART2                     EQU beam_position&$ff
 
-sine_table_length           EQU 512
+sine_table_length               EQU 512
 
 ; **** Twisted-Colorcycle-Bars ****
-tccb_bars_number            EQU 10
-tccb_bar_height             EQU 32
-tccb_y_radius               EQU (cl1_display_y_size-tccb_bar_height)/2
-tccb_y_center               EQU (cl1_display_y_size-tccb_bar_height)/2
-tccb_y_radius_angle_speed   EQU 5
-tccb_y_radius_angle_step    EQU 1
-tccb_y_angle_speed          EQU 3
-tccb_y_angle_step           EQU 2
-tccb_y_distance             EQU 16
+tccb_bars_number                EQU 10
+tccb_bar_height                 EQU 32
+tccb_y_radius                   EQU (cl1_display_y_size-tccb_bar_height)/2
+tccb_y_center                   EQU (cl1_display_y_size-tccb_bar_height)/2
+tccb_y_radius_angle_speed       EQU 5
+tccb_y_radius_angle_step        EQU 1
+tccb_y_angle_speed              EQU 3
+tccb_y_angle_step               EQU 2
+tccb_y_distance                 EQU 16
 
 ; **** Clear-Blit ****
-tccb_clear_blit_x_size      EQU 16
-  IFEQ open_border
-tccb_clear_blit_y_size      EQU cl1_display_y_size*(cl1_display_width+2)
+tccb_clear_blit_x_size          EQU 16
+  IFEQ open_border_enabled
+tccb_clear_blit_y_size          EQU cl1_display_y_size*(cl1_display_width+2)
   ELSE
-tccb_clear_blit_y_size      EQU cl1_display_y_size*(cl1_display_width+1)
+tccb_clear_blit_y_size          EQU cl1_display_y_size*(cl1_display_width+1)
   ENDC
 
 ; **** Restore-Blit ****
-tccb_restore_blit_x_size    EQU 16
-tccb_restore_blit_width     EQU tccb_restore_blit_x_size/8
-tccb_restore_blit_y_size    EQU cl1_display_y_size
+tccb_restore_blit_x_size        EQU 16
+tccb_restore_blit_width         EQU tccb_restore_blit_x_size/8
+tccb_restore_blit_y_size        EQU cl1_display_y_size
 
 ; **** Colorcycle  ****
-cc_speed                    EQU 4
-cc_step                     EQU 64
+cc_speed                        EQU 4
+cc_step                         EQU 64
 
 ; **** Blind-Fader ****
-bf_lamella_height           EQU 16
-bf_lamellas_number          EQU visible_lines_number/bf_lamella_height
-bf_step1                    EQU 1
-bf_step2                    EQU 1
-bf_speed                    EQU 2
+bf_lamella_height               EQU 16
+bf_lamellas_number              EQU visible_lines_number/bf_lamella_height
+bf_step1                        EQU 1
+bf_step2                        EQU 1
+bf_speed                        EQU 2
 
-bf_registers_table_length   EQU bf_lamella_height*4
+bf_registers_table_length       EQU bf_lamella_height*4
 
 ; **** Effects-Handler ****
-eh_trigger_number_max       EQU 3
+eh_trigger_number_max           EQU 3
 
 
-color_x_step                EQU 1
-color_y_step                EQU 255/(tccb_bar_height/2)
-color_x_values_number       EQU 255
-color_y_values_number       EQU tccb_bar_height/2
-segments_number             EQU 5
+color_x_step                    EQU 1
+color_y_step                    EQU 255/(tccb_bar_height/2)
+color_x_values_number           EQU 255
+color_y_values_number           EQU tccb_bar_height/2
+segments_number                 EQU 5
 
-ct_size                     EQU color_y_values_number*segments_number*color_x_values_number
+ct_size                         EQU color_y_values_number*segments_number*color_x_values_number
 
-tccb_switch_table_size     EQU tccb_bar_height*tccb_bars_number
+tccb_switch_table_size          EQU tccb_bar_height*tccb_bars_number
 
 
 
@@ -263,8 +260,8 @@ tccb_switch_table_size     EQU tccb_bar_height*tccb_bars_number
 ; ----------------------------
   RSRESET
 
-em_color_table   RS.L ct_size
-em_switch_table  RS.B tccb_switch_table_size
+em_color_table    RS.L ct_size
+em_switch_table   RS.B tccb_switch_table_size
 extra_memory_size RS.B 0
 
 
@@ -293,7 +290,7 @@ extra_memory_size RS.B 0
 cl1_extension1      RS.B 0
 
 cl1_ext1_WAIT       RS.L 1
-  IFEQ open_border 
+  IFEQ open_border_enabled 
 cl1_ext1_BPL1DAT    RS.L 1
   ENDC
 cl1_ext1_BPLCON4_1  RS.L 1
@@ -362,50 +359,50 @@ copperlist1_SIZE     RS.B 0
 
 ; ** Konstanten für die Größe der Copperlisten **
 ; -----------------------------------------------
-cl1_size1        EQU copperlist1_SIZE
-cl1_size2        EQU copperlist1_SIZE
-cl1_size3        EQU copperlist1_SIZE
+cl1_size1            EQU copperlist1_SIZE
+cl1_size2            EQU copperlist1_SIZE
+cl1_size3            EQU copperlist1_SIZE
 
-cl2_size1        EQU 0
-cl2_size2        EQU 0
-cl2_size3        EQU 0
+cl2_size1            EQU 0
+cl2_size2            EQU 0
+cl2_size3            EQU 0
 
 
 ; ** Konstanten für die Größe der Spritestrukturen **
 ; ---------------------------------------------------
-spr0_x_size1      EQU spr_x_size1
-spr0_y_size1      EQU 0
-spr1_x_size1      EQU spr_x_size1
-spr1_y_size1      EQU 0
-spr2_x_size1      EQU spr_x_size1
-spr2_y_size1      EQU 0
-spr3_x_size1      EQU spr_x_size1
-spr3_y_size1      EQU 0
-spr4_x_size1      EQU spr_x_size1
-spr4_y_size1      EQU 0
-spr5_x_size1      EQU spr_x_size1
-spr5_y_size1      EQU 0
-spr6_x_size1      EQU spr_x_size1
-spr6_y_size1      EQU 0
-spr7_x_size1      EQU spr_x_size1
-spr7_y_size1      EQU 0
+spr0_x_size1          EQU spr_x_size1
+spr0_y_size1          EQU 0
+spr1_x_size1          EQU spr_x_size1
+spr1_y_size1          EQU 0
+spr2_x_size1          EQU spr_x_size1
+spr2_y_size1          EQU 0
+spr3_x_size1          EQU spr_x_size1
+spr3_y_size1          EQU 0
+spr4_x_size1          EQU spr_x_size1
+spr4_y_size1          EQU 0
+spr5_x_size1          EQU spr_x_size1
+spr5_y_size1          EQU 0
+spr6_x_size1          EQU spr_x_size1
+spr6_y_size1          EQU 0
+spr7_x_size1          EQU spr_x_size1
+spr7_y_size1          EQU 0
 
-spr0_x_size2      EQU spr_x_size2
-spr0_y_size2      EQU 0
-spr1_x_size2      EQU spr_x_size2
-spr1_y_size2      EQU 0
-spr2_x_size2      EQU spr_x_size2
-spr2_y_size2      EQU 0
-spr3_x_size2      EQU spr_x_size2
-spr3_y_size2      EQU 0
-spr4_x_size2      EQU spr_x_size2
-spr4_y_size2      EQU 0
-spr5_x_size2      EQU spr_x_size2
-spr5_y_size2      EQU 0
-spr6_x_size2      EQU spr_x_size2
-spr6_y_size2      EQU 0
-spr7_x_size2      EQU spr_x_size2
-spr7_y_size2      EQU 0
+spr0_x_size2          EQU spr_x_size2
+spr0_y_size2          EQU 0
+spr1_x_size2          EQU spr_x_size2
+spr1_y_size2          EQU 0
+spr2_x_size2          EQU spr_x_size2
+spr2_y_size2          EQU 0
+spr3_x_size2          EQU spr_x_size2
+spr3_y_size2          EQU 0
+spr4_x_size2          EQU spr_x_size2
+spr4_y_size2          EQU 0
+spr5_x_size2          EQU spr_x_size2
+spr5_y_size2          EQU 0
+spr6_x_size2          EQU spr_x_size2
+spr6_y_size2          EQU 0
+spr7_x_size2          EQU spr_x_size2
+spr7_y_size2          EQU 0
 
 ; ** Struktur, die alle Variablenoffsets enthält **
 ; -------------------------------------------------
@@ -422,19 +419,19 @@ tccb_y_angle             RS.W 1
 tccb_y_radius_angle      RS.W 1
 
 ; **** Blind-Fader ****
-  IFEQ open_border
+  IFEQ open_border_enabled
 bf_registers_table_start RS.W 1
 
-bfi_state                RS.W 1
+bfi_active               RS.W 1
 
-bfo_state                RS.W 1
+bfo_active               RS.W 1
   ENDC
 
 ; **** Effects-Handler ****
 eh_trigger_number        RS.W 1
 
 ; **** Main ****
-fx_state                 RS.W 1
+fx_active                RS.W 1
 
 variables_SIZE           RS.B 0
 
@@ -451,7 +448,7 @@ start_03_twisted_colorcycle_bars
 init_own_variables
 
 ; **** Colorcycle ****
-  moveq   #TRUE,d0
+  moveq   #0,d0
   move.l  d0,cc_color_table_start(a3)
 
 ; **** Twisted-Colorcycle-Bars ****
@@ -459,20 +456,20 @@ init_own_variables
   move.w  d0,tccb_y_radius_angle(a3)
 
 ; **** Blind-Fader ****
-  IFEQ open_border
+  IFEQ open_border_enabled
     move.w  d0,bf_registers_table_start(a3)
 
     moveq   #FALSE,d1
-    move.w  d1,bfi_state(a3)
+    move.w  d1,bfi_active(a3)
 
-    move.w  d1,bfo_state(a3)
+    move.w  d1,bfo_active(a3)
   ENDC
 
 ; **** Effects-Handler ****
   move.w  d0,eh_trigger_number(a3)
 
 ; **** Main ****
-  move.w  d1,fx_state(a3)
+  move.w  d1,fx_active(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
@@ -480,7 +477,7 @@ init_own_variables
   CNOP 0,4
 init_all
   bsr.s   tccb_init_color_table
-  IFEQ tccb_quick_clear
+  IFEQ tccb_quick_clear_enabled
     IFNE 256-pf_colors_number
       bsr     init_color_registers
     ENDC
@@ -516,7 +513,7 @@ tccb_init_color_table_loop2
 
 ; ** Farbregister initialisieren **
 ; ---------------------------------
-  IFEQ tccb_quick_clear
+  IFEQ tccb_quick_clear_enabled
     IFNE pf_colors_number-256
 init_color_registers
       CPU_SELECT_COLORHI_BANK 7,BPLCON3BITS3
@@ -539,7 +536,7 @@ init_first_copperlist
   move.l  cl1_construction1(a3),a0 ;Aufbau-CL
   bsr.s   cl1_init_playfield_registers
   bsr     cl1_init_color_registers
-  IFEQ open_border
+  IFEQ open_border_enabled
     bsr     cl1_init_BPLCON4_registers
     bsr     cl1_init_copint
     COPLISTEND
@@ -552,7 +549,7 @@ init_first_copperlist
   ENDC
   bra     copy_first_copperlist
   
-  IFEQ open_border
+  IFEQ open_border_enabled
     COP_INIT_PLAYFIELD_REGISTERS cl1,NOBITPLANES
   ELSE
     COP_INIT_PLAYFIELD_REGISTERS cl1
@@ -588,7 +585,7 @@ cl1_init_color_registers
   COP_INIT_COLORLO COLOR00,1
   rts
 
-  COP_INIT_BPLCON4_CHUNKY_SCREEN cl1,cl1_HSTART1,cl1_VSTART1,cl1_display_x_size,cl1_display_y_size,open_border,tccb_quick_clear,FALSE,NOOP<<16
+  COP_INIT_BPLCON4_CHUNKY_SCREEN cl1,cl1_HSTART1,cl1_VSTART1,cl1_display_x_size,cl1_display_y_size,open_border_enabled,tccb_quick_clear_enabled,FALSE,NOOP<<16
 
   COP_INIT_COPINT cl1,cl1_HSTART2,cl1_VSTART2
 
@@ -629,17 +626,17 @@ beam_routines
   bsr     tccb_clear_first_copperlist
   bsr     colorcycle
   bsr     twisted_colorcycle_bars
-  IFNE tccb_quick_clear
+  IFNE tccb_quick_clear_enabled
     bsr     tccb_restore_first_copperlist
   ENDC
-  IFEQ open_border
+  IFEQ open_border_enabled
     bsr     blind_fader_in
     bsr     blind_fader_out
   ENDC
   bsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   fx_state(a3)       ;Effekte beendet ?
+  tst.w   fx_active(a3)      ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
   move.w  custom_error_code(a3),d1
@@ -653,7 +650,7 @@ fast_exit
 
 ; ** Copperliste löschen **
 ; -------------------------
-  CLEAR_BPLCON4_CHUNKY_SCREEN tccb,cl1,construction1,extension1,quick_clear
+  CLEAR_BPLCON4_CHUNKY_SCREEN tccb,cl1,construction1,extension1,quick_clear_enabled
 
 ; ** Farbwerte der Bars ändern **
 ; -------------------------------
@@ -818,17 +815,17 @@ tccb_get_y_coordinates_loop2
 
 ; ** Copper-WAIT-Befehle wiederherstellen **
 ; ------------------------------------------
-  IFNE tccb_quick_clear
+  IFNE tccb_quick_clear_enabled
     RESTORE_BPLCON4_CHUNKY_SCREEN tccb,cl1,construction2,extension1,32
   ENDC
 
 
-  IFEQ open_border
+  IFEQ open_border_enabled
 ; ** Blind-Fader-In **
 ; --------------------
     CNOP 0,4
 blind_fader_in
-    tst.w   bfi_state(a3)    ;Blind-Fader-In an ?
+    tst.w   bfi_active(a3)   ;Blind-Fader-In an ?
     bne.s   no_blind_fader_in ;Nein -> verzweige
     move.l  a4,-(a7)
     move.w  bf_registers_table_start(a3),d2 ;Registeradresse 
@@ -837,7 +834,7 @@ blind_fader_in
     cmp.w   #bf_registers_table_length/2,d0 ;Ende der Tabelle erreicht ?
     ble.s   bf_no_restart_registers_table ;Nein -> verzweige
     moveq   #FALSE,d1
-    move.w  d1,bfi_state(a3) ;Blind-Fader-In aus
+    move.w  d1,bfi_active(a3) ;Blind-Fader-In aus
 bf_no_restart_registers_table
     move.w  d0,bf_registers_table_start(a3) 
     MOVEF.W bf_registers_table_length,d3
@@ -890,7 +887,7 @@ no_blind_fader_in
 ; ---------------------
     CNOP 0,4
 blind_fader_out
-    tst.w   bfo_state(a3)    ;Blind-Fader-Out an ?
+    tst.w   bfo_active(a3)   ;Blind-Fader-Out an ?
     bne.s   no_blind_fader_out ;Nein -> verzweige
     move.l  a4,-(a7)
     move.w  bf_registers_table_start(a3),d2 ;Startwert der Tabelle 
@@ -898,7 +895,7 @@ blind_fader_out
     subq.w  #bf_speed,d0     ;Startwert der Tabelle verringern
     bpl.s   bfo_no_restart_registers_table ;Wenn positiv -> verzweige
     moveq   #FALSE,d1
-    move.w  d1,bfo_state(a3) ;Blind-Fader-Out aus
+    move.w  d1,bfo_active(a3) ;Blind-Fader-Out aus
 bfo_no_restart_registers_table
     move.w  d0,bf_registers_table_start(a3) 
     MOVEF.W bf_registers_table_length,d3
@@ -970,15 +967,15 @@ no_effects_handler
   rts
   CNOP 0,4
 eh_start_blind_fader_in
-  clr.w   bfi_state(a3)      ;Blind-Fader-In an
+  clr.w   bfi_active(a3)     ;Blind-Fader-In an
   rts
   CNOP 0,4
 eh_start_blind_fader_out
-  clr.w   bfo_state(a3)      ;Blind-Fader-Out an
+  clr.w   bfo_active(a3)     ;Blind-Fader-Out an
   rts
   CNOP 0,4
 eh_stop_all
-  clr.w   fx_state(a3)       ;Effekte beendet
+  clr.w   fx_active(a3)      ;Effekte beendet
   rts
 
 
@@ -1034,7 +1031,7 @@ tccb_color_gradient
   INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/04_tcb_Colorgradient.ct"
 
 ; **** Blind-Fader ****
-  IFEQ open_border
+  IFEQ open_border_enabled
 ; ** Tabelle mit Registeradressen **
 ; ----------------------------------
 bf_registers_table

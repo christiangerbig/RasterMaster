@@ -63,21 +63,21 @@ requires_68060                  EQU FALSE
 requires_fast_memory            EQU FALSE
 requires_multiscan_monitor      EQU FALSE
 
-workbench_start                 EQU FALSE
-workbench_fade                  EQU FALSE
-text_output                     EQU FALSE
+workbench_start_enabled         EQU FALSE
+workbench_fade_enabled          EQU FALSE
+text_output_enabled             EQU FALSE
 
 sys_taken_over
 pass_global_references
 pass_return_code
-open_border                     EQU TRUE
+open_border_enabled             EQU TRUE
 
 vcs3112_switch_table_length_256 EQU TRUE
 vcs3121_switch_table_length_256 EQU TRUE
 vcs3122_switch_table_length_256 EQU TRUE
 vcs3111_switch_table_length_256 EQU TRUE
 
-  IFEQ open_border
+  IFEQ open_border_enabled
 DMABITS                         EQU DMAF_COPPER+DMAF_SETCLR
   ELSE
 DMABITS                         EQU DMAF_COPPER+DMAF_RASTER+DMAF_SETCLR
@@ -87,7 +87,7 @@ INTENABITS                      EQU INTF_SETCLR
 CIAAICRBITS                     EQU CIAICRF_SETCLR
 CIABICRBITS                     EQU CIAICRF_SETCLR
 
-COPCONBITS                      EQU TRUE
+COPCONBITS                      EQU 0
 
 pf1_x_size1                     EQU 0
 pf1_y_size1                     EQU 0
@@ -95,7 +95,7 @@ pf1_depth1                      EQU 0
 pf1_x_size2                     EQU 0
 pf1_y_size2                     EQU 0
 pf1_depth2                      EQU 0
-  IFEQ open_border
+  IFEQ open_border_enabled
 pf1_x_size3                     EQU 0
 pf1_y_size3                     EQU 0
 pf1_depth3                      EQU 0
@@ -137,25 +137,25 @@ chip_memory_size                EQU 0
 
 AGA_OS_Version                  EQU 39
 
-CIAA_TA_value                   EQU 0
-CIAA_TB_value                   EQU 0
-CIAB_TA_value                   EQU 0
-CIAB_TB_value                   EQU 0
-CIAA_TA_continuous              EQU FALSE
-CIAA_TB_continuous              EQU FALSE
-CIAB_TA_continuous              EQU FALSE
-CIAB_TB_continuous              EQU FALSE
+CIAA_TA_time                    EQU 0
+CIAA_TB_time                    EQU 0
+CIAB_TA_time                    EQU 0
+CIAB_TB_time                    EQU 0
+CIAA_TA_continuous_enabled      EQU FALSE
+CIAA_TB_continuous_enabled      EQU FALSE
+CIAB_TA_continuous_enabled      EQU FALSE
+CIAB_TB_continuous_enabled      EQU FALSE
 
 beam_position                   EQU $136
 
-  IFNE open_border 
+  IFNE open_border_enabled 
 pixel_per_line                  EQU 32
   ENDC
 visible_pixels_number           EQU 352
 visible_lines_number            EQU 280
 MINROW                          EQU VSTART_overscan_PAL
 
-  IFNE open_border 
+  IFNE open_border_enabled 
 pf_pixel_per_datafetch          EQU 16 ;1x
 DDFSTRTBITS                     EQU DDFSTART_overscan_32_pixel
 DDFSTOPBITS                     EQU DDFSTOP_overscan_32_pixel_min
@@ -168,25 +168,22 @@ display_window_HSTOP            EQU HSTOP_44_chunky_pixel
 display_window_VSTOP            EQU MINROW+visible_lines_number
 DIWSTOPBITS                     EQU ((display_window_VSTOP&$ff)*DIWSTOPF_V0)+(display_window_HSTOP&$ff)
 
-  IFNE open_border 
+  IFNE open_border_enabled 
 pf1_plane_width                 EQU pf1_x_size3/8
 data_fetch_width                EQU pixel_per_line/8
 pf1_plane_moduli                EQU -(pf1_plane_width-(pf1_plane_width-data_fetch_width))
   ENDC
 
 BPLCON0BITS                     EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
-;BPLCON1BITS                     EQU TRUE
-;BPLCON2BITS                     EQU TRUE
-BPLCON3BITS1                    EQU TRUE
+BPLCON3BITS1                    EQU 0
 BPLCON3BITS2                    EQU BPLCON3BITS1+BPLCON3F_LOCT
-BPLCON4BITS                     EQU TRUE
+BPLCON4BITS                     EQU 0
 DIWHIGHBITS                     EQU (((display_window_HSTOP&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_VSTOP&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_HSTART&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_VSTART&$700)>>8)
-;FMODEBITS                       EQU TRUE
 
 cl2_display_x_size              EQU 352
 cl2_display_width               EQU cl2_display_x_size/8
 cl2_display_y_size              EQU visible_lines_number
-  IFEQ open_border
+  IFEQ open_border_enabled
 cl2_HSTART1                     EQU display_window_HSTART-(1*CMOVE_slot_period)-4
   ELSE
 cl2_HSTART1                     EQU display_window_HSTART-4
@@ -368,7 +365,7 @@ copperlist1_SIZE RS.B 0
 cl2_extension1      RS.B 0
 
 cl2_ext1_WAIT       RS.L 1
-  IFEQ open_border 
+  IFEQ open_border_enabled 
 cl2_ext1_BPL1DAT    RS.L 1
   ENDC
 cl2_ext1_BPLCON4_1  RS.L 1
@@ -487,39 +484,39 @@ spr7_y_size2            EQU 0
 save_a7                    RS.L 1
 
 ; **** Vert-Colorscroll3.1.1.2 ****
-vcs3112_state              RS.W 1
+vcs3112_active             RS.W 1
 vcs3112_switch_table_start RS.W 1
 vcs3112_step1_angle        RS.W 1
 
 ; **** Vert-Colorscroll3.1.2.1 ****
-vcs3121_state              RS.W 1
+vcs3121_active             RS.W 1
 vcs3121_switch_table_start RS.W 1
 vcs3121_step1_angle        RS.W 1
 
 ; **** Vert-Colorscroll3.1.2.2 ****
-vcs3122_state              RS.W 1
+vcs3122_active             RS.W 1
 vcs3122_switch_table_start RS.W 1
 vcs3122_step2_angle        RS.W 1
 
 ; **** Vert-Colorscroll3.1.1.1 ****
-vcs3111_state              RS.W 1
+vcs3111_active             RS.W 1
 vcs3111_switch_table_start RS.W 1
 vcs3111_step2_angle        RS.W 1
 
 ; **** Blind-Fader ****
-  IFEQ open_border
+  IFEQ open_border_enabled
 bf_registers_table_start   RS.W 1
 
-bfi_state                  RS.W 1
+bfi_active                 RS.W 1
 
-bfo_state                  RS.W 1
+bfo_active                 RS.W 1
   ENDC
 
 ; **** Effects-Handler ****
 eh_trigger_number          RS.W 1
 
 ; **** Main ****
-fx_state                   RS.W 1
+fx_active                  RS.W 1
 
 variables_SIZE             RS.B 0
 
@@ -536,42 +533,42 @@ init_own_variables
 
 ; **** Vert-Colorscroll3.1.1.2 ****
   moveq   #FALSE,d1
-  move.w  d1,vcs3112_state(a3)
-  moveq   #TRUE,d0
+  move.w  d1,vcs3112_active(a3)
+  moveq   #0,d0
   move.w  d0,vcs3112_switch_table_start(a3)
   moveq   #sine_table_length/4,d2
   move.w  d2,vcs3112_step1_angle(a3)
 
 ; **** Vert-Colorscroll3.1.2.1 ****
-  move.w  d1,vcs3121_state(a3)
+  move.w  d1,vcs3121_active(a3)
   move.w  d0,vcs3121_switch_table_start(a3)
   moveq   #sine_table_length/4,d2
   move.w  d2,vcs3121_step1_angle(a3)
 
 ; **** Vert-Colorscroll3.1.2.2 ****
-  move.w  d1,vcs3122_state(a3)
+  move.w  d1,vcs3122_active(a3)
   move.w  d0,vcs3122_switch_table_start(a3)
   moveq   #sine_table_length/4,d2
   move.w  d2,vcs3122_step2_angle(a3)
 
 ; **** Vert-Colorscroll3.1.1.1 ****
-  move.w  d1,vcs3111_state(a3)
+  move.w  d1,vcs3111_active(a3)
   move.w  d0,vcs3111_switch_table_start(a3)
   moveq   #sine_table_length/4,d2
   move.w  d2,vcs3111_step2_angle(a3)
 
 ; **** Blind-Fader ****
-  IFEQ open_border
+  IFEQ open_border_enabled
     move.w  d0,bf_registers_table_start(a3)
 
-    move.w  d1,bfi_state(a3)
+    move.w  d1,bfi_active(a3)
 
-    move.w  d1,bfo_state(a3)
+    move.w  d1,bfo_active(a3)
   ENDC
 
 ; **** Effects-Handler ****
   move.w  d0,eh_trigger_number(a3)
-  move.w  d1,fx_state(a3)
+  move.w  d1,fx_active(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
@@ -634,7 +631,7 @@ init_color_registers
 init_first_copperlist
   move.l  cl1_display(a3),a0 ;Darstellen-CL
   bsr.s   cl1_init_playfield_registers
-  IFEQ open_border
+  IFEQ open_border_enabled
     COPMOVEQ TRUE,COPJMP2
     rts
   ELSE
@@ -643,7 +640,7 @@ init_first_copperlist
     bra     cl1_set_bitplane_pointers
   ENDC
 
-  IFEQ open_border
+  IFEQ open_border_enabled
     COP_INIT_PLAYFIELD_REGISTERS cl1,NOBITPLANES
   ELSE
     COP_INIT_PLAYFIELD_REGISTERS cl1
@@ -662,7 +659,7 @@ init_second_copperlist
   bsr     copy_second_copperlist
   bra     swap_second_copperlist
 
-  COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_HSTART1,cl2_VSTART1,cl2_display_x_size,cl2_display_y_size,open_border,FALSE,FALSE,NOOP<<16
+  COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_HSTART1,cl2_VSTART1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,FALSE,FALSE,NOOP<<16
 
   COP_INIT_COPINT cl2,cl2_HSTART2,cl2_VSTART2
 
@@ -705,14 +702,14 @@ beam_routines
   bsr     vert_colorscroll3121
   bsr     vert_colorscroll3122
   bsr     vert_colorscroll3111
-  IFEQ open_border
+  IFEQ open_border_enabled
     bsr     blind_fader_in
     bsr     blind_fader_out
   ENDC
   bsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   fx_state(a3)       ;Effekte beendet ?
+  tst.w   fx_active(a3)      ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
   move.w  custom_error_code(a3),d1
@@ -728,7 +725,7 @@ fast_exit
 ; -----------------------------
   CNOP 0,4
 vert_colorscroll3112
-  tst.w   vcs3112_state(a3) ;Vert-Colorscroll3.1.1.2 an ?
+  tst.w   vcs3112_active(a3) ;Vert-Colorscroll3.1.1.2 an ?
   bne     no_vert_colorscroll3112 ;Nein -> verzweige
   movem.l a3-a6,-(a7)
   move.l  a7,save_a7(a3)     
@@ -802,7 +799,7 @@ no_vert_colorscroll3112
 ; -----------------------------
   CNOP 0,4
 vert_colorscroll3121
-  tst.w   vcs3121_state(a3) ;Vert-Colorscroll3.1.2.1 an ?
+  tst.w   vcs3121_active(a3) ;Vert-Colorscroll3.1.2.1 an ?
   bne     no_vert_colorscroll3121 ;Nein -> verzweige
   movem.l a3-a6,-(a7)
   move.l  a7,save_a7(a3)     
@@ -876,7 +873,7 @@ no_vert_colorscroll3121
 ; ------------------------------
   CNOP 0,4
 vert_colorscroll3122
-  tst.w   vcs3122_state(a3) ;Vert-Colorscroll3.1.2.2 an ?
+  tst.w   vcs3122_active(a3) ;Vert-Colorscroll3.1.2.2 an ?
   bne     no_vert_colorscroll3122 ;Nein -> verzweige
   movem.l a3-a6,-(a7)
   move.l  a7,save_a7(a3)     
@@ -950,7 +947,7 @@ no_vert_colorscroll3122
 ; ------------------------------
   CNOP 0,4
 vert_colorscroll3111
-  tst.w   vcs3111_state(a3)  ;Vert-Colorscroll3.1.1.2 an ?
+  tst.w   vcs3111_active(a3) ;Vert-Colorscroll3.1.1.2 an ?
   bne     no_vert_colorscroll3111 ;Nein -> verzweige
   movem.l a3-a6,-(a7)
   move.l  a7,save_a7(a3)     
@@ -1021,12 +1018,12 @@ no_vert_colorscroll3111
   rts
 
 
-  IFEQ open_border
+  IFEQ open_border_enabled
 ; ** Blind-Fader-In **
 ; --------------------
     CNOP 0,4
 blind_fader_in
-    tst.w   bfi_state(a3)    ;Blind-Fader-In an ?
+    tst.w   bfi_active(a3)   ;Blind-Fader-In an ?
     bne.s   no_blind_fader_in ;Nein -> verzweige
     move.l  a4,-(a7)
     move.w  bf_registers_table_start(a3),d2 ;Registeradresse 
@@ -1035,7 +1032,7 @@ blind_fader_in
     cmp.w   #bf_registers_table_length/2,d0 ;Ende der Tabelle erreicht ?
     ble.s   bfi_not_finished ;Nein -> verzweige
     moveq   #FALSE,d1
-    move.w  d1,bfi_state(a3) ;Blind-Fader-In aus
+    move.w  d1,bfi_active(a3) ;Blind-Fader-In aus
 bfi_not_finished
     move.w  d0,bf_registers_table_start(a3) 
     MOVEF.W bf_registers_table_length,d3
@@ -1087,7 +1084,7 @@ no_blind_fader_in
 ; ---------------------
     CNOP 0,4
 blind_fader_out
-    tst.w   bfo_state(a3)    ;Blind-Fader-Out an ?
+    tst.w   bfo_active(a3)   ;Blind-Fader-Out an ?
     bne.s   no_blind_fader_out ;Nein -> verzweige
     move.l  a4,-(a7)
     move.w  bf_registers_table_start(a3),d2 ;Startwert der Tabelle 
@@ -1095,7 +1092,7 @@ blind_fader_out
     subq.w  #bf_speed,d0     ;Startwert der Tabelle verringern
     bpl.s   bfo_not_finished ;Wenn positiv -> verzweige
     moveq   #FALSE,d1
-    move.w  d1,bfo_state(a3) ;Blind-Fader-Out aus
+    move.w  d1,bfo_active(a3) ;Blind-Fader-Out aus
 bfo_not_finished
     move.w  d0,bf_registers_table_start(a3) 
     MOVEF.W bf_registers_table_length,d3
@@ -1180,53 +1177,53 @@ no_effects_handler
   rts
   CNOP 0,4
 eh_start_vert_colorscroll3112
-  moveq   #TRUE,d0
-  move.w  d0,vcs3112_state(a3) ;Vert-Colorscroll3.1.1.2 an
-  move.w  d0,bfi_state(a3)   ;Blind-Fader-In an
+  moveq   #0,d0
+  move.w  d0,vcs3112_active(a3) ;Vert-Colorscroll3.1.1.2 an
+  move.w  d0,bfi_active(a3)  ;Blind-Fader-In an
   rts
   CNOP 0,4
 eh_stop_vert_colorscroll3112
-  clr.w   bfo_state(a3)      ;Blind-Fader-Out an
+  clr.w   bfo_active(a3)     ;Blind-Fader-Out an
   rts
   CNOP 0,4
 eh_start_vert_colorscroll3121
   moveq   #FALSE,d1
-  move.w  d1,vcs3112_state(a3) ;Vert-Colorscroll3.1.1.2 aus
-  moveq   #TRUE,d0
-  move.w  d0,vcs3121_state(a3) ;Vert-Colorscroll3.1.2.1 an
-  move.w  d0,bfi_state(a3)   ;Blind-Fader-In an
+  move.w  d1,vcs3112_active(a3) ;Vert-Colorscroll3.1.1.2 aus
+  moveq   #0,d0
+  move.w  d0,vcs3121_active(a3) ;Vert-Colorscroll3.1.2.1 an
+  move.w  d0,bfi_active(a3)  ;Blind-Fader-In an
   rts
   CNOP 0,4
 eh_stop_vert_colorscroll3121
-  clr.w   bfo_state(a3)      ;Blind-Fader-Out an
+  clr.w   bfo_active(a3)     ;Blind-Fader-Out an
   rts
   CNOP 0,4
 eh_start_vert_colorscroll3122
   moveq   #FALSE,d1
-  move.w  d1,vcs3121_state(a3) ;Vert-Colorscroll3.1.2.1 aus
-  moveq   #TRUE,d0
-  move.w  d0,vcs3122_state(a3) ;Vert-Colorscroll3.1.2.2 an
-  move.w  d0,bfi_state(a3)   ;Blind-Fader-In an
+  move.w  d1,vcs3121_active(a3) ;Vert-Colorscroll3.1.2.1 aus
+  moveq   #0,d0
+  move.w  d0,vcs3122_active(a3) ;Vert-Colorscroll3.1.2.2 an
+  move.w  d0,bfi_active(a3)  ;Blind-Fader-In an
   rts
   CNOP 0,4
 eh_stop_vert_colorscroll3122
-  clr.w   bfo_state(a3)      ;Blind-Fader-Out an
+  clr.w   bfo_active(a3)     ;Blind-Fader-Out an
   rts
   CNOP 0,4
 eh_start_vert_colorscroll3111
   moveq   #FALSE,d1
-  move.w  d1,vcs3122_state(a3) ;Vert-Colorscroll3.1.2.2 aus
-  moveq   #TRUE,d0
-  move.w  d0,vcs3111_state(a3) ;Vert-Colorscroll3.1.1.1 an
-  move.w  d0,bfi_state(a3)   ;Blind-Fader-In an
+  move.w  d1,vcs3122_active(a3) ;Vert-Colorscroll3.1.2.2 aus
+  moveq   #0,d0
+  move.w  d0,vcs3111_active(a3) ;Vert-Colorscroll3.1.1.1 an
+  move.w  d0,bfi_active(a3)  ;Blind-Fader-In an
   rts
   CNOP 0,4
 eh_stop_vert_colorscroll3111
-  clr.w   bfo_state(a3)      ;Blind-Fader-Out an
+  clr.w   bfo_active(a3)     ;Blind-Fader-Out an
   rts
   CNOP 0,4
 eh_stop_all
-  clr.w   fx_state(a3)       ;Effekte beendet
+  clr.w   fx_active(a3)      ;Effekte beendet
   rts
 
 
@@ -1272,7 +1269,7 @@ pf1_color_table
   INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/02_vcs3112_Colorgradient.ct"
 
 ; **** Blind-Fader ****
-  IFEQ open_border
+  IFEQ open_border_enabled
 ; ** Tabelle mit Registeradressen **
 ; ----------------------------------
   CNOP 0,2

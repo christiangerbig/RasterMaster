@@ -142,9 +142,9 @@ requires_68060             EQU FALSE
 requires_fast_memory       EQU FALSE
 requires_multiscan_monitor EQU FALSE
 
-workbench_start            EQU TRUE
-workbench_fade             EQU TRUE
-text_output                EQU FALSE
+workbench_start_enabled    EQU TRUE
+workbench_fade_enabled     EQU TRUE
+text_output_enabled        EQU FALSE
 
 own_display_set_second_copperlist
 pass_global_references
@@ -156,7 +156,7 @@ INTENABITS                 EQU INTF_INTEN+INTF_SETCLR
 CIAAICRBITS                EQU CIAICRF_SETCLR
 CIABICRBITS                EQU CIAICRF_SETCLR
 
-COPCONBITS                 EQU TRUE
+COPCONBITS                 EQU 0
 
 pf1_x_size1                EQU 0
 pf1_y_size1                EQU 0
@@ -202,21 +202,21 @@ chip_memory_size           EQU 0
 
 AGA_OS_Version             EQU 39
 
-CIAA_TA_value              EQU 0
-CIAA_TB_value              EQU 0
-CIAB_TA_value              EQU 0
-CIAB_TB_value              EQU 0
-CIAA_TA_continuous         EQU FALSE
-CIAA_TB_continuous         EQU FALSE
-CIAB_TA_continuous         EQU FALSE
-CIAB_TB_continuous         EQU FALSE
+CIAA_TA_time               EQU 0
+CIAA_TB_time               EQU 0
+CIAB_TA_time               EQU 0
+CIAB_TB_time               EQU 0
+CIAA_TA_continuous_enabled EQU FALSE
+CIAA_TB_continuous_enabled EQU FALSE
+CIAB_TA_continuous_enabled EQU FALSE
+CIAB_TB_continuous_enabled EQU FALSE
 
 beam_position              EQU $136
 
 BPLCON0BITS                EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
-BPLCON3BITS1               EQU TRUE
+BPLCON3BITS1               EQU 0
 BPLCON3BITS2               EQU BPLCON3BITS1+BPLCON3F_LOCT
-BPLCON4BITS                EQU TRUE
+BPLCON4BITS                EQU 0
 COLOR00BITS                EQU $001122
 COLOR00HIGHBITS            EQU $012
 COLOR00LOWBITS             EQU $012

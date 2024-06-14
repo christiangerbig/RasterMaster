@@ -60,283 +60,283 @@
 
   INCLUDE "equals.i"
 
-requires_68030                EQU FALSE  
-requires_68040                EQU FALSE
-requires_68060                EQU FALSE
-requires_fast_memory          EQU FALSE
-requires_multiscan_monitor    EQU FALSE
+requires_68030                     EQU FALSE
+requires_68040                     EQU FALSE
+requires_68060                     EQU FALSE
+requires_fast_memory               EQU FALSE
+requires_multiscan_monitor         EQU FALSE
 
-workbench_start               EQU FALSE
-workbench_fade                EQU FALSE
-text_output                   EQU FALSE
+workbench_start_enabled            EQU FALSE
+workbench_fade_enabled             EQU FALSE
+text_output_enabled                EQU FALSE
 
 sys_taken_over
 pass_global_references
 pass_return_code
-open_border                   EQU FALSE ;Immer FALSE, da Overscan-Playfield
+open_border_enabled                EQU FALSE ;Immer FALSE, da Overscan-Playfield
 
-tb31612_quick_clear           EQU TRUE ;Solle TRUE sein, wenn Hintergrundeffekt aktiviert ist
-tb31612_restore_cl_by_cpu     EQU FALSE
-tb31612_restore_cl_by_blitter EQU TRUE
+tb31612_quick_clear_enabled        EQU TRUE ;Solle TRUE sein, wenn Hintergrundeffekt aktiviert ist
+tb31612_restore_cl_cpu_enabled     EQU FALSE
+tb31612_restore_cl_blitter_enabled EQU TRUE
 
-DMABITS                       EQU DMAF_BLITTER+DMAF_COPPER+DMAF_RASTER+DMAF_SETCLR
-INTENABITS                    EQU INTF_SETCLR
+DMABITS                            EQU DMAF_BLITTER+DMAF_COPPER+DMAF_RASTER+DMAF_SETCLR
+INTENABITS                         EQU INTF_SETCLR
 
-CIAAICRBITS                   EQU CIAICRF_SETCLR
-CIABICRBITS                   EQU CIAICRF_SETCLR
+CIAAICRBITS                        EQU CIAICRF_SETCLR
+CIABICRBITS                        EQU CIAICRF_SETCLR
 
-COPCONBITS                    EQU COPCONF_CDANG
+COPCONBITS                         EQU COPCONF_CDANG
 
-pf1_x_size1                   EQU 0
-pf1_y_size1                   EQU 0
-pf1_depth1                    EQU 0
-pf1_x_size2                   EQU 512
-pf1_y_size2                   EQU 256+32
-pf1_depth2                    EQU 1
-pf1_x_size3                   EQU 512
-pf1_y_size3                   EQU 256+32
-pf1_depth3                    EQU 1
-pf1_colors_number             EQU 0 ;256
+pf1_x_size1                        EQU 0
+pf1_y_size1                        EQU 0
+pf1_depth1                         EQU 0
+pf1_x_size2                        EQU 512
+pf1_y_size2                        EQU 256+32
+pf1_depth2                         EQU 1
+pf1_x_size3                        EQU 512
+pf1_y_size3                        EQU 256+32
+pf1_depth3                         EQU 1
+pf1_colors_number                  EQU 0 ;256
 
-pf2_x_size1                   EQU 0
-pf2_y_size1                   EQU 0
-pf2_depth1                    EQU 0
-pf2_x_size2                   EQU 0
-pf2_y_size2                   EQU 0
-pf2_depth2                    EQU 0
-pf2_x_size3                   EQU 0
-pf2_y_size3                   EQU 0
-pf2_depth3                    EQU 0
-pf2_colors_number             EQU 0
-pf_colors_number              EQU pf1_colors_number+pf2_colors_number
-pf_depth                      EQU pf1_depth3+pf2_depth3
+pf2_x_size1                        EQU 0
+pf2_y_size1                        EQU 0
+pf2_depth1                         EQU 0
+pf2_x_size2                        EQU 0
+pf2_y_size2                        EQU 0
+pf2_depth2                         EQU 0
+pf2_x_size3                        EQU 0
+pf2_y_size3                        EQU 0
+pf2_depth3                         EQU 0
+pf2_colors_number                  EQU 0
+pf_colors_number                   EQU pf1_colors_number+pf2_colors_number
+pf_depth                           EQU pf1_depth3+pf2_depth3
 
-extra_pf_number               EQU 1
-extra_pf1_x_size              EQU 448
-extra_pf1_y_size              EQU 32+(32)
-extra_pf1_depth               EQU 1
+extra_pf_number                    EQU 1
+extra_pf1_x_size                   EQU 448
+extra_pf1_y_size                   EQU 32+(32)
+extra_pf1_depth                    EQU 1
 
-spr_number                    EQU 0
-spr_x_size1                   EQU 0
-spr_y_size1                   EQU 0
-spr_x_size2                   EQU 0
-spr_y_size2                   EQU 0
-spr_depth                     EQU 0
-spr_colors_number             EQU 0
+spr_number                         EQU 0
+spr_x_size1                        EQU 0
+spr_y_size1                        EQU 0
+spr_x_size2                        EQU 0
+spr_y_size2                        EQU 0
+spr_depth                          EQU 0
+spr_colors_number                  EQU 0
 
-audio_memory_size             EQU 0
+audio_memory_size                  EQU 0
 
-disk_memory_size              EQU 0
+disk_memory_size                   EQU 0
 
-chip_memory_size              EQU 0
+chip_memory_size                   EQU 0
 
-AGA_OS_Version                EQU 39
+AGA_OS_Version                     EQU 39
 
-CIAA_TA_value                 EQU 0
-CIAA_TB_value                 EQU 0
-CIAB_TA_value                 EQU 0
-CIAB_TB_value                 EQU 0
-CIAA_TA_continuous            EQU FALSE
-CIAA_TB_continuous            EQU FALSE
-CIAB_TA_continuous            EQU FALSE
-CIAB_TB_continuous            EQU FALSE
+CIAA_TA_time                       EQU 0
+CIAA_TB_time                       EQU 0
+CIAB_TA_time                       EQU 0
+CIAB_TB_time                       EQU 0
+CIAA_TA_continuous_enabled         EQU FALSE
+CIAA_TB_continuous_enabled         EQU FALSE
+CIAB_TA_continuous_enabled         EQU FALSE
+CIAB_TB_continuous_enabled         EQU FALSE
 
-beam_position                 EQU $136
+beam_position                      EQU $136
 
-pixel_per_line                EQU 448
-visible_pixels_number         EQU 352
-visible_lines_number          EQU 256
-MINROW                        EQU VSTART_256_lines
+pixel_per_line                     EQU 448
+visible_pixels_number              EQU 352
+visible_lines_number               EQU 256
+MINROW                             EQU VSTART_256_lines
 
-pf_pixel_per_datafetch        EQU 64 ;4x
-DDFSTRTBITS                   EQU DDFSTART_overscan_64_pixel
-DDFSTOPBITS                   EQU DDFSTOP_overscan_16_pixel
+pf_pixel_per_datafetch             EQU 64 ;4x
+DDFSTRTBITS                        EQU DDFSTART_overscan_64_pixel
+DDFSTOPBITS                        EQU DDFSTOP_overscan_16_pixel
 
-display_window_HSTART         EQU HSTART_44_chunky_pixel
-display_window_VSTART         EQU MINROW
-DIWSTRTBITS                   EQU ((display_window_VSTART&$ff)*DIWSTRTF_V0)+(display_window_HSTART&$ff)
-display_window_HSTOP          EQU HSTOP_44_chunky_pixel
-display_window_VSTOP          EQU VSTOP_256_lines
-DIWSTOPBITS                   EQU ((display_window_VSTOP&$ff)*DIWSTOPF_V0)+(display_window_HSTOP&$ff)
+display_window_HSTART              EQU HSTART_44_chunky_pixel
+display_window_VSTART              EQU MINROW
+DIWSTRTBITS                        EQU ((display_window_VSTART&$ff)*DIWSTRTF_V0)+(display_window_HSTART&$ff)
+display_window_HSTOP               EQU HSTOP_44_chunky_pixel
+display_window_VSTOP               EQU VSTOP_256_lines
+DIWSTOPBITS                        EQU ((display_window_VSTOP&$ff)*DIWSTOPF_V0)+(display_window_HSTOP&$ff)
 
-pf1_plane_width               EQU pf1_x_size3/8
-extra_pf1_plane_width         EQU extra_pf1_x_size/8
-data_fetch_width              EQU pixel_per_line/8
-pf1_plane_moduli              EQU (pf1_plane_width*(pf1_depth3-1))+pf1_plane_width-data_fetch_width
+pf1_plane_width                    EQU pf1_x_size3/8
+extra_pf1_plane_width              EQU extra_pf1_x_size/8
+data_fetch_width                   EQU pixel_per_line/8
+pf1_plane_moduli                   EQU (pf1_plane_width*(pf1_depth3-1))+pf1_plane_width-data_fetch_width
 
-BPLCON0BITS                   EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
-BPLCON1BITS                   EQU BPLCON1F_PF1H4+BPLCON1F_PF2H4+BPLCON1F_PF1H1+BPLCON1F_PF2H1 ;Damit die Bitplane die gleiche Startposition wie CWAIT hat
-BPLCON2BITS                   EQU TRUE
-BPLCON3BITS1                  EQU TRUE
-BPLCON3BITS2                  EQU BPLCON3BITS1+BPLCON3F_LOCT
-BPLCON3BITS3                  EQU BPLCON3BITS1+BPLCON3F_BANK0+BPLCON3F_BANK1+BPLCON3F_BANK2
-BPLCON3BITS4                  EQU BPLCON3BITS2+BPLCON3F_BANK0+BPLCON3F_BANK1+BPLCON3F_BANK2
-BPLCON4BITS                   EQU TRUE
-DIWHIGHBITS                   EQU (((display_window_HSTOP&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_VSTOP&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_HSTART&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_VSTART&$700)>>8)
-FMODEBITS                     EQU FMODEF_BPL32+FMODEF_BPAGEM
+BPLCON0BITS                        EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
+BPLCON1BITS                        EQU BPLCON1F_PF1H4+BPLCON1F_PF2H4+BPLCON1F_PF1H1+BPLCON1F_PF2H1 ;Damit die Bitplane die gleiche Startposition wie CWAIT hat
+BPLCON2BITS                        EQU 0
+BPLCON3BITS1                       EQU 0
+BPLCON3BITS2                       EQU BPLCON3BITS1+BPLCON3F_LOCT
+BPLCON3BITS3                       EQU BPLCON3BITS1+BPLCON3F_BANK0+BPLCON3F_BANK1+BPLCON3F_BANK2
+BPLCON3BITS4                       EQU BPLCON3BITS2+BPLCON3F_BANK0+BPLCON3F_BANK1+BPLCON3F_BANK2
+BPLCON4BITS                        EQU 0
+DIWHIGHBITS                        EQU (((display_window_HSTOP&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_VSTOP&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_HSTART&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_VSTART&$700)>>8)
+FMODEBITS                          EQU FMODEF_BPL32+FMODEF_BPAGEM
 
-cl1_HSTART                    EQU $00
-cl1_VSTART                    EQU $03 ;Damit die CPU die Zeiger COP1LC in der CL für den Einsprung des Char-Blits vor dem Ausführen der CMOVE-Befehlen ändert
+cl1_HSTART                         EQU $00
+cl1_VSTART                         EQU $03 ;Damit die CPU die Zeiger COP1LC in der CL für den Einsprung des Char-Blits vor dem Ausführen der CMOVE-Befehlen ändert
 
-cl2_display_x_size            EQU 352
-cl2_display_width             EQU cl2_display_x_size/8
-cl2_display_y_size            EQU visible_lines_number
-  IFEQ open_border
-cl2_HSTART1                   EQU display_window_HSTART-(5*CMOVE_slot_period)-4
+cl2_display_x_size                 EQU 352
+cl2_display_width                  EQU cl2_display_x_size/8
+cl2_display_y_size                 EQU visible_lines_number
+  IFEQ open_border_enabled
+cl2_HSTART1                        EQU display_window_HSTART-(5*CMOVE_slot_period)-4
   ELSE
-cl2_HSTART1                   EQU display_window_HSTART-(4*CMOVE_slot_period)-4
+cl2_HSTART1                        EQU display_window_HSTART-(4*CMOVE_slot_period)-4
   ENDC
-cl2_VSTART1                   EQU MINROW
-cl2_HSTART2                   EQU $00
-cl2_VSTART2                   EQU beam_position&$ff
+cl2_VSTART1                        EQU MINROW
+cl2_HSTART2                        EQU $00
+cl2_VSTART2                        EQU beam_position&$ff
 
-sine_table_length             EQU 256
+sine_table_length                  EQU 256
 
 ; **** Twisted-Bars3.16.1.2 ****
-tb31612_bars_number           EQU 3
-tb31612_bar_height            EQU 32
-tb31612_y_radius              EQU 56
-tb31612_y_center              EQU (cl2_display_y_size-tb31612_bar_height)/2
-tb31612_y_angle_speed         EQU 4
-tb31612_y_angle_step          EQU 6
-tb31612_y_distance            EQU sine_table_length/tb31612_bars_number
+tb31612_bars_number                EQU 3
+tb31612_bar_height                 EQU 32
+tb31612_y_radius                   EQU 56
+tb31612_y_center                   EQU (cl2_display_y_size-tb31612_bar_height)/2
+tb31612_y_angle_speed              EQU 4
+tb31612_y_angle_step               EQU 6
+tb31612_y_distance                 EQU sine_table_length/tb31612_bars_number
 
 ; **** Clear-Blit ****
-tb31612_clear_blit_x_size     EQU 16
-  IFEQ open_border
-tb31612_clear_blit_y_size     EQU cl2_display_y_size*(cl2_display_width+6)
+tb31612_clear_blit_x_size          EQU 16
+  IFEQ open_border_enabled
+tb31612_clear_blit_y_size          EQU cl2_display_y_size*(cl2_display_width+6)
   ELSE
-tb31612_clear_blit_y_size     EQU cl2_display_y_size*(cl2_display_width+5)
+tb31612_clear_blit_y_size          EQU cl2_display_y_size*(cl2_display_width+5)
   ENDC
 
 ; **** Restore-Blit ****
-tb31612_restore_blit_x_size   EQU 16
-tb31612_restore_blit_width    EQU tb31612_restore_blit_x_size/8
-tb31612_restore_blit_y_size   EQU cl2_display_y_size
+tb31612_restore_blit_x_size        EQU 16
+tb31612_restore_blit_width         EQU tb31612_restore_blit_x_size/8
+tb31612_restore_blit_y_size        EQU cl2_display_y_size
 
 ; **** Wave-Center-Bar ****
-wcb_bar_height                EQU 80
-wcb_y_center                  EQU (cl2_display_y_size-wcb_bar_height)/2
+wcb_bar_height                     EQU 80
+wcb_y_center                       EQU (cl2_display_y_size-wcb_bar_height)/2
 
 ; **** Wave-Effect ****
-we_y_radius                   EQU 48
-we_y_angle_speed              EQU 1
-we_y_angle_step               EQU 2
-we_y_radius_angle_speed       EQU 2
-we_y_radius_angle_step        EQU 4
+we_y_radius                        EQU 48
+we_y_angle_speed                   EQU 1
+we_y_angle_step                    EQU 2
+we_y_radius_angle_speed            EQU 2
+we_y_radius_angle_step             EQU 4
 
 ; **** Sine-Scrolltext ****
-ss_image_x_size               EQU 320
-ss_image_plane_width          EQU ss_image_x_size/8
-ss_image_depth                EQU 1
-ss_origin_character_x_size    EQU 32
-ss_origin_character_y_size    EQU 32
+ss_image_x_size                    EQU 320
+ss_image_plane_width               EQU ss_image_x_size/8
+ss_image_depth                     EQU 1
+ss_origin_character_x_size         EQU 32
+ss_origin_character_y_size         EQU 32
 
-ss_text_character_x_size      EQU 16
-ss_text_character_width       EQU ss_text_character_x_size/8
-ss_text_character_y_size      EQU ss_origin_character_y_size
-ss_text_character_depth       EQU ss_image_depth
+ss_text_character_x_size           EQU 16
+ss_text_character_width            EQU ss_text_character_x_size/8
+ss_text_character_y_size           EQU ss_origin_character_y_size
+ss_text_character_depth            EQU ss_image_depth
 
-ss_sine_character_x_size      EQU 16
-ss_sine_character_width       EQU ss_sine_character_x_size/8
-ss_sine_character_y_size1     EQU extra_pf1_y_size
-ss_sine_character_y_size2     EQU ss_text_character_y_size
-ss_sine_character_depth       EQU pf1_depth3
+ss_sine_character_x_size           EQU 16
+ss_sine_character_width            EQU ss_sine_character_x_size/8
+ss_sine_character_y_size1          EQU extra_pf1_y_size
+ss_sine_character_y_size2          EQU ss_text_character_y_size
+ss_sine_character_depth            EQU pf1_depth3
 
-ss_horiz_scroll_window_x_size EQU visible_pixels_number+(ss_text_character_x_size*2)
-ss_horiz_scroll_window_width  EQU ss_horiz_scroll_window_x_size/8
-ss_horiz_scroll_window_y_size EQU ss_text_character_y_size
-ss_horiz_scroll_window_depth  EQU ss_image_depth
-ss_horiz_scroll_speed         EQU 4
+ss_horiz_scroll_window_x_size      EQU visible_pixels_number+(ss_text_character_x_size*2)
+ss_horiz_scroll_window_width       EQU ss_horiz_scroll_window_x_size/8
+ss_horiz_scroll_window_y_size      EQU ss_text_character_y_size
+ss_horiz_scroll_window_depth       EQU ss_image_depth
+ss_horiz_scroll_speed              EQU 4
 
-ss_text_character_x_restart   EQU ss_horiz_scroll_window_x_size-ss_text_character_x_size
-ss_text_character_y_restart   EQU ss_text_character_y_size/2
-ss_text_character_x_shift_max EQU ss_text_character_x_size
-ss_text_characters_number     EQU ss_horiz_scroll_window_x_size/ss_text_character_x_size
+ss_text_character_x_restart        EQU ss_horiz_scroll_window_x_size-ss_text_character_x_size
+ss_text_character_y_restart        EQU ss_text_character_y_size/2
+ss_text_character_x_shift_max      EQU ss_text_character_x_size
+ss_text_characters_number          EQU ss_horiz_scroll_window_x_size/ss_text_character_x_size
 
-ss_text_x_position            EQU 32
-ss_text_y_position            EQU ss_text_character_y_size/2
-ss_text_y_center              EQU (visible_lines_number-ss_text_character_y_size)/2
+ss_text_x_position                 EQU 32
+ss_text_y_position                 EQU ss_text_character_y_size/2
+ss_text_y_center                   EQU (visible_lines_number-ss_text_character_y_size)/2
 
-ss_text_columns_x_size        EQU 8
-ss_text_columns_per_word      EQU 16/ss_text_columns_x_size
-ss_text_columns_number        EQU visible_pixels_number/ss_text_columns_x_size
+ss_text_columns_x_size             EQU 8
+ss_text_columns_per_word           EQU 16/ss_text_columns_x_size
+ss_text_columns_number             EQU visible_pixels_number/ss_text_columns_x_size
 
-ss_colorrun_height            EQU ss_text_character_y_size
-ss_colorrun_y_pos             EQU (wcb_bar_height-ss_text_character_y_size)/2
+ss_colorrun_height                 EQU ss_text_character_y_size
+ss_colorrun_y_pos                  EQU (wcb_bar_height-ss_text_character_y_size)/2
 
-ss_copy_character_blit_x_size EQU ss_text_character_x_size
-ss_copy_character_blit_y_size EQU ss_text_character_y_size*ss_text_character_depth
+ss_copy_character_blit_x_size      EQU ss_text_character_x_size
+ss_copy_character_blit_y_size      EQU ss_text_character_y_size*ss_text_character_depth
 
-ss_horiz_scroll_blit_x_size   EQU ss_horiz_scroll_window_x_size
-ss_horiz_scroll_blit_y_size   EQU ss_horiz_scroll_window_y_size*ss_horiz_scroll_window_depth
+ss_horiz_scroll_blit_x_size        EQU ss_horiz_scroll_window_x_size
+ss_horiz_scroll_blit_y_size        EQU ss_horiz_scroll_window_y_size*ss_horiz_scroll_window_depth
 
-ss_copy_column_blit_x_size1   EQU ss_sine_character_x_size
-ss_copy_column_blit_y_size1   EQU ss_sine_character_y_size1*ss_sine_character_depth
+ss_copy_column_blit_x_size1        EQU ss_sine_character_x_size
+ss_copy_column_blit_y_size1        EQU ss_sine_character_y_size1*ss_sine_character_depth
 
-ss_copy_column_blit_x_size2   EQU ss_sine_character_x_size
-ss_copy_column_blit_y_size2   EQU ss_sine_character_y_size2*ss_sine_character_depth
+ss_copy_column_blit_x_size2        EQU ss_sine_character_x_size
+ss_copy_column_blit_y_size2        EQU ss_sine_character_y_size2*ss_sine_character_depth
 
 ; **** Barfield ****
-bf_bars_planes_number         EQU 6
-bf_bars_per_plane             EQU 1
-bf_bar_height                 EQU 40
-bf_y_center                   EQU (visible_lines_number+bf_bar_height)/2
-bf_z_speed                    EQU 8
+bf_bars_planes_number              EQU 6
+bf_bars_per_plane                  EQU 1
+bf_bar_height                      EQU 40
+bf_y_center                        EQU (visible_lines_number+bf_bar_height)/2
+bf_z_speed                         EQU 8
 
-bf_destination_bar_y_size     EQU 4
-bf_source_bar_y_size          EQU 40
+bf_destination_bar_y_size          EQU 4
+bf_source_bar_y_size               EQU 40
 
-bf_z_planes_number            EQU (bf_source_bar_y_size-bf_destination_bar_y_size)/2
-bf_z_plane1                   EQU 30
-bf_y_min                      EQU 0
-bf_y_max                      EQU visible_lines_number+bf_bar_height
-bf_z_min                      EQU 0
-bf_d                          EQU 64
+bf_z_planes_number                 EQU (bf_source_bar_y_size-bf_destination_bar_y_size)/2
+bf_z_plane1                        EQU 30
+bf_y_min                           EQU 0
+bf_y_max                           EQU visible_lines_number+bf_bar_height
+bf_z_min                           EQU 0
+bf_d                               EQU 64
 
 ; **** Chunky-Columns-Fader ****
-ccfi_mode1                    EQU 0
-ccfi_mode2                    EQU 1
-ccfi_mode3                    EQU 2
-ccfi_mode4                    EQU 3
-ccfi_delay_speed              EQU 1
-ccfi_columns_delay1           EQU 2
-ccfi_columns_delay2           EQU 27
+ccfi_mode1                         EQU 0
+ccfi_mode2                         EQU 1
+ccfi_mode3                         EQU 2
+ccfi_mode4                         EQU 3
+ccfi_delay_speed                   EQU 1
+ccfi_columns_delay1                EQU 2
+ccfi_columns_delay2                EQU 27
 
-ccfo_mode1                    EQU 0
-ccfo_mode2                    EQU 1
-ccfo_mode3                    EQU 2
-ccfo_mode4                    EQU 3
-ccfo_delay_speed              EQU 1
-ccfo_columns_delay            EQU 1
+ccfo_mode1                         EQU 0
+ccfo_mode2                         EQU 1
+ccfo_mode3                         EQU 2
+ccfo_mode4                         EQU 3
+ccfo_delay_speed                   EQU 1
+ccfo_columns_delay                 EQU 1
 
 ; **** Effects-Handler ****
-eh_trigger_number_max         EQU 9
+eh_trigger_number_max              EQU 9
 
 
-color_step1                   EQU 256/(tb31612_bar_height/2)
-color_step2                   EQU 256/(wcb_bar_height/2)
-color_step3                   EQU 256/ss_colorrun_height
-color_step4                   EQU 256/(bf_bar_height/2)
-color_values_number1          EQU tb31612_bar_height/2
-color_values_number2          EQU wcb_bar_height/2
-color_values_number3          EQU ss_colorrun_height
-color_values_number4          EQU bf_bar_height/2
-segments_number1              EQU tb31612_bars_number
-segments_number2              EQU 2
-segments_number3              EQU 1
-segments_number4              EQU 1*2
+color_step1                        EQU 256/(tb31612_bar_height/2)
+color_step2                        EQU 256/(wcb_bar_height/2)
+color_step3                        EQU 256/ss_colorrun_height
+color_step4                        EQU 256/(bf_bar_height/2)
+color_values_number1               EQU tb31612_bar_height/2
+color_values_number2               EQU wcb_bar_height/2
+color_values_number3               EQU ss_colorrun_height
+color_values_number4               EQU bf_bar_height/2
+segments_number1                   EQU tb31612_bars_number
+segments_number2                   EQU 2
+segments_number3                   EQU 1
+segments_number4                   EQU 1*2
 
-ct_size1                      EQU color_values_number1*segments_number1
-ct_size2                      EQU color_values_number2*segments_number2
-ct_size3                      EQU color_values_number3*segments_number3
-ct_size4                      EQU color_values_number4*segments_number4
+ct_size1                           EQU color_values_number1*segments_number1
+ct_size2                           EQU color_values_number2*segments_number2
+ct_size3                           EQU color_values_number3*segments_number3
+ct_size4                           EQU color_values_number4*segments_number4
 
-tb31612_switch_table_size     EQU ct_size1*2
-wcb_switch_table_size         EQU ct_size2
+tb31612_switch_table_size          EQU ct_size1*2
+wcb_switch_table_size              EQU ct_size2
 
-pf1_bitplane_x_offset         EQU 0
-pf1_bitplane_y_offset         EQU ss_text_y_position
+pf1_bitplane_x_offset              EQU 0
+pf1_bitplane_y_offset              EQU ss_text_y_position
 
 
 ; ## Makrobefehle ##
@@ -538,7 +538,7 @@ cl2_extension6_SIZE RS.B 0
 cl2_extension7        RS.B 0
 
 cl2_ext7_WAIT         RS.L 1
-  IFEQ tb31612_quick_clear
+  IFEQ tb31612_quick_clear_enabled
 cl2_ext7_BPLCON3_1    RS.L 1
 cl2_ext7_COLOR31_high RS.L 1
 cl2_ext7_BPLCON3_2    RS.L 1
@@ -549,7 +549,7 @@ cl2_ext7_COLOR00_high RS.L 1
 cl2_ext7_BPLCON3_2    RS.L 1
 cl2_ext7_COLOR00_low  RS.L 1
   ENDC
-  IFEQ open_border 
+  IFEQ open_border_enabled 
 cl2_ext7_BPL1DAT      RS.L 1
   ENDC
 cl2_ext7_BPLCON4_1    RS.L 1
@@ -599,8 +599,8 @@ cl2_ext7_BPLCON4_44   RS.L 1
 
 cl2_extension7_SIZE   RS.B 0
 
-  IFNE tb31612_quick_clear
-    IFEQ tb31612_restore_cl_by_blitter
+  IFNE tb31612_quick_clear_enabled
+    IFEQ tb31612_restore_cl_blitter_enabled
       RSRESET
 
 cl2_extension8      RS.B 0
@@ -627,8 +627,8 @@ cl2_extension4_entry RS.B cl2_extension4_SIZE*(ss_text_columns_number-(visible_p
 cl2_extension5_entry RS.B cl2_extension5_SIZE
 cl2_extension6_entry RS.B cl2_extension6_SIZE
 cl2_extension7_entry RS.B cl2_extension7_SIZE*cl2_display_y_size
-  IFNE tb31612_quick_clear
-    IFEQ tb31612_restore_cl_by_blitter
+  IFNE tb31612_quick_clear_enabled
+    IFEQ tb31612_restore_cl_blitter_enabled
 cl2_extension8_entry RS.B cl2_extension8_SIZE
     ENDC
   ENDC
@@ -643,50 +643,50 @@ copperlist2_SIZE     RS.B 0
 
 ; ** Konstanten für die Größe der Copperlisten **
 ; -----------------------------------------------
-cl1_size1       EQU 0
-cl1_size2       EQU 0
-cl1_size3       EQU copperlist1_SIZE
+cl1_size1            EQU 0
+cl1_size2            EQU 0
+cl1_size3            EQU copperlist1_SIZE
 
-cl2_size1       EQU copperlist2_SIZE
-cl2_size2       EQU copperlist2_SIZE
-cl2_size3       EQU copperlist2_SIZE
+cl2_size1            EQU copperlist2_SIZE
+cl2_size2            EQU copperlist2_SIZE
+cl2_size3            EQU copperlist2_SIZE
 
 
 ; ** Konstanten für die Größe der Spritestrukturen **
 ; ---------------------------------------------------
-spr0_x_size1    EQU spr_x_size1
-spr0_y_size1    EQU 0
-spr1_x_size1    EQU spr_x_size1
-spr1_y_size1    EQU 0
-spr2_x_size1    EQU spr_x_size1
-spr2_y_size1    EQU 0
-spr3_x_size1    EQU spr_x_size1
-spr3_y_size1    EQU 0
-spr4_x_size1    EQU spr_x_size1
-spr4_y_size1    EQU 0
-spr5_x_size1    EQU spr_x_size1
-spr5_y_size1    EQU 0
-spr6_x_size1    EQU spr_x_size1
-spr6_y_size1    EQU 0
-spr7_x_size1    EQU spr_x_size1
-spr7_y_size1    EQU 0
+spr0_x_size1         EQU spr_x_size1
+spr0_y_size1         EQU 0
+spr1_x_size1         EQU spr_x_size1
+spr1_y_size1         EQU 0
+spr2_x_size1         EQU spr_x_size1
+spr2_y_size1         EQU 0
+spr3_x_size1         EQU spr_x_size1
+spr3_y_size1         EQU 0
+spr4_x_size1         EQU spr_x_size1
+spr4_y_size1         EQU 0
+spr5_x_size1         EQU spr_x_size1
+spr5_y_size1         EQU 0
+spr6_x_size1         EQU spr_x_size1
+spr6_y_size1         EQU 0
+spr7_x_size1         EQU spr_x_size1
+spr7_y_size1         EQU 0
 
-spr0_x_size2    EQU spr_x_size2
-spr0_y_size2    EQU 0
-spr1_x_size2    EQU spr_x_size2
-spr1_y_size2    EQU 0
-spr2_x_size2    EQU spr_x_size2
-spr2_y_size2    EQU 0
-spr3_x_size2    EQU spr_x_size2
-spr3_y_size2    EQU 0
-spr4_x_size2    EQU spr_x_size2
-spr4_y_size2    EQU 0
-spr5_x_size2    EQU spr_x_size2
-spr5_y_size2    EQU 0
-spr6_x_size2    EQU spr_x_size2
-spr6_y_size2    EQU 0
-spr7_x_size2    EQU spr_x_size2
-spr7_y_size2    EQU 0
+spr0_x_size2         EQU spr_x_size2
+spr0_y_size2         EQU 0
+spr1_x_size2         EQU spr_x_size2
+spr1_y_size2         EQU 0
+spr2_x_size2         EQU spr_x_size2
+spr2_y_size2         EQU 0
+spr3_x_size2         EQU spr_x_size2
+spr3_y_size2         EQU 0
+spr4_x_size2         EQU spr_x_size2
+spr4_y_size2         EQU 0
+spr5_x_size2         EQU spr_x_size2
+spr5_y_size2         EQU 0
+spr6_x_size2         EQU spr_x_size2
+spr6_y_size2         EQU 0
+spr7_x_size2         EQU spr_x_size2
+spr7_y_size2         EQU 0
 
 ; ** Struktur, die alle Variablenoffsets enthält **
 ; -------------------------------------------------
@@ -697,7 +697,7 @@ save_a7                    RS.L 1
 
 ; **** Sine-Scrolltext ****
 ss_image                   RS.L 1
-ss_state                   RS.W 1
+ss_enabled                 RS.W 1
 ss_text_table_start        RS.W 1
 ss_text_character_x_shift  RS.W 1
 ss_character_toggle_image  RS.W 1
@@ -710,20 +710,20 @@ we_radius_y_angle          RS.W 1
 we_y_angle                 RS.W 1
 
 ; **** Barfield ****
-bf_state                   RS.W 1
-bf_z_restart_state         RS.W 1
+bf_active                  RS.W 1
+bf_z_restart_active        RS.W 1
 
 ; **** Chunky-Columns-Fader ****
   RS_ALIGN_LONGWORD
 ccf_fader_columns_mask     RS.L 1
 
-ccfi_state                 RS.W 1
+ccfi_active                RS.W 1
 ccfi_current_mode          RS.W 1
 ccfi_start                 RS.W 1
 ccfi_columns_delay_counter RS.W 1
 ccfi_columns_delay_reset   RS.W 1
 
-ccfo_state                 RS.W 1
+ccfo_active                RS.W 1
 ccfo_current_mode          RS.W 1
 ccfo_start                 RS.W 1
 ccfo_columns_delay_counter RS.W 1
@@ -733,7 +733,7 @@ ccfo_columns_delay_reset   RS.W 1
 eh_trigger_number          RS.W 1
 
 ; **** Main ****
-fx_state                   RS.W 1
+fx_active                  RS.W 1
 
 variables_SIZE             RS.B 0
 
@@ -752,8 +752,8 @@ init_own_variables
   lea     ss_image_data,a0
   move.l  a0,ss_image(a3)
   moveq   #FALSE,d1
-  move.w  d1,ss_state(a3)
-  moveq   #TRUE,d0
+  move.w  d1,ss_enabled(a3)
+  moveq   #0,d0
   move.w  d0,ss_text_table_start(a3)
   move.w  d0,ss_text_character_x_shift(a3)
   move.w  d0,ss_character_toggle_image(a3)
@@ -766,14 +766,14 @@ init_own_variables
   move.w  d0,we_y_angle(a3)
 
 ; **** Barfield ****
-  move.w  d1,bf_state(a3)
-  move.w  d0,bf_z_restart_state(a3)
+  move.w  d1,bf_active(a3)
+  move.w  d0,bf_z_restart_active(a3)
 
 ; **** Chunky-Columns-Fader ****
   lea     wcb_fader_columns_mask(pc),a0
   move.l  a0,ccf_fader_columns_mask(a3)
 
-  move.w  d1,ccfi_state(a3)
+  move.w  d1,ccfi_active(a3)
   moveq   #ccfi_mode2,d2
   move.w  d2,ccfi_current_mode(a3)
   move.w  d0,ccfi_start(a3)
@@ -781,7 +781,7 @@ init_own_variables
   moveq   #ccfi_columns_delay1,d2
   move.w  d2,ccfi_columns_delay_reset(a3)
 
-  move.w  d1,ccfo_state(a3)
+  move.w  d1,ccfo_active(a3)
   moveq   #ccfo_mode2,d2
   move.w  d2,ccfo_current_mode(a3)
   move.w  d0,ccfo_start(a3)
@@ -793,7 +793,7 @@ init_own_variables
   move.w  d0,eh_trigger_number(a3)
 
 ; **** Main ****
-  move.w  d1,fx_state(a3)
+  move.w  d1,fx_active(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
@@ -1018,7 +1018,7 @@ bf_scale_bar_size_loop2
 ; ---------------------------------
   CNOP 0,4
 bf_refresh_bitmap_table
-  moveq   #TRUE,d0
+  moveq   #0,d0
   lea     bf_bitmap_lines_table(pc),a0 ;Zeiger auf Bitmap-Tabelle
   move.w  #(bf_source_bar_y_size/4)-1,d6 ;Anzahl der Langwörter
 bf_refresh_bitmap_table_loop
@@ -1154,8 +1154,8 @@ init_second_copperlist
   bsr     cl2_init_copperlist_branch
   bsr     cl2_init_clear_blit
   bsr     cl2_init_BPLCON4_registers
-  IFEQ tb31612_restore_cl_by_blitter
-    IFNE tb31612_quick_clear
+  IFEQ tb31612_restore_cl_blitter_enabled
+    IFNE tb31612_quick_clear_enabled
       bsr     cl2_init_restore_blit
     ENDC
   ENDC
@@ -1167,8 +1167,8 @@ init_second_copperlist
   bsr     ss_horiz_scrolltext_init
   bsr     tb31612_clear_second_copperlist
   bsr     bf_clear_buffer
-  IFNE tb31612_quick_clear
-    IFEQ tb31612_restore_cl_by_blitter
+  IFNE tb31612_quick_clear_enabled
+    IFEQ tb31612_restore_cl_blitter_enabled
       bsr     tb31612_restore_second_copperlist
     ENDC
   ENDC
@@ -1176,8 +1176,8 @@ init_second_copperlist
   bsr     swap_second_copperlist
   bsr     swap_playfield1
   bsr     tb31612_clear_second_copperlist
-  IFNE tb31612_quick_clear
-    IFEQ tb31612_restore_cl_by_blitter
+  IFNE tb31612_quick_clear_enabled
+    IFEQ tb31612_restore_cl_blitter_enabled
       bsr     tb31612_restore_second_copperlist
     ENDC
   ENDC
@@ -1185,8 +1185,8 @@ init_second_copperlist
   bsr     swap_second_copperlist
   bsr     swap_playfield1
   bsr     tb31612_clear_second_copperlist
-  IFEQ tb31612_restore_cl_by_blitter
-    IFNE tb31612_quick_clear
+  IFEQ tb31612_restore_cl_blitter_enabled
+    IFNE tb31612_quick_clear_enabled
       bsr     tb31612_restore_second_copperlist
     ENDC
   ENDC
@@ -1265,7 +1265,7 @@ cl2_init_clear_blit
   COPMOVEQ TRUE,BLTDPTH
   COPMOVEQ TRUE,BLTDPTL
   COPMOVEQ 2,BLTDMOD
-  IFEQ tb31612_quick_clear
+  IFEQ tb31612_quick_clear_enabled
     COPMOVEQ -2,BLTADAT      ;Quelle = BPLCON4-Bits
   ELSE
     COPMOVEQ BPLCON4BITS,BLTADAT ;Quelle = BPLCON4-Bits
@@ -1274,10 +1274,10 @@ cl2_init_clear_blit
   COPMOVEQ tb31612_clear_blit_x_size/16,BLTSIZH ;Anzahl der Wörter & Blitter starten
   rts
 
-  COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_HSTART1,cl2_VSTART1,cl2_display_x_size,cl2_display_y_size,open_border,tb31612_quick_clear,TRUE
+  COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_HSTART1,cl2_VSTART1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,tb31612_quick_clear_enabled,TRUE
 
-  IFEQ tb31612_restore_cl_by_blitter
-    IFNE tb31612_quick_clear
+  IFEQ tb31612_restore_cl_blitter_enabled
+    IFNE tb31612_quick_clear_enabled
       CNOP 0,4
 cl2_init_restore_blit
       COPWAITBLIT
@@ -1336,7 +1336,7 @@ beam_routines
   bsr     tb31612_set_background_bars
   bsr     set_wave_center_bar
   bsr     tb31612_set_foreground_bars
-  tst.w   bf_state(a3)
+  tst.w   bf_active(a3)
   bne.s   no_barfield
   bsr     bf_clear_buffer
   bsr     bf_set_bars
@@ -1344,13 +1344,13 @@ no_barfield
   bsr     bf_copy_buffer
   bsr     tb31612_get_yz_coordinates
   bsr     we_get_y_coordinates
-  IFNE tb31612_quick_clear
+  IFNE tb31612_quick_clear_enabled
     bsr     restore_second_copperlist
   ENDC
   bsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   fx_state(a3)       ;Effekte beendet ?
+  tst.w   fx_active(a3)      ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
   move.l  nop_second_copperlist,COP2LC-DMACONR(a6) ;2. Copperliste deaktivieren
@@ -1372,7 +1372,7 @@ fast_exit
 ; -----------------
   CNOP 0,4
 ss_horiz_scrolltext
-  tst.w   ss_state(a3)
+  tst.w   ss_enabled(a3)
   bne.s   ss_no_horiz_scrolltext
 ss_horiz_scrolltext_init
   move.w  ss_text_character_x_shift(a3),d2 ;X-Shift-Wert
@@ -1431,7 +1431,7 @@ sine_scroll
   ADDF.W  cl2_extension2_entry+2,a4
   moveq   #(visible_pixels_number/16)-1,d7 ;Anzahl der Wörter
 sine_scroll_loop1
-  moveq   #TRUE,d0           ;Langwort-Zugriff
+  moveq   #0,d0           ;Langwort-Zugriff
   move.w  (a0)+,d0           ;Y-Offset
   add.w   d2,d0              ;y' + Y-Mittelpunkt
   MULUF.L pf1_plane_width*pf1_depth3,d0,d1 ;Y-Offset in Zielbild-1
@@ -1443,7 +1443,7 @@ sine_scroll_loop1
   move.w  d0,cl2_ext2_BLTDPTH-(cl2_extension2_SIZE+cl2_extension3_SIZE)(a4) ;Playfield schreiben
 ;  moveq   #tb31612_columns_per_word-2,d6 ;Anzahl der Spalten pro Wort
 ;sine_scroll_loop2
-  moveq   #TRUE,d0           ;Langwort-Zugriff
+  moveq   #0,d0           ;Langwort-Zugriff
   move.w  (a0)+,d0           ;Y-Offset
   add.w   d2,d0              ;y' + Y-Mittelpunkt
   MULUF.L pf1_plane_width*pf1_depth3,d0,d1 ;Y-Offset uin Zielbild-2
@@ -1729,7 +1729,7 @@ bf_no_bar
   rts
   CNOP 0,4
 bf_restart_z_plane
-  tst.w   bf_z_restart_state(a3) ;Z-Ebene zurücksetzen ?
+  tst.w   bf_z_restart_active(a3) ;Z-Ebene zurücksetzen ?
   bne.s   bf_no_bar        ;Nein -> Keine Bar darstellen
   subq.w  #4,a0
   move.w  #bf_z_plane1*bf_z_planes_number,2(a0) ;Hinterste Z-Ebene setzen
@@ -1744,7 +1744,7 @@ bf_copy_buffer
   move.l  extra_memory(a3),a0
   add.l   #em_color_buffer+(bf_bar_height*4),a0 ;Puffer
   move.l  cl2_construction2(a3),a1 
-    IFEQ tb31612_quick_clear
+    IFEQ tb31612_quick_clear_enabled
       ADDF.W  cl2_extension7_entry+cl2_ext7_COLOR31_high+2,a1
       move.w  #BPLCON3BITS3,a2 ;High-RGB-Werte
       move.w  #BPLCON3BITS4,a4 ;Low-RGB-Werte
@@ -1758,7 +1758,7 @@ bf_copy_buffer
 bf_copy_buffer_loop
   move.l  (a0)+,d0
   move.l  d0,d2              
-    IFEQ tb31612_quick_clear
+    IFEQ tb31612_quick_clear_enabled
       move.w  a2,cl2_ext7_BPLCON3_1-cl2_ext7_COLOR31_high(a1) ;CMOVE wiederherstellen
     ELSE
       move.w  a2,cl2_ext7_BPLCON3_1-cl2_ext7_COLOR00_high(a1) ;CMOVE wiederherstellen
@@ -1766,13 +1766,13 @@ bf_copy_buffer_loop
   RGB8_TO_RGB4HI d0,d1,d3
   move.w  d0,(a1)            ;COLOR00 High-Wert
   RGB8_TO_RGB4LO d2,d1,d3
-    IFEQ tb31612_quick_clear
+    IFEQ tb31612_quick_clear_enabled
       move.w  d2,cl2_ext7_COLOR31_low-cl2_ext7_COLOR31_high(a1) ;COLOR31 Low-Bits
     ELSE
       move.w  d2,cl2_ext7_COLOR00_low-cl2_ext7_COLOR00_high(a1) ;COLOR00 Low-Bits
     ENDC
   add.l   a5,a1              ;nächste Zeile in CL
-    IFEQ tb31612_quick_clear
+    IFEQ tb31612_quick_clear_enabled
       move.w  a4,cl2_ext7_BPLCON3_2-cl2_ext7_COLOR31_high-cl2_extension7_SIZE(a1) ;CMOVE wiederherstellen
     ELSE
       move.w  a4,cl2_ext7_BPLCON3_2-cl2_ext7_COLOR00_high-cl2_extension7_SIZE(a1) ;CMOVE wiederherstellen
@@ -1814,9 +1814,9 @@ we_get_y_coordinates_loop
 
 ; ** Copper-WAIT-Befehle wiederherstellen **
 ; ------------------------------------------
-  IFNE tb31612_quick_clear
+  IFNE tb31612_quick_clear_enabled
     RESTORE_BPLCON4_CHUNKY_SCREEN tb,cl2,construction2,extension7,32,,tb31612_restore_blit
-    IFEQ tb31612_restore_cl_by_blitter
+    IFEQ tb31612_restore_cl_blitter_enabled
 tb31612_restore_blit
       move.l  cl2_construction1(a3),a0 
       add.l   #cl2_extension8_entry+cl2_ext8_BLTDPTH+2,a0
@@ -1834,7 +1834,7 @@ tb31612_restore_blit
 ; ------------------------
   CNOP 0,4
 chunky_columns_fader_in
-  tst.w   ccfi_state(a3)     ;Chunky-Columns-Fader-In an ?
+  tst.w   ccfi_active(a3)    ;Chunky-Columns-Fader-In an ?
   bne.s   ccfi_no_chunky_columns_fader_in ;Nein -> verzweige
   subq.w  #ccfi_delay_speed,ccfi_columns_delay_counter(a3) ;Verzögerungszähler herunterzählen
   bgt.s   ccfi_no_chunky_columns_fader_in ;Wenn > Null -> verzweige
@@ -1900,14 +1900,14 @@ ccfi_mode4_column_fader_in
   CNOP 0,4
 ccfi_stop_column_fader_in
   moveq   #FALSE,d0
-  move.w  d0,ccfi_state(a3)  ;Chunky-Columns-Fader-In aus
+  move.w  d0,ccfi_active(a3) ;Chunky-Columns-Fader-In aus
   rts
 
 ; ** Spalten ausblenden **
 ; ------------------------
   CNOP 0,4
 chunky_columns_fader_out
-  tst.w   ccfo_state(a3)     ;Chunky-Columns-Fader-Out an ?
+  tst.w   ccfo_active(a3)    ;Chunky-Columns-Fader-Out an ?
   bne.s   ccfo_no_chunky_columns_fader_out ;Neout -> verzweige
   subq.w  #ccfo_delay_speed,ccfo_columns_delay_counter(a3) ;Verzögerungszähler herunterzählen
   bgt.s   ccfo_no_chunky_columns_fader_out ;Wenn > Null -> verzweige
@@ -1973,7 +1973,7 @@ ccfo_mode4_column_fader_out
   CNOP 0,4
 ccfo_stop_column_fader_out
   moveq   #FALSE,d0
-  move.w  d0,ccfo_state(a3)  ;Chunky-Columns-Fader-Out aus
+  move.w  d0,ccfo_active(a3) ;Chunky-Columns-Fader-Out aus
   rts
 
 
@@ -2011,11 +2011,11 @@ no_effects_handler
   rts
   CNOP 0,4
 eh_start_barfield
-  clr.w   bf_state(a3)       ;Barfield an
+  clr.w   bf_active(a3)      ;Barfield an
   rts
   CNOP 0,4
 eh_start_wave_center_bar
-  clr.w   ccfi_state(a3)     ;Chunky-Columns-Fader-In an
+  clr.w   ccfi_active(a3)    ;Chunky-Columns-Fader-In an
   moveq   #1,d2
   move.w  d2,ccfi_columns_delay_counter(a3) ;Verzögerungszähler aktivieren
   rts
@@ -2025,27 +2025,27 @@ eh_start_twisted_bars31612
   move.l  a0,ccf_fader_columns_mask(a3) ;Maske setzen
   moveq   #ccfi_mode1,d2
   move.w  d2,ccfi_current_mode(a3) ;Modus setzen
-  moveq   #TRUE,d0
+  moveq   #0,d0
   move.w  d0,ccfi_start(a3)  ;Startwert zurücksetzrn
-  move.w  d0,ccfi_state(a3)  ;Chunky-Columns-Fader-In an
+  move.w  d0,ccfi_active(a3) ;Chunky-Columns-Fader-In an
   moveq   #1,d2
   move.w  d2,ccfi_columns_delay_counter(a3) ;Verzögerungszähler aktivieren
   rts
   CNOP 0,4
 eh_start_horiz_scrolltext
-  clr.w   ss_state(a3)       ;Sine-Scrolltext an
+  clr.w   ss_enabled(a3)     ;Sine-Scrolltext an
   rts
   CNOP 0,4
 eh_stop_horiz_scrolltext
   moveq   #FALSE,d1
-  move.w  d1,ss_state(a3)    ;Sine-Scrolltext aus
+  move.w  d1,ss_enabled(a3)  ;Sine-Scrolltext aus
   rts
   CNOP 0,4
 eh_stop_wave_center_bar
   lea     wcb_fader_columns_mask(pc),a0
   move.l  a0,ccf_fader_columns_mask(a3) ;Maske setzen
-  moveq   #TRUE,d0
-  move.w  d0,ccfo_state(a3)  ;Chunky-Columns-Fader-Out an
+  moveq   #0,d0
+  move.w  d0,ccfo_active(a3) ;Chunky-Columns-Fader-Out an
   moveq   #1,d2
   move.w  d2,ccfo_columns_delay_counter(a3) ;Verzögerungszähler aktivieren
   rts
@@ -2053,20 +2053,20 @@ eh_stop_wave_center_bar
 eh_stop_twisted_bars31612
   lea     tb31612_fader_columns_mask(pc),a0
   move.l  a0,ccf_fader_columns_mask(a3) ;Maske setzen
-  moveq   #TRUE,d0
+  moveq   #0,d0
   move.w  d0,ccfo_start(a3)  ;Startwert zurücksetzen
-  move.w  d0,ccfo_state(a3)  ;Chunky-Columns-Fader-Out an
+  move.w  d0,ccfo_active(a3) ;Chunky-Columns-Fader-Out an
   moveq   #1,d2
   move.w  d2,ccfo_columns_delay_counter(a3) ;Verzögerungszähler aktivieren
   rts
   CNOP 0,4
 eh_disable_barfield_z_restart
   moveq   #FALSE,d0
-  move.w  d0,bf_z_restart_state(a3) ;Barfield stoppen
+  move.w  d0,bf_z_restart_active(a3) ;Barfield stoppen
   rts
   CNOP 0,4
 eh_stop_all
-  clr.w   fx_state(a3)       ;Effekte beendet
+  clr.w   fx_active(a3)      ;Effekte beendet
   rts
 
 

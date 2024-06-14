@@ -63,9 +63,9 @@ requires_68060                 EQU FALSE
 requires_fast_memory           EQU FALSE
 requires_multiscan_monitor     EQU FALSE
 
-workbench_start                EQU FALSE
-workbench_fade                 EQU FALSE
-text_output                    EQU FALSE
+workbench_start_enabled        EQU FALSE
+workbench_fade_enabled         EQU FALSE
+text_output_enabled            EQU FALSE
 
 sys_taken_over
 own_display_set_second_copperlist
@@ -78,7 +78,7 @@ INTENABITS                     EQU INTF_SETCLR
 CIAAICRBITS                    EQU CIAICRF_SETCLR
 CIABICRBITS                    EQU CIAICRF_SETCLR
 
-COPCONBITS                     EQU TRUE
+COPCONBITS                     EQU 0
 
 pf1_x_size1                    EQU 0
 pf1_y_size1                    EQU 0
@@ -132,14 +132,14 @@ chip_memory_size               EQU 0
 
 AGA_OS_Version                 EQU 39
 
-CIAA_TA_value                  EQU 0
-CIAA_TB_value                  EQU 0
-CIAB_TA_value                  EQU 0
-CIAB_TB_value                  EQU 0
-CIAA_TA_continuous             EQU FALSE
-CIAA_TB_continuous             EQU FALSE
-CIAB_TA_continuous             EQU FALSE
-CIAB_TB_continuous             EQU FALSE
+CIAA_TA_time                   EQU 0
+CIAA_TB_time                   EQU 0
+CIAB_TA_time                   EQU 0
+CIAB_TB_time                   EQU 0
+CIAA_TA_continuous_enabled     EQU FALSE
+CIAA_TB_continuous_enabled     EQU FALSE
+CIAB_TA_continuous_enabled     EQU FALSE
+CIAB_TB_continuous_enabled     EQU FALSE
 
 beam_position                  EQU $136
 
@@ -167,7 +167,7 @@ data_fetch_width               EQU pixel_per_line/8
 pf1_plane_moduli               EQU (pf1_plane_width*(pf1_depth3-1))+pf1_plane_width-data_fetch_width
 
 BPLCON0BITS                    EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
-BPLCON1BITS                    EQU TRUE
+BPLCON1BITS                    EQU 0
 BPLCON2BITS                    EQU BPLCON2F_PF2P2
 BPLCON3BITS1                   EQU BPLCON3F_SPRES0
 BPLCON3BITS2                   EQU BPLCON3BITS1+BPLCON3F_LOCT
@@ -527,27 +527,27 @@ vts_text_table_start           RS.W 1
 
 ; **** Image-Fader ****
 if_colors_counter              RS.W 1
-if_copy_colors_state           RS.W 1
+if_copy_colors_active          RS.W 1
 
-ifi_state                      RS.W 1
+ifi_active                     RS.W 1
 ifi_fader_angle                RS.W 1
 
-ifo_state                      RS.W 1
+ifo_active                     RS.W 1
 ifo_fader_angle                RS.W 1
 
 ; **** Scroll-Logo-Left-In ****
-slli_state                     RS.W 1
+slli_active                    RS.W 1
 slli_x_angle                   RS.W 1
 
 ; **** Scroll-Logo-Left-Out ****
-sllo_state                     RS.W 1
+sllo_active                    RS.W 1
 sllo_x_angle                   RS.W 1
 
 ; **** Effects-Handler ****
 eh_trigger_number              RS.W 1
 
 ; **** Main ****
-fx_state                       RS.W 1
+fx_active                      RS.W 1
 
 variables_SIZE                 RS.B 0
 
@@ -566,29 +566,29 @@ init_own_variables
   lea     vts_image_data,a0
   move.l  a0,vts_image(a3)
   moveq   #vts_vert_scroll_speed,d2
-  moveq   #TRUE,d0
+  moveq   #0,d0
   move.w  d0,vts_variable_vert_scroll_speed(a3)
   move.w  d0,vts_text_table_start(a3)
 
 ; **** Image-Fader ****
   move.w  d0,if_colors_counter(a3)
   moveq   #FALSE,d1
-  move.w  d1,if_copy_colors_state(a3)
+  move.w  d1,if_copy_colors_active(a3)
 
 ; **** Image-Fader-In ****
-  move.w  d1,ifi_state(a3)
+  move.w  d1,ifi_active(a3)
   MOVEF.W sine_table_length/4,d2
   move.w  d2,ifi_fader_angle(a3) ;90 Grad
 
 ; **** Image-Fader-Out ****
-  move.w  d1,ifo_state(a3)
+  move.w  d1,ifo_active(a3)
   move.w  d2,ifo_fader_angle(a3) ;90 Grad
 
 ; **** Scroll-Logo-Left ****
-  move.w  d1,slli_state(a3)
+  move.w  d1,slli_active(a3)
   move.w  d0,slli_x_angle(a3) ;0 Grad
 
-  move.w  d1,sllo_state(a3)
+  move.w  d1,sllo_active(a3)
   MOVEF.W sine_table_length/4,d2
   move.w  d2,sllo_x_angle(a3) ;90 Grad
 
@@ -596,7 +596,7 @@ init_own_variables
   move.w  d0,eh_trigger_number(a3)
 
 ; **** Main ****
-  move.w  d1,fx_state(a3)
+  move.w  d1,fx_active(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
@@ -886,7 +886,7 @@ beam_routines
   jsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   fx_state(a3)       ;Effekte beendet ?
+  tst.w   fx_active(a3)      ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
   move.w  custom_error_code(a3),d1
@@ -929,7 +929,7 @@ vert_text_scroll_loop1
   lea     vts_characters_x_positions(pc),a0 ;X-Koords der Chars
   moveq   #vts_text_characters_per_line-1,d6 ;Anzahl der Zeichen pro Zeile
 vert_text_scroll_loop2
-  moveq   #TRUE,d0           ;Langwort-Zugriff
+  moveq   #0,d0           ;Langwort-Zugriff
   move.w  (a0)+,d0           ;X
   lsr.w   #3,d0              ;X/8
   add.l   d1,d0              ;X+Y-Offset
@@ -1004,7 +1004,7 @@ vts_copy_buffer_loop
 ; -----------------------
   CNOP 0,4
 image_fader_in
-  tst.w   ifi_state(a3)      ;Image-Fader-In an ?
+  tst.w   ifi_active(a3)     ;Image-Fader-In an ?
   bne.s   no_image_fader_in  ;Nein -> verzweige
   movem.l a4-a6,-(a7)
   move.w  ifi_fader_angle(a3),d2 ;Fader-Winkel 
@@ -1035,7 +1035,7 @@ ifi_save_fader_angle
   move.w  d6,if_colors_counter(a3) ;Image-Fader-In fertig ?
   bne.s   no_image_fader_in  ;Nein -> verzweige
   moveq   #FALSE,d0
-  move.w  d0,ifi_state(a3)   ;Image-Fader-In aus
+  move.w  d0,ifi_active(a3)  ;Image-Fader-In aus
 no_image_fader_in
   rts
 
@@ -1043,7 +1043,7 @@ no_image_fader_in
 ; -----------------------
   CNOP 0,4
 image_fader_out
-  tst.w   ifo_state(a3)      ;Image-Fader-Out an ?
+  tst.w   ifo_active(a3)     ;Image-Fader-Out an ?
   bne.s   no_image_fader_out ;Nein -> verzweige
   movem.l a4-a6,-(a7)
   move.w  ifo_fader_angle(a3),d2 ;Fader-Winkel 
@@ -1074,7 +1074,7 @@ ifo_save_fader_angle
   move.w  d6,if_colors_counter(a3) ;Image-Fader-Out fertig ?
   bne.s   no_image_fader_out ;Nein -> verzweige
   moveq   #FALSE,d0
-  move.w  d0,ifo_state(a3)   ;Image-Fader-Out aus
+  move.w  d0,ifo_active(a3)  ;Image-Fader-Out aus
 no_image_fader_out
   rts
 
@@ -1088,7 +1088,7 @@ no_image_fader_out
 ; --------------------------------
   CNOP 0,4
 scroll_logo_left_in
-  tst.w   slli_state(a3)     ;Scroll-Logo-Left-In an ?
+  tst.w   slli_active(a3)    ;Scroll-Logo-Left-In an ?
   bne     no_scroll_logo_left_in  ;Nein -> verzweige
   move.w  slli_x_angle(a3),d2 ;X-Winkel
   cmp.w   #sine_table_length/4,d2 ;90 Grad erreicht ?
@@ -1130,7 +1130,7 @@ no_scroll_logo_left_in
 ; ---------------------------------
   CNOP 0,4
 scroll_logo_left_out
-  tst.w   sllo_state(a3)     ;Scroll-Logo-Left-Out an ?
+  tst.w   sllo_active(a3)    ;Scroll-Logo-Left-Out an ?
   bne     no_scroll_logo_left_out ;Nein -> verzweige
   move.w  sllo_x_angle(a3),d2 ;X-Winkel
   cmp.w   #sine_table_length/2,d2 ;180 Grad erreicht ?
@@ -1202,18 +1202,18 @@ no_effects_handler
   CNOP 0,4
 eh_start_image_fader_in
   move.w  #if_colors_number*3,if_colors_counter(a3)
-  moveq   #TRUE,d0
-  move.w  d0,ifi_state(a3)   ;Image-Fader-In an
-  move.w  d0,if_copy_colors_state(a3) ;Kopieren der Farben an
+  moveq   #0,d0
+  move.w  d0,ifi_active(a3)  ;Image-Fader-In an
+  move.w  d0,if_copy_colors_active(a3) ;Kopieren der Farben an
   rts
   CNOP 0,4
 eh_start_scroll_logo_left_in
-  clr.w   slli_state(a3)     ;Scroll-Logo-Left-In an
+  clr.w   slli_active(a3)    ;Scroll-Logo-Left-In an
   rts
   CNOP 0,4
 eh_stop_image_fader_in
   moveq   #FALSE,d0
-  move.w  d0,ifi_state(a3)   ;Image-Fader-In stoppen
+  move.w  d0,ifi_active(a3)  ;Image-Fader-In stoppen
   rts
   CNOP 0,4
 eh_start_vert_text_scroll
@@ -1227,17 +1227,17 @@ eh_stop_vert_text_scroll
   CNOP 0,4
 eh_start_image_fader_out
   move.w  #if_colors_number*3,if_colors_counter(a3)
-  moveq   #TRUE,d0
-  move.w  d0,ifo_state(a3)   ;Image-Fader-Out an
-  move.w  d0,if_copy_colors_state(a3) ;Kopieren der Farben an
+  moveq   #0,d0
+  move.w  d0,ifo_active(a3)  ;Image-Fader-Out an
+  move.w  d0,if_copy_colors_active(a3) ;Kopieren der Farben an
   rts
   CNOP 0,4
 eh_start_scroll_logo_left_out
-  clr.w   sllo_state(a3)     ;Scroll-Logo-Left-Out an
+  clr.w   sllo_active(a3)    ;Scroll-Logo-Left-Out an
   rts
   CNOP 0,4
 eh_stop_all
-  clr.w   fx_state(a3)       ;Effekte beendet
+  clr.w   fx_active(a3)      ;Effekte beendet
   rts
 
 

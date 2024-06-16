@@ -65,12 +65,12 @@ requires_multiscan_monitor  EQU FALSE
 
 workbench_start_enabled     EQU FALSE
 workbench_fade_enabled      EQU FALSE
-text_output_enabled         EQU FALSE
+text_output_enabled EQU FALSE
 
 sys_taken_over
 pass_global_references
 pass_return_code
-open_border_enabled         EQU TRUE
+open_border_enabled EQU TRUE
 
   IFEQ open_border_enabled
 DMABITS                     EQU DMAF_SPRITE+DMAF_BLITTER+DMAF_COPPER+DMAF_SETCLR
@@ -131,7 +131,6 @@ disk_memory_size            EQU 0
 
 extra_memory_size           EQU 0
 
-AGA_OS_Version              EQU 39
 
 CIAA_TA_time                EQU 0
 CIAA_TB_time                EQU 0

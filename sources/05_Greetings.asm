@@ -129,9 +129,6 @@ audio_memory_size                  EQU 0
 disk_memory_size                   EQU 0
 
 chip_memory_size                   EQU 0
-
-AGA_OS_Version                     EQU 39
-
 CIAA_TA_time                       EQU 0
 CIAA_TB_time                       EQU 0
 CIAB_TA_time                       EQU 0
@@ -697,7 +694,7 @@ save_a7                    RS.L 1
 
 ; **** Sine-Scrolltext ****
 ss_image                   RS.L 1
-ss_enabled                 RS.W 1
+ss_enabled RS.W 1
 ss_text_table_start        RS.W 1
 ss_text_character_x_shift  RS.W 1
 ss_character_toggle_image  RS.W 1

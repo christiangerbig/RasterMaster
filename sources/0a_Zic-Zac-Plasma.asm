@@ -119,7 +119,7 @@ disk_memory_size           EQU 0
 
 extra_memory_size          EQU 0
 
-AGA_OS_Version             EQU 39
+
 
 CIAA_TA_time               EQU 0
 CIAA_TB_time               EQU 0

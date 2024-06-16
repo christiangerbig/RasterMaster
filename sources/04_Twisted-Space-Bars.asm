@@ -126,9 +126,6 @@ disk_memory_size               EQU 0
 extra_memory_size              EQU 0
 
 chip_memory_size               EQU 0
-
-AGA_OS_Version                 EQU 39
-
 CIAA_TA_time                   EQU 0
 CIAA_TB_time                   EQU 0
 CIAB_TA_time                   EQU 0
@@ -647,7 +644,7 @@ spr7_y_size2    EQU sprite7_SIZE/(spr_pixel_per_datafetch/4)
 
 ; **** Horiz-Scrolltext ****
 hst_image                  RS.L 1
-hst_enabled                RS.W 1
+hst_enabled        RS.W 1
 hst_text_table_start       RS.W 1
 hst_text_BLTCON0BITS       RS.W 1
 hst_character_toggle_image RS.W 1

@@ -549,10 +549,9 @@ fx_active                      RS.W 1
 variables_SIZE                 RS.B 0
 
 
-; ## Beginn des Initialisierungsprogramms ##
-; ------------------------------------------
 start_10_credits
-  INCLUDE "sys-init.i"
+
+  INCLUDE "sys-wrapper.i"
 
 ; ** Eigene Variablen initialisieren **
 ; -------------------------------------
@@ -838,12 +837,6 @@ no_patch_copperlist1
   COP_SET_SPRITE_POINTERS cl1,display,spr_number
 
   COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
-
-
-; ** CIA-Timer starten **
-; -----------------------
-
-  INCLUDE "continuous-timers-start.i"
 
 
 ; ## Hauptprogramm ##
@@ -1248,18 +1241,6 @@ eh_stop_all
   CNOP 0,4
 NMI_int_server
   rts
-
-
-; ** Timer stoppen **
-; -------------------
-
-  INCLUDE "continuous-timers-stop.i"
-
-
-; ## System wieder in Ausganszustand zurücksetzen ##
-; --------------------------------------------------
-
-  INCLUDE "sys-return.i"
 
 
 ; ## Hilfsroutinen ##

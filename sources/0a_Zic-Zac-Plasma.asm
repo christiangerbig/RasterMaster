@@ -417,10 +417,9 @@ fx_active                 RS.W 1
 variables_SIZE            RS.B 0
 
 
-; ## Beginn des Initialisierungsprogramms ##
-; ------------------------------------------
 start_0a_zig_zag_plasma
-  INCLUDE "sys-init.i"
+
+  INCLUDE "sys-wrapper.i"
 
 ; ** Eigene Variablen initialisieren **
 ; -------------------------------------
@@ -540,12 +539,6 @@ cl2_init_BPLCON4_registers_loop
   COP_INIT_COPINT cl2
 
   COPY_COPPERLIST cl2,2
-
-
-; ** CIA-Timer starten **
-; -----------------------
-
-  INCLUDE "continuous-timers-start.i"
 
 
 ; ## Hauptprogramm ##
@@ -795,18 +788,6 @@ eh_stop_all
   CNOP 0,4
 NMI_int_server
   rts
-
-
-; ** Timer stoppen **
-; -------------------
-
-  INCLUDE "continuous-timers-stop.i"
-
-
-; ## System wieder in Ausganszustand zurücksetzen ##
-; --------------------------------------------------
-
-  INCLUDE "sys-return.i"
 
 
 ; ## Hilfsroutinen ##

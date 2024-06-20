@@ -332,10 +332,7 @@ spr7_y_size2       EQU 0
 variables_SIZE RS.B 0
 
 
-; ## Beginn des Initialisierungsprogramms ##
-; ------------------------------------------
-
-  INCLUDE "sys-init.i"
+  INCLUDE "sys-wrapper.i"
 
 ; ** Eigene Variablen initialisieren **
 ; -------------------------------------
@@ -388,12 +385,6 @@ init_second_copperlist
   rts
 
 
-; ** CIA-Timer starten **
-; -----------------------
-
-  INCLUDE "continuous-timers-start.i"
-
-
 ; ## Hauptprogramm ##
 ; -------------------
 ; a3 ... Basisadresse aller Variablen
@@ -420,18 +411,6 @@ no_start_1_pt_replay
   CNOP 0,4
 NMI_int_server
   rts
-
-
-; ** Timer stoppen **
-; -------------------
-
-  INCLUDE "continuous-timers-stop.i"
-
-
-; ## System wieder in Ausganszustand zurücksetzen ##
-; --------------------------------------------------
-
-  INCLUDE "sys-return.i"
 
 
 ; ## Hilfsroutinen ##

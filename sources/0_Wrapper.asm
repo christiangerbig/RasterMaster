@@ -348,10 +348,9 @@ cme_memory_pointer       RS.L 1
 custom_memory_entry_SIZE RS.B 0
 
 
-; ## Beginn des Initialisierungsprogramms ##
-; ------------------------------------------
 start_0_pt_replay
-  INCLUDE "sys-init.i"
+
+  INCLUDE "sys-wrapper.i"
 
 ; ** Custom-Memory-Table initialisieren **
 ; ----------------------------------------
@@ -515,12 +514,6 @@ custom_memory_error
   moveq   #RETURN_ERROR,d0
   rts
 
-; ** CIA-Timer starten **
-; -----------------------
-
-  INCLUDE "continuous-timers-start.i"
-
-
 ; ## Hauptprogramm ##
 ; -------------------
 ; a3 ... Basisadresse aller Variablen
@@ -623,18 +616,6 @@ EXTER_int_server
   CNOP 0,4
 NMI_int_server
   rts
-
-
-; ** Timer stoppen **
-; -------------------
-
-  INCLUDE "continuous-timers-stop.i"
-
-
-; ## System wieder in Ausganszustand zurücksetzen ##
-; --------------------------------------------------
-
-  INCLUDE "sys-return.i"
 
 
 ; ## Hilfsroutinen ##

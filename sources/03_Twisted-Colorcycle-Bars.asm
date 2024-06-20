@@ -433,11 +433,9 @@ fx_active                RS.W 1
 variables_SIZE           RS.B 0
 
 
-
-; ## Beginn des Initialisierungsprogramms ##
-; ------------------------------------------
 start_03_twisted_colorcycle_bars
-  INCLUDE "sys-init.i"
+
+  INCLUDE "sys-wrapper.i"
 
 ; ** Eigene Variablen initialisieren **
 ; -------------------------------------
@@ -587,12 +585,6 @@ cl1_init_color_registers
   COP_INIT_COPINT cl1,cl1_HSTART2,cl1_VSTART2
 
   COPY_COPPERLIST cl1,3
-
-; ** CIA-Timer starten **
-; -----------------------
-
-  INCLUDE "continuous-timers-start.i"
-
 
 ; ## Hauptprogramm ##
 ; -------------------
@@ -986,18 +978,6 @@ eh_stop_all
   CNOP 0,4
 NMI_int_server
   rts
-
-
-; ** Timer stoppen **
-; -------------------
-
-  INCLUDE "continuous-timers-stop.i"
-
-
-; ## System wieder in Ausganszustand zurücksetzen ##
-; --------------------------------------------------
-
-  INCLUDE "sys-return.i"
 
 
 ; ## Hilfsroutinen ##

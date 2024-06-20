@@ -589,10 +589,9 @@ variables_SIZE                RS.B 0
   INCLUDE "music-tracker/pt-temp-channel-structure.i"
 
 
-; ## Beginn des Initialisierungsprogramms ##
-; ------------------------------------------
 start_00_title_screen
-  INCLUDE "sys-init.i"
+
+  INCLUDE "sys-wrapper.i"
 
 ; ** Eigene Variablen initialisieren **
 ; -------------------------------------
@@ -811,12 +810,6 @@ no_patch_copperlist2
   COP_INIT_COPINT cl2,cl2_HSTART2,cl2_VSTART2
 
   COPY_COPPERLIST cl2,2
-
-
-; ** CIA-Timer starten **
-; -----------------------
-
-  INCLUDE "continuous-timers-start.i"
 
 
 ; ## Hauptprogramm ##
@@ -1342,18 +1335,6 @@ mh_quit
   CNOP 0,4
 NMI_int_server
   rts
-
-
-; ** Timer stoppen **
-; -------------------
-
-  INCLUDE "continuous-timers-stop.i"
-
-
-; ## System wieder in Ausganszustand zurücksetzen ##
-; --------------------------------------------------
-
-  INCLUDE "sys-return.i"
 
 
 ; ## Hilfsroutinen ##

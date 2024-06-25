@@ -23,24 +23,17 @@
 
 ; ** Library-Includes V.3.x nachladen **
 ; --------------------------------------
-  ;INCDIR  "OMA:include/"
   INCDIR "Daten:include3.5/"
-
-  INCLUDE "dos/dos.i"
-  INCLUDE "dos/dosextens.i"
-  INCLUDE "libraries/dos_lib.i"
 
   INCLUDE "exec/exec.i"
   INCLUDE "exec/exec_lib.i"
 
-  INCLUDE "graphics/GFXBase.i"
-  INCLUDE "graphics/videocontrol.i"
+  INCLUDE "dos/dos.i"
+
+  INCLUDE "graphics/gfxbase.i"
   INCLUDE "graphics/graphics_lib.i"
 
-  INCLUDE "intuition/intuition.i"
-  INCLUDE "intuition/intuition_lib.i"
-
-  INCLUDE "resources/cia_lib.i"
+  INCLUDE "libraries/any_lib.i"
 
   INCLUDE "hardware/adkbits.i"
   INCLUDE "hardware/blit.i"

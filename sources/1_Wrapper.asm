@@ -13,7 +13,7 @@
 
   MC68040
 
-  XREF COLOR00BITS
+  XREF color00_bits
   XREF sc_start
   XREF start_10_credits
 
@@ -88,22 +88,22 @@ pt_split_module_enabled    EQU TRUE
 pt_usedfx                  EQU %1001010100000000
 pt_usedefx                 EQU %0000000000000000
 
-DMABITS                    EQU DMAF_COPPER+DMAF_SETCLR
+dma_bits                   EQU DMAF_COPPER+DMAF_SETCLR
 
   IFEQ pt_ciatiming_enabled
-INTENABITS                 EQU INTF_EXTER+INTF_SETCLR
+intena_bits                EQU INTF_EXTER+INTF_SETCLR
   ELSE
-INTENABITS                 EQU INTF_VERTB+INTF_EXTER+INTF_SETCLR
+intena_bits                EQU INTF_VERTB+INTF_EXTER+INTF_SETCLR
   ENDC
 
-CIAAICRBITS                EQU CIAICRF_SETCLR
+ciaa_icr_bits              EQU CIAICRF_SETCLR
   IFEQ pt_ciatiming_enabled
-CIABICRBITS                EQU CIAICRF_TA+CIAICRF_TB+CIAICRF_SETCLR
+ciab_icr_bits              EQU CIAICRF_TA+CIAICRF_TB+CIAICRF_SETCLR
   ELSE
-CIABICRBITS                EQU CIAICRF_TB+CIAICRF_SETCLR
+ciab_icr_bits              EQU CIAICRF_TB+CIAICRF_SETCLR
   ENDC
 
-COPCONBITS                 EQU 0
+copcon_bits                EQU 0
 
 pf1_x_size1                EQU 0
 pf1_y_size1                EQU 0
@@ -152,37 +152,37 @@ extra_memory_size          EQU 0
 
 chip_memory_size           EQU 0
   IFEQ pt_ciatiming_enabled
-CIABCRABITS                EQU CIACRBF_LOAD
+ciab_cra_bits              EQU CIACRBF_LOAD
   ENDC
-CIABCRBBITS                EQU CIACRBF_LOAD+CIACRBF_RUNMODE ;Oneshot mode
-CIAA_TA_time               EQU 0
-CIAA_TB_time               EQU 0
+ciab_crb_bits              EQU CIACRBF_LOAD+CIACRBF_RUNMODE ;Oneshot mode
+ciaa_ta_time               EQU 0
+ciaa_tb_time               EQU 0
   IFEQ pt_ciatiming_enabled
-CIAB_TA_time               EQU 14187 ;= 0.709379 MHz * [20000 탎 = 50 Hz duration for one frame on a PAL machine]
-;CIAB_TA_time               EQU 14318 ;= 0.715909 MHz * [20000 탎 = 50 Hz duration for one frame on a NTSC machine]
+ciab_ta_time               EQU 14187 ;= 0.709379 MHz * [20000 탎 = 50 Hz duration for one frame on a PAL machine]
+;ciab_ta_time               EQU 14318 ;= 0.715909 MHz * [20000 탎 = 50 Hz duration for one frame on a NTSC machine]
   ELSE
-CIAB_TA_time               EQU 0
+ciab_ta_time               EQU 0
   ENDC
-CIAB_TB_time               EQU 362 ;= 0.709379 MHz * [511.43 탎 = Lowest note period C1 with Tuning=-8 * 2 / PAL clock constant = 907*2/3546895 ticks per second]
+ciab_tb_time               EQU 362 ;= 0.709379 MHz * [511.43 탎 = Lowest note period C1 with Tuning=-8 * 2 / PAL clock constant = 907*2/3546895 ticks per second]
                                    ;= 0.715909 MHz * [506.76 탎 = Lowest note period C1 with Tuning=-8 * 2 / NTSC clock constant = 907*2/3579545 ticks per second]
-CIAA_TA_continuous_enabled EQU FALSE
-CIAA_TB_continuous_enabled EQU FALSE
+ciaa_ta_continuous_enabled EQU FALSE
+ciaa_tb_continuous_enabled EQU FALSE
   IFEQ pt_ciatiming_enabled
-CIAB_TA_continuous_enabled EQU TRUE
+ciab_ta_continuous_enabled EQU TRUE
   ELSE
-CIAB_TA_continuous_enabled EQU FALSE
+ciab_ta_continuous_enabled EQU FALSE
   ENDC
-CIAB_TB_continuous_enabled EQU FALSE
+ciab_tb_continuous_enabled EQU FALSE
 
 beam_position              EQU $136
 
-BPLCON0BITS                EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
-BPLCON3BITS1               EQU 0
-BPLCON3BITS2               EQU BPLCON3BITS1+BPLCON3F_LOCT
-BPLCON4BITS                EQU 0
+bplcon0_bits               EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) 
+bplcon3_bits1              EQU 0
+bplcon3_bits2              EQU bplcon3_bits1+BPLCON3F_LOCT
+bplcon4_bits               EQU 0
 
-cl1_HSTART                 EQU $00
-cl1_VSTART                 EQU beam_position&$ff
+cl1_hstart                 EQU $00
+cl1_vstart                 EQU beam_position&$ff
 
 ; **** Custom Memory ****
 custom_memory_number       EQU 2
@@ -424,11 +424,11 @@ pt_decrunch_audio_data
 ; ---------------------------------
   CNOP 0,4
 init_color_registers
-  CPU_SELECT_COLORHI_BANK 0
-  CPU_INIT_COLORHI COLOR00,1,pf1_color_table
+  CPU_SELECT_COLOR_HIGH_BANK 0
+  CPU_INIT_COLOR_HIGH COLOR00,1,pf1_color_table
 
-  CPU_SELECT_COLORLO_BANK 0
-  CPU_INIT_COLORLO COLOR00,1,pf1_color_table
+  CPU_SELECT_COLOR_LOW_BANK 0
+  CPU_INIT_COLOR_LOW COLOR00,1,pf1_color_table
   rts
 
 ; ** CIA-Timer initialisieren **
@@ -444,13 +444,13 @@ init_CIA_timers
 init_first_copperlist
   move.l  cl1_display(a3),a0 ;Darstellen-CL
   bsr.s   cl1_init_playfield_registers
-  bsr     cl1_init_copint
-  COPLISTEND
+  bsr     cl1_init_copper_interrupt
+  COP_LIST_END
   rts
 
   COP_INIT_PLAYFIELD_REGISTERS cl1,BLANK
 
-  COP_INIT_COPINT cl1,cl1_HSTART,cl1_VSTART,YWRAP
+  COP_INIT_COPPER_INTERRUPT cl1,cl1_HSTART,cl1_VSTART,YWRAP
 
 
 ; ** Custom-Memory belegen **
@@ -523,7 +523,7 @@ free_next_custom_memory
 ; ** CIA-B timer A interrupt server **
 ; ------------------------------------
   CNOP 0,4
-CIAB_TA_int_server
+ciab_ta_int_server
   ENDC
 
   IFNE pt_ciatiming_enabled
@@ -561,7 +561,7 @@ pt_SetSoftInterrupt
 
 ; ** CIA-B Timer B interrupt server **
   CNOP 0,4
-CIAB_TB_int_server
+ciab_tb_int_server
   PT_TIMER_INTERRUPT_SERVER
 
 ; ** Level-6-Interrupt-Server **
@@ -592,7 +592,7 @@ NMI_int_server
 ; ----------------------------------
   CNOP 0,4
 pf1_color_table
-  DC.L COLOR00BITS
+  DC.L color00_bits
 
 ; ** Tables for effect commands **
 ; --------------------------------

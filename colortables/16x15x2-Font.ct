@@ -1,2 +1,2 @@
 
-		dc.l	COLOR00BITS,$00f0f0f0
+		dc.l	color00_bits,$00f0f0f0

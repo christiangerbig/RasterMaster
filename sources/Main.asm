@@ -90,10 +90,10 @@
 
   MC68040
 
-  XDEF COLOR00BITS
-  XDEF COLOR00HIGHBITS
-  XDEF COLOR00LOWBITS
-  XDEF COLOR255BITS
+  XDEF color00_bits
+  XDEF color00_high_bits
+  XDEF color00_low_bits
+  XDEF color255_bits
   XDEF nop_second_copperlist
 
   XREF start_0_pt_replay
@@ -151,13 +151,13 @@ own_display_set_second_copperlist
 pass_global_references
 pass_return_code
 
-DMABITS                    EQU DMAF_COPPER+DMAF_MASTER+DMAF_SETCLR
-INTENABITS                 EQU INTF_INTEN+INTF_SETCLR
+dma_bits                   EQU DMAF_COPPER+DMAF_MASTER+DMAF_SETCLR
+intena_bits                EQU INTF_INTEN+INTF_SETCLR
 
-CIAAICRBITS                EQU CIAICRF_SETCLR
-CIABICRBITS                EQU CIAICRF_SETCLR
+ciaa_icr_bits              EQU CIAICRF_SETCLR
+ciab_icr_bits              EQU CIAICRF_SETCLR
 
-COPCONBITS                 EQU 0
+copcon_bits                EQU 0
 
 pf1_x_size1                EQU 0
 pf1_y_size1                EQU 0
@@ -200,28 +200,28 @@ disk_memory_size           EQU 0
 extra_memory_size          EQU 0
 
 chip_memory_size           EQU 0
-CIAA_TA_time               EQU 0
-CIAA_TB_time               EQU 0
-CIAB_TA_time               EQU 0
-CIAB_TB_time               EQU 0
-CIAA_TA_continuous_enabled EQU FALSE
-CIAA_TB_continuous_enabled EQU FALSE
-CIAB_TA_continuous_enabled EQU FALSE
-CIAB_TB_continuous_enabled EQU FALSE
+ciaa_ta_time               EQU 0
+ciaa_tb_time               EQU 0
+ciab_ta_time               EQU 0
+ciab_tb_time               EQU 0
+ciaa_ta_continuous_enabled EQU FALSE
+ciaa_tb_continuous_enabled EQU FALSE
+ciab_ta_continuous_enabled EQU FALSE
+ciab_tb_continuous_enabled EQU FALSE
 
 beam_position              EQU $136
 
-BPLCON0BITS                EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
-BPLCON3BITS1               EQU 0
-BPLCON3BITS2               EQU BPLCON3BITS1+BPLCON3F_LOCT
-BPLCON4BITS                EQU 0
-COLOR00BITS                EQU $001122
-COLOR00HIGHBITS            EQU $012
-COLOR00LOWBITS             EQU $012
-COLOR255BITS               EQU COLOR00BITS
+bplcon0_bits               EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) 
+bplcon3_bits1              EQU 0
+bplcon3_bits2              EQU bplcon3_bits1+BPLCON3F_LOCT
+bplcon4_bits               EQU 0
+color00_bits               EQU $001122
+color00_high_bits          EQU $012
+color00_low_bits           EQU $012
+color255_bits              EQU color00_bits
 
-cl1_HSTART                 EQU $00
-cl1_VSTART                 EQU beam_position&$ff
+cl1_hstart                 EQU $00
+cl1_vstart                 EQU beam_position&$ff
 
 
 ; ## Makrobefehle ##
@@ -353,11 +353,11 @@ init_all
 ; ---------------------------------
   CNOP 0,4
 init_color_registers
-  CPU_SELECT_COLORHI_BANK 0
-  CPU_INIT_COLORHI COLOR00,1,pf1_color_table
+  CPU_SELECT_COLOR_HIGH_BANK 0
+  CPU_INIT_COLOR_HIGH COLOR00,1,pf1_color_table
 
-  CPU_SELECT_COLORLO_BANK 0
-  CPU_INIT_COLORLO COLOR00,1,pf1_color_table
+  CPU_SELECT_COLOR_LOW_BANK 0
+  CPU_INIT_COLOR_LOW COLOR00,1,pf1_color_table
   rts
 
 
@@ -367,20 +367,20 @@ init_color_registers
 init_first_copperlist
   move.l  cl1_display(a3),a0
   bsr.s   cl1_init_playfield_registers
-  bsr     cl1_init_copint
-  COPLISTEND
+  bsr     cl1_init_copper_interrupt
+  COP_LIST_END
   rts
 
   COP_INIT_PLAYFIELD_REGISTERS cl1,BLANK
 
-  COP_INIT_COPINT cl1,cl1_HSTART,cl1_VSTART,YWRAP
+  COP_INIT_COPPER_INTERRUPT cl1,cl1_HSTART,cl1_VSTART,YWRAP
 
 ; ** 2. Copperliste initialisieren **
 ; -----------------------------------
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_display(a3),a0
-  COPLISTEND
+  COP_LIST_END
   lea     nop_second_copperlist(pc),a1
   move.l  a0,(a1)
   rts
@@ -429,7 +429,7 @@ NMI_int_server
 ; ----------------------------------
   CNOP 0,4
 pf1_color_table
-  DC.L COLOR00BITS
+  DC.L color00_bits
 
 
 ; ## Speicherstellen allgemein ##

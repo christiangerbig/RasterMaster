@@ -13,7 +13,7 @@
 
   MC68040
 
-  XREF COLOR00BITS
+  XREF color00_bits
   XREF mouse_handler
   XREF sine_table
 
@@ -71,16 +71,16 @@ vcs3122_switch_table_length_256 EQU TRUE
 vcs3111_switch_table_length_256 EQU TRUE
 
   IFEQ open_border_enabled
-DMABITS                         EQU DMAF_COPPER+DMAF_SETCLR
+dma_bits                        EQU DMAF_COPPER+DMAF_SETCLR
   ELSE
-DMABITS                         EQU DMAF_COPPER+DMAF_RASTER+DMAF_SETCLR
+dma_bits                        EQU DMAF_COPPER+DMAF_RASTER+DMAF_SETCLR
   ENDC
-INTENABITS                      EQU INTF_SETCLR
+intena_bits                     EQU INTF_SETCLR
 
-CIAAICRBITS                     EQU CIAICRF_SETCLR
-CIABICRBITS                     EQU CIAICRF_SETCLR
+ciaa_icr_bits                   EQU CIAICRF_SETCLR
+ciab_icr_bits                   EQU CIAICRF_SETCLR
 
-COPCONBITS                      EQU 0
+copcon_bits                     EQU 0
 
 pf1_x_size1                     EQU 0
 pf1_y_size1                     EQU 0
@@ -127,14 +127,14 @@ audio_memory_size               EQU 0
 disk_memory_size                EQU 0
 
 chip_memory_size                EQU 0
-CIAA_TA_time                    EQU 0
-CIAA_TB_time                    EQU 0
-CIAB_TA_time                    EQU 0
-CIAB_TB_time                    EQU 0
-CIAA_TA_continuous_enabled      EQU FALSE
-CIAA_TB_continuous_enabled      EQU FALSE
-CIAB_TA_continuous_enabled      EQU FALSE
-CIAB_TB_continuous_enabled      EQU FALSE
+ciaa_ta_time                    EQU 0
+ciaa_tb_time                    EQU 0
+ciab_ta_time                    EQU 0
+ciab_tb_time                    EQU 0
+ciaa_ta_continuous_enabled      EQU FALSE
+ciaa_tb_continuous_enabled      EQU FALSE
+ciab_ta_continuous_enabled      EQU FALSE
+ciab_tb_continuous_enabled      EQU FALSE
 
 beam_position                   EQU $136
 
@@ -143,20 +143,20 @@ pixel_per_line                  EQU 32
   ENDC
 visible_pixels_number           EQU 352
 visible_lines_number            EQU 280
-MINROW                          EQU VSTART_overscan_PAL
+MINROW                          EQU VSTART_OVERSCAN_PAL
 
   IFNE open_border_enabled 
 pf_pixel_per_datafetch          EQU 16 ;1x
-DDFSTRTBITS                     EQU DDFSTART_overscan_32_pixel
-DDFSTOPBITS                     EQU DDFSTOP_overscan_32_pixel_min
+DDFSTRT_bits                    EQU DDFSTART_OVERSCAN_32_pixel
+DDFSTOP_bits                    EQU DDFSTOP_OVERSCAN_32_PIXEL_MIN
   ENDC
 
-display_window_HSTART           EQU HSTART_44_chunky_pixel
-display_window_VSTART           EQU MINROW
-DIWSTRTBITS                     EQU ((display_window_VSTART&$ff)*DIWSTRTF_V0)+(display_window_HSTART&$ff)
-display_window_HSTOP            EQU HSTOP_44_chunky_pixel
-display_window_VSTOP            EQU MINROW+visible_lines_number
-DIWSTOPBITS                     EQU ((display_window_VSTOP&$ff)*DIWSTOPF_V0)+(display_window_HSTOP&$ff)
+display_window_hstart           EQU HSTART_44_chunky_pixel
+display_window_vstart           EQU MINROW
+diwstrt_bits                    EQU ((display_window_VSTART&$ff)*DIWSTRTF_V0)+(display_window_HSTART&$ff)
+display_window_hstop            EQU HSTOP_44_chunky_pixel
+display_window_vstop            EQU MINROW+visible_lines_number
+diwstop_bits                    EQU ((display_window_VSTOP&$ff)*DIWSTOPF_V0)+(display_window_HSTOP&$ff)
 
   IFNE open_border_enabled 
 pf1_plane_width                 EQU pf1_x_size3/8
@@ -164,23 +164,23 @@ data_fetch_width                EQU pixel_per_line/8
 pf1_plane_moduli                EQU -(pf1_plane_width-(pf1_plane_width-data_fetch_width))
   ENDC
 
-BPLCON0BITS                     EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
-BPLCON3BITS1                    EQU 0
-BPLCON3BITS2                    EQU BPLCON3BITS1+BPLCON3F_LOCT
-BPLCON4BITS                     EQU 0
-DIWHIGHBITS                     EQU (((display_window_HSTOP&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_VSTOP&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_HSTART&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_VSTART&$700)>>8)
+bplcon0_bits                    EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) 
+bplcon3_bits1                   EQU 0
+bplcon3_bits2                   EQU bplcon3_bits1+BPLCON3F_LOCT
+bplcon4_bits                    EQU 0
+diwhigh_bits                 EQU (((display_window_HSTOP&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_VSTOP&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_HSTART&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_VSTART&$700)>>8)
 
 cl2_display_x_size              EQU 352
 cl2_display_width               EQU cl2_display_x_size/8
 cl2_display_y_size              EQU visible_lines_number
   IFEQ open_border_enabled
-cl2_HSTART1                     EQU display_window_HSTART-(1*CMOVE_slot_period)-4
+cl2_hstart1                     EQU display_window_HSTART-(1*CMOVE_SLOT_PERIOD)-4
   ELSE
-cl2_HSTART1                     EQU display_window_HSTART-4
+cl2_hstart1                     EQU display_window_HSTART-4
   ENDC
-cl2_VSTART1                     EQU MINROW
-cl2_HSTART2                     EQU $00
-cl2_VSTART2                     EQU beam_position&$ff
+cl2_vstart1                     EQU MINROW
+cl2_hstart2                     EQU $00
+cl2_vstart2                     EQU beam_position&$ff
 
 sine_table_length               EQU 256
 
@@ -257,7 +257,7 @@ ct_size1                        EQU color_values_number1*segments_number1
 
 vcs_switch_table_size           EQU ct_size1
 
-extra_memory_size               EQU vcs_switch_table_size*BYTESIZE
+extra_memory_size               EQU vcs_switch_table_size*BYTE_SIZE
 
 
 ; ## Makrobefehle ##
@@ -403,13 +403,13 @@ cl2_ext1_BPLCON4_42 RS.L 1
 cl2_ext1_BPLCON4_43 RS.L 1
 cl2_ext1_BPLCON4_44 RS.L 1
 
-cl2_extension1_SIZE RS.B 0
+cl2_extension1_size RS.B 0
 
   RSRESET
 
 cl2_begin            RS.B 0
 
-cl2_extension1_entry RS.B cl2_extension1_SIZE*cl2_display_y_size
+cl2_extension1_entry RS.B cl2_extension1_size*cl2_display_y_size
 
 cl2_WAIT             RS.L 1
 cl2_INTREQ           RS.L 1
@@ -573,39 +573,39 @@ init_all
 ; ---------------------------------
   CNOP 0,4
 init_color_registers
-  CPU_SELECT_COLORHI_BANK 0
-  CPU_INIT_COLORHI COLOR00,32,pf1_color_table
-  CPU_SELECT_COLORHI_BANK 1
-  CPU_INIT_COLORHI COLOR00,32
-  CPU_SELECT_COLORHI_BANK 2
-  CPU_INIT_COLORHI COLOR00,32
-  CPU_SELECT_COLORHI_BANK 3
-  CPU_INIT_COLORHI COLOR00,32
-  CPU_SELECT_COLORHI_BANK 4
-  CPU_INIT_COLORHI COLOR00,32
-  CPU_SELECT_COLORHI_BANK 5
-  CPU_INIT_COLORHI COLOR00,32
-  CPU_SELECT_COLORHI_BANK 6
-  CPU_INIT_COLORHI COLOR00,32
-  CPU_SELECT_COLORHI_BANK 7
-  CPU_INIT_COLORHI COLOR00,32
+  CPU_SELECT_COLOR_HIGH_BANK 0
+  CPU_INIT_COLOR_HIGH COLOR00,32,pf1_color_table
+  CPU_SELECT_COLOR_HIGH_BANK 1
+  CPU_INIT_COLOR_HIGH COLOR00,32
+  CPU_SELECT_COLOR_HIGH_BANK 2
+  CPU_INIT_COLOR_HIGH COLOR00,32
+  CPU_SELECT_COLOR_HIGH_BANK 3
+  CPU_INIT_COLOR_HIGH COLOR00,32
+  CPU_SELECT_COLOR_HIGH_BANK 4
+  CPU_INIT_COLOR_HIGH COLOR00,32
+  CPU_SELECT_COLOR_HIGH_BANK 5
+  CPU_INIT_COLOR_HIGH COLOR00,32
+  CPU_SELECT_COLOR_HIGH_BANK 6
+  CPU_INIT_COLOR_HIGH COLOR00,32
+  CPU_SELECT_COLOR_HIGH_BANK 7
+  CPU_INIT_COLOR_HIGH COLOR00,32
 
-  CPU_SELECT_COLORLO_BANK 0
-  CPU_INIT_COLORLO COLOR00,32,pf1_color_table
-  CPU_SELECT_COLORLO_BANK 1
-  CPU_INIT_COLORLO COLOR00,32
-  CPU_SELECT_COLORLO_BANK 2
-  CPU_INIT_COLORLO COLOR00,32
-  CPU_SELECT_COLORLO_BANK 3
-  CPU_INIT_COLORLO COLOR00,32
-  CPU_SELECT_COLORLO_BANK 4
-  CPU_INIT_COLORLO COLOR00,32
-  CPU_SELECT_COLORLO_BANK 5
-  CPU_INIT_COLORLO COLOR00,32
-  CPU_SELECT_COLORLO_BANK 6
-  CPU_INIT_COLORLO COLOR00,32
-  CPU_SELECT_COLORLO_BANK 7
-  CPU_INIT_COLORLO COLOR00,32
+  CPU_SELECT_COLOR_LOW_BANK 0
+  CPU_INIT_COLOR_LOW COLOR00,32,pf1_color_table
+  CPU_SELECT_COLOR_LOW_BANK 1
+  CPU_INIT_COLOR_LOW COLOR00,32
+  CPU_SELECT_COLOR_LOW_BANK 2
+  CPU_INIT_COLOR_LOW COLOR00,32
+  CPU_SELECT_COLOR_LOW_BANK 3
+  CPU_INIT_COLOR_LOW COLOR00,32
+  CPU_SELECT_COLOR_LOW_BANK 4
+  CPU_INIT_COLOR_LOW COLOR00,32
+  CPU_SELECT_COLOR_LOW_BANK 5
+  CPU_INIT_COLOR_LOW COLOR00,32
+  CPU_SELECT_COLOR_LOW_BANK 6
+  CPU_INIT_COLOR_LOW COLOR00,32
+  CPU_SELECT_COLOR_LOW_BANK 7
+  CPU_INIT_COLOR_LOW COLOR00,32
   rts
 
 ; **** Vert-Colorscroll ****
@@ -621,11 +621,11 @@ init_first_copperlist
   move.l  cl1_display(a3),a0 ;Darstellen-CL
   bsr.s   cl1_init_playfield_registers
   IFEQ open_border_enabled
-    COPMOVEQ TRUE,COPJMP2
+    COP_MOVE_QUICK TRUE,COPJMP2
     rts
   ELSE
     bsr.s   cl1_init_bitplane_pointers
-    COPMOVEQ TRUE,COPJMP2
+    COP_MOVE_QUICK TRUE,COPJMP2
     bra     cl1_set_bitplane_pointers
   ENDC
 
@@ -642,15 +642,15 @@ init_first_copperlist
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_construction2(a3),a0 ;Aufbau-CL
-  bsr.s   cl2_init_BPLCON4_registers
-  bsr.s   cl2_init_copint
-  COPLISTEND
+  bsr.s   cl2_init_bplcon4_registers
+  bsr.s   cl2_init_copper_interrupt
+  COP_LIST_END
   bsr     copy_second_copperlist
   bra     swap_second_copperlist
 
-  COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_HSTART1,cl2_VSTART1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,FALSE,FALSE,NOOP<<16
+  COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,FALSE,FALSE,NOOP<<16
 
-  COP_INIT_COPINT cl2,cl2_HSTART2,cl2_VSTART2
+  COP_INIT_COPPER_INTERRUPT cl2,cl2_hstart2,cl2_vstart2
 
   COPY_COPPERLIST cl2,2
 
@@ -726,16 +726,16 @@ vert_colorscroll3112
   move.w  d4,d0              
   addq.b  #vcs3112_step1_angle_speed,d0 ;nächster Y-Winkel
   move.w  d0,vcs3112_step1_angle(a3) 
-  MOVEF.L (cl2_extension1_SIZE*(cl2_display_y_size/2))+4,d5
+  MOVEF.L (cl2_extension1_size*(cl2_display_y_size/2))+4,d5
   move.l  extra_memory(a3),a0 ;Tabelle mit Switchwerten
   move.l  cl2_construction2(a3),a1 
-  ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2+(((cl2_display_width/2)-1)*LONGWORDSIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ;Start in CL 2. Quadrant
-  lea     LONGWORDSIZE(a1),a2 ;Start in CL 1. Quadrant
+  ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ;Start in CL 2. Quadrant
+  lea     LONGWORD_SIZE(a1),a2 ;Start in CL 1. Quadrant
   lea     sine_table(pc),a3 
-  lea     cl2_extension1_SIZE(a1),a4 ;Start in CL 3. Quadrant
-  lea     cl2_extension1_SIZE(a2),a5 ;Start in CL 4. Quadrant
-  move.w  #cl2_extension1_SIZE,a6
-  move.w  #(cl2_extension1_SIZE*(cl2_display_y_size/2))-4,a7
+  lea     cl2_extension1_size(a1),a4 ;Start in CL 3. Quadrant
+  lea     cl2_extension1_size(a2),a5 ;Start in CL 4. Quadrant
+  move.w  #cl2_extension1_size,a6
+  move.w  #(cl2_extension1_size*(cl2_display_y_size/2))-4,a7
   moveq   #(cl2_display_width/2)-1,d7 ;Anzahl der Spalten
 vert_colorscroll3112_loop1
   move.w  d2,d1              ;Startwert 
@@ -800,16 +800,16 @@ vert_colorscroll3121
   move.w  d4,d0              
   addq.b  #vcs3121_step1_angle_speed,d0 ;nächster Y-Winkel
   move.w  d0,vcs3121_step1_angle(a3) 
-  MOVEF.L (cl2_extension1_SIZE*(cl2_display_y_size/2))+4,d5
+  MOVEF.L (cl2_extension1_size*(cl2_display_y_size/2))+4,d5
   move.l  extra_memory(a3),a0 ;Tabelle mit Switchwerten
   move.l  cl2_construction2(a3),a1 
-  ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2+(((cl2_display_width/2)-1)*LONGWORDSIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ;Start in CL 2. Quadrant
-  lea     LONGWORDSIZE(a1),a2 ;Start in CL 1. Quadrant
+  ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ;Start in CL 2. Quadrant
+  lea     LONGWORD_SIZE(a1),a2 ;Start in CL 1. Quadrant
   lea     sine_table(pc),a3  
-  lea     cl2_extension1_SIZE(a1),a4 ;Start in CL 3. Quadrant
-  lea     cl2_extension1_SIZE(a2),a5 ;Start in CL 4. Quadrant
-  move.w  #cl2_extension1_SIZE,a6
-  move.w  #(cl2_extension1_SIZE*(cl2_display_y_size/2))-4,a7
+  lea     cl2_extension1_size(a1),a4 ;Start in CL 3. Quadrant
+  lea     cl2_extension1_size(a2),a5 ;Start in CL 4. Quadrant
+  move.w  #cl2_extension1_size,a6
+  move.w  #(cl2_extension1_size*(cl2_display_y_size/2))-4,a7
   moveq   #(cl2_display_width/2)-1,d7 ;Anzahl der Spalten
 vert_colorscroll3121_loop1
   move.w  d2,d1              ;Startwert 
@@ -874,16 +874,16 @@ vert_colorscroll3122
   move.w  d4,d0              
   addq.b  #vcs3122_step2_angle_speed,d0 ;nächster Y-Winkel
   move.w  d0,vcs3122_step2_angle(a3) 
-  MOVEF.L (cl2_extension1_SIZE*(cl2_display_y_size/2))+4,d5
+  MOVEF.L (cl2_extension1_size*(cl2_display_y_size/2))+4,d5
   move.l  extra_memory(a3),a0 ;Tabelle mit Switchwerten
   move.l  cl2_construction2(a3),a1 
-  ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2+(((cl2_display_width/2)-1)*LONGWORDSIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ;Start in CL 2. Quadrant
-  lea     LONGWORDSIZE(a1),a2 ;Start in CL 1. Quadrant
+  ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ;Start in CL 2. Quadrant
+  lea     LONGWORD_SIZE(a1),a2 ;Start in CL 1. Quadrant
   lea     sine_table(pc),a3  
-  lea     cl2_extension1_SIZE(a1),a4 ;Start in CL 3. Quadrant
-  lea     cl2_extension1_SIZE(a2),a5 ;Start in CL 4. Quadrant
-  move.w  #cl2_extension1_SIZE,a6
-  move.w  #(cl2_extension1_SIZE*(cl2_display_y_size/2))-4,a7
+  lea     cl2_extension1_size(a1),a4 ;Start in CL 3. Quadrant
+  lea     cl2_extension1_size(a2),a5 ;Start in CL 4. Quadrant
+  move.w  #cl2_extension1_size,a6
+  move.w  #(cl2_extension1_size*(cl2_display_y_size/2))-4,a7
   moveq   #(cl2_display_width/2)-1,d7 ;Anzahl der Spalten
 vert_colorscroll3122_loop1
   move.w  d2,d1              ;Startwert 
@@ -948,16 +948,16 @@ vert_colorscroll3111
   move.w  d4,d0              
   addq.b  #vcs3111_step2_angle_speed,d0 ;nächster Y-Winkel
   move.w  d0,vcs3111_step2_angle(a3) 
-  MOVEF.L (cl2_extension1_SIZE*(cl2_display_y_size/2))+4,d5
+  MOVEF.L (cl2_extension1_size*(cl2_display_y_size/2))+4,d5
   move.l  extra_memory(a3),a0 ;Tabelle mit Switchwerten
   move.l  cl2_construction2(a3),a1 
-  ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2+(((cl2_display_width/2)-1)*LONGWORDSIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ;Start in CL 2. Quadrant
-  lea     LONGWORDSIZE(a1),a2 ;Start in CL 1. Quadrant
+  ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ;Start in CL 2. Quadrant
+  lea     LONGWORD_SIZE(a1),a2 ;Start in CL 1. Quadrant
   lea     sine_table(pc),a3 
-  lea     cl2_extension1_SIZE(a1),a4 ;Start in CL 3. Quadrant
-  lea     cl2_extension1_SIZE(a2),a5 ;Start in CL 4. Quadrant
-  move.w  #cl2_extension1_SIZE,a6
-  move.w  #(cl2_extension1_SIZE*(cl2_display_y_size/2))-4,a7
+  lea     cl2_extension1_size(a1),a4 ;Start in CL 3. Quadrant
+  lea     cl2_extension1_size(a2),a5 ;Start in CL 4. Quadrant
+  move.w  #cl2_extension1_size,a6
+  move.w  #(cl2_extension1_size*(cl2_display_y_size/2))-4,a7
   moveq   #(cl2_display_width/2)-1,d7 ;Anzahl der Spalten
 vert_colorscroll_loop1
   move.w  d2,d1              ;Startwert 
@@ -1019,7 +1019,7 @@ blind_fader_in
 bfi_not_finished
     move.w  d0,bf_registers_table_start(a3) 
     MOVEF.W bf_registers_table_length,d3
-    MOVEF.W cl2_extension1_SIZE,d4
+    MOVEF.W cl2_extension1_size,d4
     lea     bf_registers_table(pc),a0 ;Tabelle mit Registeradressen
     IFNE cl2_size1
       move.l  cl2_construction1(a3),a1 ;1. CL
@@ -1079,7 +1079,7 @@ blind_fader_out
 bfo_not_finished
     move.w  d0,bf_registers_table_start(a3) 
     MOVEF.W bf_registers_table_length,d3
-    MOVEF.W cl2_extension1_SIZE,d4
+    MOVEF.W cl2_extension1_size,d4
     moveq   #bf_step2,d5
     lea     bf_registers_table(pc),a0 ;Tabelle mit Registeradressen
     IFNE cl2_size1

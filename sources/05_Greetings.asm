@@ -13,10 +13,10 @@
 
   MC68040
 
-  XREF COLOR00BITS
-  XREF COLOR00HIGHBITS
-  XREF COLOR00LOWBITS
-  XREF COLOR255BITS
+  XREF color00_bits
+  XREF color00_high_bits
+  XREF color00_low_bits
+  XREF color255_bits
   XREF nop_second_copperlist
   XREF mouse_handler
   XREF sine_table
@@ -73,13 +73,13 @@ tb31612_quick_clear_enabled        EQU TRUE ;Solle TRUE sein, wenn Hintergrundef
 tb31612_restore_cl_cpu_enabled     EQU FALSE
 tb31612_restore_cl_blitter_enabled EQU TRUE
 
-DMABITS                            EQU DMAF_BLITTER+DMAF_COPPER+DMAF_RASTER+DMAF_SETCLR
-INTENABITS                         EQU INTF_SETCLR
+dma_bits                           EQU DMAF_BLITTER+DMAF_COPPER+DMAF_RASTER+DMAF_SETCLR
+intena_bits                        EQU INTF_SETCLR
 
-CIAAICRBITS                        EQU CIAICRF_SETCLR
-CIABICRBITS                        EQU CIAICRF_SETCLR
+ciaa_icr_bits                      EQU CIAICRF_SETCLR
+ciab_icr_bits                      EQU CIAICRF_SETCLR
 
-COPCONBITS                         EQU COPCONF_CDANG
+copcon_bits                        EQU COPCONF_CDANG
 
 pf1_x_size1                        EQU 0
 pf1_y_size1                        EQU 0
@@ -123,63 +123,63 @@ audio_memory_size                  EQU 0
 disk_memory_size                   EQU 0
 
 chip_memory_size                   EQU 0
-CIAA_TA_time                       EQU 0
-CIAA_TB_time                       EQU 0
-CIAB_TA_time                       EQU 0
-CIAB_TB_time                       EQU 0
-CIAA_TA_continuous_enabled         EQU FALSE
-CIAA_TB_continuous_enabled         EQU FALSE
-CIAB_TA_continuous_enabled         EQU FALSE
-CIAB_TB_continuous_enabled         EQU FALSE
+ciaa_ta_time                       EQU 0
+ciaa_tb_time                       EQU 0
+ciab_ta_time                       EQU 0
+ciab_tb_time                       EQU 0
+ciaa_ta_continuous_enabled         EQU FALSE
+ciaa_tb_continuous_enabled         EQU FALSE
+ciab_ta_continuous_enabled         EQU FALSE
+ciab_tb_continuous_enabled         EQU FALSE
 
 beam_position                      EQU $136
 
 pixel_per_line                     EQU 448
 visible_pixels_number              EQU 352
 visible_lines_number               EQU 256
-MINROW                             EQU VSTART_256_lines
+MINROW                             EQU VSTART_256_LINES
 
 pf_pixel_per_datafetch             EQU 64 ;4x
-DDFSTRTBITS                        EQU DDFSTART_overscan_64_pixel
-DDFSTOPBITS                        EQU DDFSTOP_overscan_16_pixel
+DDFSTRT_bits                       EQU DDFSTART_OVERSCAN_64_pixel
+DDFSTOP_bits                       EQU DDFSTOP_OVERSCAN_16_pixel
 
-display_window_HSTART              EQU HSTART_44_chunky_pixel
-display_window_VSTART              EQU MINROW
-DIWSTRTBITS                        EQU ((display_window_VSTART&$ff)*DIWSTRTF_V0)+(display_window_HSTART&$ff)
-display_window_HSTOP               EQU HSTOP_44_chunky_pixel
-display_window_VSTOP               EQU VSTOP_256_lines
-DIWSTOPBITS                        EQU ((display_window_VSTOP&$ff)*DIWSTOPF_V0)+(display_window_HSTOP&$ff)
+display_window_hstart              EQU HSTART_44_chunky_pixel
+display_window_vstart              EQU MINROW
+diwstrt_bits                       EQU ((display_window_VSTART&$ff)*DIWSTRTF_V0)+(display_window_HSTART&$ff)
+display_window_hstop               EQU HSTOP_44_chunky_pixel
+display_window_vstop               EQU VSTOP_256_lines
+diwstop_bits                       EQU ((display_window_VSTOP&$ff)*DIWSTOPF_V0)+(display_window_HSTOP&$ff)
 
 pf1_plane_width                    EQU pf1_x_size3/8
 extra_pf1_plane_width              EQU extra_pf1_x_size/8
 data_fetch_width                   EQU pixel_per_line/8
 pf1_plane_moduli                   EQU (pf1_plane_width*(pf1_depth3-1))+pf1_plane_width-data_fetch_width
 
-BPLCON0BITS                        EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) ;lores
-BPLCON1BITS                        EQU BPLCON1F_PF1H4+BPLCON1F_PF2H4+BPLCON1F_PF1H1+BPLCON1F_PF2H1 ;Damit die Bitplane die gleiche Startposition wie CWAIT hat
-BPLCON2BITS                        EQU 0
-BPLCON3BITS1                       EQU 0
-BPLCON3BITS2                       EQU BPLCON3BITS1+BPLCON3F_LOCT
-BPLCON3BITS3                       EQU BPLCON3BITS1+BPLCON3F_BANK0+BPLCON3F_BANK1+BPLCON3F_BANK2
-BPLCON3BITS4                       EQU BPLCON3BITS2+BPLCON3F_BANK0+BPLCON3F_BANK1+BPLCON3F_BANK2
-BPLCON4BITS                        EQU 0
-DIWHIGHBITS                        EQU (((display_window_HSTOP&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_VSTOP&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_HSTART&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_VSTART&$700)>>8)
-FMODEBITS                          EQU FMODEF_BPL32+FMODEF_BPAGEM
+bplcon0_bits                       EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) 
+bplcon1_bits                       EQU BPLCON1F_PF1H4+BPLCON1F_PF2H4+BPLCON1F_PF1H1+BPLCON1F_PF2H1 ;Damit die Bitplane die gleiche Startposition wie CWAIT hat
+bplcon2_bits                       EQU 0
+bplcon3_bits1                      EQU 0
+bplcon3_bits2                      EQU bplcon3_bits1+BPLCON3F_LOCT
+bplcon3_bits3                      EQU bplcon3_bits1+BPLCON3F_BANK0+BPLCON3F_BANK1+BPLCON3F_BANK2
+bplcon3_bits4                      EQU bplcon3_bits2+BPLCON3F_BANK0+BPLCON3F_BANK1+BPLCON3F_BANK2
+bplcon4_bits                       EQU 0
+diwhigh_bits                    EQU (((display_window_HSTOP&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_VSTOP&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_HSTART&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_VSTART&$700)>>8)
+fmode_bits                         EQU FMODEF_BPL32+FMODEF_BPAGEM
 
-cl1_HSTART                         EQU $00
-cl1_VSTART                         EQU $03 ;Damit die CPU die Zeiger COP1LC in der CL für den Einsprung des Char-Blits vor dem Ausführen der CMOVE-Befehlen ändert
+cl1_hstart                         EQU $00
+cl1_vstart                         EQU $03 ;Damit die CPU die Zeiger COP1LC in der CL für den Einsprung des Char-Blits vor dem Ausführen der CMOVE-Befehlen ändert
 
 cl2_display_x_size                 EQU 352
 cl2_display_width                  EQU cl2_display_x_size/8
 cl2_display_y_size                 EQU visible_lines_number
   IFEQ open_border_enabled
-cl2_HSTART1                        EQU display_window_HSTART-(5*CMOVE_slot_period)-4
+cl2_hstart1                        EQU display_window_HSTART-(5*CMOVE_SLOT_PERIOD)-4
   ELSE
-cl2_HSTART1                        EQU display_window_HSTART-(4*CMOVE_slot_period)-4
+cl2_hstart1                        EQU display_window_HSTART-(4*CMOVE_SLOT_PERIOD)-4
   ENDC
-cl2_VSTART1                        EQU MINROW
-cl2_HSTART2                        EQU $00
-cl2_VSTART2                        EQU beam_position&$ff
+cl2_vstart1                        EQU MINROW
+cl2_hstart2                        EQU $00
+cl2_vstart2                        EQU beam_position&$ff
 
 sine_table_length                  EQU 256
 
@@ -383,7 +383,7 @@ cl1_ext1_COP1LCH    RS.L 1
 cl1_ext1_COP1LCL    RS.L 1
 cl1_ext1_COPJMP1    RS.L 1
 
-cl1_extension1_SIZE RS.B 0
+cl1_extension1_size RS.B 0
 
 
   RSRESET
@@ -424,7 +424,7 @@ cl1_ext3_BLTAMOD    RS.L 1
 cl1_ext3_BLTDMOD    RS.L 1
 cl1_ext3_BLTSIZE    RS.L 1
 
-cl1_extension3_SIZE RS.B 0
+cl1_extension3_size RS.B 0
 
   RSRESET
 
@@ -432,9 +432,9 @@ cl1_begin            RS.B 0
 
   INCLUDE "copperlist1-offsets.i"
 
-cl1_extension1_entry RS.B cl1_extension1_SIZE
+cl1_extension1_entry RS.B cl1_extension1_size
 cl1_extension2_entry RS.B cl1_extension2_SIZE
-cl1_extension3_entry RS.B cl1_extension3_SIZE
+cl1_extension3_entry RS.B cl1_extension3_size
 
 cl1_ext3_COPJMP2     RS.L 1
 
@@ -452,7 +452,7 @@ cl2_ext1_BLTBMOD    RS.L 1
 cl2_ext1_BLTAMOD    RS.L 1
 cl2_ext1_BLTDMOD    RS.L 1
 
-cl2_extension1_SIZE RS.B 0
+cl2_extension1_size RS.B 0
 
 
   RSRESET
@@ -477,7 +477,7 @@ cl2_extension3      RS.B 0
 
 cl2_ext3_BLTCON0    RS.L 1
 
-cl2_extension3_SIZE RS.B 0
+cl2_extension3_size RS.B 0
 
 
   RSRESET
@@ -494,7 +494,7 @@ cl2_ext4_BLTDPTL    RS.L 1
 cl2_ext4_BLTSIZE    RS.L 1
 cl2_ext4_WAITBLIT   RS.L 1
 
-cl2_extension4_SIZE RS.B 0
+cl2_extension4_size RS.B 0
 
 
   RSRESET
@@ -504,7 +504,7 @@ cl2_extension5      RS.B 0
 cl2_ext5_COP1LCH    RS.L 1
 cl2_ext5_COP1LCL    RS.L 1
 
-cl2_extension5_SIZE RS.B 0
+cl2_extension5_size RS.B 0
 
 
   RSRESET
@@ -521,7 +521,7 @@ cl2_ext6_BLTADAT    RS.L 1
 cl2_ext6_BLTSIZV    RS.L 1
 cl2_ext6_BLTSIZH    RS.L 1
 
-cl2_extension6_SIZE RS.B 0
+cl2_extension6_size RS.B 0
 
 
   RSRESET
@@ -588,7 +588,7 @@ cl2_ext7_BPLCON4_42   RS.L 1
 cl2_ext7_BPLCON4_43   RS.L 1
 cl2_ext7_BPLCON4_44   RS.L 1
 
-cl2_extension7_SIZE   RS.B 0
+cl2_extension7_size   RS.B 0
 
   IFNE tb31612_quick_clear_enabled
     IFEQ tb31612_restore_cl_blitter_enabled
@@ -603,7 +603,7 @@ cl2_ext8_BLTDMOD    RS.L 1
 cl2_ext8_BLTADAT    RS.L 1
 cl2_ext8_BLTSIZE    RS.L 1
 
-cl2_extension8_SIZE RS.B 0
+cl2_extension8_size RS.B 0
     ENDC
   ENDC
 
@@ -611,16 +611,16 @@ cl2_extension8_SIZE RS.B 0
 
 cl2_begin            RS.B 0
 
-cl2_extension1_entry RS.B cl2_extension1_SIZE
+cl2_extension1_entry RS.B cl2_extension1_size
 cl2_extension2_entry RS.B cl2_extension2_SIZE*(visible_pixels_number/16)
-cl2_extension3_entry RS.B cl2_extension3_SIZE*(visible_pixels_number/16)
-cl2_extension4_entry RS.B cl2_extension4_SIZE*(ss_text_columns_number-(visible_pixels_number/16))
-cl2_extension5_entry RS.B cl2_extension5_SIZE
-cl2_extension6_entry RS.B cl2_extension6_SIZE
-cl2_extension7_entry RS.B cl2_extension7_SIZE*cl2_display_y_size
+cl2_extension3_entry RS.B cl2_extension3_size*(visible_pixels_number/16)
+cl2_extension4_entry RS.B cl2_extension4_size*(ss_text_columns_number-(visible_pixels_number/16))
+cl2_extension5_entry RS.B cl2_extension5_size
+cl2_extension6_entry RS.B cl2_extension6_size
+cl2_extension7_entry RS.B cl2_extension7_size*cl2_display_y_size
   IFNE tb31612_quick_clear_enabled
     IFEQ tb31612_restore_cl_blitter_enabled
-cl2_extension8_entry RS.B cl2_extension8_SIZE
+cl2_extension8_entry RS.B cl2_extension8_size
     ENDC
   ENDC
 
@@ -825,7 +825,7 @@ tb31612_init_color_table_loop
   CNOP 0,4
 wcb_init_color_table
   lea     wcb_bar_color_table(pc),a0
-  lea     pf1_color_table+(color_values_number1*segments_number1*2*LONGWORDSIZE)(pc),a1
+  lea     pf1_color_table+(color_values_number1*segments_number1*2*LONGWORD_SIZE)(pc),a1
   MOVEF.W (color_values_number2*segments_number2)-1,d7
 wcb_init_color_table_loop
   move.l  (a0)+,(a1)         ;COLOR00
@@ -839,7 +839,7 @@ wcb_init_color_table_loop
   CNOP 0,4
 ss_init_color_table
   lea     ss_color_table(pc),a0
-  lea     pf1_color_table+((1+(((color_values_number1*segments_number1)+ss_colorrun_y_pos)*2))*LONGWORDSIZE)(pc),a1
+  lea     pf1_color_table+((1+(((color_values_number1*segments_number1)+ss_colorrun_y_pos)*2))*LONGWORD_SIZE)(pc),a1
   MOVEF.W (color_values_number3*segments_number3)-1,d7
 ss_init_color_table_loop
   move.l  (a0)+,(a1)         ;COLOR01
@@ -851,39 +851,39 @@ ss_init_color_table_loop
 ; ---------------------------------
   CNOP 0,4
 init_color_registers
-  CPU_SELECT_COLORHI_BANK 0
-  CPU_INIT_COLORHI COLOR00,32,pf1_color_table
-  CPU_SELECT_COLORHI_BANK 1
-  CPU_INIT_COLORHI COLOR00,32
-  CPU_SELECT_COLORHI_BANK 2
-  CPU_INIT_COLORHI COLOR00,32
-  CPU_SELECT_COLORHI_BANK 3
-  CPU_INIT_COLORHI COLOR00,32
-  CPU_SELECT_COLORHI_BANK 4
-  CPU_INIT_COLORHI COLOR00,32
-  CPU_SELECT_COLORHI_BANK 5
-  CPU_INIT_COLORHI COLOR00,32
-  CPU_SELECT_COLORHI_BANK 6
-  CPU_INIT_COLORHI COLOR00,32
-  CPU_SELECT_COLORHI_BANK 7
-  CPU_INIT_COLORHI COLOR00,32
+  CPU_SELECT_COLOR_HIGH_BANK 0
+  CPU_INIT_COLOR_HIGH COLOR00,32,pf1_color_table
+  CPU_SELECT_COLOR_HIGH_BANK 1
+  CPU_INIT_COLOR_HIGH COLOR00,32
+  CPU_SELECT_COLOR_HIGH_BANK 2
+  CPU_INIT_COLOR_HIGH COLOR00,32
+  CPU_SELECT_COLOR_HIGH_BANK 3
+  CPU_INIT_COLOR_HIGH COLOR00,32
+  CPU_SELECT_COLOR_HIGH_BANK 4
+  CPU_INIT_COLOR_HIGH COLOR00,32
+  CPU_SELECT_COLOR_HIGH_BANK 5
+  CPU_INIT_COLOR_HIGH COLOR00,32
+  CPU_SELECT_COLOR_HIGH_BANK 6
+  CPU_INIT_COLOR_HIGH COLOR00,32
+  CPU_SELECT_COLOR_HIGH_BANK 7
+  CPU_INIT_COLOR_HIGH COLOR00,32
 
-  CPU_SELECT_COLORLO_BANK 0
-  CPU_INIT_COLORLO COLOR00,32,pf1_color_table
-  CPU_SELECT_COLORLO_BANK 1
-  CPU_INIT_COLORLO COLOR00,32
-  CPU_SELECT_COLORLO_BANK 2
-  CPU_INIT_COLORLO COLOR00,32
-  CPU_SELECT_COLORLO_BANK 3
-  CPU_INIT_COLORLO COLOR00,32
-  CPU_SELECT_COLORLO_BANK 4
-  CPU_INIT_COLORLO COLOR00,32
-  CPU_SELECT_COLORLO_BANK 5
-  CPU_INIT_COLORLO COLOR00,32
-  CPU_SELECT_COLORLO_BANK 6
-  CPU_INIT_COLORLO COLOR00,32
-  CPU_SELECT_COLORLO_BANK 7
-  CPU_INIT_COLORLO COLOR00,32
+  CPU_SELECT_COLOR_LOW_BANK 0
+  CPU_INIT_COLOR_LOW COLOR00,32,pf1_color_table
+  CPU_SELECT_COLOR_LOW_BANK 1
+  CPU_INIT_COLOR_LOW COLOR00,32
+  CPU_SELECT_COLOR_LOW_BANK 2
+  CPU_INIT_COLOR_LOW COLOR00,32
+  CPU_SELECT_COLOR_LOW_BANK 3
+  CPU_INIT_COLOR_LOW COLOR00,32
+  CPU_SELECT_COLOR_LOW_BANK 4
+  CPU_INIT_COLOR_LOW COLOR00,32
+  CPU_SELECT_COLOR_LOW_BANK 5
+  CPU_INIT_COLOR_LOW COLOR00,32
+  CPU_SELECT_COLOR_LOW_BANK 6
+  CPU_INIT_COLOR_LOW COLOR00,32
+  CPU_SELECT_COLOR_LOW_BANK 7
+  CPU_INIT_COLOR_LOW COLOR00,32
   rts
 
 ; **** Twisted-Bars3.16.1.2 ****
@@ -912,42 +912,42 @@ bf_init_color_table
   MOVEF.W (color_values_number4*segments_number4)-1,d7
 bf_init_color_table_loop1
   move.l  (a0)+,(a1)         ;COLOR01
-  add.l   #(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORDSIZE,a1
+  add.l   #(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORD_SIZE,a1
   dbf     d7,bf_init_color_table_loop1
 
   lea     em_color_table2(a2),a1
   MOVEF.W (color_values_number4*segments_number4)-1,d7
 bf_init_color_table_loop2
   move.l  (a0)+,(a1)         ;COLOR01
-  add.l   #(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORDSIZE,a1
+  add.l   #(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORD_SIZE,a1
   dbf     d7,bf_init_color_table_loop2
 
   lea     em_color_table3(a2),a1
   MOVEF.W (color_values_number4*segments_number4)-1,d7
 bf_init_color_table_loop3
   move.l  (a0)+,(a1)         ;COLOR01
-  add.l   #(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORDSIZE,a1
+  add.l   #(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORD_SIZE,a1
   dbf     d7,bf_init_color_table_loop3
 
   lea     em_color_table4(a2),a1
   MOVEF.W (color_values_number4*segments_number4)-1,d7
 bf_init_color_table_loop4
   move.l  (a0)+,(a1)         ;COLOR01
-  add.l   #(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORDSIZE,a1
+  add.l   #(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORD_SIZE,a1
   dbf     d7,bf_init_color_table_loop4
 
   lea     em_color_table5(a2),a1
   MOVEF.W (color_values_number4*segments_number4)-1,d7
 bf_init_color_table_loop5
   move.l  (a0)+,(a1)         ;COLOR01
-  add.l   #(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORDSIZE,a1
+  add.l   #(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORD_SIZE,a1
   dbf     d7,bf_init_color_table_loop5
 
   lea     em_color_table6(a2),a1
   MOVEF.W (color_values_number4*segments_number4)-1,d7
 bf_init_color_table_loop6
   move.l  (a0)+,(a1)         ;COLOR01
-  add.l   #(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORDSIZE,a1
+  add.l   #(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORD_SIZE,a1
   dbf     d7,bf_init_color_table_loop6
   rts
 
@@ -1066,7 +1066,7 @@ init_first_copperlist
   bsr     cl1_init_copperlist_branch
   bsr     cl1_init_copy_blit
   bsr     cl1_init_horiz_scroll_blit
-  COPMOVEQ TRUE,COPJMP2
+  COP_MOVE_QUICK TRUE,COPJMP2
   bra     cl1_set_bitplane_pointers
 
   COP_INIT_PLAYFIELD_REGISTERS cl1
@@ -1075,61 +1075,61 @@ init_first_copperlist
 
   CNOP 0,4
 cl1_init_copperlist_branch
-  COPWAIT cl1_HSTART,cl1_VSTART
+  COP_WAIT cl1_HSTART,cl1_VSTART
   move.l  cl1_display(a3),d0 ;Darstellen-CL
   add.l   #cl1_extension3_entry,d0 ;Char-Blit überspringen
   swap    d0                 ;High
-  COPMOVE d0,COP1LCH
+  COP_MOVE d0,COP1LCH
   swap    d0                 ;Low
-  COPMOVE d0,COP1LCL
-  COPMOVEQ TRUE,COPJMP1
+  COP_MOVE d0,COP1LCL
+  COP_MOVE_QUICK TRUE,COPJMP1
   rts
 
   CNOP 0,4
 cl1_init_copy_blit
-  COPWAITBLIT
-  COPMOVEQ BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;Minterm D=A
-  COPMOVEQ TRUE,BLTCON1
-  COPMOVEQ FALSEW,BLTAFWM
-  COPMOVEQ FALSEW,BLTALWM
-  COPMOVEQ TRUE,BLTAPTH
-  COPMOVEQ TRUE,BLTAPTL
+  COP_WAIT_BLITTER
+  COP_MOVE_QUICK BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;Minterm D=A
+  COP_MOVE_QUICK TRUE,BLTCON1
+  COP_MOVE_QUICK FALSE_WORD,BLTAFWM
+  COP_MOVE_QUICK FALSE_WORD,BLTALWM
+  COP_MOVE_QUICK TRUE,BLTAPTH
+  COP_MOVE_QUICK TRUE,BLTAPTL
   move.l  extra_pf1(a3),a1
   move.l  #(ss_text_character_x_restart/8)+(ss_text_character_y_restart*extra_pf1_plane_width*extra_pf1_depth),d0
   add.l   (a1),d0
   swap    d0                 ;High
-  COPMOVE d0,BLTDPTH         ;Playfield
+  COP_MOVE d0,BLTDPTH         ;Playfield
   swap    d0                 ;Low
-  COPMOVE d0,BLTDPTL
-  COPMOVEQ ss_image_plane_width-ss_text_character_width,BLTAMOD
-  COPMOVEQ extra_pf1_plane_width-ss_text_character_width,BLTDMOD
-  COPMOVEQ (ss_copy_character_blit_y_size*64)+(ss_copy_character_blit_x_size/16),BLTSIZE
+  COP_MOVE d0,BLTDPTL
+  COP_MOVE_QUICK ss_image_plane_width-ss_text_character_width,BLTAMOD
+  COP_MOVE_QUICK extra_pf1_plane_width-ss_text_character_width,BLTDMOD
+  COP_MOVE_QUICK (ss_copy_character_blit_y_size*64)+(ss_copy_character_blit_x_size/16),BLTSIZE
   rts
 
   CNOP 0,4
 cl1_init_horiz_scroll_blit
-  COPWAITBLIT
-  COPMOVEQ DMAF_BLITHOG+DMAF_SETCLR,DMACON ;BLTPRI an
-  COPMOVEQ ((-ss_horiz_scroll_speed<<12)+BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC),BLTCON0 ;Minterm D=A
-  COPMOVEQ TRUE,BLTCON1
+  COP_WAIT_BLITTER
+  COP_MOVE_QUICK DMAF_BLITHOG+DMAF_SETCLR,DMACON ;BLTPRI an
+  COP_MOVE_QUICK ((-ss_horiz_scroll_speed<<12)+BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC),BLTCON0 ;Minterm D=A
+  COP_MOVE_QUICK TRUE,BLTCON1
   move.l  extra_pf1(a3),a1   ;Quelle
   move.l  (a1),d0 
   add.l   #ss_text_y_position*extra_pf1_plane_width*extra_pf1_depth,d0
   move.l  d0,d1              ;Erste Zeile
-  COPMOVEQ FALSEW,BLTAFWM
+  COP_MOVE_QUICK FALSE_WORD,BLTAFWM
   addq.l  #2,d0              ;Erste Zeile, 16 Pixel überspringen
-  COPMOVEQ FALSEW,BLTALWM
+  COP_MOVE_QUICK FALSE_WORD,BLTALWM
   swap    d0                 ;High
-  COPMOVE d0,BLTAPTH
+  COP_MOVE d0,BLTAPTH
   swap    d0                 ;Low
-  COPMOVE d0,BLTAPTL
+  COP_MOVE d0,BLTAPTL
   swap    d1                 ;High
-  COPMOVE d1,BLTDPTH
+  COP_MOVE d1,BLTDPTH
   swap    d1                 ;Low
-  COPMOVE d1,BLTDPTL
-  COPMOVEQ extra_pf1_plane_width-ss_horiz_scroll_window_width,BLTAMOD
-  COPMOVEQ extra_pf1_plane_width-ss_horiz_scroll_window_width,BLTDMOD
-  COPMOVEQ (ss_horiz_scroll_blit_y_size*64)+(ss_horiz_scroll_blit_x_size/16),BLTSIZE
+  COP_MOVE d1,BLTDPTL
+  COP_MOVE_QUICK extra_pf1_plane_width-ss_horiz_scroll_window_width,BLTAMOD
+  COP_MOVE_QUICK extra_pf1_plane_width-ss_horiz_scroll_window_width,BLTDMOD
+  COP_MOVE_QUICK (ss_horiz_scroll_blit_y_size*64)+(ss_horiz_scroll_blit_x_size/16),BLTSIZE
   rts
 
   COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
@@ -1143,14 +1143,14 @@ init_second_copperlist
   bsr.s   cl2_init_sine_scroll_blits
   bsr     cl2_init_copperlist_branch
   bsr     cl2_init_clear_blit
-  bsr     cl2_init_BPLCON4_registers
+  bsr     cl2_init_bplcon4_registers
   IFEQ tb31612_restore_cl_blitter_enabled
     IFNE tb31612_quick_clear_enabled
       bsr     cl2_init_restore_blit
     ENDC
   ENDC
-  bsr     cl2_init_copint
-  COPLISTEND
+  bsr     cl2_init_copper_interrupt
+  COP_LIST_END
   bsr     copy_second_copperlist
 ;  bsr     swap_second_copperlist
   bsr     swap_playfield1
@@ -1184,10 +1184,10 @@ init_second_copperlist
 
   CNOP 0,4
 cl2_init_blit_steady_registers
-  COPWAITBLIT
-  COPMOVEQ pf1_plane_width-ss_text_character_width,BLTBMOD
-  COPMOVEQ extra_pf1_plane_width-ss_text_character_width,BLTAMOD
-  COPMOVEQ pf1_plane_width-ss_text_character_width,BLTDMOD
+  COP_WAIT_BLITTER
+  COP_MOVE_QUICK pf1_plane_width-ss_text_character_width,BLTBMOD
+  COP_MOVE_QUICK extra_pf1_plane_width-ss_text_character_width,BLTAMOD
+  COP_MOVE_QUICK pf1_plane_width-ss_text_character_width,BLTDMOD
   rts
 
   CNOP 0,4
@@ -1199,19 +1199,19 @@ cl2_init_sine_scroll_blits
   add.l   #ss_text_y_position*extra_pf1_plane_width*extra_pf1_depth,d3 ;Quellbild-2
   moveq   #(visible_pixels_number/16)-1,d7 ;Anzahl der Wörter
 cl2_init_sine_scroll_blits_loop1
-  COPMOVEQ BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;D=A
-  MOVEF.W FALSEB>>(8-ss_text_columns_x_size),d1 ;Maske
-  COPMOVE d1,BLTALWM         ;Maske
+  COP_MOVE_QUICK BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;D=A
+  MOVEF.W FALSE_BYTE>>(8-ss_text_columns_x_size),d1 ;Maske
+  COP_MOVE d1,BLTALWM         ;Maske
   swap    d2
-  COPMOVE d2,BLTAPTH         ;Scrolltext
+  COP_MOVE d2,BLTAPTH         ;Scrolltext
   swap    d2
-  COPMOVE d2,BLTAPTL
-  COPMOVEQ TRUE,BLTDPTH
-  COPMOVEQ TRUE,BLTDPTL
-  COPMOVEQ (ss_copy_column_blit_y_size1*64)+(ss_copy_column_blit_x_size1/16),BLTSIZE
-  COPWAITBLIT
+  COP_MOVE d2,BLTAPTL
+  COP_MOVE_QUICK TRUE,BLTDPTH
+  COP_MOVE_QUICK TRUE,BLTDPTL
+  COP_MOVE_QUICK (ss_copy_column_blit_y_size1*64)+(ss_copy_column_blit_x_size1/16),BLTSIZE
+  COP_WAIT_BLITTER
 
-  COPMOVEQ BC0F_SRCA+BC0F_SRCB+BC0F_DEST+NABNC+NABC+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;D=A+B
+  COP_MOVE_QUICK BC0F_SRCA+BC0F_SRCB+BC0F_DEST+NABNC+NABC+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;D=A+B
 
   subq.l  #ss_sine_character_width,d2 ;nächster Char in Quellbild-1
   moveq   #ss_text_columns_per_word-2,d6 ;Anzahl der Spalten pro Wort
@@ -1225,17 +1225,17 @@ cl2_init_sine_scroll_blits_loop2
       lsl.w   #ss_text_columns_x_size,d1 ;Maske n Bits nach links verschieben
     ENDC
   ENDC
-  COPMOVE d1,BLTALWM
+  COP_MOVE d1,BLTALWM
   swap    d3
-  COPMOVEQ TRUE,BLTBPTH
-  COPMOVEQ TRUE,BLTBPTL
-  COPMOVE d3,BLTAPTH         ;Scrolltext
+  COP_MOVE_QUICK TRUE,BLTBPTH
+  COP_MOVE_QUICK TRUE,BLTBPTL
+  COP_MOVE d3,BLTAPTH         ;Scrolltext
   swap    d3
-  COPMOVE d3,BLTAPTL
-  COPMOVEQ TRUE,BLTDPTH
-  COPMOVEQ TRUE,BLTDPTL
-  COPMOVEQ (ss_copy_column_blit_y_size2*64)+(ss_copy_column_blit_x_size2/16),BLTSIZE
-  COPWAITBLIT
+  COP_MOVE d3,BLTAPTL
+  COP_MOVE_QUICK TRUE,BLTDPTH
+  COP_MOVE_QUICK TRUE,BLTDPTL
+  COP_MOVE_QUICK (ss_copy_column_blit_y_size2*64)+(ss_copy_column_blit_x_size2/16),BLTSIZE
+  COP_WAIT_BLITTER
   dbf     d6,cl2_init_sine_scroll_blits_loop2
   subq.l  #ss_sine_character_width,d3 ;nächster Char in Quellbild-2
   dbf     d7,cl2_init_sine_scroll_blits_loop1
@@ -1243,44 +1243,44 @@ cl2_init_sine_scroll_blits_loop2
 
   CNOP 0,4
 cl2_init_copperlist_branch
-  COPMOVE cl1_display(a3),COP1LCH
-  COPMOVE cl1_display+2(a3),COP1LCL
+  COP_MOVE cl1_display(a3),COP1LCH
+  COP_MOVE cl1_display+2(a3),COP1LCL
   rts
 
   CNOP 0,4
 cl2_init_clear_blit
-  COPMOVEQ DMAF_BLITHOG,DMACON ;BLTPRI aus
-  COPMOVEQ BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;Minterm D=A
-  COPMOVEQ FALSEW,BLTALWM    ;Maske aus
-  COPMOVEQ TRUE,BLTDPTH
-  COPMOVEQ TRUE,BLTDPTL
-  COPMOVEQ 2,BLTDMOD
+  COP_MOVE_QUICK DMAF_BLITHOG,DMACON ;BLTPRI aus
+  COP_MOVE_QUICK BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;Minterm D=A
+  COP_MOVE_QUICK FALSE_WORD,BLTALWM    ;Maske aus
+  COP_MOVE_QUICK TRUE,BLTDPTH
+  COP_MOVE_QUICK TRUE,BLTDPTL
+  COP_MOVE_QUICK 2,BLTDMOD
   IFEQ tb31612_quick_clear_enabled
-    COPMOVEQ -2,BLTADAT      ;Quelle = BPLCON4-Bits
+    COP_MOVE_QUICK -2,BLTADAT      ;Quelle = BPLCON4-Bits
   ELSE
-    COPMOVEQ BPLCON4BITS,BLTADAT ;Quelle = BPLCON4-Bits
+    COP_MOVE_QUICK bplcon4_bits,BLTADAT ;Quelle = BPLCON4-Bits
   ENDC
-  COPMOVEQ tb31612_clear_blit_y_size,BLTSIZV ;Anzahl der Zeilen
-  COPMOVEQ tb31612_clear_blit_x_size/16,BLTSIZH ;Anzahl der Wörter & Blitter starten
+  COP_MOVE_QUICK tb31612_clear_blit_y_size,BLTSIZV ;Anzahl der Zeilen
+  COP_MOVE_QUICK tb31612_clear_blit_x_size/16,BLTSIZH ;Anzahl der Wörter & Blitter starten
   rts
 
-  COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_HSTART1,cl2_VSTART1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,tb31612_quick_clear_enabled,TRUE
+  COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,tb31612_quick_clear_enabled,TRUE
 
   IFEQ tb31612_restore_cl_blitter_enabled
     IFNE tb31612_quick_clear_enabled
       CNOP 0,4
 cl2_init_restore_blit
-      COPWAITBLIT
-      COPMOVEQ TRUE,BLTDPTH
-      COPMOVEQ TRUE,BLTDPTL
-      COPMOVEQ cl2_extension7_SIZE-tb31612_restore_blit_width,BLTDMOD
-      COPMOVEQ -2,BLTADAT ;Quelle = 2. Wort in CWAIT
-      COPMOVEQ (tb31612_restore_blit_y_size*64)+(tb31612_restore_blit_x_size/16),BLTSIZE ;Anzahl der Zeilen
+      COP_WAIT_BLITTER
+      COP_MOVE_QUICK TRUE,BLTDPTH
+      COP_MOVE_QUICK TRUE,BLTDPTL
+      COP_MOVE_QUICK cl2_extension7_size-tb31612_restore_blit_width,BLTDMOD
+      COP_MOVE_QUICK -2,BLTADAT ;Quelle = 2. Wort in CWAIT
+      COP_MOVE_QUICK (tb31612_restore_blit_y_size*64)+(tb31612_restore_blit_x_size/16),BLTSIZE ;Anzahl der Zeilen
       rts
     ENDC
   ENDC
 
-  COP_INIT_COPINT cl2,cl2_HSTART2,cl2_VSTART2
+  COP_INIT_COPPER_INTERRUPT cl2,cl2_hstart2,cl2_vstart2
 
   COPY_COPPERLIST cl2,3
 
@@ -1365,7 +1365,6 @@ ss_horiz_scrolltext_init
   addq.w  #ss_horiz_scroll_speed,d2 ;erhöhen
   cmp.w   #ss_text_character_x_shift_max,d2 ;X-Shift-Wert < Maximum ?
   blt.s   ss_set_character_x_shift ;Ja -> verzweige
-ss_new_character_image
   bsr.s   ss_get_new_character_image
   move.w  d0,cl1_extension2_entry+cl1_ext2_BLTAPTL+2(a2) ;Character-Image
   swap    d0
@@ -1374,7 +1373,6 @@ ss_new_character_image
   MOVEF.L cl1_extension2_entry,d3 ;Einsprung bei Charset-Blit
 ss_set_character_x_shift
   move.w  d2,ss_text_character_x_shift(a3) 
-ss_set_copper_jump_entry
   add.l   a2,d3
   move.w  d3,cl1_extension1_entry+cl1_ext1_COP1LCL+2(a2) ;Sprungadresse eintragen
   swap    d3                 ;High
@@ -1404,8 +1402,8 @@ tb31612_clear_second_copperlist
 sine_scroll
   move.l  a4,-(a7)
   MOVEF.W ss_text_y_center,d2
-  MOVEF.L cl2_extension2_SIZE+cl2_extension3_SIZE,d3
-  MOVEF.L cl2_extension4_SIZE,d4
+  MOVEF.L cl2_extension2_SIZE+cl2_extension3_size,d3
+  MOVEF.L cl2_extension4_size,d4
   lea     we_y_coordinates(pc),a0 ;Tabelle mit Y-Koords
   move.l  pf1_construction2(a3),a1 ;Zielbild
   move.l  (a1),a1
@@ -1424,7 +1422,7 @@ sine_scroll_loop1
   move.w  d0,cl2_ext2_BLTDPTL(a4) ;Playfield schreiben
   swap    d0                 ;High
   add.l   d3,a4              ;nächster Blit in CL
-  move.w  d0,cl2_ext2_BLTDPTH-(cl2_extension2_SIZE+cl2_extension3_SIZE)(a4) ;Playfield schreiben
+  move.w  d0,cl2_ext2_BLTDPTH-(cl2_extension2_SIZE+cl2_extension3_size)(a4) ;Playfield schreiben
 ;  moveq   #tb31612_columns_per_word-2,d6 ;Anzahl der Spalten pro Wort
 ;sine_scroll_loop2
   moveq   #0,d0           ;Langwort-Zugriff
@@ -1438,7 +1436,7 @@ sine_scroll_loop1
   swap    d0                 ;High
   move.w  d0,cl2_ext4_BLTBPTH(a4) ;Playfield lesen
   add.l   d4,a4              ;nächster Blit in CL
-  move.w  d0,cl2_ext4_BLTDPTH-cl2_extension4_SIZE(a4) ;Playfield schreiben
+  move.w  d0,cl2_ext4_BLTDPTH-cl2_extension4_size(a4) ;Playfield schreiben
 ;  dbf     d6,sine_scroll_loop2
   dbf     d7,sine_scroll_loop1
   move.l  (a7)+,a4
@@ -1462,7 +1460,7 @@ tb31612_set_background_bars_loop1
   move.w  -(a7),d0           ;2. Y-Offset
   tst.b   (a6)+              ;Spalte darstellen ?
   bne     tb31612_skip_column1    ;Nein -> verzweige
-  MULUF.W cl2_extension7_SIZE/4,d0,d1 ;Y-Offset in CL
+  MULUF.W cl2_extension7_size/4,d0,d1 ;Y-Offset in CL
   move.l  a5,a1              ;Zeiger auf Tabelle mit Switchwerten
   lea     (a2,d0.w*4),a3     ;+ 2. Y-Offset
   moveq   #tb31612_bars_number-1,d6 ;Anzahl der Stangen
@@ -1482,7 +1480,7 @@ tb31612_no_column1
   rts
   CNOP 0,4
 tb31612_skip_column1
-  ADDF.W  tb31612_bars_number*LONGWORDSIZE,a0 ;Z + Y überspringen
+  ADDF.W  tb31612_bars_number*LONGWORD_SIZE,a0 ;Z + Y überspringen
   bra.s   tb31612_no_column1
   CNOP 0,4
 tb31612_skip_background_bar
@@ -1495,7 +1493,7 @@ tb31612_skip_background_bar
 set_wave_center_bar
   movem.l a4-a6,-(a7)
   moveq   #wcb_y_center,d4
-  MOVEF.L cl2_extension7_SIZE*40,d5
+  MOVEF.L cl2_extension7_size*40,d5
   lea     we_y_coordinates_end(pc),a0 ;Ende der Y-Koords-Tab.
   move.l  cl2_construction2(a3),a2 
   ADDF.W  cl2_extension7_entry+cl2_ext7_BPLCON4_1+2,a2 
@@ -1508,85 +1506,85 @@ set_center_bar_loop1
   tst.b   (a6)+
   bne     wcb_skip_column
   add.w   d4,d0              ;y' + Y-Mittelpunkt
-  MULUF.W cl2_extension7_SIZE/4,d0,d1 ;Y-Offset in CL
+  MULUF.W cl2_extension7_size/4,d0,d1 ;Y-Offset in CL
   move.l  a5,a1              ;Zeiger auf Tabelle mit Switchwerten
   lea     (a2,d0.w*4),a4     ;+ Y-Offset in CL
   MOVEF.W (wcb_bar_height/40)-1,d6 ;Höhe der Bar
 set_center_bar_loop2
   movem.l (a1)+,d0-d3        ;16 Switchwerte lesen
-  move.b  d0,cl2_extension7_SIZE*3(a4)
+  move.b  d0,cl2_extension7_size*3(a4)
   swap    d0
-  move.b  d0,cl2_extension7_SIZE*1(a4)
+  move.b  d0,cl2_extension7_size*1(a4)
   lsr.l   #8,d0
   move.b  d0,(a4)
   swap    d0
-  move.b  d0,cl2_extension7_SIZE*2(a4)
-  move.b  d1,cl2_extension7_SIZE*7(a4)
+  move.b  d0,cl2_extension7_size*2(a4)
+  move.b  d1,cl2_extension7_size*7(a4)
   swap    d1
-  move.b  d1,cl2_extension7_SIZE*5(a4)
+  move.b  d1,cl2_extension7_size*5(a4)
   lsr.l   #8,d1
-  move.b  d1,cl2_extension7_SIZE*4(a4)
+  move.b  d1,cl2_extension7_size*4(a4)
   swap    d1
-  move.b  d1,cl2_extension7_SIZE*6(a4)
-  move.b  d2,cl2_extension7_SIZE*11(a4)
+  move.b  d1,cl2_extension7_size*6(a4)
+  move.b  d2,cl2_extension7_size*11(a4)
   swap    d2
-  move.b  d2,cl2_extension7_SIZE*9(a4)
+  move.b  d2,cl2_extension7_size*9(a4)
   lsr.l   #8,d2
-  move.b  d2,cl2_extension7_SIZE*8(a4)
+  move.b  d2,cl2_extension7_size*8(a4)
   swap    d2
-  move.b  d2,cl2_extension7_SIZE*10(a4)
-  move.b  d3,cl2_extension7_SIZE*15(a4)
+  move.b  d2,cl2_extension7_size*10(a4)
+  move.b  d3,cl2_extension7_size*15(a4)
   swap    d3
-  move.b  d3,cl2_extension7_SIZE*13(a4)
+  move.b  d3,cl2_extension7_size*13(a4)
   lsr.l   #8,d3
-  move.b  d3,cl2_extension7_SIZE*12(a4)
+  move.b  d3,cl2_extension7_size*12(a4)
   swap    d3
-  move.b  d3,cl2_extension7_SIZE*14(a4)
+  move.b  d3,cl2_extension7_size*14(a4)
   movem.l (a1)+,d0-d3        ;weitere 16 Switchwerte lesen
-  move.b  d0,cl2_extension7_SIZE*19(a4)
+  move.b  d0,cl2_extension7_size*19(a4)
   swap    d0
-  move.b  d0,cl2_extension7_SIZE*17(a4)
+  move.b  d0,cl2_extension7_size*17(a4)
   lsr.l   #8,d0
-  move.b  d0,cl2_extension7_SIZE*16(a4)
+  move.b  d0,cl2_extension7_size*16(a4)
   swap    d0
-  move.b  d0,cl2_extension7_SIZE*18(a4)
-  move.b  d1,cl2_extension7_SIZE*23(a4)
+  move.b  d0,cl2_extension7_size*18(a4)
+  move.b  d1,cl2_extension7_size*23(a4)
   swap    d1
-  move.b  d1,cl2_extension7_SIZE*21(a4)
+  move.b  d1,cl2_extension7_size*21(a4)
   lsr.l   #8,d1
-  move.b  d1,cl2_extension7_SIZE*20(a4)
+  move.b  d1,cl2_extension7_size*20(a4)
   swap    d1
-  move.b  d1,cl2_extension7_SIZE*22(a4)
-  move.b  d2,cl2_extension7_SIZE*27(a4)
+  move.b  d1,cl2_extension7_size*22(a4)
+  move.b  d2,cl2_extension7_size*27(a4)
   swap    d2
-  move.b  d2,cl2_extension7_SIZE*25(a4)
+  move.b  d2,cl2_extension7_size*25(a4)
   lsr.l   #8,d2
-  move.b  d2,cl2_extension7_SIZE*24(a4)
+  move.b  d2,cl2_extension7_size*24(a4)
   swap    d2
-  move.b  d2,cl2_extension7_SIZE*26(a4)
-  move.b  d3,cl2_extension7_SIZE*31(a4)
+  move.b  d2,cl2_extension7_size*26(a4)
+  move.b  d3,cl2_extension7_size*31(a4)
   swap    d3
-  move.b  d3,cl2_extension7_SIZE*29(a4)
+  move.b  d3,cl2_extension7_size*29(a4)
   lsr.l   #8,d3
-  move.b  d3,cl2_extension7_SIZE*28(a4)
+  move.b  d3,cl2_extension7_size*28(a4)
   swap    d3
-  move.b  d3,cl2_extension7_SIZE*30(a4)
+  move.b  d3,cl2_extension7_size*30(a4)
   movem.l (a1)+,d0-d1        ;weitere 16 Switchwerte lesen
-  move.b  d0,cl2_extension7_SIZE*35(a4)
+  move.b  d0,cl2_extension7_size*35(a4)
   swap    d0
-  move.b  d0,cl2_extension7_SIZE*33(a4)
+  move.b  d0,cl2_extension7_size*33(a4)
   lsr.l   #8,d0
-  move.b  d0,cl2_extension7_SIZE*32(a4)
+  move.b  d0,cl2_extension7_size*32(a4)
   swap    d0
-  move.b  d0,cl2_extension7_SIZE*34(a4)
+  move.b  d0,cl2_extension7_size*34(a4)
   add.l   d5,a4              ;40 Zeilen überpspringen
-  move.b  d1,(cl2_extension7_SIZE*39)-(cl2_extension7_SIZE*40)(a4)
+  move.b  d1,(cl2_extension7_size*39)-(cl2_extension7_size*40)(a4)
   swap    d1
-  move.b  d1,(cl2_extension7_SIZE*37)-(cl2_extension7_SIZE*40)(a4)
+  move.b  d1,(cl2_extension7_size*37)-(cl2_extension7_size*40)(a4)
   lsr.l   #8,d1
-  move.b  d1,(cl2_extension7_SIZE*36)-(cl2_extension7_SIZE*40)(a4)
+  move.b  d1,(cl2_extension7_size*36)-(cl2_extension7_size*40)(a4)
   swap    d1
-  move.b  d1,(cl2_extension7_SIZE*38)-(cl2_extension7_SIZE*40)(a4)
+  move.b  d1,(cl2_extension7_size*38)-(cl2_extension7_size*40)(a4)
   dbf     d6,set_center_bar_loop2
 wcb_skip_column
   addq.w  #4,a2              ;nächste Spalte in CL
@@ -1612,7 +1610,7 @@ tb31612_set_foreround_bars_loop1
   move.w  -(a7),d0           ;2. Y-Offset
   tst.b   (a6)+              ;Spalte darstellen ?
   bne     tb31612_skip_column2    ;Nein -> verzweige
-  MULUF.W cl2_extension7_SIZE/4,d0,d1 ;Y-Offset in CL
+  MULUF.W cl2_extension7_size/4,d0,d1 ;Y-Offset in CL
   move.l  a5,a1              ;Zeiger auf Tabelle mit Switchwerten
   lea     (a2,d0.w*4),a3     ;+ 2. Y-Offset
   moveq   #tb31612_bars_number-1,d6  ;Anzahl der Stangen
@@ -1632,7 +1630,7 @@ tb31612_no_column2
   rts
   CNOP 0,4
 tb31612_skip_column2
-  ADDF.W  tb31612_bars_number*LONGWORDSIZE,a0 ;Z + Y überspringen
+  ADDF.W  tb31612_bars_number*LONGWORD_SIZE,a0 ;Z + Y überspringen
   bra.s   tb31612_no_column2
   CNOP 0,4
 tb31612_skip_foreground_bar
@@ -1644,9 +1642,9 @@ tb31612_skip_foreground_bar
 ; ---------------------------------
   CNOP 0,4
 bf_clear_buffer
-  move.l  #COLOR255BITS,d0
+  move.l  #color255_bits,d0
   move.l  extra_memory(a3),a0
-  add.l   #em_color_buffer+(bf_bar_height*LONGWORDSIZE),a0 ;Puffer
+  add.l   #em_color_buffer+(bf_bar_height*LONGWORD_SIZE),a0 ;Puffer
   MOVEF.W visible_lines_number-1,d7 ;Anzahl der Zeilen
 bf_clear_buffer_loop
   move.l  d0,(a0)+           ;Farbwert löschen
@@ -1699,9 +1697,9 @@ bf_z_plane_found
   moveq   #bf_bar_height-1,d5 ;Höhe der Bar
 bf_set_bars_loop4
   move.l  (a1),d0            ;RGB8-Farbwert
-  beq.s   bf_no_rgb8_value   ;Wenn Null -> verzweige
+  beq.s   bf_no_rgb_nibbles8_value   ;Wenn Null -> verzweige
   move.l  d0,(a4)+           
-bf_no_rgb8_value
+bf_no_rgb_nibbles8_value
   add.l   d4,a1              ;nächste Zeile in Farbtabelle
   dbf     d5,bf_set_bars_loop4
   dbf     d6,bf_set_bars_loop2
@@ -1724,20 +1722,20 @@ bf_restart_z_plane
   CNOP 0,4
 bf_copy_buffer
   movem.l a4-a5,-(a7)
-  move.w  #$0f0f,d3          ;Maske für RGB-Nibbles
+  move.w  #$0f0f,d3          ;Maske RGB-Nibbles
   move.l  extra_memory(a3),a0
   add.l   #em_color_buffer+(bf_bar_height*4),a0 ;Puffer
   move.l  cl2_construction2(a3),a1 
     IFEQ tb31612_quick_clear_enabled
       ADDF.W  cl2_extension7_entry+cl2_ext7_COLOR31_high+2,a1
-      move.w  #BPLCON3BITS3,a2 ;High-RGB-Werte
-      move.w  #BPLCON3BITS4,a4 ;Low-RGB-Werte
+      move.w  #bplcon3_bits3,a2 ;High-RGB-Werte
+      move.w  #bplcon3_bits4,a4 ;Low-RGB-Werte
     ELSE
       ADDF.W  cl2_extension7_entry+cl2_ext7_COLOR00_high+2,a1
-      move.w  #BPLCON3BITS1,a2 ;High-RGB-Werte
-      move.w  #BPLCON3BITS2,a4 ;Low-RGB-Werte
+      move.w  #bplcon3_bits1,a2 ;High-RGB-Werte
+      move.w  #bplcon3_bits2,a4 ;Low-RGB-Werte
     ENDC
-  move.w  #cl2_extension7_SIZE,a5
+  move.w  #cl2_extension7_size,a5
   MOVEF.W visible_lines_number-1,d7 ;Anzahl der Zeilen
 bf_copy_buffer_loop
   move.l  (a0)+,d0
@@ -1747,9 +1745,9 @@ bf_copy_buffer_loop
     ELSE
       move.w  a2,cl2_ext7_BPLCON3_1-cl2_ext7_COLOR00_high(a1) ;CMOVE wiederherstellen
     ENDC
-  RGB8_TO_RGB4HI d0,d1,d3
+  RGB8_TO_RGB4_HIGH d0,d1,d3
   move.w  d0,(a1)            ;COLOR00 High-Wert
-  RGB8_TO_RGB4LO d2,d1,d3
+  RGB8_TO_RGB4_LOW d2,d1,d3
     IFEQ tb31612_quick_clear_enabled
       move.w  d2,cl2_ext7_COLOR31_low-cl2_ext7_COLOR31_high(a1) ;COLOR31 Low-Bits
     ELSE
@@ -1757,9 +1755,9 @@ bf_copy_buffer_loop
     ENDC
   add.l   a5,a1              ;nächste Zeile in CL
     IFEQ tb31612_quick_clear_enabled
-      move.w  a4,cl2_ext7_BPLCON3_2-cl2_ext7_COLOR31_high-cl2_extension7_SIZE(a1) ;CMOVE wiederherstellen
+      move.w  a4,cl2_ext7_BPLCON3_2-cl2_ext7_COLOR31_high-cl2_extension7_size(a1) ;CMOVE wiederherstellen
     ELSE
-      move.w  a4,cl2_ext7_BPLCON3_2-cl2_ext7_COLOR00_high-cl2_extension7_SIZE(a1) ;CMOVE wiederherstellen
+      move.w  a4,cl2_ext7_BPLCON3_2-cl2_ext7_COLOR00_high-cl2_extension7_size(a1) ;CMOVE wiederherstellen
     ENDC
   dbf     d7,bf_copy_buffer_loop
   movem.l (a7)+,a4-a5
@@ -1767,7 +1765,7 @@ bf_copy_buffer_loop
 
 ; ** Y+Z-Koordinaten berechnen **
 ; -------------------------------
-  GET_TWISTED_BARS_YZ_COORDINATES tb31612,256,cl2_extension7_SIZE
+  GET_TWISTED_BARS_YZ_COORDINATES tb31612,256,cl2_extension7_size
 
 ; ** Y-Koordinaten für Wave-Effect berechnen **
 ; ---------------------------------------------
@@ -1799,7 +1797,7 @@ we_get_y_coordinates_loop
 ; ** Copper-WAIT-Befehle wiederherstellen **
 ; ------------------------------------------
   IFNE tb31612_quick_clear_enabled
-    RESTORE_BPLCON4_CHUNKY_SCREEN tb,cl2,construction2,extension7,32,,tb31612_restore_blit
+    RESTORE_BLCON4_CHUNKY_SCREEN tb,cl2,construction2,extension7,32,,tb31612_restore_blit
     IFEQ tb31612_restore_cl_blitter_enabled
 tb31612_restore_blit
       move.l  cl2_construction1(a3),a0 
@@ -2081,9 +2079,9 @@ NMI_int_server
 ; ----------------------------------
   CNOP 0,4
 pf1_color_table
-  DC.L COLOR00BITS
+  DC.L color00_bits
   DS.L 256-2 ;pf1_colors_number-2
-  DC.L COLOR255BITS
+  DC.L color255_bits
 
 ; **** Twisted-Bars3.16.1.2 ****
 tb31612_bars_color_table
@@ -2128,16 +2126,16 @@ ss_color_table
 
 ; ** ASCII-Buchstaben **
 ; ----------------------
-ss_ASCII
+ss_ascii
   DC.B "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.!?-'():\/ "
-ss_ASCII_end
+ss_ascii_end
   EVEN
 
 ; ** Offsets der einzelnen Chars **
 ; ---------------------------------
   CNOP 0,2
 ss_characters_offsets
-  DS.W ss_ASCII_end-ss_ASCII
+  DS.W ss_ascii_end-ss_ascii
 
 ; **** Barfield ****
 ; ** Farbwerte **

@@ -60,9 +60,9 @@ workbench_start_enabled        EQU FALSE
 workbench_fade_enabled         EQU FALSE
 text_output_enabled            EQU FALSE
 
-sys_taken_over
-pass_global_references
-pass_return_code
+LINKER_SYS_TAKEN_OVER
+LINKER_PASS_GLOBAL_REFERENCES
+LINKER_PASS_RETURN_CODE
 open_border_enabled            EQU TRUE
 
 bcc512_switch_table_length_256 EQU TRUE
@@ -145,14 +145,14 @@ MINROW                         EQU VSTART_256_LINES
 
   IFNE open_border_enabled 
 pf_pixel_per_datafetch         EQU 32 ;2x
-DDFSTRT_bits                   EQU DDFSTART_OVERSCAN_32_pixel
+DDFSTRT_bits                   EQU DDFSTART_OVERSCAN_32_PIXEL
 DDFSTOP_bits                   EQU DDFSTOP_OVERSCAN_32_PIXEL_MIN
   ENDC
 
-display_window_hstart          EQU HSTART_44_chunky_pixel
+display_window_hstart          EQU HSTART_44_CHUNKY_PIXEL
 display_window_vstart          EQU MINROW
 diwstrt_bits                   EQU ((display_window_VSTART&$ff)*DIWSTRTF_V0)+(display_window_HSTART&$ff)
-display_window_hstop           EQU HSTOP_44_chunky_pixel
+display_window_hstop           EQU HSTOP_44_CHUNKY_PIXEL
 display_window_vstop           EQU VSTOP_256_lines
 diwstop_bits                   EQU ((display_window_VSTOP&$ff)*DIWSTOPF_V0)+(display_window_HSTOP&$ff)
 
@@ -425,7 +425,7 @@ eh_trigger_number         RS.W 1
 ; **** Main ****
 fx_active                 RS.W 1
 
-variables_SIZE            RS.B 0
+variables_size            RS.B 0
 
 
 start_06_blind_colorcycle
@@ -515,11 +515,11 @@ init_first_copperlist
   move.l  cl1_display(a3),a0 ;Darstellen-CL
   bsr.s   cl1_init_playfield_registers
   IFEQ open_border_enabled
-    COP_MOVE_QUICK TRUE,COPJMP2
+    COP_MOVEQ TRUE,COPJMP2
     rts
   ELSE
     bsr.s   cl1_init_bitplane_pointers
-    COP_MOVE_QUICK TRUE,COPJMP2
+    COP_MOVEQ TRUE,COPJMP2
     bra     cl1_set_bitplane_pointers
   ENDC
 
@@ -535,16 +535,16 @@ init_first_copperlist
 ; -----------------------------------
   CNOP 0,4
 init_second_copperlist
-  move.l  cl2_construction2(a3),a0 ;Aufbau-CL
+  move.l  cl2_construction2(a3),a0 
   bsr.s   cl2_init_bplcon4_registers
   bsr.s   cl2_init_copper_interrupt
-  COP_LIST_END
+  COP_LISTEND
   bsr     copy_second_copperlist
   bra     swap_second_copperlist
 
   COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,FALSE,FALSE,NOOP<<16
 
-  COP_INIT_COPPER_INTERRUPT cl2,cl2_hstart2,cl2_vstart2
+  COP_INIT_COPINT cl2,cl2_hstart2,cl2_vstart2
 
   COPY_COPPERLIST cl2,2
 

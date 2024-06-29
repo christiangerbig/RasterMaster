@@ -60,10 +60,10 @@ workbench_start_enabled        EQU FALSE
 workbench_fade_enabled         EQU FALSE
 text_output_enabled            EQU FALSE
 
-sys_taken_over
+LINKER_SYS_TAKEN_OVER
 own_display_set_second_copperlist
-pass_global_references
-pass_return_code
+LINKER_PASS_GLOBAL_REFERENCES
+LINKER_PASS_RETURN_CODE
 
 dma_bits                       EQU DMAF_SPRITE+DMAF_BLITTER+DMAF_COPPER+DMAF_RASTER+DMAF_SETCLR
 intena_bits                    EQU INTF_SETCLR
@@ -539,7 +539,7 @@ eh_trigger_number              RS.W 1
 ; **** Main ****
 fx_active                      RS.W 1
 
-variables_SIZE                 RS.B 0
+variables_size                 RS.B 0
 
 
 start_10_credits
@@ -753,7 +753,7 @@ init_first_copperlist
   bsr     cl1_init_bitplane_pointers
   bsr     cl1_init_BPLxDAT_registers
   bsr     cl1_init_copper_interrupt
-  COP_LIST_END
+  COP_LISTEND
   bsr     cl1_set_sprite_pointers
   bra     cl1_set_bitplane_pointers
 
@@ -825,7 +825,7 @@ no_patch_copperlist1
   movem.l (a7)+,a4-a5
   rts
 
-  COP_INIT_COPPER_INTERRUPT cl1,cl1_hstart2,cl1_vstart2
+  COP_INIT_COPINT cl1,cl1_hstart2,cl1_vstart2
 
   COP_SET_SPRITE_POINTERS cl1,display,spr_number
 

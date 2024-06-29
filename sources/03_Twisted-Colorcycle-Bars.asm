@@ -60,10 +60,10 @@ workbench_start_enabled         EQU FALSE
 workbench_fade_enabled          EQU FALSE
 text_output_enabled             EQU FALSE
 
-sys_taken_over
-pass_global_references
-pass_return_code
-color_gradient_rgb8
+LINKER_SYS_TAKEN_OVER
+LINKER_PASS_GLOBAL_REFERENCES
+LINKER_PASS_RETURN_CODE
+COLOR_GRADIENT_RGB8
 open_border_enabled             EQU TRUE
 
 tccb_quick_clear_enabled        EQU TRUE
@@ -148,14 +148,14 @@ MINROW                          EQU VSTART_256_LINES
 
   IFNE open_border_enabled 
 pf_pixel_per_datafetch          EQU 16 ;1x
-DDFSTRT_bits                    EQU DDFSTART_OVERSCAN_32_pixel
+DDFSTRT_bits                    EQU DDFSTART_OVERSCAN_32_PIXEL
 DDFSTOP_bits                    EQU DDFSTOP_OVERSCAN_32_PIXEL_MIN
   ENDC
 
-display_window_hstart           EQU HSTART_44_chunky_pixel
+display_window_hstart           EQU HSTART_44_CHUNKY_PIXEL
 display_window_vstart           EQU MINROW
 diwstrt_bits                    EQU ((display_window_VSTART&$ff)*DIWSTRTF_V0)+(display_window_HSTART&$ff)
-display_window_hstop            EQU HSTOP_44_chunky_pixel
+display_window_hstop            EQU HSTOP_44_CHUNKY_PIXEL
 display_window_vstop            EQU VSTOP_256_lines
 diwstop_bits                    EQU ((display_window_VSTOP&$ff)*DIWSTOPF_V0)+(display_window_HSTOP&$ff)
 
@@ -423,7 +423,7 @@ eh_trigger_number        RS.W 1
 ; **** Main ****
 fx_active                RS.W 1
 
-variables_SIZE           RS.B 0
+variables_size           RS.B 0
 
 
 start_03_twisted_colorcycle_bars
@@ -521,18 +521,18 @@ init_color_registers
 ; -----------------------------------
   CNOP 0,4
 init_first_copperlist
-  move.l  cl1_construction1(a3),a0 ;Aufbau-CL
+  move.l  cl1_construction1(a3),a0 
   bsr.s   cl1_init_playfield_registers
   bsr     cl1_init_color_registers
   IFEQ open_border_enabled
     bsr     cl1_init_bplcon4_registers
     bsr     cl1_init_copper_interrupt
-    COP_LIST_END
+    COP_LISTEND
   ELSE
     bsr     cl1_init_bitplane_pointers
     bsr     cl1_init_bplcon4_registers
     bsr     cl1_init_copper_interrupt
-    COP_LIST_END
+    COP_LISTEND
     bsr     cl1_set_bitplane_pointers
   ENDC
   bra     copy_first_copperlist
@@ -575,7 +575,7 @@ cl1_init_color_registers
 
   COP_INIT_BPLCON4_CHUNKY_SCREEN cl1,cl1_hstart1,cl1_vstart1,cl1_display_x_size,cl1_display_y_size,open_border_enabled,tccb_quick_clear_enabled,FALSE,NOOP<<16
 
-  COP_INIT_COPPER_INTERRUPT cl1,cl1_hstart2,cl1_vstart2
+  COP_INIT_COPINT cl1,cl1_hstart2,cl1_vstart2
 
   COPY_COPPERLIST cl1,3
 

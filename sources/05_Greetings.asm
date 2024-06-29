@@ -64,9 +64,9 @@ workbench_start_enabled            EQU FALSE
 workbench_fade_enabled             EQU FALSE
 text_output_enabled                EQU FALSE
 
-sys_taken_over
-pass_global_references
-pass_return_code
+LINKER_SYS_TAKEN_OVER
+LINKER_PASS_GLOBAL_REFERENCES
+LINKER_PASS_RETURN_CODE
 open_border_enabled                EQU FALSE ;Immer FALSE, da Overscan-Playfield
 
 tb31612_quick_clear_enabled        EQU TRUE ;Solle TRUE sein, wenn Hintergrundeffekt aktiviert ist
@@ -143,10 +143,10 @@ pf_pixel_per_datafetch             EQU 64 ;4x
 DDFSTRT_bits                       EQU DDFSTART_OVERSCAN_64_pixel
 DDFSTOP_bits                       EQU DDFSTOP_OVERSCAN_16_pixel
 
-display_window_hstart              EQU HSTART_44_chunky_pixel
+display_window_hstart              EQU HSTART_44_CHUNKY_PIXEL
 display_window_vstart              EQU MINROW
 diwstrt_bits                       EQU ((display_window_VSTART&$ff)*DIWSTRTF_V0)+(display_window_HSTART&$ff)
-display_window_hstop               EQU HSTOP_44_chunky_pixel
+display_window_hstop               EQU HSTOP_44_CHUNKY_PIXEL
 display_window_vstop               EQU VSTOP_256_lines
 diwstop_bits                       EQU ((display_window_VSTOP&$ff)*DIWSTOPF_V0)+(display_window_HSTOP&$ff)
 
@@ -726,7 +726,7 @@ eh_trigger_number          RS.W 1
 ; **** Main ****
 fx_active                  RS.W 1
 
-variables_SIZE             RS.B 0
+variables_size             RS.B 0
 
 
 start_05_greetings
@@ -1066,7 +1066,7 @@ init_first_copperlist
   bsr     cl1_init_copperlist_branch
   bsr     cl1_init_copy_blit
   bsr     cl1_init_horiz_scroll_blit
-  COP_MOVE_QUICK TRUE,COPJMP2
+  COP_MOVEQ TRUE,COPJMP2
   bra     cl1_set_bitplane_pointers
 
   COP_INIT_PLAYFIELD_REGISTERS cl1
@@ -1079,57 +1079,57 @@ cl1_init_copperlist_branch
   move.l  cl1_display(a3),d0 ;Darstellen-CL
   add.l   #cl1_extension3_entry,d0 ;Char-Blit überspringen
   swap    d0                 ;High
-  COP_MOVE d0,COP1LCH
+  COP_MOVE  d0,COP1LCH
   swap    d0                 ;Low
-  COP_MOVE d0,COP1LCL
-  COP_MOVE_QUICK TRUE,COPJMP1
+  COP_MOVE  d0,COP1LCL
+  COP_MOVEQ TRUE,COPJMP1
   rts
 
   CNOP 0,4
 cl1_init_copy_blit
-  COP_WAIT_BLITTER
-  COP_MOVE_QUICK BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;Minterm D=A
-  COP_MOVE_QUICK TRUE,BLTCON1
-  COP_MOVE_QUICK FALSE_WORD,BLTAFWM
-  COP_MOVE_QUICK FALSE_WORD,BLTALWM
-  COP_MOVE_QUICK TRUE,BLTAPTH
-  COP_MOVE_QUICK TRUE,BLTAPTL
+  COP_WAITBLT
+  COP_MOVEQ BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;Minterm D=A
+  COP_MOVEQ TRUE,BLTCON1
+  COP_MOVEQ FALSE_WORD,BLTAFWM
+  COP_MOVEQ FALSE_WORD,BLTALWM
+  COP_MOVEQ TRUE,BLTAPTH
+  COP_MOVEQ TRUE,BLTAPTL
   move.l  extra_pf1(a3),a1
   move.l  #(ss_text_character_x_restart/8)+(ss_text_character_y_restart*extra_pf1_plane_width*extra_pf1_depth),d0
   add.l   (a1),d0
   swap    d0                 ;High
-  COP_MOVE d0,BLTDPTH         ;Playfield
+  COP_MOVE  d0,BLTDPTH         ;Playfield
   swap    d0                 ;Low
-  COP_MOVE d0,BLTDPTL
-  COP_MOVE_QUICK ss_image_plane_width-ss_text_character_width,BLTAMOD
-  COP_MOVE_QUICK extra_pf1_plane_width-ss_text_character_width,BLTDMOD
-  COP_MOVE_QUICK (ss_copy_character_blit_y_size*64)+(ss_copy_character_blit_x_size/16),BLTSIZE
+  COP_MOVE  d0,BLTDPTL
+  COP_MOVEQ ss_image_plane_width-ss_text_character_width,BLTAMOD
+  COP_MOVEQ extra_pf1_plane_width-ss_text_character_width,BLTDMOD
+  COP_MOVEQ (ss_copy_character_blit_y_size*64)+(ss_copy_character_blit_x_size/16),BLTSIZE
   rts
 
   CNOP 0,4
 cl1_init_horiz_scroll_blit
-  COP_WAIT_BLITTER
-  COP_MOVE_QUICK DMAF_BLITHOG+DMAF_SETCLR,DMACON ;BLTPRI an
-  COP_MOVE_QUICK ((-ss_horiz_scroll_speed<<12)+BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC),BLTCON0 ;Minterm D=A
-  COP_MOVE_QUICK TRUE,BLTCON1
+  COP_WAITBLT
+  COP_MOVEQ DMAF_BLITHOG+DMAF_SETCLR,DMACON ;BLTPRI an
+  COP_MOVEQ ((-ss_horiz_scroll_speed<<12)+BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC),BLTCON0 ;Minterm D=A
+  COP_MOVEQ TRUE,BLTCON1
   move.l  extra_pf1(a3),a1   ;Quelle
   move.l  (a1),d0 
   add.l   #ss_text_y_position*extra_pf1_plane_width*extra_pf1_depth,d0
   move.l  d0,d1              ;Erste Zeile
-  COP_MOVE_QUICK FALSE_WORD,BLTAFWM
+  COP_MOVEQ FALSE_WORD,BLTAFWM
   addq.l  #2,d0              ;Erste Zeile, 16 Pixel überspringen
-  COP_MOVE_QUICK FALSE_WORD,BLTALWM
+  COP_MOVEQ FALSE_WORD,BLTALWM
   swap    d0                 ;High
-  COP_MOVE d0,BLTAPTH
+  COP_MOVE  d0,BLTAPTH
   swap    d0                 ;Low
-  COP_MOVE d0,BLTAPTL
+  COP_MOVE  d0,BLTAPTL
   swap    d1                 ;High
-  COP_MOVE d1,BLTDPTH
+  COP_MOVE  d1,BLTDPTH
   swap    d1                 ;Low
-  COP_MOVE d1,BLTDPTL
-  COP_MOVE_QUICK extra_pf1_plane_width-ss_horiz_scroll_window_width,BLTAMOD
-  COP_MOVE_QUICK extra_pf1_plane_width-ss_horiz_scroll_window_width,BLTDMOD
-  COP_MOVE_QUICK (ss_horiz_scroll_blit_y_size*64)+(ss_horiz_scroll_blit_x_size/16),BLTSIZE
+  COP_MOVE  d1,BLTDPTL
+  COP_MOVEQ extra_pf1_plane_width-ss_horiz_scroll_window_width,BLTAMOD
+  COP_MOVEQ extra_pf1_plane_width-ss_horiz_scroll_window_width,BLTDMOD
+  COP_MOVEQ (ss_horiz_scroll_blit_y_size*64)+(ss_horiz_scroll_blit_x_size/16),BLTSIZE
   rts
 
   COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
@@ -1138,7 +1138,7 @@ cl1_init_horiz_scroll_blit
 ; -----------------------------------
   CNOP 0,4
 init_second_copperlist
-  move.l  cl2_construction1(a3),a0 ;Aufbau-CL
+  move.l  cl2_construction1(a3),a0 
   bsr.s   cl2_init_blit_steady_registers
   bsr.s   cl2_init_sine_scroll_blits
   bsr     cl2_init_copperlist_branch
@@ -1150,7 +1150,7 @@ init_second_copperlist
     ENDC
   ENDC
   bsr     cl2_init_copper_interrupt
-  COP_LIST_END
+  COP_LISTEND
   bsr     copy_second_copperlist
 ;  bsr     swap_second_copperlist
   bsr     swap_playfield1
@@ -1184,10 +1184,10 @@ init_second_copperlist
 
   CNOP 0,4
 cl2_init_blit_steady_registers
-  COP_WAIT_BLITTER
-  COP_MOVE_QUICK pf1_plane_width-ss_text_character_width,BLTBMOD
-  COP_MOVE_QUICK extra_pf1_plane_width-ss_text_character_width,BLTAMOD
-  COP_MOVE_QUICK pf1_plane_width-ss_text_character_width,BLTDMOD
+  COP_WAITBLT
+  COP_MOVEQ pf1_plane_width-ss_text_character_width,BLTBMOD
+  COP_MOVEQ extra_pf1_plane_width-ss_text_character_width,BLTAMOD
+  COP_MOVEQ pf1_plane_width-ss_text_character_width,BLTDMOD
   rts
 
   CNOP 0,4
@@ -1199,19 +1199,19 @@ cl2_init_sine_scroll_blits
   add.l   #ss_text_y_position*extra_pf1_plane_width*extra_pf1_depth,d3 ;Quellbild-2
   moveq   #(visible_pixels_number/16)-1,d7 ;Anzahl der Wörter
 cl2_init_sine_scroll_blits_loop1
-  COP_MOVE_QUICK BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;D=A
+  COP_MOVEQ BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;D=A
   MOVEF.W FALSE_BYTE>>(8-ss_text_columns_x_size),d1 ;Maske
-  COP_MOVE d1,BLTALWM         ;Maske
+  COP_MOVE  d1,BLTALWM         ;Maske
   swap    d2
-  COP_MOVE d2,BLTAPTH         ;Scrolltext
+  COP_MOVE  d2,BLTAPTH         ;Scrolltext
   swap    d2
-  COP_MOVE d2,BLTAPTL
-  COP_MOVE_QUICK TRUE,BLTDPTH
-  COP_MOVE_QUICK TRUE,BLTDPTL
-  COP_MOVE_QUICK (ss_copy_column_blit_y_size1*64)+(ss_copy_column_blit_x_size1/16),BLTSIZE
-  COP_WAIT_BLITTER
+  COP_MOVE  d2,BLTAPTL
+  COP_MOVEQ TRUE,BLTDPTH
+  COP_MOVEQ TRUE,BLTDPTL
+  COP_MOVEQ (ss_copy_column_blit_y_size1*64)+(ss_copy_column_blit_x_size1/16),BLTSIZE
+  COP_WAITBLT
 
-  COP_MOVE_QUICK BC0F_SRCA+BC0F_SRCB+BC0F_DEST+NABNC+NABC+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;D=A+B
+  COP_MOVEQ BC0F_SRCA+BC0F_SRCB+BC0F_DEST+NABNC+NABC+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;D=A+B
 
   subq.l  #ss_sine_character_width,d2 ;nächster Char in Quellbild-1
   moveq   #ss_text_columns_per_word-2,d6 ;Anzahl der Spalten pro Wort
@@ -1225,17 +1225,17 @@ cl2_init_sine_scroll_blits_loop2
       lsl.w   #ss_text_columns_x_size,d1 ;Maske n Bits nach links verschieben
     ENDC
   ENDC
-  COP_MOVE d1,BLTALWM
+  COP_MOVE  d1,BLTALWM
   swap    d3
-  COP_MOVE_QUICK TRUE,BLTBPTH
-  COP_MOVE_QUICK TRUE,BLTBPTL
-  COP_MOVE d3,BLTAPTH         ;Scrolltext
+  COP_MOVEQ TRUE,BLTBPTH
+  COP_MOVEQ TRUE,BLTBPTL
+  COP_MOVE  d3,BLTAPTH         ;Scrolltext
   swap    d3
-  COP_MOVE d3,BLTAPTL
-  COP_MOVE_QUICK TRUE,BLTDPTH
-  COP_MOVE_QUICK TRUE,BLTDPTL
-  COP_MOVE_QUICK (ss_copy_column_blit_y_size2*64)+(ss_copy_column_blit_x_size2/16),BLTSIZE
-  COP_WAIT_BLITTER
+  COP_MOVE  d3,BLTAPTL
+  COP_MOVEQ TRUE,BLTDPTH
+  COP_MOVEQ TRUE,BLTDPTL
+  COP_MOVEQ (ss_copy_column_blit_y_size2*64)+(ss_copy_column_blit_x_size2/16),BLTSIZE
+  COP_WAITBLT
   dbf     d6,cl2_init_sine_scroll_blits_loop2
   subq.l  #ss_sine_character_width,d3 ;nächster Char in Quellbild-2
   dbf     d7,cl2_init_sine_scroll_blits_loop1
@@ -1243,25 +1243,25 @@ cl2_init_sine_scroll_blits_loop2
 
   CNOP 0,4
 cl2_init_copperlist_branch
-  COP_MOVE cl1_display(a3),COP1LCH
-  COP_MOVE cl1_display+2(a3),COP1LCL
+  COP_MOVE  cl1_display(a3),COP1LCH
+  COP_MOVE  cl1_display+2(a3),COP1LCL
   rts
 
   CNOP 0,4
 cl2_init_clear_blit
-  COP_MOVE_QUICK DMAF_BLITHOG,DMACON ;BLTPRI aus
-  COP_MOVE_QUICK BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;Minterm D=A
-  COP_MOVE_QUICK FALSE_WORD,BLTALWM    ;Maske aus
-  COP_MOVE_QUICK TRUE,BLTDPTH
-  COP_MOVE_QUICK TRUE,BLTDPTL
-  COP_MOVE_QUICK 2,BLTDMOD
+  COP_MOVEQ DMAF_BLITHOG,DMACON ;BLTPRI aus
+  COP_MOVEQ BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;Minterm D=A
+  COP_MOVEQ FALSE_WORD,BLTALWM    ;Maske aus
+  COP_MOVEQ TRUE,BLTDPTH
+  COP_MOVEQ TRUE,BLTDPTL
+  COP_MOVEQ 2,BLTDMOD
   IFEQ tb31612_quick_clear_enabled
-    COP_MOVE_QUICK -2,BLTADAT      ;Quelle = BPLCON4-Bits
+    COP_MOVEQ -2,BLTADAT      ;Quelle = BPLCON4-Bits
   ELSE
-    COP_MOVE_QUICK bplcon4_bits,BLTADAT ;Quelle = BPLCON4-Bits
+    COP_MOVEQ bplcon4_bits,BLTADAT ;Quelle = BPLCON4-Bits
   ENDC
-  COP_MOVE_QUICK tb31612_clear_blit_y_size,BLTSIZV ;Anzahl der Zeilen
-  COP_MOVE_QUICK tb31612_clear_blit_x_size/16,BLTSIZH ;Anzahl der Wörter & Blitter starten
+  COP_MOVEQ tb31612_clear_blit_y_size,BLTSIZV ;Anzahl der Zeilen
+  COP_MOVEQ tb31612_clear_blit_x_size/16,BLTSIZH ;Anzahl der Wörter & Blitter starten
   rts
 
   COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,tb31612_quick_clear_enabled,TRUE
@@ -1270,17 +1270,17 @@ cl2_init_clear_blit
     IFNE tb31612_quick_clear_enabled
       CNOP 0,4
 cl2_init_restore_blit
-      COP_WAIT_BLITTER
-      COP_MOVE_QUICK TRUE,BLTDPTH
-      COP_MOVE_QUICK TRUE,BLTDPTL
-      COP_MOVE_QUICK cl2_extension7_size-tb31612_restore_blit_width,BLTDMOD
-      COP_MOVE_QUICK -2,BLTADAT ;Quelle = 2. Wort in CWAIT
-      COP_MOVE_QUICK (tb31612_restore_blit_y_size*64)+(tb31612_restore_blit_x_size/16),BLTSIZE ;Anzahl der Zeilen
+      COP_WAITBLT
+      COP_MOVEQ TRUE,BLTDPTH
+      COP_MOVEQ TRUE,BLTDPTL
+      COP_MOVEQ cl2_extension7_size-tb31612_restore_blit_width,BLTDMOD
+      COP_MOVEQ -2,BLTADAT ;Quelle = 2. Wort in CWAIT
+      COP_MOVEQ (tb31612_restore_blit_y_size*64)+(tb31612_restore_blit_x_size/16),BLTSIZE ;Anzahl der Zeilen
       rts
     ENDC
   ENDC
 
-  COP_INIT_COPPER_INTERRUPT cl2,cl2_hstart2,cl2_vstart2
+  COP_INIT_COPINT cl2,cl2_hstart2,cl2_vstart2
 
   COPY_COPPERLIST cl2,3
 

@@ -67,9 +67,9 @@ workbench_start_enabled     EQU FALSE
 workbench_fade_enabled      EQU FALSE
 text_output_enabled         EQU FALSE
 
-sys_taken_over
-pass_global_references
-pass_return_code
+LINKER_SYS_TAKEN_OVER
+LINKER_PASS_GLOBAL_REFERENCES
+LINKER_PASS_RETURN_CODE
 
 dma_bits                    EQU DMAF_SPRITE+DMAF_COPPER+DMAF_RASTER+DMAF_SETCLR
 intena_bits                 EQU INTF_SETCLR
@@ -573,7 +573,7 @@ eh_trigger_number             RS.W 1
 ; **** Main ****
 fx_active                     RS.W 1
 
-variables_SIZE                RS.B 0
+variables_size                RS.B 0
 
 
 ; **** PT-Replay ****
@@ -712,7 +712,7 @@ init_first_copperlist
   bsr.s   cl1_init_sprite_pointers
   bsr     cl1_init_color_registers
   bsr     cl1_init_bitplane_pointers
-  COP_MOVE_QUICK TRUE,COPJMP2
+  COP_MOVEQ TRUE,COPJMP2
   bsr     cl1_set_sprite_pointers
   bra     cl1_set_bitplane_pointers
 
@@ -753,7 +753,7 @@ init_second_copperlist
   move.l  cl2_construction2(a3),a0
   bsr.s   cl2_init_BPLxDAT_registers
   bsr     cl2_init_copper_interrupt
-  COP_LIST_END
+  COP_LISTEND
   bsr     copy_second_copperlist
   bra     swap_second_copperlist
 
@@ -775,7 +775,7 @@ cl2_init_BPLxDAT_registers
   MOVEF.W cl2_display_y_size-1,d7 ;Anzahl der Zeilen
 cl2_init_BPLxDAT_registers_loop
   move.l  d0,(a0)+           ;WAIT x,y
-  COP_MOVE_QUICK TRUE,BPLCON1
+  COP_MOVEQ TRUE,BPLCON1
   move.w  a5,(a0)+           ;BPL7DAT
   move.w  bg_image_plane_width*6(a1),(a0)+ ;Erste 16 Pixel Bitplane 7
   move.w  a4,(a0)+           ;BPL6DAT
@@ -800,7 +800,7 @@ no_patch_copperlist2
   movem.l (a7)+,a4-a5
   rts
 
-  COP_INIT_COPPER_INTERRUPT cl2,cl2_hstart2,cl2_vstart2
+  COP_INIT_COPINT cl2,cl2_hstart2,cl2_vstart2
 
   COPY_COPPERLIST cl2,2
 

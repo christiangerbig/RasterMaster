@@ -29,7 +29,6 @@
 
 
 ; ** Library-Includes V.3.x nachladen **
-; --------------------------------------
   INCDIR "Daten:include3.5/"
 
   INCLUDE "exec/exec.i"
@@ -53,8 +52,6 @@
 
 
 ; ** Konstanten **
-; ----------------
-
   INCLUDE "equals.i"
 
 requires_68030              EQU FALSE  
@@ -236,31 +233,23 @@ pf1_BPL1DAT_x_offset        EQU 0
 
 
 ; ## Makrobefehle ##
-; ------------------
-
   INCLUDE "macros.i"
 
 
 ; ** Struktur, die alle Exception-Vektoren-Offsets enthält **
-; -----------------------------------------------------------
-
   INCLUDE "except-vectors-offsets.i"
 
 
 ; ** Struktur, die alle Eigenschaften des Extra-Playfields enthält **
-; -------------------------------------------------------------------
-
   INCLUDE "extra-pf-attributes-structure.i"
 
 
 ; ** Struktur, die alle Eigenschaften der Sprites enthält **
-; ----------------------------------------------------------
-
   INCLUDE "sprite-attributes-structure.i"
 
 
 ; ** Struktur, die alle Registeroffsets der ersten Copperliste enthält **
-; -----------------------------------------------------------------------
+
   RSRESET
 
 cl1_begin        RS.B 0
@@ -269,11 +258,11 @@ cl1_begin        RS.B 0
 
 cl1_COPJMP2      RS.L 1
 
-copperlist1_SIZE RS.B 0
+copperlist1_size RS.B 0
 
 
 ; ** Struktur, die alle Registeroffsets der zweiten Copperliste enthält **
-; ------------------------------------------------------------------------
+
   RSRESET
 
 cl2_extension1      RS.B 0
@@ -301,21 +290,19 @@ cl2_INTREQ       RS.L 1
 
 cl2_end          RS.L 1
 
-copperlist2_SIZE RS.B 0
+copperlist2_size RS.B 0
 
 
 ; ** Konstanten für die größe der Copperlisten **
-; -----------------------------------------------
 cl1_size1        EQU 0
 cl1_size2        EQU 0
-cl1_size3        EQU copperlist1_SIZE
+cl1_size3        EQU copperlist1_size
 cl2_size1        EQU 0
-cl2_size2        EQU copperlist2_SIZE
-cl2_size3        EQU copperlist2_SIZE
+cl2_size2        EQU copperlist2_size
+cl2_size3        EQU copperlist2_size
 
 
 ; ** Sprite0-Zusatzstruktur **
-; ----------------------------
   RSRESET
 
 spr0_extension1       RS.B 0
@@ -326,7 +313,6 @@ spr0_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 spr0_extension1_size  RS.B 0
 
 ; ** Sprite0-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr0_begin            RS.B 0
@@ -335,10 +321,9 @@ spr0_extension1_entry RS.B spr0_extension1_size
 
 spr0_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite0_SIZE          RS.B 0
+sprite0_size          RS.B 0
 
 ; ** Sprite1-Zusatzstruktur **
-; ----------------------------
   RSRESET
 
 spr1_extension1       RS.B 0
@@ -349,7 +334,6 @@ spr1_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 spr1_extension1_size  RS.B 0
 
 ; ** Sprite1-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr1_begin            RS.B 0
@@ -358,10 +342,9 @@ spr1_extension1_entry RS.B spr1_extension1_size
 
 spr1_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite1_SIZE          RS.B 0
+sprite1_size          RS.B 0
 
 ; ** Sprite2-Zusatzstruktur **
-; ----------------------------
   RSRESET
 
 spr2_extension1       RS.B 0
@@ -372,7 +355,6 @@ spr2_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 spr2_extension1_size  RS.B 0
 
 ; ** Sprite2-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr2_begin            RS.B 0
@@ -381,10 +363,9 @@ spr2_extension1_entry RS.B spr2_extension1_size
 
 spr2_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite2_SIZE          RS.B 0
+sprite2_size          RS.B 0
 
 ; ** Sprite3-Zusatzstruktur **
-; ----------------------------
   RSRESET
 
 spr3_extension1       RS.B 0
@@ -395,7 +376,6 @@ spr3_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 spr3_extension1_size  RS.B 0
 
 ; ** Sprite3-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr3_begin            RS.B 0
@@ -404,10 +384,9 @@ spr3_extension1_entry RS.B spr3_extension1_size
 
 spr3_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite3_SIZE          RS.B 0
+sprite3_size          RS.B 0
 
 ; ** Sprite4-Zusatzstruktur **
-; ----------------------------
   RSRESET
 
 spr4_extension1       RS.B 0
@@ -418,7 +397,6 @@ spr4_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 spr4_extension1_size  RS.B 0
 
 ; ** Sprite4-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr4_begin            RS.B 0
@@ -427,10 +405,9 @@ spr4_extension1_entry RS.B spr4_extension1_size
 
 spr4_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite4_SIZE          RS.B 0
+sprite4_size          RS.B 0
 
 ; ** Sprite5-Zusatzstruktur **
-; ----------------------------
   RSRESET
 
 spr5_extension1       RS.B 0
@@ -441,7 +418,6 @@ spr5_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 spr5_extension1_size  RS.B 0
 
 ; ** Sprite5-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr5_begin            RS.B 0
@@ -450,10 +426,9 @@ spr5_extension1_entry RS.B spr5_extension1_size
 
 spr5_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite5_SIZE          RS.B 0
+sprite5_size          RS.B 0
 
 ; ** Sprite6-Zusatzstruktur **
-; ----------------------------
   RSRESET
 
 spr6_extension1       RS.B 0
@@ -464,7 +439,6 @@ spr6_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 spr6_extension1_size  RS.B 0
 
 ; ** Sprite6-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr6_begin            RS.B 0
@@ -473,10 +447,9 @@ spr6_extension1_entry RS.B spr6_extension1_size
 
 spr6_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite6_SIZE          RS.B 0
+sprite6_size          RS.B 0
 
 ; ** Sprite7-Zusatzstruktur **
-; ----------------------------
   RSRESET
 
 spr7_extension1       RS.B 0
@@ -487,7 +460,6 @@ spr7_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 spr7_extension1_size  RS.B 0
 
 ; ** Sprite7-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr7_begin            RS.B 0
@@ -496,11 +468,10 @@ spr7_extension1_entry RS.B spr7_extension1_size
 
 spr7_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite7_SIZE          RS.B 0
+sprite7_size          RS.B 0
 
 
 ; ** Konstanten für die Größe der Spritestrukturen **
-; ---------------------------------------------------
 spr0_x_size1     EQU spr_x_size1
 spr0_y_size1     EQU 0
 spr1_x_size1     EQU spr_x_size1
@@ -519,26 +490,24 @@ spr7_x_size1     EQU spr_x_size1
 spr7_y_size1     EQU 0
 
 spr0_x_size2     EQU spr_x_size2
-spr0_y_size2     EQU sprite0_SIZE/(spr_x_size2/8)
+spr0_y_size2     EQU sprite0_size/(spr_x_size2/8)
 spr1_x_size2     EQU spr_x_size2
-spr1_y_size2     EQU sprite1_SIZE/(spr_x_size2/8)
+spr1_y_size2     EQU sprite1_size/(spr_x_size2/8)
 spr2_x_size2     EQU spr_x_size2
-spr2_y_size2     EQU sprite2_SIZE/(spr_x_size2/8)
+spr2_y_size2     EQU sprite2_size/(spr_x_size2/8)
 spr3_x_size2     EQU spr_x_size2
-spr3_y_size2     EQU sprite3_SIZE/(spr_x_size2/8)
+spr3_y_size2     EQU sprite3_size/(spr_x_size2/8)
 spr4_x_size2     EQU spr_x_size2
-spr4_y_size2     EQU sprite4_SIZE/(spr_x_size2/8)
+spr4_y_size2     EQU sprite4_size/(spr_x_size2/8)
 spr5_x_size2     EQU spr_x_size2
-spr5_y_size2     EQU sprite5_SIZE/(spr_x_size2/8)
+spr5_y_size2     EQU sprite5_size/(spr_x_size2/8)
 spr6_x_size2     EQU spr_x_size2
-spr6_y_size2     EQU sprite6_SIZE/(spr_x_size2/8)
+spr6_y_size2     EQU sprite6_size/(spr_x_size2/8)
 spr7_x_size2     EQU spr_x_size2
-spr7_y_size2     EQU sprite7_SIZE/(spr_x_size2/8)
+spr7_y_size2     EQU sprite7_size/(spr_x_size2/8)
 
 
 ; ** Struktur, die alle Variablenoffsets enthält **
-; -------------------------------------------------
-
   INCLUDE "variables-offsets.i"
 
 ; **** Wobble-Display ****
@@ -578,7 +547,6 @@ variables_size                RS.B 0
 
 ; **** PT-Replay ****
 ; ** Temporary channel structure **
-; ---------------------------------
   INCLUDE "music-tracker/pt-temp-channel-structure.i"
 
 
@@ -587,7 +555,6 @@ start_00_title_screen
   INCLUDE "sys-wrapper.i"
 
 ; ** Eigene Variablen initialisieren **
-; -------------------------------------
   CNOP 0,4
 init_own_variables
 
@@ -629,7 +596,6 @@ init_own_variables
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
-; ---------------------------------------------
   CNOP 0,4
 init_all
   bsr.s   init_color_registers
@@ -639,7 +605,6 @@ init_all
   bra     init_second_copperlist
 
 ; ** Farben initialisieren **
-; ---------------------------
   CNOP 0,4
 init_color_registers
   CPU_SELECT_COLOR_HIGH_BANK 4
@@ -650,7 +615,6 @@ init_color_registers
   rts
 
 ; ** Sprites initialisieren **
-; ----------------------------
   CNOP 0,4
 init_sprites
   bsr.s   spr_init_pointers_table
@@ -662,12 +626,10 @@ init_sprites
 
 ; **** Logo ****
 ; ** Spritestruktur initialisieren **
-; -----------------------------------
   INIT_ATTACHED_SPRITES_CLUSTER lg,spr_pointers_display,lg_image_x_position,lg_image_y_position,spr_x_size2,lg_image_y_size,,BLANK
 
 ; **** Background-Image ****
 ; ** Objekt ins Playfield kopieren **
-; -----------------------------------
   CNOP 0,4
 bg_copy_image_to_bitplane
   movem.l a3-a6,-(a7)
@@ -704,7 +666,6 @@ bg_copy_image_data_loop
 
 
 ; ** 1. Copperliste initialisieren **
-; -----------------------------------
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_display(a3),a0 ;Darstellen-CL
@@ -747,7 +708,6 @@ cl1_init_color_registers
   COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
 
 ; ** 2. Copperliste initialisieren **
-; -----------------------------------
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_construction2(a3),a0
@@ -806,7 +766,6 @@ no_patch_copperlist2
 
 
 ; ## Hauptprogramm ##
-; -------------------
 ; a3 ... Basisadresse aller Variablen
 ; a4 ... CIA-A-Base
 ; a5 ... CIA-B-Base
@@ -818,14 +777,12 @@ main_routine
 
 
 ; ## Routinen, die nicht mit der Bildwiederholfrequenz gekoppelt sind ##
-; ----------------------------------------------------------------------
   CNOP 0,4
 no_sync_routines
   rts
 
 
 ; ## Rasterstahl-Routinen ##
-; --------------------------
   CNOP 0,4
 beam_routines
   bsr     wait_copint
@@ -850,12 +807,10 @@ fast_exit
 
 
 ; ** Copperlisten vertauschen **
-; ------------------------------
   SWAP_COPPERLIST cl2,2
 
 
 ; ** Daten eines bestimmten Kanals in Erfahrung bringen **
-; --------------------------------------------------------
   CNOP 0,4
 get_channels_data
   move.l  #PAL_CLOCK_CONSTANT/PAL_FPS,d6 ;PAL-Clockkonstante / PAL-Frequenz
@@ -948,7 +903,6 @@ no_get_sample_data
   rts
 
 ; ** Schwabbel-Effekt **
-; ----------------------
   CNOP 0,4
 wobble_display
   tst.w   wd_active(a3)      ;Wobble-Display an ?
@@ -982,7 +936,6 @@ no_wobble_display
 
 
 ; ** Grafik einblenden **
-; -----------------------
   CNOP 0,4
 image_fader_in
   tst.w   ifi_active(a3)     ;Image-Fader-In an ?
@@ -1021,7 +974,6 @@ no_image_fader_in
   rts
 
 ; ** Grafik ausblenden **
-; -----------------------
   CNOP 0,4
 image_fader_out
   tst.w   ifo_active(a3)     ;Image-Fader-Out an ?
@@ -1062,11 +1014,9 @@ no_image_fader_out
   COLOR_FADER if
 
 ; ** Farbwerte in Copperliste kopieren **
-; ---------------------------------------
   COPY_COLOR_TABLE_TO_COPPERLIST if,pf1,cl1,cl1_COLOR01_high1,cl1_COLOR01_low1
 
 ; ** Logo Pixelweise einblenden **
-; --------------------------------
   CNOP 0,4
 image_pixel_fader_in
   tst.w   ipfi_active(a3)    ;Image-Pixel-Fader-In an ?
@@ -1118,7 +1068,6 @@ ipfi_finished
   rts
 
 ; ** Logo Pixelweise ausblenden **
-; --------------------------------
   CNOP 0,4
 image_pixel_fader_out
   tst.w   ipfo_active(a3)    ;Image-Pixel-Fader-Out an ?
@@ -1171,7 +1120,6 @@ ipfo_finished
   rts
 
 ; ** Objekt pixelweise ins Playfield kopieren **
-; ----------------------------------------------
   CNOP 0,4
 ipf_random_pixel_data_copy
   movem.l a4-a5,-(a7)
@@ -1244,7 +1192,6 @@ init_sprite_bitmap_loop
 
 
 ; ** SOFTINT-Interrupts abfragen **
-; ---------------------------------
   CNOP 0,4
 effects_handler
   moveq   #INTF_SOFTINT,d1
@@ -1305,7 +1252,6 @@ eh_stop_all
   rts
 
 ; ** Mouse-Handler **
-; -------------------
   CNOP 0,4
 mouse_handler
   btst    #CIAB_GAMEPORT0,CIAPRA(a4) ;Linke Maustaste gedrückt ?
@@ -1319,31 +1265,23 @@ mh_quit
 
 
 ; ## Interrupt-Routinen ##
-; ------------------------
-  
   INCLUDE "int-autovectors-handlers.i"
 
 ; ** Level-7-Interrupt-Server **
-; ------------------------------
   CNOP 0,4
 NMI_int_server
   rts
 
 
 ; ## Hilfsroutinen ##
-; -------------------
-
   INCLUDE "help-routines.i"
 
 
 ; ## Speicherstellen für Tabellen und Strukturen ##
-; -------------------------------------------------
-
   INCLUDE "sys-structures.i"
 
 
 ; ** Farben des ersten Playfields **
-; ----------------------------------
   CNOP 0,4
 pf1_color_table
   REPT pf1_colors_number
@@ -1351,36 +1289,30 @@ pf1_color_table
   ENDR
 
 ; ** Farben der Sprites **
-; ------------------------
 spr_color_table
   INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/256x75x16-Resistance.ct"
 
 ; ** Adressen der Sprites **
-; --------------------------
 spr_pointers_display
   DS.L spr_number
 
 ; ** Sinus / Cosinustabelle **
-; ----------------------------
 sine_table
   INCLUDE "sine-table-256x32.i"
 
 ; **** Channelscope ****
 ; Tabelle mit Sampledaten des Kanals **
-; -------------------------------------
   CNOP 0,2
 cs_audio_channel_data
   DS.W cs_scope_x_size
 
 ; **** Image-Fader ****
 ; ** Zielfarbwerte für Image-Fader-In **
-; --------------------------------------
   CNOP 0,4
 ifi_color_table
   INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/352x256x128-RasterMaster.ct"
 
 ; ** Zielfarbwerte für Image-Fader-Out **
-; ---------------------------------------
 ifo_color_table
   REPT pf1_colors_number
     DC.L color00_bits
@@ -1388,25 +1320,18 @@ ifo_color_table
 
 
 ; ## Speicherstellen allgemein ##
-; -------------------------------
-
   INCLUDE "sys-variables.i"
 
 
 ; ## Speicherstellen für Namen ##
-; -------------------------------
-
   INCLUDE "sys-names.i"
 
 
 ; ## Speicherstellen für Texte ##
-; -------------------------------
-
   INCLUDE "error-texts.i"
 
 
 ; ## Grafikdaten nachladen ##
-; ---------------------------
 
 ; **** Background-Image ****
 bg_image_data SECTION bg_gfx,DATA

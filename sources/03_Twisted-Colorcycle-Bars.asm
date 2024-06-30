@@ -22,7 +22,6 @@
 
 
 ; ** Library-Includes V.3.x nachladen **
-; --------------------------------------
   INCDIR "Daten:include3.5/"
 
   INCLUDE "exec/exec.i"
@@ -46,8 +45,6 @@
 
 
 ; ** Konstanten **
-; ----------------
-
   INCLUDE "equals.i"
 
 requires_68030                  EQU FALSE
@@ -241,13 +238,10 @@ tccb_switch_table_size          EQU tccb_bar_height*tccb_bars_number
 
 
 ; ## Makrobefehle ##
-; ------------------
-
   INCLUDE "macros.i"
 
 
 ; ** Extra-Memory-Abschnitte **
-; ----------------------------
   RSRESET
 
 em_color_table    RS.L ct_size
@@ -256,25 +250,19 @@ extra_memory_size RS.B 0
 
 
 ; ** Struktur, die alle Exception-Vektoren-Offsets enthält **
-; -----------------------------------------------------------
-
   INCLUDE "except-vectors-offsets.i"
 
 
 ; ** Struktur, die alle Eigenschaften des Extra-Playfields enthält **
-; -------------------------------------------------------------------
-
   INCLUDE "extra-pf-attributes-structure.i"
 
 
 ; ** Struktur, die alle Eigenschaften der Sprites enthält **
-; ----------------------------------------------------------
-
   INCLUDE "sprite-attributes-structure.i"
 
 
 ; ** Struktur, die alle Registeroffsets der ersten Copperliste enthält **
-; -----------------------------------------------------------------------
+
   RSRESET
 
 cl1_extension1      RS.B 0
@@ -344,14 +332,13 @@ cl1_INTREQ           RS.L 1
 
 cl1_end              RS.L 1
 
-copperlist1_SIZE     RS.B 0
+copperlist1_size     RS.B 0
 
 
 ; ** Konstanten für die Größe der Copperlisten **
-; -----------------------------------------------
-cl1_size1            EQU copperlist1_SIZE
-cl1_size2            EQU copperlist1_SIZE
-cl1_size3            EQU copperlist1_SIZE
+cl1_size1            EQU copperlist1_size
+cl1_size2            EQU copperlist1_size
+cl1_size3            EQU copperlist1_size
 
 cl2_size1            EQU 0
 cl2_size2            EQU 0
@@ -359,7 +346,6 @@ cl2_size3            EQU 0
 
 
 ; ** Konstanten für die Größe der Spritestrukturen **
-; ---------------------------------------------------
 spr0_x_size1          EQU spr_x_size1
 spr0_y_size1          EQU 0
 spr1_x_size1          EQU spr_x_size1
@@ -395,8 +381,6 @@ spr7_x_size2          EQU spr_x_size2
 spr7_y_size2          EQU 0
 
 ; ** Struktur, die alle Variablenoffsets enthält **
-; -------------------------------------------------
-
   INCLUDE "variables-offsets.i"
 
 save_a7                  RS.L 1
@@ -431,7 +415,6 @@ start_03_twisted_colorcycle_bars
   INCLUDE "sys-wrapper.i"
 
 ; ** Eigene Variablen initialisieren **
-; -------------------------------------
   CNOP 0,4
 init_own_variables
 
@@ -461,7 +444,6 @@ init_own_variables
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
-; ---------------------------------------------
   CNOP 0,4
 init_all
   bsr.s   tccb_init_color_table
@@ -475,7 +457,6 @@ init_all
 
 ; **** Twisted-Colorcycle-Bars ****
 ; ** Farbtabelle initialisieren **
-; --------------------------------
   CNOP 0,4
 tccb_init_color_table
   movem.l a4-a6,-(a7)
@@ -500,7 +481,6 @@ tccb_init_color_table_loop2
   rts
 
 ; ** Farbregister initialisieren **
-; ---------------------------------
   IFEQ tccb_quick_clear_enabled
     IFNE pf_colors_number-256
 init_color_registers
@@ -513,12 +493,10 @@ init_color_registers
   ENDC
 
 ; ** Referenz-Switchtabelle initialisieren **
-; -------------------------------------------
   INIT_MIRROR_SWITCH_TABLE.B tccb,1,1,tccb_bars_number,color_y_values_number,extra_memory,a3,em_switch_table
 
 
 ; ** 1. Copperliste initialisieren **
-; -----------------------------------
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_construction1(a3),a0 
@@ -580,7 +558,6 @@ cl1_init_color_registers
   COPY_COPPERLIST cl1,3
 
 ; ## Hauptprogramm ##
-; -------------------
 ; a3 ... Basisadresse aller Variablen
 ; a4 ... CIA-A-Base
 ; a5 ... CIA-B-Base
@@ -592,14 +569,12 @@ main_routine
 
 
 ; ## Routinen, die nicht mit der Bildwiederholfrequenz gekoppelt sind ##
-; ----------------------------------------------------------------------
   CNOP 0,4
 no_sync_routines
   rts
 
 
 ; ## Rasterstahl-Routinen ##
-; --------------------------
   CNOP 0,4
 beam_routines
   bsr     wait_copint
@@ -626,16 +601,13 @@ fast_exit
 
 
 ; ** Copperlisten vertauschen **
-; ------------------------------
   SWAP_COPPERLIST cl1,3
 
 
 ; ** Copperliste löschen **
-; -------------------------
   CLEAR_BPLCON4_CHUNKY_SCREEN tccb,cl1,construction1,extension1,quick_clear_enabled
 
 ; ** Farbwerte der Bars ändern **
-; -------------------------------
   CNOP 0,4
 colorcycle
   movem.l a4-a6,-(a7)
@@ -682,7 +654,6 @@ cc_no_restart_color_table2
   rts
 
 ; ** Y-Koordinaten berechnen und Bars setzen **
-; ---------------------------------------------
   CNOP 0,4
 twisted_colorcycle_bars
   movem.l a3-a6,-(a7)
@@ -796,7 +767,6 @@ tccb_get_y_coordinates_loop2
   rts
 
 ; ** Copper-WAIT-Befehle wiederherstellen **
-; ------------------------------------------
   IFNE tccb_quick_clear_enabled
     RESTORE_BLCON4_CHUNKY_SCREEN tccb,cl1,construction2,extension1,32
   ENDC
@@ -804,7 +774,6 @@ tccb_get_y_coordinates_loop2
 
   IFEQ open_border_enabled
 ; ** Blind-Fader-In **
-; --------------------
     CNOP 0,4
 blind_fader_in
     tst.w   bfi_active(a3)   ;Blind-Fader-In an ?
@@ -866,7 +835,6 @@ no_blind_fader_in
     rts
   
 ; ** Blind-Fader-Out **
-; ---------------------
     CNOP 0,4
 blind_fader_out
     tst.w   bfo_active(a3)   ;Blind-Fader-Out an ?
@@ -928,7 +896,6 @@ no_blind_fader_out
   ENDC
 
 ; ** SOFTINT-Interrupts abfragen **
-; ---------------------------------
   CNOP 0,4
 effects_handler
   moveq   #INTF_SOFTINT,d1
@@ -962,37 +929,28 @@ eh_stop_all
 
 
 ; ## Interrupt-Routinen ##
-; ------------------------
-  
   INCLUDE "int-autovectors-handlers.i"
 
 ; ** Level-7-Interrupt-Server **
-; ------------------------------
   CNOP 0,4
 NMI_int_server
   rts
 
 
 ; ## Hilfsroutinen ##
-; -------------------
-
   INCLUDE "help-routines.i"
 
 
 ; ## Speicherstellen für Tabellen und Strukturen ##
-; -------------------------------------------------
-
   INCLUDE "sys-structures.i"
 
 ; ** Farben des ersten Playfields **
-; ----------------------------------
   CNOP 0,4
 pf1_color_table
   DC.L color00_bits
   DS.L pf1_colors_number-1
 
 ; ** Sinus / Cosinustabelle **
-; ----------------------------
 sine_table_512
   INCLUDE "sine-table-512x32.i"
 
@@ -1003,7 +961,6 @@ tccb_color_gradient
 ; **** Blind-Fader ****
   IFEQ open_border_enabled
 ; ** Tabelle mit Registeradressen **
-; ----------------------------------
 bf_registers_table
     REPT bf_registers_table_length/2
       DC.W NOOP
@@ -1015,20 +972,14 @@ bf_registers_table
 
 
 ; ## Speicherstellen allgemein ##
-; -------------------------------
-
   INCLUDE "sys-variables.i"
 
 
 ; ## Speicherstellen für Namen ##
-; -------------------------------
-
   INCLUDE "sys-names.i"
 
 
 ; ## Speicherstellen für Texte ##
-; -------------------------------
-
   INCLUDE "error-texts.i"
 
   END

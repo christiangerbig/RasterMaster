@@ -101,7 +101,6 @@
 
 
 ; ** Library-Includes V.3.x nachladen **
-; --------------------------------------
   INCDIR "Daten:include3.5/"
 
   INCLUDE "exec/exec.i"
@@ -133,8 +132,6 @@
 
 
 ; ** Konstanten **
-; ----------------
-
   INCLUDE "equals.i"
 
 requires_68030             EQU FALSE  
@@ -147,9 +144,9 @@ workbench_start_enabled    EQU TRUE
 workbench_fade_enabled     EQU TRUE
 text_output_enabled        EQU FALSE
 
-own_display_set_second_copperlist
 LINKER_PASS_GLOBAL_REFERENCES
 LINKER_PASS_RETURN_CODE
+SET_SECOND_COPPERLIST
 
 dma_bits                   EQU DMAF_COPPER+DMAF_MASTER+DMAF_SETCLR
 intena_bits                EQU INTF_INTEN+INTF_SETCLR
@@ -225,31 +222,23 @@ cl1_vstart                 EQU beam_position&$ff
 
 
 ; ## Makrobefehle ##
-; ------------------
-
   INCLUDE "macros.i"
 
 
 ; ** Struktur, die alle Exception-Vektoren-Offsets enthält **
-; -----------------------------------------------------------
-
   INCLUDE "except-vectors-offsets.i"
 
 
 ; ** Struktur, die alle Eigenschaften des Extra-Playfields enthält **
-; -------------------------------------------------------------------
-
   INCLUDE "extra-pf-attributes-structure.i"
 
 
 ; ** Struktur, die alle Eigenschaften der Sprites enthält **
-; ----------------------------------------------------------
-
   INCLUDE "sprite-attributes-structure.i"
 
 
 ; ** Struktur, die alle Registeroffsets der ersten Copperliste enthält **
-; -----------------------------------------------------------------------
+
   RSRESET
 
 cl1_begin        RS.B 0
@@ -263,31 +252,29 @@ cl1_INTREQ       RS.L 1
 
 cl1_end          RS.L 1
 
-copperlist1_SIZE RS.B 0
+copperlist1_size RS.B 0
 
 
 ; ** Struktur, die alle Registeroffsets der zweiten Copperliste enthält **
-; ------------------------------------------------------------------------
+
   RSRESET
 
 cl2_begin        RS.B 0
 
 cl2_end          RS.L 1
 
-copperlist2_SIZE RS.B 0
+copperlist2_size RS.B 0
 
 
 ; ** Konstanten für die größe der Copperlisten **
-; -----------------------------------------------
 cl1_size1          EQU 0
 cl1_size2          EQU 0
-cl1_size3          EQU copperlist1_SIZE
+cl1_size3          EQU copperlist1_size
 cl2_size1          EQU 0
 cl2_size2          EQU 0
-cl2_size3          EQU copperlist2_SIZE
+cl2_size3          EQU copperlist2_size
 
 ; ** Konstanten für die Größe der Spritestrukturen **
-; ---------------------------------------------------
 spr0_x_size1       EQU spr_x_size1
 spr0_y_size1       EQU 0
 spr1_x_size1       EQU spr_x_size1
@@ -323,12 +310,9 @@ spr7_x_size2       EQU spr_x_size2
 spr7_y_size2       EQU 0
 
 ; ** Struktur, die alle Variablenoffsets enthält **
-; -------------------------------------------------
-
   INCLUDE "variables-offsets.i"
 
 ; ** Relative offsets for variables **
-; ------------------------------------
 
 variables_size RS.B 0
 
@@ -336,13 +320,11 @@ variables_size RS.B 0
   INCLUDE "sys-wrapper.i"
 
 ; ** Eigene Variablen initialisieren **
-; -------------------------------------
   CNOP 0,4
 init_own_variables
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
-; ---------------------------------------------
   CNOP 0,4
 init_all
   bsr.s   init_color_registers
@@ -350,7 +332,6 @@ init_all
   bra     init_second_copperlist
 
 ; ** Farbregister initialisieren **
-; ---------------------------------
   CNOP 0,4
 init_color_registers
   CPU_SELECT_COLOR_HIGH_BANK 0
@@ -362,7 +343,6 @@ init_color_registers
 
 
 ; ** 1. Copperliste initialisieren **
-; -----------------------------------
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_display(a3),a0
@@ -376,7 +356,6 @@ init_first_copperlist
   COP_INIT_COPINT cl1,cl1_HSTART,cl1_VSTART,YWRAP
 
 ; ** 2. Copperliste initialisieren **
-; -----------------------------------
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_display(a3),a0
@@ -387,7 +366,6 @@ init_second_copperlist
 
 
 ; ## Hauptprogramm ##
-; -------------------
 ; a3 ... Basisadresse aller Variablen
 ; a4 ... CIA-A-Base
 ; a5 ... CIA-B-Base
@@ -403,57 +381,41 @@ no_start_1_pt_replay
   rts
 
 ; ## Interrupt-Routinen ##
-; ------------------------
-  
   INCLUDE "int-autovectors-handlers.i"
 
 ; ** Level-7-Interrupt-Server **
-; ------------------------------
   CNOP 0,4
 NMI_int_server
   rts
 
 
 ; ## Hilfsroutinen ##
-; -------------------
-
   INCLUDE "help-routines.i"
 
 
 ; ## Speicherstellen für Tabellen und Strukturen ##
-; -------------------------------------------------
-
   INCLUDE "sys-structures.i"
 
 ; ** Farben des ersten Playfields **
-; ----------------------------------
   CNOP 0,4
 pf1_color_table
   DC.L color00_bits
 
 
 ; ## Speicherstellen allgemein ##
-; -------------------------------
-
   INCLUDE "sys-variables.i"
 
 nop_second_copperlist DC.L 0
 
 
 ; ## Speicherstellen für Namen ##
-; -------------------------------
-
   INCLUDE "sys-names.i"
 
 
 ; ## Speicherstellen für Texte ##
-; -------------------------------
-
   INCLUDE "error-texts.i"
 
-; ** Programmversion für Version-Befehl **
-; ----------------------------------------
-program_version DC.B "$VER: RSE-RasterMaster 1.6 23.4.24)",TRUE
+program_version DC.B "$VER: RSE-RasterMaster 1.6 23.4.24)",0
   EVEN
 
   END

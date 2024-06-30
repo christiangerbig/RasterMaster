@@ -21,7 +21,6 @@
 
 
 ; ** Library-Includes V.3.x nachladen **
-; --------------------------------------
   INCDIR "Daten:include3.5/"
 
   INCLUDE "exec/exec.i"
@@ -45,8 +44,6 @@
 
 
 ; ** Konstanten **
-; ----------------
-
   INCLUDE "equals.i"
 
 requires_68030             EQU FALSE
@@ -217,32 +214,22 @@ extra_memory_size          EQU vcs_switch_table_size*BYTE_SIZE
 
 
 ; ## Makrobefehle ##
-; ------------------
-
   INCLUDE "macros.i"
 
 
 ; ** Struktur, die alle Exception-Vektoren-Offsets enthält **
-; -----------------------------------------------------------
-
   INCLUDE "except-vectors-offsets.i"
 
 
 ; ** Struktur, die alle Eigenschaften des Extra-Playfields enthält **
-; -------------------------------------------------------------------
-
   INCLUDE "extra-pf-attributes-structure.i"
 
 
 ; ** Struktur, die alle Eigenschaften der Sprites enthält **
-; ----------------------------------------------------------
-
   INCLUDE "sprite-attributes-structure.i"
 
 
 ; ** Struktur, die alle Registeroffsets der ersten Copperliste enthält **
-; -----------------------------------------------------------------------
-
   RSRESET
 
 cl1_begin        RS.B 0
@@ -251,12 +238,10 @@ cl1_begin        RS.B 0
 
 cl1_COPJMP2      RS.L 1
 
-copperlist1_SIZE RS.B 0
+copperlist1_size RS.B 0
 
 
 ; ** Struktur, die alle Registeroffsets der zweiten Copperliste enthält **
-; ------------------------------------------------------------------------
-
   RSRESET
 
 cl2_extension1        RS.B 0
@@ -323,22 +308,20 @@ cl2_INTREQ           RS.L 1
 
 cl2_end              RS.L 1
 
-copperlist2_SIZE     RS.B 0
+copperlist2_size     RS.B 0
 
 
 ; ** Konstanten für die Größe der Copperlisten **
-; -----------------------------------------------
 cl1_size1         EQU 0
 cl1_size2         EQU 0
-cl1_size3         EQU copperlist1_SIZE
+cl1_size3         EQU copperlist1_size
 
 cl2_size1         EQU 0
-cl2_size2         EQU copperlist2_SIZE
-cl2_size3         EQU copperlist2_SIZE
+cl2_size2         EQU copperlist2_size
+cl2_size3         EQU copperlist2_size
 
 
 ; ** Konstanten für die Größe der Spritestrukturen **
-; ---------------------------------------------------
 spr0_x_size1      EQU spr_x_size1
 spr0_y_size1      EQU 0
 spr1_x_size1      EQU spr_x_size1
@@ -374,8 +357,6 @@ spr7_x_size2      EQU spr_x_size2
 spr7_y_size2      EQU 0
 
 ; ** Struktur, die alle Variablenoffsets enthält **
-; -------------------------------------------------
-
   INCLUDE "variables-offsets.i"
 
 ; **** Vert-Colorscroll4 ****
@@ -410,7 +391,6 @@ start_07_vert_colorscroll
   INCLUDE "sys-wrapper.i"
 
 ; ** Eigene Variablen initialisieren **
-; -------------------------------------
   CNOP 0,4
 init_own_variables
 
@@ -442,7 +422,6 @@ init_own_variables
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
-; ---------------------------------------------
   CNOP 0,4
 init_all
   bsr.s   init_color_registers
@@ -451,7 +430,6 @@ init_all
   bra     init_second_copperlist
 
 ; ** Farbregister initialisieren **
-; ---------------------------------
   CNOP 0,4
 init_color_registers
   CPU_SELECT_COLOR_HIGH_BANK 0
@@ -490,12 +468,10 @@ init_color_registers
   rts
 
 ; ** Referenz-Switchtabelle initialisieren **
-; -------------------------------------------
   INIT_SWITCH_TABLE.B vcs,0,1,color_values_number1*segments_number1,extra_memory,a3
 
 
 ; ** 1. Copperliste initialisieren **
-; -----------------------------------
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_display(a3),a0 ;Darstellen-CL
@@ -518,7 +494,6 @@ init_first_copperlist
   ENDC
 
 ; ** 2. Copperliste initialisieren **
-; -----------------------------------
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_construction2(a3),a0 
@@ -536,7 +511,6 @@ init_second_copperlist
 
 
 ; ## Hauptprogramm ##
-; -------------------
 ; a3 ... Basisadresse aller Variablen
 ; a4 ... CIA-A-Base
 ; a5 ... CIA-B-Base
@@ -548,14 +522,12 @@ main_routine
 
 
 ; ## Routinen, die nicht mit der Bildwiederholfrequenz gekoppelt sind ##
-; ----------------------------------------------------------------------
   CNOP 0,4
 no_sync_routines
   rts
 
 
 ; ## Rasterstahl-Routinen ##
-; --------------------------
   CNOP 0,4
 beam_routines
   bsr     wait_copint
@@ -582,12 +554,10 @@ fast_exit
 
 
 ; ** Copperlisten vertauschen **
-; ------------------------------
   SWAP_COPPERLIST cl2,2
 
 
 ; ** Vertikaler Colorscroll4 **
-; -----------------------------
   CNOP 0,4
 vert_colorscroll4
   tst.w   vcs4_active(a3)
@@ -626,7 +596,6 @@ no_vert_colorscroll4
   rts
 
 ; ** Vertical-Colorscroll5 **
-; ---------------------------
   CNOP 0,4
 vert_colorscroll5_1
   move.w  vcs5_switch_table_start1(a3),d2 ;Startwert in Farbtabelle 
@@ -700,7 +669,6 @@ vert_colorscroll5_2_loop2
 
   IFEQ open_border_enabled
 ; ** Blind-Fader-In **
-; --------------------
     CNOP 0,4
 blind_fader_in
     tst.w   bfi_active(a3)   ;Blind-Fader-In an ?
@@ -762,7 +730,6 @@ no_blind_fader_in
     rts
   
 ; ** Blind-Fader-Out **
-; ---------------------
     CNOP 0,4
 blind_fader_out
     tst.w   bfo_active(a3)   ;Blind-Fader-Out an ?
@@ -825,7 +792,6 @@ no_blind_fader_out
 
 
 ; ** SOFTINT-Interrupts abfragen **
-; ---------------------------------
   CNOP 0,4
 effects_handler
   moveq   #INTF_SOFTINT,d1
@@ -877,30 +843,22 @@ eh_stop_all
 
 
 ; ## Interrupt-Routinen ##
-; ------------------------
-  
   INCLUDE "int-autovectors-handlers.i"
 
 ; ** Level-7-Interrupt-Server **
-; ------------------------------
   CNOP 0,4
 NMI_int_server
   rts
 
 
 ; ## Hilfsroutinen ##
-; -------------------
-
   INCLUDE "help-routines.i"
 
 
 ; ## Speicherstellen für Tabellen und Strukturen ##
-; -------------------------------------------------
-
   INCLUDE "sys-structures.i"
 
 ; ** Farben des ersten Playfields **
-; ----------------------------------
   CNOP 0,4
 pf1_color_table
   INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/08_vcs4_Colorgradient.ct"
@@ -908,7 +866,6 @@ pf1_color_table
 ; **** Blind-Fader ****
   IFEQ open_border_enabled
 ; ** Tabelle mit Registeradressen **
-; ----------------------------------
   CNOP 0,2
 bf_registers_table
     REPT bf_registers_table_length/2
@@ -921,20 +878,14 @@ bf_registers_table
 
 
 ; ## Speicherstellen allgemein ##
-; -------------------------------
-
   INCLUDE "sys-variables.i"
 
 
 ; ## Speicherstellen für Namen ##
-; -------------------------------
-
   INCLUDE "sys-names.i"
 
 
 ; ## Speicherstellen für Texte ##
-; -------------------------------
-
   INCLUDE "error-texts.i"
 
   END

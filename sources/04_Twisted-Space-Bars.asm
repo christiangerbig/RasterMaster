@@ -22,7 +22,6 @@
 
 
 ; ** Library-Includes V.3.x nachladen **
-; --------------------------------------
   INCDIR "Daten:include3.5/"
 
   INCLUDE "exec/exec.i"
@@ -46,8 +45,6 @@
 
 
 ; ** Konstanten **
-; ----------------
-
   INCLUDE "equals.i"
 
 requires_68030                 EQU FALSE  
@@ -292,32 +289,22 @@ pf1_bitplane_y_offset          EQU 0
 
 
 ; ## Makrobefehle ##
-; ------------------
-
   INCLUDE "macros.i"
 
 
 ; ** Struktur, die alle Exception-Vektoren-Offsets enthält **
-; -----------------------------------------------------------
-
   INCLUDE "except-vectors-offsets.i"
 
 
 ; ** Struktur, die alle Eigenschaften des Extra-Playfields enthält **
-; -------------------------------------------------------------------
-
   INCLUDE "extra-pf-attributes-structure.i"
 
 
 ; ** Struktur, die alle Eigenschaften der Sprites enthält **
-; ----------------------------------------------------------
-
   INCLUDE "sprite-attributes-structure.i"
 
 
 ; ** Struktur, die alle Registeroffsets der ersten Copperliste enthält **
-; -----------------------------------------------------------------------
-
   RSRESET
 
 cl1_begin        RS.B 0
@@ -326,12 +313,10 @@ cl1_begin        RS.B 0
 
 cl1_COPJMP2      RS.L 1
 
-copperlist1_SIZE RS.B 0
+copperlist1_size RS.B 0
 
 
 ; ** Struktur, die alle Registeroffsets der zweiten Copperliste enthält **
-; ------------------------------------------------------------------------
-
   RSRESET
 
 cl2_extension1        RS.B 0
@@ -394,22 +379,20 @@ cl2_INTREQ           RS.L 1
 
 cl2_end              RS.L 1
 
-copperlist2_SIZE     RS.B 0
+copperlist2_size     RS.B 0
 
 
 ; ** Konstanten für die Größe der Copperlisten **
-; -----------------------------------------------
 cl1_size1       EQU 0
 cl1_size2       EQU 0
-cl1_size3       EQU copperlist1_SIZE
+cl1_size3       EQU copperlist1_size
 
-cl2_size1       EQU copperlist2_SIZE
-cl2_size2       EQU copperlist2_SIZE
-cl2_size3       EQU copperlist2_SIZE
+cl2_size1       EQU copperlist2_size
+cl2_size2       EQU copperlist2_size
+cl2_size3       EQU copperlist2_size
 
 
 ; ** Sprite0-Zusatzstruktur **
-; ----------------------------
   RSRESET
 
 spr0_extension1       RS.B 0
@@ -420,7 +403,6 @@ spr0_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 spr0_extension1_size  RS.B 0
 
 ; ** Sprite0-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr0_begin            RS.B 0
@@ -429,10 +411,9 @@ spr0_extension1_entry RS.B spr0_extension1_size
 
 spr0_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite0_SIZE          RS.B 0
+sprite0_size          RS.B 0
 
 ; ** Sprite1-Zusatzstruktur **
-; ----------------------------
   RSRESET
 
 spr1_extension1       RS.B 0
@@ -443,7 +424,6 @@ spr1_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 spr1_extension1_size  RS.B 0
 
 ; ** Sprite1-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr1_begin            RS.B 0
@@ -452,10 +432,9 @@ spr1_extension1_entry RS.B spr1_extension1_size
 
 spr1_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite1_SIZE          RS.B 0
+sprite1_size          RS.B 0
 
 ; ** Sprite2-Zusatzstruktur **
-; ----------------------------
   RSRESET
 
 spr2_extension1       RS.B 0
@@ -466,7 +445,6 @@ spr2_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 spr2_extension1_size  RS.B 0
 
 ; ** Sprite2-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr2_begin            RS.B 0
@@ -475,10 +453,9 @@ spr2_extension1_entry RS.B spr2_extension1_size
 
 spr2_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite2_SIZE          RS.B 0
+sprite2_size          RS.B 0
 
 ; ** Sprite3-Zusatzstruktur **
-; ----------------------------
   RSRESET
 
 spr3_extension1       RS.B 0
@@ -489,7 +466,6 @@ spr3_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 spr3_extension1_size  RS.B 0
 
 ; ** Sprite3-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr3_begin            RS.B 0
@@ -498,10 +474,9 @@ spr3_extension1_entry RS.B spr3_extension1_size
 
 spr3_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite3_SIZE          RS.B 0
+sprite3_size          RS.B 0
 
 ; ** Sprite4-Zusatzstruktur **
-; ----------------------------
   RSRESET
 
 spr4_extension1       RS.B 0
@@ -512,7 +487,6 @@ spr4_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 spr4_extension1_size  RS.B 0
 
 ; ** Sprite4-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr4_begin            RS.B 0
@@ -521,10 +495,9 @@ spr4_extension1_entry RS.B spr4_extension1_size
 
 spr4_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite4_SIZE          RS.B 0
+sprite4_size          RS.B 0
 
 ; ** Sprite5-Zusatzstruktur **
-; ----------------------------
   RSRESET
 
 spr5_extension1       RS.B 0
@@ -535,7 +508,6 @@ spr5_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 spr5_extension1_size  RS.B 0
 
 ; ** Sprite5-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr5_begin            RS.B 0
@@ -544,10 +516,9 @@ spr5_extension1_entry RS.B spr5_extension1_size
 
 spr5_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite5_SIZE          RS.B 0
+sprite5_size          RS.B 0
 
 ; ** Sprite6-Zusatzstruktur **
-; ----------------------------
   RSRESET
 
 spr6_extension1       RS.B 0
@@ -558,7 +529,6 @@ spr6_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 spr6_extension1_size  RS.B 0
 
 ; ** Sprite6-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr6_begin            RS.B 0
@@ -567,10 +537,9 @@ spr6_extension1_entry RS.B spr6_extension1_size
 
 spr6_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite6_SIZE          RS.B 0
+sprite6_size          RS.B 0
 
 ; ** Sprite7-Zusatzstruktur **
-; ----------------------------
   RSRESET
 
 spr7_extension1       RS.B 0
@@ -581,7 +550,6 @@ spr7_ext1_planedata   RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 spr7_extension1_size  RS.B 0
 
 ; ** Sprite7-Hauptstruktur **
-; ---------------------------
   RSRESET
 
 spr7_begin            RS.B 0
@@ -590,11 +558,10 @@ spr7_extension1_entry RS.B spr7_extension1_size
 
 spr7_end              RS.L 1*(spr_pixel_per_datafetch/16)
 
-sprite7_SIZE          RS.B 0
+sprite7_size          RS.B 0
 
 
 ; ** Konstanten für die Größe der Spritestrukturen **
-; ---------------------------------------------------
 spr0_x_size1    EQU spr_x_size1
 spr0_y_size1    EQU 0
 spr1_x_size1    EQU spr_x_size1
@@ -613,26 +580,24 @@ spr7_x_size1    EQU spr_x_size1
 spr7_y_size1    EQU 0
 
 spr0_x_size2    EQU spr_x_size2
-spr0_y_size2    EQU sprite0_SIZE/(spr_pixel_per_datafetch/4)
+spr0_y_size2    EQU sprite0_size/(spr_pixel_per_datafetch/4)
 spr1_x_size2    EQU spr_x_size2
-spr1_y_size2    EQU sprite1_SIZE/(spr_pixel_per_datafetch/4)
+spr1_y_size2    EQU sprite1_size/(spr_pixel_per_datafetch/4)
 spr2_x_size2    EQU spr_x_size2
-spr2_y_size2    EQU sprite2_SIZE/(spr_pixel_per_datafetch/4)
+spr2_y_size2    EQU sprite2_size/(spr_pixel_per_datafetch/4)
 spr3_x_size2    EQU spr_x_size2
-spr3_y_size2    EQU sprite3_SIZE/(spr_pixel_per_datafetch/4)
+spr3_y_size2    EQU sprite3_size/(spr_pixel_per_datafetch/4)
 spr4_x_size2    EQU spr_x_size2
-spr4_y_size2    EQU sprite4_SIZE/(spr_pixel_per_datafetch/4)
+spr4_y_size2    EQU sprite4_size/(spr_pixel_per_datafetch/4)
 spr5_x_size2    EQU spr_x_size2
-spr5_y_size2    EQU sprite5_SIZE/(spr_pixel_per_datafetch/4)
+spr5_y_size2    EQU sprite5_size/(spr_pixel_per_datafetch/4)
 spr6_x_size2    EQU spr_x_size2
-spr6_y_size2    EQU sprite6_SIZE/(spr_pixel_per_datafetch/4)
+spr6_y_size2    EQU sprite6_size/(spr_pixel_per_datafetch/4)
 spr7_x_size2    EQU spr_x_size2
-spr7_y_size2    EQU sprite7_SIZE/(spr_pixel_per_datafetch/4)
+spr7_y_size2    EQU sprite7_size/(spr_pixel_per_datafetch/4)
 
 
 ; ** Struktur, die alle Variablenoffsets enthält **
-; -------------------------------------------------
-
   INCLUDE "variables-offsets.i"
 
 ; **** Horiz-Scrolltext ****
@@ -689,7 +654,6 @@ start_04_twisted_space_bars
   INCLUDE "sys-wrapper.i"
 
 ; ** Eigene Variablen initialisieren **
-; -------------------------------------
   CNOP 0,4
 init_own_variables
 
@@ -750,7 +714,6 @@ init_own_variables
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
-; ---------------------------------------------
   CNOP 0,4
 init_all
   bsr.s   tb_init_color_table
@@ -763,7 +726,6 @@ init_all
   bra     init_second_copperlist
 
 ; ** Farbwerte der Bar initialisieren **
-; --------------------------------------
   CNOP 0,4
 tb_init_color_table
   move.l  #color00_bits,d1
@@ -781,7 +743,6 @@ tb_init_color_table_loop2
   rts
 
 ; ** Farbregister initialisieren **
-; ---------------------------------
   CNOP 0,4
 init_color_registers
   CPU_SELECT_COLOR_HIGH_BANK 0
@@ -820,7 +781,6 @@ init_color_registers
   rts
 
 ; ** Sprites initialisieren **
-; ----------------------------
   CNOP 0,4
 init_sprites
   bsr.s   spr_init_pointers_table
@@ -831,25 +791,20 @@ init_sprites
   INIT_SPRITE_POINTERS_TABLE
 
 ; ** Spritestruktur initialisieren **
-; -----------------------------------
   INIT_ATTACHED_SPRITES_CLUSTER bg,spr_pointers_display,bg_image_x_position,bg_image_y_position,spr_x_size2,bg_image_y_size,,,REPEAT
 
 ; **** Horiz-Scrolltext ****
 ; ** Offsets der Buchstaben im Characters-Pic berechnen **
-; --------------------------------------------------------
   INIT_CHARACTERS_OFFSETS.W hst
 
 ; ** X-Positionen der Chars berechnen **
-; --------------------------------------
   INIT_CHARACTERS_X_POSITIONS hst,LORES
 
 ; ** Laufschrift initialisieren **
-; --------------------------------
   INIT_CHARACTERS_IMAGES hst
 
 
 ; ** 1. Copperliste initialisieren **
-; -----------------------------------
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_display(a3),a0 ;Darstellen-CL
@@ -881,7 +836,6 @@ cl1_init_color_registers
   COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
 
 ; ** 2. Copperliste initialisieren **
-; -----------------------------------
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_construction1(a3),a0 
@@ -899,7 +853,6 @@ init_second_copperlist
 
 
 ; ## Hauptprogramm ##
-; -------------------
 ; a3 ... Basisadresse aller Variablen
 ; a4 ... CIA-A-Base
 ; a5 ... CIA-B-Base
@@ -911,14 +864,12 @@ main_routine
 
 
 ; ## Routinen, die nicht mit der Bildwiederholfrequenz gekoppelt sind ##
-; ----------------------------------------------------------------------
   CNOP 0,4
 no_sync_routines
   rts
 
 
 ; ## Rasterstahl-Routinen ##
-; --------------------------
   CNOP 0,4
 beam_routines
   bsr     wait_copint
@@ -954,16 +905,13 @@ fast_exit
 
 
 ; ** Copperlisten vertauschen **
-; ------------------------------
   SWAP_COPPERLIST cl2,3
 
 ; ** Playfields vertauschen **
-; ----------------------------
   SWAP_PLAYFIELD pf1,2,pf1_depth3,pf1_bitplane_x_offset,pf1_bitplane_y_offset
 
 
 ; ** Laufschrift **
-; -----------------
   CNOP 0,4
 horiz_scrolltext
   movem.l a4-a5,-(a7)
@@ -1014,7 +962,6 @@ hst_init_copy_blit
   rts
 
 ; ** Softscrollwert berechen **
-; -----------------------------
   CNOP 0,4
 hst_get_text_softscroll
   moveq   #hst_text_character_x_size-1,d0
@@ -1025,7 +972,6 @@ hst_get_text_softscroll
   rts
 
 ; ** Neues Image für Character ermitteln **
-; -----------------------------------------
   GET_NEW_CHARACTER_IMAGE.W hst,hst_check_control_codes,NORESTART
 
   CNOP 0,4
@@ -1041,7 +987,6 @@ hst_stop_horiz_scrolltext
   rts
 
 ; ** Laufschrift bewegen **
-; -------------------------
   CNOP 0,4
 hst_horiz_scroll
   move.l  pf1_construction2(a3),a0
@@ -1057,11 +1002,9 @@ hst_horiz_scroll
   rts
 
 ; ** Copperliste löschen **
-; -------------------------
   CLEAR_BPLCON4_CHUNKY_SCREEN tb,cl2,construction1,extension1,quick_clear_enabled
 
 ; ** Hintere Stangen in Copperliste kopieren **
-; ---------------------------------------------
   CNOP 0,4
 tb_set_background_bars
   movem.l a3-a6,-(a7)
@@ -1096,7 +1039,6 @@ tb_skip_column1
   bra.s   tb_no_column1
 
 ; ** Vordere Stangen in Copperliste kopieren **
-; ---------------------------------------------
   CNOP 0,4
 tb_set_foreground_bars
   movem.l a3-a6,-(a7)
@@ -1131,7 +1073,6 @@ tb_skip_column2
   bra.s   tb_no_column2
 
 ; ** Y+Z-Koordinaten berechnen **
-; -------------------------------
   CNOP 0,4
 tb313_get_yz_coordinates
   tst.w   tb313_active(a3)
@@ -1179,7 +1120,6 @@ tb313_no_get_yz_coordinates
   rts
 
 ; ** Y+Z-Koordinaten berechnen **
-; -------------------------------
   CNOP 0,4
 tb312_get_yz_coordinates
   tst.w   tb312_active(a3)
@@ -1227,14 +1167,12 @@ tb312_no_get_yz_coordinates
   rts
 
 ; ** Copper-WAIT-Befehle wiederherstellen **
-; ------------------------------------------
   IFNE tb_quick_clear_enabled
     RESTORE_BLCON4_CHUNKY_SCREEN tb,cl2,construction2,extension1,32
   ENDC
 
 
 ; ** Hintergrundbild einblenden **
-; --------------------------------
   CNOP 0,4
 sprite_fader_in
   tst.w   sprfi_active(a3)     ;Sprites-Fader-In an ?
@@ -1273,7 +1211,6 @@ no_sprite_fader_in
   rts
 
 ; ** Hintergrundbild ausblenden **
-; --------------------------------
   CNOP 0,4
 sprite_fader_out
   tst.w   sprfo_active(a3)     ;Sprites-Fader-Out an ?
@@ -1314,11 +1251,9 @@ no_sprite_fader_out
   COLOR_FADER sprf
 
 ; ** Farbwerte in Copperliste kopieren **
-; ---------------------------------------
   COPY_COLOR_TABLE_TO_COPPERLIST sprf,spr,cl1,cl1_COLOR17_high1,cl1_COLOR17_low1
 
 ; ** Spalten einblenden **
-; ------------------------
   CNOP 0,4
 chunky_columns_fader_in
   tst.w   ccfi_active(a3)    ;Chunky-Columns-Fader-In an ?
@@ -1391,7 +1326,6 @@ ccfi_stop_column_fader_in
   rts
 
 ; ** Spalten ausblenden **
-; ------------------------
   CNOP 0,4
 chunky_columns_fader_out
   tst.w   ccfo_active(a3)    ;Chunky-Columns-Fader-Out an ?
@@ -1465,7 +1399,6 @@ ccfo_stop_column_fader_out
 
 
 ; ** SOFTINT-Interrupts abfragen **
-; ---------------------------------
   CNOP 0,4
 effects_handler
   moveq   #INTF_SOFTINT,d1
@@ -1552,59 +1485,46 @@ eh_stop_all
 
 
 ; ## Interrupt-Routinen ##
-; ------------------------
-  
   INCLUDE "int-autovectors-handlers.i"
 
 ; ** Level-7-Interrupt-Server **
-; ------------------------------
   CNOP 0,4
 NMI_int_server
   rts
 
 
 ; ## Hilfsroutinen ##
-; -------------------
-
   INCLUDE "help-routines.i"
 
 
 ; ## Speicherstellen für Tabellen und Strukturen ##
-; -------------------------------------------------
-
   INCLUDE "sys-structures.i"
 
 ; ** Farben des Playfields **
-; ---------------------------
   CNOP 0,4
 pf1_color_table
   INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/32x32x16-Font.ct"
 
 ; ** Farben der Sprites **
-; -------------------------
 spr_color_table
   REPT spr_colors_number
     DC.L color00_bits
   ENDR  
 
 ; ** Adressen der Sprites **
-; --------------------------
 spr_pointers_display
   DS.L spr_number
 
 ; **** Twisted-Bars ****
 ; ** Farbverlauf **
-; -----------------
 tb_color_gradient
   INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/05_tb_Colorgradient.ct"
 
 ; ** Farben der Bar **
-; --------------------
 tb_color_table
   DS.L spr_colors_number*tb_bar_height
 
 ; ** Tabellen mit Switchwerten der Bar **
-; ---------------------------------------
 tb_switch_table_background
   DC.W $0022,$0033,$0044,$0055,$0066,$0077,$0088,$0099,$00aa,$00bb,$00cc,$00dd,$00ee,$00ff
 
@@ -1612,44 +1532,37 @@ tb_switch_table_foreground
   DC.W $2022,$3033,$4044,$5055,$6066,$7077,$8088,$9099,$a0aa,$b0bb,$c0cc,$d0dd,$e0ee,$f0ff
 
 ; ** YZ-Koordinatentabelle **
-; ---------------------------
 tb_yz_coordinates
   DS.W tb_bars_number*cl2_display_width*2
 
 ; **** Horiz-Scrolltext ****
 ; ** ASCII-Buchstaben **
-; ----------------------
 hst_ascii
   DC.B "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?'():\/ "
 hst_ascii_end
   EVEN
 
 ; ** Offsets der einzelnen Chars **
-; ---------------------------------
   CNOP 0,2
 hst_characters_offsets
   DS.W hst_ascii_end-hst_ascii
   
 ; ** X-Koordinaten der einzelnen Chars der Laufschrift **
-; -------------------------------------------------------
 hst_characters_x_positions
   DS.W hst_text_characters_number
 
 ; ** Tabelle für Chars-Image-Adressen **
-; --------------------------------------
   CNOP 0,4
 hst_characters_image_pointers
   DS.L hst_text_characters_number
 
 ; **** Sprites-Fader ****
 ; ** Zielfarbwerte für Sprites-Fader-In **
-; ----------------------------------------
   CNOP 0,4
 sprfi_color_table
   INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/256x256x16-Nebula.ct"
 
 ; ** Zielfarbwerte für Sprites-Fader-Out **
-; -----------------------------------------
 sprfo_color_table
   REPT spr_colors_number
     DC.L color00_bits
@@ -1658,7 +1571,6 @@ sprfo_color_table
 
 ; **** Chunky-Columns-Fader ****
 ; ** Maske für die Spalten **
-; ---------------------------
 ccf_fader_columns_mask
   REPT cl2_display_width
     DC.B FALSE
@@ -1666,25 +1578,18 @@ ccf_fader_columns_mask
 
 
 ; ## Speicherstellen allgemein ##
-; -------------------------------
-
   INCLUDE "sys-variables.i"
 
 
 ; ## Speicherstellen für Namen ##
-; -------------------------------
-
   INCLUDE "sys-names.i"
 
 
 ; ## Speicherstellen für Texte ##
-; -------------------------------
-
   INCLUDE "error-texts.i"
 
 ; **** Horiz-Scrolltext ****
 ; ** Text für Laufschrift **
-; --------------------------
 hst_text
   REPT hst_text_characters_number/(hst_origin_character_x_size/hst_text_character_x_size)
     DC.B " "
@@ -1699,7 +1604,6 @@ hst_stop_text
 
 
 ; ## Grafikdaten nachladen ##
-; ---------------------------
 
 ; **** Background-Image ****
 bg_image_data SECTION bg_gfx,DATA

@@ -26,7 +26,6 @@
 
 
 ; ** Library-Includes V.3.x nachladen **
-; --------------------------------------
   INCDIR "Daten:include3.5/"
 
   INCLUDE "exec/exec.i"
@@ -50,8 +49,6 @@
 
 
 ; ** Konstanten **
-; ----------------
-
   INCLUDE "equals.i"
 
 requires_68030                     EQU FALSE
@@ -331,13 +328,10 @@ pf1_bitplane_y_offset              EQU ss_text_y_position
 
 
 ; ## Makrobefehle ##
-; ------------------
-
   INCLUDE "macros.i"
 
 
 ; ** Extra-Memory-Abschnitte **
-; ----------------------------
   RSRESET
 
 em_switch_table1 RS.B tb31612_switch_table_size
@@ -354,26 +348,18 @@ extra_memory_size RS.B 0
 
 
 ; ** Struktur, die alle Exception-Vektoren-Offsets enthält **
-; -----------------------------------------------------------
-
   INCLUDE "except-vectors-offsets.i"
 
 
 ; ** Struktur, die alle Eigenschaften des Extra-Playfields enthält **
-; -------------------------------------------------------------------
-
   INCLUDE "extra-pf-attributes-structure.i"
 
 
 ; ** Struktur, die alle Eigenschaften der Sprites enthält **
-; ----------------------------------------------------------
-
   INCLUDE "sprite-attributes-structure.i"
 
 
 ; ** Struktur, die alle Registeroffsets der ersten Copperliste enthält **
-; -----------------------------------------------------------------------
-
   RSRESET
 
 cl1_extension1      RS.B 0
@@ -403,7 +389,7 @@ cl1_ext2_BLTAMOD    RS.L 1
 cl1_ext2_BLTDMOD    RS.L 1
 cl1_ext2_BLTSIZE    RS.L 1
 
-cl1_extension2_SIZE RS.B 0
+cl1_extension2_size RS.B 0
 
 
   RSRESET
@@ -433,16 +419,16 @@ cl1_begin            RS.B 0
   INCLUDE "copperlist1-offsets.i"
 
 cl1_extension1_entry RS.B cl1_extension1_size
-cl1_extension2_entry RS.B cl1_extension2_SIZE
+cl1_extension2_entry RS.B cl1_extension2_size
 cl1_extension3_entry RS.B cl1_extension3_size
 
 cl1_ext3_COPJMP2     RS.L 1
 
-copperlist1_SIZE     RS.B 0
+copperlist1_size     RS.B 0
 
 
 ; ** Struktur, die alle Registeroffsets der zweiten Copperliste enthält **
-; ------------------------------------------------------------------------
+
   RSRESET
 
 cl2_extension1      RS.B 0
@@ -468,7 +454,7 @@ cl2_ext2_BLTDPTL    RS.L 1
 cl2_ext2_BLTSIZE    RS.L 1
 cl2_ext2_WAITBLIT   RS.L 1
 
-cl2_extension2_SIZE RS.B 0
+cl2_extension2_size RS.B 0
 
 
   RSRESET
@@ -612,7 +598,7 @@ cl2_extension8_size RS.B 0
 cl2_begin            RS.B 0
 
 cl2_extension1_entry RS.B cl2_extension1_size
-cl2_extension2_entry RS.B cl2_extension2_SIZE*(visible_pixels_number/16)
+cl2_extension2_entry RS.B cl2_extension2_size*(visible_pixels_number/16)
 cl2_extension3_entry RS.B cl2_extension3_size*(visible_pixels_number/16)
 cl2_extension4_entry RS.B cl2_extension4_size*(ss_text_columns_number-(visible_pixels_number/16))
 cl2_extension5_entry RS.B cl2_extension5_size
@@ -629,22 +615,20 @@ cl2_INTREQ           RS.L 1
 
 cl2_end              RS.L 1
 
-copperlist2_SIZE     RS.B 0
+copperlist2_size     RS.B 0
 
 
 ; ** Konstanten für die Größe der Copperlisten **
-; -----------------------------------------------
 cl1_size1            EQU 0
 cl1_size2            EQU 0
-cl1_size3            EQU copperlist1_SIZE
+cl1_size3            EQU copperlist1_size
 
-cl2_size1            EQU copperlist2_SIZE
-cl2_size2            EQU copperlist2_SIZE
-cl2_size3            EQU copperlist2_SIZE
+cl2_size1            EQU copperlist2_size
+cl2_size2            EQU copperlist2_size
+cl2_size3            EQU copperlist2_size
 
 
 ; ** Konstanten für die Größe der Spritestrukturen **
-; ---------------------------------------------------
 spr0_x_size1         EQU spr_x_size1
 spr0_y_size1         EQU 0
 spr1_x_size1         EQU spr_x_size1
@@ -680,8 +664,6 @@ spr7_x_size2         EQU spr_x_size2
 spr7_y_size2         EQU 0
 
 ; ** Struktur, die alle Variablenoffsets enthält **
-; -------------------------------------------------
-
   INCLUDE "variables-offsets.i"
 
 save_a7                    RS.L 1
@@ -734,7 +716,6 @@ start_05_greetings
   INCLUDE "sys-wrapper.i"
 
 ; ** Eigene Variablen initialisieren **
-; -------------------------------------
   CNOP 0,4
 init_own_variables
 
@@ -787,7 +768,6 @@ init_own_variables
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
-; ---------------------------------------------
   CNOP 0,4
 init_all
   bsr.s   tb31612_init_color_table
@@ -806,7 +786,6 @@ init_all
 
 ; **** Twisted-Bars ****
 ; ** Farbtabelle initialisieren **
-; --------------------------------
   CNOP 0,4
 tb31612_init_color_table
   lea     tb31612_bars_color_table(pc),a0
@@ -821,7 +800,6 @@ tb31612_init_color_table_loop
 
 ; **** Wave-Center-Bar ****
 ; ** Farbtabelle initialisieren **
-; --------------------------------
   CNOP 0,4
 wcb_init_color_table
   lea     wcb_bar_color_table(pc),a0
@@ -835,7 +813,6 @@ wcb_init_color_table_loop
 
 ; **** Sine-Scrolltext *****
 ; ** Farbtabelle initialisieren **
-; --------------------------------
   CNOP 0,4
 ss_init_color_table
   lea     ss_color_table(pc),a0
@@ -848,7 +825,6 @@ ss_init_color_table_loop
   rts
 
 ; ** Farbregister initialisieren **
-; ---------------------------------
   CNOP 0,4
 init_color_registers
   CPU_SELECT_COLOR_HIGH_BANK 0
@@ -888,22 +864,20 @@ init_color_registers
 
 ; **** Twisted-Bars3.16.1.2 ****
 ; ** Referenz-Switchtabelle für Twisted-Bars initialisieren **
-; ------------------------------------------------------------
+
   INIT_MIRROR_SWITCH_TABLE.B tb31612,0,2,segments_number1,color_values_number1,extra_memory,a3
 
 ; **** Wave-Center-Bar/Sine-Scrolltext ****
 ; ** Referenz-Switchtabelle für Wave-Wave-Center-Bar initialisieren **
-; ---------------------------------------------------------------
+
   INIT_SWITCH_TABLE.B wcb,color_values_number1*segments_number1*2,2,color_values_number2*2,extra_memory,a3,em_switch_table2
 
 ; **** Sine-Scrolltext ****
 ; ** Offsets der Buchstaben im Characters-Pic berechnen **
-; --------------------------------------------------------
   INIT_CHARACTERS_OFFSETS.W ss
 
 ; **** Barfield ****
 ; ** Farbtabelle initialisieren **
-; --------------------------------
   CNOP 0,4
 bf_init_color_table
   lea     bf_color_table(pc),a0
@@ -952,7 +926,6 @@ bf_init_color_table_loop6
   rts
 
 ; ** Tabelle mit Zeigern auf Farbtabellen initialisieren **
-; ---------------------------------------------------------
   CNOP 0,4
 bf_init_color_table_pointers
   move.l  extra_memory(a3),a0
@@ -972,7 +945,6 @@ bf_init_color_table_pointers
   rts
 
 ; ** Bar schrittweise verkleinern **
-; ----------------------------------
   CNOP 0,4
 bf_scale_bar_size
   movem.l a4-a6,-(a7)
@@ -1005,7 +977,6 @@ bf_scale_bar_size_loop2
   rts
 
 ; ** Bitmap-Tabelle zurücksetzen **
-; ---------------------------------
   CNOP 0,4
 bf_refresh_bitmap_table
   moveq   #0,d0
@@ -1017,7 +988,6 @@ bf_refresh_bitmap_table_loop
   rts
 
 ; ** Bitmap-Tabelle für die Zeilen initialisieren **
-; --------------------------------------------------
   CNOP 0,4
 bf_init_bitmap_lines_table
   lea     bf_bitmap_lines_table(pc),a0 ;Zeiger auf Bitmap-Tabelle
@@ -1040,7 +1010,6 @@ bf_init_bitmap_lines_table_loop
   rts
 
 ; ** Höhe der Bar skalieren **
-; ----------------------------
   CNOP 0,4
 bf_do_scale_bar_y_size
   lea     bf_bitmap_lines_table(pc),a0 ;Zeiger auf Bitmap-Tabelle
@@ -1057,7 +1026,6 @@ bf_skip_line
 
 
 ; ** 1. Copperliste initialisieren **
-; -----------------------------------
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_display(a3),a0 ;Darstellen-CL
@@ -1135,7 +1103,6 @@ cl1_init_horiz_scroll_blit
   COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
 
 ; ** 2. Copperliste initialisieren **
-; -----------------------------------
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_construction1(a3),a0 
@@ -1264,7 +1231,7 @@ cl2_init_clear_blit
   COP_MOVEQ tb31612_clear_blit_x_size/16,BLTSIZH ;Anzahl der Wörter & Blitter starten
   rts
 
-  COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,tb31612_quick_clear_enabled,TRUE
+  COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,tb31612_quick_clear_enabled,0
 
   IFEQ tb31612_restore_cl_blitter_enabled
     IFNE tb31612_quick_clear_enabled
@@ -1286,7 +1253,6 @@ cl2_init_restore_blit
 
 
 ; ## Hauptprogramm ##
-; -------------------
 ; a3 ... Basisadresse aller Variablen
 ; a4 ... CIA-A-Base
 ; a5 ... CIA-B-Base
@@ -1298,14 +1264,12 @@ main_routine
 
 
 ; ## Routinen, die nicht mit der Bildwiederholfrequenz gekoppelt sind ##
-; ----------------------------------------------------------------------
   CNOP 0,4
 no_sync_routines
   rts
 
 
 ; ## Rasterstahl-Routinen ##
-; --------------------------
   CNOP 0,4
 beam_routines
   bsr     wait_copint
@@ -1344,16 +1308,13 @@ fast_exit
 
 
 ; ** Copperlisten vertauschen **
-; ------------------------------
   SWAP_COPPERLIST cl2,3
 
 ; ** Playfields vertauschen **
-; ----------------------------
   SWAP_PLAYFIELD pf1,2,pf1_depth3,pf1_bitplane_x_offset,pf1_bitplane_y_offset
 
 
 ; ** Laufschrift **
-; -----------------
   CNOP 0,4
 ss_horiz_scrolltext
   tst.w   ss_enabled(a3)
@@ -1381,11 +1342,9 @@ ss_no_horiz_scrolltext
   rts
 
 ; ** Neues Image für Character ermitteln **
-; -----------------------------------------
   GET_NEW_CHARACTER_IMAGE.W ss
 
 ; ** Copperliste löschen **
-; -------------------------
 tb31612_clear_second_copperlist
   move.l  cl2_construction1(a3),a0
   ADDF.W  cl2_extension6_entry+2,a0
@@ -1397,12 +1356,11 @@ tb31612_clear_second_copperlist
   rts
 
 ; ** Sinus-Laufschrift **
-; ------------------------
   CNOP 0,4
 sine_scroll
   move.l  a4,-(a7)
   MOVEF.W ss_text_y_center,d2
-  MOVEF.L cl2_extension2_SIZE+cl2_extension3_size,d3
+  MOVEF.L cl2_extension2_size+cl2_extension3_size,d3
   MOVEF.L cl2_extension4_size,d4
   lea     we_y_coordinates(pc),a0 ;Tabelle mit Y-Koords
   move.l  pf1_construction2(a3),a1 ;Zielbild
@@ -1422,7 +1380,7 @@ sine_scroll_loop1
   move.w  d0,cl2_ext2_BLTDPTL(a4) ;Playfield schreiben
   swap    d0                 ;High
   add.l   d3,a4              ;nächster Blit in CL
-  move.w  d0,cl2_ext2_BLTDPTH-(cl2_extension2_SIZE+cl2_extension3_size)(a4) ;Playfield schreiben
+  move.w  d0,cl2_ext2_BLTDPTH-(cl2_extension2_size+cl2_extension3_size)(a4) ;Playfield schreiben
 ;  moveq   #tb31612_columns_per_word-2,d6 ;Anzahl der Spalten pro Wort
 ;sine_scroll_loop2
   moveq   #0,d0           ;Langwort-Zugriff
@@ -1443,7 +1401,6 @@ sine_scroll_loop1
   rts
 
 ; ** Hintere Stangen in Copperliste kopieren **
-; ---------------------------------------------
   CNOP 0,4
 tb31612_set_background_bars
   movem.l a3-a6,-(a7)
@@ -1488,7 +1445,6 @@ tb31612_skip_background_bar
   bra.s   tb31612_no_background_bar
 
 ; ** Wave-Center-Bar setzen **
-; ----------------------------
   CNOP 0,4
 set_wave_center_bar
   movem.l a4-a6,-(a7)
@@ -1593,7 +1549,6 @@ wcb_skip_column
   rts
 
 ; ** Vordere Stangen in Copperliste kopieren **
-; ---------------------------------------------
   CNOP 0,4
 tb31612_set_foreground_bars
   movem.l a3-a6,-(a7)
@@ -1639,7 +1594,6 @@ tb31612_skip_foreground_bar
 
 ; **** Barfield ****
 ; ** Farbwerte in Puffer löschen **
-; ---------------------------------
   CNOP 0,4
 bf_clear_buffer
   move.l  #color255_bits,d0
@@ -1652,7 +1606,6 @@ bf_clear_buffer_loop
   rts
 
 ; ** Stangen kopieren **
-; ----------------------
   CNOP 0,4
 bf_set_bars
   movem.l a4-a6,-(a7)
@@ -1718,7 +1671,6 @@ bf_restart_z_plane
   bra.s   bf_set_bars_loop2
 
 ; ** Farbwerte aus Puffer in Copperliste kopieren **
-; --------------------------------------------------
   CNOP 0,4
 bf_copy_buffer
   movem.l a4-a5,-(a7)
@@ -1764,11 +1716,9 @@ bf_copy_buffer_loop
   rts
 
 ; ** Y+Z-Koordinaten berechnen **
-; -------------------------------
   GET_TWISTED_BARS_YZ_COORDINATES tb31612,256,cl2_extension7_size
 
 ; ** Y-Koordinaten für Wave-Effect berechnen **
-; ---------------------------------------------
   CNOP 0,4
 we_get_y_coordinates
   move.w  we_radius_y_angle(a3),d2 ;1. Winkel Y-Radius
@@ -1795,7 +1745,6 @@ we_get_y_coordinates_loop
   rts
 
 ; ** Copper-WAIT-Befehle wiederherstellen **
-; ------------------------------------------
   IFNE tb31612_quick_clear_enabled
     RESTORE_BLCON4_CHUNKY_SCREEN tb,cl2,construction2,extension7,32,,tb31612_restore_blit
     IFEQ tb31612_restore_cl_blitter_enabled
@@ -1813,7 +1762,6 @@ tb31612_restore_blit
 
 
 ; ** Spalten einblenden **
-; ------------------------
   CNOP 0,4
 chunky_columns_fader_in
   tst.w   ccfi_active(a3)    ;Chunky-Columns-Fader-In an ?
@@ -1886,7 +1834,6 @@ ccfi_stop_column_fader_in
   rts
 
 ; ** Spalten ausblenden **
-; ------------------------
   CNOP 0,4
 chunky_columns_fader_out
   tst.w   ccfo_active(a3)    ;Chunky-Columns-Fader-Out an ?
@@ -1960,7 +1907,6 @@ ccfo_stop_column_fader_out
 
 
 ; ** SOFTINT-Interrupts abfragen **
-; ---------------------------------
   CNOP 0,4
 effects_handler
   moveq   #INTF_SOFTINT,d1
@@ -2053,30 +1999,22 @@ eh_stop_all
 
 
 ; ## Interrupt-Routinen ##
-; ------------------------
-  
   INCLUDE "int-autovectors-handlers.i"
 
 ; ** Level-7-Interrupt-Server **
-; ------------------------------
   CNOP 0,4
 NMI_int_server
   rts
 
 
 ; ## Hilfsroutinen ##
-; -------------------
-
   INCLUDE "help-routines.i"
 
 
 ; ## Speicherstellen für Tabellen und Strukturen ##
-; -------------------------------------------------
-
   INCLUDE "sys-structures.i"
 
 ; ** Farben des ersten Playfields **
-; ----------------------------------
   CNOP 0,4
 pf1_color_table
   DC.L color00_bits
@@ -2088,12 +2026,10 @@ tb31612_bars_color_table
   INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/06_tb31612_Colorgradient.ct"
 
 ; ** YZ-Koordinatentabelle Twisted-Sine-Bars **
-; ---------------------------------------------
 tb31612_yz_coordinates
   DS.W tb31612_bars_number*cl2_display_width*2
 
 ; ** Maske für die Spalten **
-; ---------------------------
 tb31612_fader_columns_mask
   REPT cl2_display_width
     DC.B FALSE
@@ -2105,7 +2041,6 @@ wcb_bar_color_table
   INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/06_wcb_Colorgradient.ct"
 
 ; ** Maske für die Spalten **
-; ---------------------------
 wcb_fader_columns_mask
   REPT cl2_display_width
     DC.B FALSE
@@ -2113,7 +2048,6 @@ wcb_fader_columns_mask
 
 ; **** Wave-Effect ****
 ; ** Y-Koordinatentabelle des Wave-Effect **
-; ------------------------------------------
   CNOP 0,2
 we_y_coordinates
   DS.W cl2_display_width
@@ -2125,38 +2059,32 @@ ss_color_table
   INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/06_ss_Colorgradient.ct"
 
 ; ** ASCII-Buchstaben **
-; ----------------------
 ss_ascii
   DC.B "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.!?-'():\/ "
 ss_ascii_end
   EVEN
 
 ; ** Offsets der einzelnen Chars **
-; ---------------------------------
   CNOP 0,2
 ss_characters_offsets
   DS.W ss_ascii_end-ss_ascii
 
 ; **** Barfield ****
 ; ** Farbwerte **
-; ---------------
   CNOP 0,4
 bf_color_table
   INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/06_bf_Colorgradient.ct"
 
 ; ** Tabelle mit Zeigern auf Farbtabelle **
-; -----------------------------------------
 bf_color_table_pointers
   DS.L bf_bars_planes_number
 
 ; ** Bitmap-Tabelle für die Zeilen **
-; -----------------------------------
 bf_bitmap_lines_table
   DS.B bf_source_bar_y_size
   EVEN
 
 ; ** YZ-Koordinaten der Bars **
-; -----------------------------
   CNOP 0,2
 bf_yz_coordinates
   DC.W -900,3000             ;1. Ebene
@@ -2168,25 +2096,18 @@ bf_yz_coordinates
 
 
 ; ## Speicherstellen allgemein ##
-; -------------------------------
-
   INCLUDE "sys-variables.i"
 
 
 ; ## Speicherstellen für Namen ##
-; -------------------------------
-
   INCLUDE "sys-names.i"
 
 
 ; ## Speicherstellen für Texte ##
-; -------------------------------
-
   INCLUDE "error-texts.i"
 
 ; **** Sine-Scrolltext ****
 ; ** Text für Laufschrift **
-; --------------------------
 ss_text
   DC.B "ARTSTATE  "
   DC.B "DESIRE  "
@@ -2203,7 +2124,6 @@ ss_text
 
 
 ; ## Grafikdaten nachladen ##
-; ---------------------------
 
 ; **** Sine-Scrolltext ****
 ss_image_data SECTION ss_gfx,DATA_C

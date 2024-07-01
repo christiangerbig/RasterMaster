@@ -639,7 +639,7 @@ zzp5_get_y_coordinates_loop
   muls.w  2(a0,d3.w*4),d0    ;y'=(yr'*sin(w))/2^15
   swap    d0
   add.w   d1,d0              ;y' + Y-Mittelpunkt
-  WAIT_BLITTER
+  WAITBLIT
   move.l  a2,(a4)            ;Ziel = Copperliste
   lea     (a7,d0.w*2),a1     ;Y-Offset in Switch-Tabelle
   move.l  a1,(a3)            ;Quelle = Switch-Tabelle
@@ -655,7 +655,7 @@ zzp5_get_y_coordinates_loop
   CNOP 0,4
 zzp5_init_copy_blit
   move.w  #DMAF_BLITHOG+DMAF_SETCLR,DMACON-DMACONR(a6) ;BLTPRI an
-  WAIT_BLITTER
+  WAITBLIT
   move.l  #(BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC)<<16,BLTCON0-DMACONR(a6) ;Minterm D=A
   moveq   #FALSE,d0
   move.l  d0,BLTAFWM-DMACONR(a6) ;Ausmaskierung

@@ -1055,7 +1055,7 @@ cl1_init_copperlist_branch
 
   CNOP 0,4
 cl1_init_copy_blit
-  COP_WAITBLT
+  COP_WAITBLIT
   COP_MOVEQ BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;Minterm D=A
   COP_MOVEQ TRUE,BLTCON1
   COP_MOVEQ FALSE_WORD,BLTAFWM
@@ -1076,7 +1076,7 @@ cl1_init_copy_blit
 
   CNOP 0,4
 cl1_init_horiz_scroll_blit
-  COP_WAITBLT
+  COP_WAITBLIT
   COP_MOVEQ DMAF_BLITHOG+DMAF_SETCLR,DMACON ;BLTPRI an
   COP_MOVEQ ((-ss_horiz_scroll_speed<<12)+BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC),BLTCON0 ;Minterm D=A
   COP_MOVEQ TRUE,BLTCON1
@@ -1151,7 +1151,7 @@ init_second_copperlist
 
   CNOP 0,4
 cl2_init_blit_steady_registers
-  COP_WAITBLT
+  COP_WAITBLIT
   COP_MOVEQ pf1_plane_width-ss_text_character_width,BLTBMOD
   COP_MOVEQ extra_pf1_plane_width-ss_text_character_width,BLTAMOD
   COP_MOVEQ pf1_plane_width-ss_text_character_width,BLTDMOD
@@ -1176,7 +1176,7 @@ cl2_init_sine_scroll_blits_loop1
   COP_MOVEQ TRUE,BLTDPTH
   COP_MOVEQ TRUE,BLTDPTL
   COP_MOVEQ (ss_copy_column_blit_y_size1*64)+(ss_copy_column_blit_x_size1/16),BLTSIZE
-  COP_WAITBLT
+  COP_WAITBLIT
 
   COP_MOVEQ BC0F_SRCA+BC0F_SRCB+BC0F_DEST+NABNC+NABC+ANBNC+ANBC+ABNC+ABC,BLTCON0 ;D=A+B
 
@@ -1202,7 +1202,7 @@ cl2_init_sine_scroll_blits_loop2
   COP_MOVEQ TRUE,BLTDPTH
   COP_MOVEQ TRUE,BLTDPTL
   COP_MOVEQ (ss_copy_column_blit_y_size2*64)+(ss_copy_column_blit_x_size2/16),BLTSIZE
-  COP_WAITBLT
+  COP_WAITBLIT
   dbf     d6,cl2_init_sine_scroll_blits_loop2
   subq.l  #ss_sine_character_width,d3 ;nächster Char in Quellbild-2
   dbf     d7,cl2_init_sine_scroll_blits_loop1
@@ -1237,7 +1237,7 @@ cl2_init_clear_blit
     IFNE tb31612_quick_clear_enabled
       CNOP 0,4
 cl2_init_restore_blit
-      COP_WAITBLT
+      COP_WAITBLIT
       COP_MOVEQ TRUE,BLTDPTH
       COP_MOVEQ TRUE,BLTDPTL
       COP_MOVEQ cl2_extension7_size-tb31612_restore_blit_width,BLTDMOD

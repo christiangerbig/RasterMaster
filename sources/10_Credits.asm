@@ -872,7 +872,7 @@ vert_text_scroll_loop2
   lsr.w   #3,d0              ;X/8
   add.l   d1,d0              ;X+Y-Offset
   add.l   a4,d0              ;Playfieldadresse addieren
-  WAIT_BLITTER
+  WAITBLIT
   move.l  (a2)+,BLTAPT-DMACONR(a6) ;Char
   move.l  d0,BLTDPT-DMACONR(a6) ;Playfield
   move.w  d3,BLTSIZE-DMACONR(a6) ;Blitter starten
@@ -895,7 +895,7 @@ vts_set_characters_y_position
   CNOP 0,4
 vts_init_copy_blit
   move.w  #DMAF_BLITHOG+DMAF_SETCLR,DMACON-DMACONR(a6) ;BLTPRI an
-  WAIT_BLITTER
+  WAITBLIT
   move.l  #(BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC)<<16,BLTCON0-DMACONR(a6) ;D=A
   moveq   #FALSE,d0
   move.l  d0,BLTAFWM-DMACONR(a6) ;keine Ausmaskierung

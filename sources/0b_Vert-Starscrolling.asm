@@ -944,7 +944,7 @@ vert_starscrolling
   move.w  #(16*64)+(16/16),a7 ;Additionswert für Blitgröße
   moveq   #vss_z_planes_number-1,d7 ;Anzahl der Ebenen
 vert_starscrolling_loop1
-  WAIT_BLITTER
+  WAITBLIT
   move.l  d2,BLTCMOD-DMACONR(a6)
   swap    d2                 ;Moduli vertauschen
   move.l  d2,BLTAMOD-DMACONR(a6)
@@ -966,7 +966,7 @@ vss_no_y_restart
   swap    d0                 ;Shiftwert 
   add.w   d1,d1              ;*2 = XY-Offset
   add.l   a4,d1              ;+ Playfieldadresse
-  WAIT_BLITTER
+  WAITBLIT
   move.w  d0,BLTCON1-DMACONR(a6)
   add.w   a3,d0              ;+ Minterm
   move.w  d0,BLTCON0-DMACONR(a6)
@@ -994,7 +994,7 @@ vss_no_y_restart
   CNOP 0,4
 vss_init_copy_blit
   move.w  #DMAF_BLITHOG+DMAF_SETCLR,DMACON-DMACONR(a6) ;BLTPRI an
-  WAIT_BLITTER
+  WAITBLIT
   move.l  #$ffff0000,BLTAFWM-DMACONR(a6) ;Maske
   rts
 
@@ -1002,7 +1002,7 @@ vss_init_copy_blit
   CNOP 0,4
 vss_clear_switch_buffer
   move.l  vss_switch_buffer_construction1(a3),a0 ;Zeiger auf Tabelle mit Switchwerten
-  WAIT_BLITTER
+  WAITBLIT
   move.l  #(BC0F_DEST+ANBNC+ANBC+ABNC+ABC)<<16,BLTCON0-DMACONR(a6) ;Minterm D=A
   moveq   #FALSE,d0
   move.l  d0,BLTAFWM-DMACONR(a6) ;Maske aus

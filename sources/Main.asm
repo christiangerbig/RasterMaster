@@ -90,6 +90,7 @@
 
   MC68040
 
+
   XDEF color00_bits
   XDEF color00_high_bits
   XDEF color00_low_bits
@@ -98,6 +99,11 @@
 
   XREF start_0_pt_replay
   XREF start_1_pt_replay
+
+
+DEF_PASS_GLOBAL_REFERENCES
+DEF_PASS_RETURN_CODE
+DEF_SET_SECOND_COPPERLIST
 
 
 ; ** Library-Includes V.3.x nachladen **
@@ -143,10 +149,6 @@ requires_multiscan_monitor EQU FALSE
 workbench_start_enabled    EQU TRUE
 workbench_fade_enabled     EQU TRUE
 text_output_enabled        EQU FALSE
-
-DEF_PASS_GLOBAL_REFERENCES
-DEF_PASS_RETURN_CODE
-DEF_SET_SECOND_COPPERLIST
 
 dma_bits                   EQU DMAF_COPPER+DMAF_MASTER+DMAF_SETCLR
 intena_bits                EQU INTF_INTEN+INTF_SETCLR

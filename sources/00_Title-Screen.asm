@@ -13,6 +13,7 @@
 
   MC68040
 
+
   XREF color00_bits
   XREF pt_track_volumes_enabled
   XREF pt_track_periods_enabled
@@ -21,11 +22,15 @@
   XREF pt_audchan3temp
   XREF pt_audchan4temp
 
-
   XDEF start_00_title_screen
   XDEF mouse_handler
   XDEF sine_table
   XDEF bg_image_data
+
+
+DEF_SYS_TAKEN_OVER
+DEF_PASS_GLOBAL_REFERENCES
+DEF_PASS_RETURN_CODE
 
 
 ; ** Library-Includes V.3.x nachladen **
@@ -63,10 +68,6 @@ requires_multiscan_monitor  EQU FALSE
 workbench_start_enabled     EQU FALSE
 workbench_fade_enabled      EQU FALSE
 text_output_enabled         EQU FALSE
-
-DEF_SYS_TAKEN_OVER
-DEF_PASS_GLOBAL_REFERENCES
-DEF_PASS_RETURN_CODE
 
 dma_bits                    EQU DMAF_SPRITE+DMAF_COPPER+DMAF_RASTER+DMAF_SETCLR
 intena_bits                 EQU INTF_SETCLR

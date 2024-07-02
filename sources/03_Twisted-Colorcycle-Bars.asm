@@ -13,12 +13,18 @@
 
   MC68040
 
+
   XREF color00_bits
   XREF mouse_handler
 
-
   XDEF start_03_twisted_colorcycle_bars
   XDEF sine_table_512
+
+
+DEF_SYS_TAKEN_OVER
+DEF_PASS_GLOBAL_REFERENCES
+DEF_PASS_RETURN_CODE
+DEF_COLOR_GRADIENT_RGB8
 
 
 ; ** Library-Includes V.3.x nachladen **
@@ -57,10 +63,6 @@ workbench_start_enabled         EQU FALSE
 workbench_fade_enabled          EQU FALSE
 text_output_enabled             EQU FALSE
 
-DEF_SYS_TAKEN_OVER
-DEF_PASS_GLOBAL_REFERENCES
-DEF_PASS_RETURN_CODE
-DEF_COLOR_GRADIENT_RGB8
 open_border_enabled             EQU TRUE
 
 tccb_quick_clear_enabled        EQU TRUE

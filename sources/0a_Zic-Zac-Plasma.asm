@@ -13,12 +13,17 @@
 
   MC68040
 
+
   XREF color00_bits
   XREF mouse_handler
   XREF sine_table_512
 
-
   XDEF start_0a_zig_zag_plasma
+
+
+DEF_SYS_TAKEN_OVER
+DEF_PASS_GLOBAL_REFERENCES
+DEF_PASS_RETURN_CODE
 
 
 ; ** Library-Includes V.3.x nachladen **
@@ -56,10 +61,6 @@ requires_multiscan_monitor EQU FALSE
 workbench_start_enabled    EQU FALSE
 workbench_fade_enabled     EQU FALSE
 text_output_enabled        EQU FALSE
-
-DEF_SYS_TAKEN_OVER
-DEF_PASS_GLOBAL_REFERENCES
-DEF_PASS_RETURN_CODE
 
 dma_bits                   EQU DMAF_BLITTER+DMAF_COPPER+DMAF_RASTER+DMAF_SETCLR
 intena_bits                EQU INTF_SETCLR

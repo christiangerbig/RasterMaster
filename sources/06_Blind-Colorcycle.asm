@@ -13,12 +13,17 @@
 
   MC68040
 
+
   XREF color00_bits
   XREF mouse_handler
   XREF sine_table
 
-
   XDEF start_06_blind_colorcycle
+
+
+DEF_SYS_TAKEN_OVER
+DEF_PASS_GLOBAL_REFERENCES
+DEF_PASS_RETURN_CODE
 
 
 ; ** Library-Includes V.3.x nachladen **
@@ -57,9 +62,6 @@ workbench_start_enabled        EQU FALSE
 workbench_fade_enabled         EQU FALSE
 text_output_enabled            EQU FALSE
 
-DEF_SYS_TAKEN_OVER
-DEF_PASS_GLOBAL_REFERENCES
-DEF_PASS_RETURN_CODE
 open_border_enabled            EQU TRUE
 
 bcc512_switch_table_length_256 EQU TRUE

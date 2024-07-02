@@ -13,6 +13,7 @@
 
   MC68040
 
+
   XREF color00_bits
   XREF color00_high_bits
   XREF color00_low_bits
@@ -21,8 +22,12 @@
   XREF mouse_handler
   XREF sine_table
 
-
   XDEF start_05_greetings
+
+
+DEF_SYS_TAKEN_OVER
+DEF_PASS_GLOBAL_REFERENCES
+DEF_PASS_RETURN_CODE
 
 
 ; ** Library-Includes V.3.x nachladen **
@@ -61,9 +66,6 @@ workbench_start_enabled            EQU FALSE
 workbench_fade_enabled             EQU FALSE
 text_output_enabled                EQU FALSE
 
-DEF_SYS_TAKEN_OVER
-DEF_PASS_GLOBAL_REFERENCES
-DEF_PASS_RETURN_CODE
 open_border_enabled                EQU FALSE ;Immer FALSE, da Overscan-Playfield
 
 tb31612_quick_clear_enabled        EQU TRUE ;Solle TRUE sein, wenn Hintergrundeffekt aktiviert ist

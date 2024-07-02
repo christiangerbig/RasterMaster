@@ -13,12 +13,17 @@
 
   MC68040
 
+
   XREF color00_bits
   XREF mouse_handler
   XREF sine_table
 
-
   XDEF start_04_twisted_space_bars
+
+
+DEF_SYS_TAKEN_OVER
+DEF_PASS_GLOBAL_REFERENCES
+DEF_PASS_RETURN_CODE
 
 
 ; ** Library-Includes V.3.x nachladen **
@@ -57,9 +62,6 @@ workbench_start_enabled        EQU FALSE
 workbench_fade_enabled         EQU FALSE
 text_output_enabled            EQU FALSE
 
-DEF_SYS_TAKEN_OVER
-DEF_PASS_GLOBAL_REFERENCES
-DEF_PASS_RETURN_CODE
 open_border_enabled            EQU FALSE ;Sollte FALSE sein, weil bereits durch Bitplanes der Border geöffnet wird.
 
 tb_quick_clear_enabled         EQU FALSE ;Immer FALSE, da COLOR255 nicht die Hintergrundfarbe ist und die Sprites sonst verdeckt werde sowie die Laufschriftfarben falsch dargestellt werdenn!!!
@@ -155,6 +157,8 @@ bplcon3_bits1                  EQU BPLCON3F_SPRES0
 bplcon3_bits2                  EQU bplcon3_bits1+BPLCON3F_LOCT
 bplcon4_bits                   EQU (BPLCON4F_OSPRM4*spr_odd_color_table_select)+(BPLCON4F_ESPRM4*spr_even_color_table_select)
 diwhigh_bits                 EQU (((display_window_hstop&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_vstop&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_hstart&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_vstart&$700)>>8)+DIWHIGHF_hstart1+DIWHIGHF_HSTOP1
+
+
 fmode_bits                     EQU FMODEF_BPL32+FMODEF_BPAGEM+FMODEF_SPR32+FMODEF_SPAGEM+FMODEF_SSCAN2
 
 cl2_display_x_size             EQU 320

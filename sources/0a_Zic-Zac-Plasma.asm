@@ -47,9 +47,9 @@
 ; ** Konstanten **
   INCLUDE "equals.i"
 
-requires_68030             EQU FALSE  
-requires_68040             EQU FALSE
-requires_68060             EQU FALSE
+requires_030_cpu           EQU FALSE  
+requires_040_cpu           EQU FALSE
+requires_060_cpu           EQU FALSE
 requires_fast_memory       EQU FALSE
 requires_multiscan_monitor EQU FALSE
 
@@ -57,9 +57,9 @@ workbench_start_enabled    EQU FALSE
 workbench_fade_enabled     EQU FALSE
 text_output_enabled        EQU FALSE
 
-LINKER_SYS_TAKEN_OVER
-LINKER_PASS_GLOBAL_REFERENCES
-LINKER_PASS_RETURN_CODE
+DEF_SYS_TAKEN_OVER
+DEF_PASS_GLOBAL_REFERENCES
+DEF_PASS_RETURN_CODE
 
 dma_bits                   EQU DMAF_BLITTER+DMAF_COPPER+DMAF_RASTER+DMAF_SETCLR
 intena_bits                EQU INTF_SETCLR
@@ -133,10 +133,10 @@ DDFSTOP_bits               EQU DDFSTOP_OVERSCAN_32_PIXEL_MIN
 
 display_window_hstart      EQU HSTART_44_CHUNKY_PIXEL
 display_window_vstart      EQU MINROW
-diwstrt_bits               EQU ((display_window_VSTART&$ff)*DIWSTRTF_V0)+(display_window_HSTART&$ff)
+diwstrt_bits               EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)+(display_window_hstart&$ff)
 display_window_hstop       EQU HSTOP_44_CHUNKY_PIXEL
 display_window_vstop       EQU VSTOP_256_lines
-diwstop_bits               EQU ((display_window_VSTOP&$ff)*DIWSTOPF_V0)+(display_window_HSTOP&$ff)
+diwstop_bits               EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)+(display_window_hstop&$ff)
 
 pf1_plane_width            EQU pf1_x_size3/8
 data_fetch_width           EQU pixel_per_line/8
@@ -148,7 +148,7 @@ bplcon2_bits               EQU 0
 bplcon3_bits1              EQU 0
 bplcon3_bits2              EQU bplcon3_bits1+BPLCON3F_LOCT
 bplcon4_bits               EQU 0
-diwhigh_bits            EQU (((display_window_HSTOP&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_VSTOP&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_HSTART&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_VSTART&$700)>>8)
+diwhigh_bits               EQU (((display_window_hstop&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_vstop&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_hstart&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_vstart&$700)>>8)
 fmode_bits                 EQU 0
 
 cl2_display_x_size         EQU 456
@@ -185,7 +185,7 @@ vsb_y_angle_step           EQU sine_table_length/vsb_bars_number
 
 ; **** Vert-Border-Fader ****
 vbf_FPS                    EQU 50
-vbf_y_position_center      EQU display_window_VSTART+(visible_lines_number/2)
+vbf_y_position_center      EQU display_window_vstart+(visible_lines_number/2)
 
 vbfo_fader_speed_max       EQU 4
 vbfo_fader_radius          EQU vbfo_fader_speed_max
@@ -411,8 +411,8 @@ init_own_variables
 
 ; **** Vert-Border-Fader ****
   move.w  #sine_table_length/4,vbf_fader_angle(a3)
-  move.w  #display_window_VSTART,vbf_display_window_VSTART(a3)
-  move.w  #display_window_VSTOP,vbf_display_window_VSTOP(a3)
+  move.w  #display_window_vstart,vbf_display_window_vstart(a3)
+  move.w  #display_window_vstop,vbf_display_window_vstop(a3)
 
   moveq   #FALSE,d1
   move.w  d1,vbfo_active(a3)
@@ -677,22 +677,22 @@ vert_border_fader_out
   MULUF.L vbfo_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
   add.w   #vbfo_fader_center,d0 ;+ Fader-Mittelpunkt
-  move.w  vbf_display_window_VSTART(a3),d2 ;Aktuelle VSTART-Position
+  move.w  vbf_display_window_vstart(a3),d2 ;Aktuelle VSTART-Position
   add.w   d0,d2              ;neue VSTART-Position
   cmp.w   #vbf_y_position_center,d2 ;Zielwert erreicht ?
   ble.s   vbfo_no_vert_start_position_max ;Nein -> verzweige
   MOVEF.W vbf_y_position_center,d2 ;Zielwert
 vbfo_no_vert_start_position_max
-  move.w  vbf_display_window_VSTOP(a3),d1 ;Aktuelle VSTOP-Position
+  move.w  vbf_display_window_vstop(a3),d1 ;Aktuelle VSTOP-Position
   sub.w   d0,d1              ;neue VSTOP-Position
-  move.w  d2,vbf_display_window_VSTART(a3) 
+  move.w  d2,vbf_display_window_vstart(a3) 
   cmp.w   #vbf_y_position_center,d1 ;Zielwert erreicht ?
   bge.s   vbfo_no_vert_stop_position_min ;Nein -> verzweige
   moveq   #FALSE,d0
   move.w  d0,vbfo_active(a3) ;Vert-Border-Fader aus
   MOVEF.W vbf_y_position_center,d1 ;Zielwert
 vbfo_no_vert_stop_position_min
-  move.w  d1,vbf_display_window_VSTOP(a3) retten
+  move.w  d1,vbf_display_window_vstop(a3) retten
 vbfo_set_window_vert_positions
   move.l  cl1_display(a3),a0 
   move.w  #diwhigh_bits&(~(DIWHIGHF_VSTART8+DIWHIGHF_VSTART9+DIWHIGHF_vstart10+DIWHIGHF_VSTOP8+DIWHIGHF_VSTOP9+DIWHIGHF_VSTOP10)),d0 ;DIWHIGH-Bits 

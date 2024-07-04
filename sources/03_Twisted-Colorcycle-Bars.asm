@@ -21,13 +21,6 @@
   XDEF sine_table_512
 
 
-DEF_SYS_TAKEN_OVER
-DEF_PASS_GLOBAL_REFERENCES
-DEF_PASS_RETURN_CODE
-DEF_COLOR_GRADIENT_RGB8
-
-
-; ** Library-Includes V.3.x nachladen **
   INCDIR "Daten:include3.5/"
 
   INCLUDE "exec/exec.i"
@@ -50,7 +43,15 @@ DEF_COLOR_GRADIENT_RGB8
   INCDIR "Daten:Asm-Sources.AGA/normsource-includes/"
 
 
-; ** Konstanten **
+SYS_TAKEN_OVER                  SET 1
+PASS_GLOBAL_REFERENCES          SET 1
+PASS_RETURN_CODE                SET 1
+COLOR_GRADIENT_RGB8             SET 1
+
+
+  INCLUDE "macros.i"
+
+
   INCLUDE "equals.i"
 
 requires_030_cpu                EQU FALSE
@@ -147,16 +148,12 @@ MINROW                          EQU VSTART_256_LINES
 
   IFNE open_border_enabled 
 pf_pixel_per_datafetch          EQU 16 ;1x
-DDFSTRT_bits                    EQU DDFSTART_OVERSCAN_32_PIXEL
-DDFSTOP_bits                    EQU DDFSTOP_OVERSCAN_32_PIXEL_MIN
   ENDC
 
 display_window_hstart           EQU HSTART_44_CHUNKY_PIXEL
 display_window_vstart           EQU MINROW
-diwstrt_bits                    EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)+(display_window_hstart&$ff)
 display_window_hstop            EQU HSTOP_44_CHUNKY_PIXEL
-display_window_vstop            EQU VSTOP_256_lines
-diwstop_bits                    EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)+(display_window_hstop&$ff)
+display_window_vstop            EQU VSTOP_256_LINES
 
   IFNE open_border_enabled 
 pf1_plane_width                 EQU pf1_x_size3/8
@@ -164,6 +161,9 @@ data_fetch_width                EQU pixel_per_line/8
 pf1_plane_moduli                EQU -(pf1_plane_width-(pf1_plane_width-data_fetch_width))
   ENDC
 
+  IFEQ open_border_enabled
+diwstrt_bits                    EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)+(display_window_hstart&$ff)
+diwstop_bits                    EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)+(display_window_hstop&$ff)
 bplcon0_bits                    EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) 
 bplcon3_bits1                   EQU 0
 bplcon3_bits2                   EQU bplcon3_bits1+BPLCON3F_LOCT
@@ -171,6 +171,19 @@ bplcon3_bits3                   EQU bplcon3_bits1+BPLCON3F_BANK0+BPLCON3F_BANK1+
 bplcon3_bits4                   EQU bplcon3_bits2+BPLCON3F_BANK0+BPLCON3F_BANK1+BPLCON3F_BANK2
 bplcon4_bits                    EQU 0
 diwhigh_bits                    EQU (((display_window_hstop&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_vstop&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_hstart&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_vstart&$700)>>8)
+  ELSE
+diwstrt_bits                    EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)+(display_window_hstart&$ff)
+diwstop_bits                    EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)+(display_window_hstop&$ff)
+ddfstrt_bits                    EQU DDFSTART_OVERSCAN_32_PIXEL
+ddfstop_bits                    EQU DDFSTOP_OVERSCAN_32_PIXEL_MIN
+bplcon0_bits                    EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0)
+bplcon3_bits1                   EQU 0
+bplcon3_bits2                   EQU bplcon3_bits1+BPLCON3F_LOCT
+bplcon3_bits3                   EQU bplcon3_bits1+BPLCON3F_BANK0+BPLCON3F_BANK1+BPLCON3F_BANK2
+bplcon3_bits4                   EQU bplcon3_bits2+BPLCON3F_BANK0+BPLCON3F_BANK1+BPLCON3F_BANK2
+bplcon4_bits                    EQU 0
+diwhigh_bits                    EQU (((display_window_hstop&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_vstop&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_hstart&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_vstart&$700)>>8)
+  ENDC
 
 cl1_display_x_size              EQU 352
 cl1_display_width               EQU cl1_display_x_size/8
@@ -238,32 +251,14 @@ ct_size                         EQU color_y_values_number*segments_number*color_
 tccb_switch_table_size          EQU tccb_bar_height*tccb_bars_number
 
 
-
-; ## Makrobefehle ##
-  INCLUDE "macros.i"
-
-
-; ** Extra-Memory-Abschnitte **
-  RSRESET
-
-em_color_table    RS.L ct_size
-em_switch_table   RS.B tccb_switch_table_size
-extra_memory_size RS.B 0
-
-
-; ** Struktur, die alle Exception-Vektoren-Offsets enthält **
   INCLUDE "except-vectors-offsets.i"
 
 
-; ** Struktur, die alle Eigenschaften des Extra-Playfields enthält **
   INCLUDE "extra-pf-attributes-structure.i"
 
 
-; ** Struktur, die alle Eigenschaften der Sprites enthält **
   INCLUDE "sprite-attributes-structure.i"
 
-
-; ** Struktur, die alle Registeroffsets der ersten Copperliste enthält **
 
   RSRESET
 
@@ -382,7 +377,16 @@ spr6_y_size2          EQU 0
 spr7_x_size2          EQU spr_x_size2
 spr7_y_size2          EQU 0
 
-; ** Struktur, die alle Variablenoffsets enthält **
+
+  RSRESET
+
+em_color_table    RS.L ct_size
+em_switch_table   RS.B tccb_switch_table_size
+extra_memory_size RS.B 0
+
+
+  RSRESET
+
   INCLUDE "variables-offsets.i"
 
 save_a7                  RS.L 1
@@ -416,7 +420,6 @@ start_03_twisted_colorcycle_bars
 
   INCLUDE "sys-wrapper.i"
 
-; ** Eigene Variablen initialisieren **
   CNOP 0,4
 init_own_variables
 
@@ -482,7 +485,6 @@ tccb_init_color_table_loop2
   movem.l (a7)+,a4-a6
   rts
 
-; ** Farbregister initialisieren **
   IFEQ tccb_quick_clear_enabled
     IFNE pf_colors_number-256
 init_color_registers
@@ -494,11 +496,9 @@ init_color_registers
     ENDC
   ENDC
 
-; ** Referenz-Switchtabelle initialisieren **
   INIT_MIRROR_SWITCH_TABLE.B tccb,1,1,tccb_bars_number,color_y_values_number,extra_memory,a3,em_switch_table
 
 
-; ** 1. Copperliste initialisieren **
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_construction1(a3),a0 
@@ -559,24 +559,17 @@ cl1_init_color_registers
 
   COPY_COPPERLIST cl1,3
 
-; ## Hauptprogramm ##
-; a3 ... Basisadresse aller Variablen
-; a4 ... CIA-A-Base
-; a5 ... CIA-B-Base
-; a6 ... DMACONR
   CNOP 0,4
 main_routine
   bsr.s   no_sync_routines
   bra.s   beam_routines
 
 
-; ## Routinen, die nicht mit der Bildwiederholfrequenz gekoppelt sind ##
   CNOP 0,4
 no_sync_routines
   rts
 
 
-; ## Rasterstahl-Routinen ##
   CNOP 0,4
 beam_routines
   bsr     wait_copint
@@ -602,11 +595,9 @@ fast_exit
   rts
 
 
-; ** Copperlisten vertauschen **
   SWAP_COPPERLIST cl1,3
 
 
-; ** Copperliste löschen **
   CLEAR_BPLCON4_CHUNKY_SCREEN tccb,cl1,construction1,extension1,quick_clear_enabled
 
 ; ** Farbwerte der Bars ändern **
@@ -930,7 +921,6 @@ eh_stop_all
   rts
 
 
-; ## Interrupt-Routinen ##
   INCLUDE "int-autovectors-handlers.i"
 
 ; ** Level-7-Interrupt-Server **
@@ -939,20 +929,16 @@ NMI_int_server
   rts
 
 
-; ## Hilfsroutinen ##
   INCLUDE "help-routines.i"
 
 
-; ## Speicherstellen für Tabellen und Strukturen ##
   INCLUDE "sys-structures.i"
 
-; ** Farben des ersten Playfields **
   CNOP 0,4
 pf1_color_table
   DC.L color00_bits
   DS.L pf1_colors_number-1
 
-; ** Sinus / Cosinustabelle **
 sine_table_512
   INCLUDE "sine-table-512x32.i"
 
@@ -973,15 +959,12 @@ bf_registers_table
   ENDC
 
 
-; ## Speicherstellen allgemein ##
   INCLUDE "sys-variables.i"
 
 
-; ## Speicherstellen für Namen ##
   INCLUDE "sys-names.i"
 
 
-; ## Speicherstellen für Texte ##
   INCLUDE "error-texts.i"
 
   END

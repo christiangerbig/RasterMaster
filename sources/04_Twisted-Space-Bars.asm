@@ -21,12 +21,6 @@
   XDEF start_04_twisted_space_bars
 
 
-DEF_SYS_TAKEN_OVER
-DEF_PASS_GLOBAL_REFERENCES
-DEF_PASS_RETURN_CODE
-
-
-; ** Library-Includes V.3.x nachladen **
   INCDIR "Daten:include3.5/"
 
   INCLUDE "exec/exec.i"
@@ -46,10 +40,18 @@ DEF_PASS_RETURN_CODE
   INCLUDE "hardware/dmabits.i"
   INCLUDE "hardware/intbits.i"
 
+
   INCDIR "Daten:Asm-Sources.AGA/normsource-includes/"
 
 
-; ** Konstanten **
+SYS_TAKEN_OVER                 SET 1
+PASS_GLOBAL_REFERENCES         SET 1
+PASS_RETURN_CODE               SET 1
+
+
+  INCLUDE "macros.i"
+
+
   INCLUDE "equals.i"
 
 requires_030_cpu               EQU FALSE  
@@ -135,30 +137,28 @@ visible_lines_number           EQU 256
 MINROW                         EQU VSTART_256_LINES
 
 pf_pixel_per_datafetch         EQU 64 ;4x
-DDFSTRT_bits                   EQU DDFSTART_320_pixel
-DDFSTOP_bits                   EQU DDFSTOP_320_PIXEL_4X
 spr_pixel_per_datafetch        EQU 64 ;4x
 
 display_window_hstart          EQU HSTART_40_CHUNKY_PIXEL
 display_window_vstart          EQU MINROW
-diwstrt_bits                   EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)+(display_window_hstart&$ff)
-display_window_hstop           EQU HSTOP_320_pixel
-display_window_vstop           EQU VSTOP_256_lines
-diwstop_bits                   EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)+(display_window_hstop&$ff)
+display_window_hstop           EQU HSTOP_320_PIXEL
+display_window_vstop           EQU VSTOP_256_LINES
 
 pf1_plane_width                EQU pf1_x_size3/8
 data_fetch_width               EQU pixel_per_line/8
 pf1_plane_moduli               EQU (pf1_plane_width*(pf1_depth3-1))+pf1_plane_width-data_fetch_width
 
+diwstrt_bits                   EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)+(display_window_hstart&$ff)
+diwstop_bits                   EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)+(display_window_hstop&$ff)
+ddfstrt_bits                   EQU DDFSTART_320_PIXEL
+ddfstop_bits                   EQU DDFSTOP_320_PIXEL_4X
 bplcon0_bits                   EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) 
 bplcon1_bits                   EQU 0
 bplcon2_bits                   EQU 0
 bplcon3_bits1                  EQU BPLCON3F_SPRES0
 bplcon3_bits2                  EQU bplcon3_bits1+BPLCON3F_LOCT
 bplcon4_bits                   EQU (BPLCON4F_OSPRM4*spr_odd_color_table_select)+(BPLCON4F_ESPRM4*spr_even_color_table_select)
-diwhigh_bits                 EQU (((display_window_hstop&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_vstop&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_hstart&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_vstart&$700)>>8)+DIWHIGHF_hstart1+DIWHIGHF_HSTOP1
-
-
+diwhigh_bits               EQU (((display_window_hstop&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_vstop&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_hstart&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_vstart&$700)>>8)+DIWHIGHF_hstart1+DIWHIGHF_HSTOP1
 fmode_bits                     EQU FMODEF_BPL32+FMODEF_BPAGEM+FMODEF_SPR32+FMODEF_SPAGEM+FMODEF_SSCAN2
 
 cl2_display_x_size             EQU 320
@@ -292,23 +292,15 @@ pf1_bitplane_x_offset          EQU 1*pf_pixel_per_datafetch
 pf1_bitplane_y_offset          EQU 0
 
 
-; ## Makrobefehle ##
-  INCLUDE "macros.i"
-
-
-; ** Struktur, die alle Exception-Vektoren-Offsets enthält **
   INCLUDE "except-vectors-offsets.i"
 
 
-; ** Struktur, die alle Eigenschaften des Extra-Playfields enthält **
   INCLUDE "extra-pf-attributes-structure.i"
 
 
-; ** Struktur, die alle Eigenschaften der Sprites enthält **
   INCLUDE "sprite-attributes-structure.i"
 
 
-; ** Struktur, die alle Registeroffsets der ersten Copperliste enthält **
   RSRESET
 
 cl1_begin        RS.B 0
@@ -320,7 +312,6 @@ cl1_COPJMP2      RS.L 1
 copperlist1_size RS.B 0
 
 
-; ** Struktur, die alle Registeroffsets der zweiten Copperliste enthält **
   RSRESET
 
 cl2_extension1        RS.B 0
@@ -371,6 +362,7 @@ cl2_ext1_BPLCON4_39   RS.L 1
 cl2_ext1_BPLCON4_40   RS.L 1
 
 cl2_extension1_size   RS.B 0
+
 
   RSRESET
 
@@ -601,12 +593,13 @@ spr7_x_size2    EQU spr_x_size2
 spr7_y_size2    EQU sprite7_size/(spr_pixel_per_datafetch/4)
 
 
-; ** Struktur, die alle Variablenoffsets enthält **
+  RSRESET
+
   INCLUDE "variables-offsets.i"
 
 ; **** Horiz-Scrolltext ****
 hst_image                  RS.L 1
-hst_enabled        RS.W 1
+hst_enabled                RS.W 1
 hst_text_table_start       RS.W 1
 hst_text_BLTCON0_bits      RS.W 1
 hst_character_toggle_image RS.W 1
@@ -657,7 +650,6 @@ start_04_twisted_space_bars
 
   INCLUDE "sys-wrapper.i"
 
-; ** Eigene Variablen initialisieren **
   CNOP 0,4
 init_own_variables
 
@@ -746,7 +738,6 @@ tb_init_color_table_loop2
   dbf     d7,tb_init_color_table_loop1
   rts
 
-; ** Farbregister initialisieren **
   CNOP 0,4
 init_color_registers
   CPU_SELECT_COLOR_HIGH_BANK 0
@@ -784,17 +775,13 @@ init_color_registers
   CPU_INIT_COLOR_LOW COLOR00,32
   rts
 
-; ** Sprites initialisieren **
   CNOP 0,4
 init_sprites
   bsr.s   spr_init_pointers_table
   bra.s   bg_init_attached_sprites_cluster
 
-; ** Tabelle mit Zeigern auf Sprites initialisieren **
-; ----------------------------------------------------
   INIT_SPRITE_POINTERS_TABLE
 
-; ** Spritestruktur initialisieren **
   INIT_ATTACHED_SPRITES_CLUSTER bg,spr_pointers_display,bg_image_x_position,bg_image_y_position,spr_x_size2,bg_image_y_size,,,REPEAT
 
 ; **** Horiz-Scrolltext ****
@@ -808,7 +795,6 @@ init_sprites
   INIT_CHARACTERS_IMAGES hst
 
 
-; ** 1. Copperliste initialisieren **
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_display(a3),a0 ;Darstellen-CL
@@ -839,7 +825,6 @@ cl1_init_color_registers
 
   COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
 
-; ** 2. Copperliste initialisieren **
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_construction1(a3),a0 
@@ -856,24 +841,17 @@ init_second_copperlist
   COPY_COPPERLIST cl2,3
 
 
-; ## Hauptprogramm ##
-; a3 ... Basisadresse aller Variablen
-; a4 ... CIA-A-Base
-; a5 ... CIA-B-Base
-; a6 ... DMACONR
   CNOP 0,4
 main_routine
   bsr.s   no_sync_routines
   bra.s   beam_routines
 
 
-; ## Routinen, die nicht mit der Bildwiederholfrequenz gekoppelt sind ##
   CNOP 0,4
 no_sync_routines
   rts
 
 
-; ## Rasterstahl-Routinen ##
   CNOP 0,4
 beam_routines
   bsr     wait_copint
@@ -908,10 +886,8 @@ fast_exit
   rts
 
 
-; ** Copperlisten vertauschen **
   SWAP_COPPERLIST cl2,3
 
-; ** Playfields vertauschen **
   SWAP_PLAYFIELD pf1,2,pf1_depth3,pf1_bitplane_x_offset,pf1_bitplane_y_offset
 
 
@@ -1254,7 +1230,6 @@ no_sprite_fader_out
 
   COLOR_FADER sprf
 
-; ** Farbwerte in Copperliste kopieren **
   COPY_COLOR_TABLE_TO_COPPERLIST sprf,spr,cl1,cl1_COLOR17_high1,cl1_COLOR17_low1
 
 ; ** Spalten einblenden **
@@ -1488,7 +1463,6 @@ eh_stop_all
   rts
 
 
-; ## Interrupt-Routinen ##
   INCLUDE "int-autovectors-handlers.i"
 
 ; ** Level-7-Interrupt-Server **
@@ -1497,25 +1471,20 @@ NMI_int_server
   rts
 
 
-; ## Hilfsroutinen ##
   INCLUDE "help-routines.i"
 
 
-; ## Speicherstellen für Tabellen und Strukturen ##
   INCLUDE "sys-structures.i"
 
-; ** Farben des Playfields **
   CNOP 0,4
 pf1_color_table
   INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/32x32x16-Font.ct"
 
-; ** Farben der Sprites **
 spr_color_table
   REPT spr_colors_number
     DC.L color00_bits
   ENDR  
 
-; ** Adressen der Sprites **
 spr_pointers_display
   DS.L spr_number
 
@@ -1581,15 +1550,12 @@ ccf_fader_columns_mask
   ENDR
 
 
-; ## Speicherstellen allgemein ##
   INCLUDE "sys-variables.i"
 
 
-; ## Speicherstellen für Namen ##
   INCLUDE "sys-names.i"
 
 
-; ## Speicherstellen für Texte ##
   INCLUDE "error-texts.i"
 
 ; **** Horiz-Scrolltext ****
@@ -1607,7 +1573,7 @@ hst_stop_text
   EVEN
 
 
-; ## Grafikdaten nachladen ##
+; ** Grafikdaten nachladen **
 
 ; **** Background-Image ****
 bg_image_data SECTION bg_gfx,DATA

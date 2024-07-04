@@ -22,13 +22,6 @@
   XDEF start_10_credits
 
 
-DEF_SYS_TAKEN_OVER
-DEF_PASS_GLOBAL_REFERENCES
-DEF_PASS_RETURN_CODE
-DEF_SET_SECOND_COPPERLIST
-
-
-; ** Library-Includes V.3.x nachladen **
   INCDIR "Daten:include3.5/"
 
   INCLUDE "exec/exec.i"
@@ -48,10 +41,19 @@ DEF_SET_SECOND_COPPERLIST
   INCLUDE "hardware/dmabits.i"
   INCLUDE "hardware/intbits.i"
 
+
   INCDIR "Daten:Asm-Sources.AGA/normsource-includes/"
 
 
-; ** Konstanten **
+SYS_TAKEN_OVER                 SET 1
+PASS_GLOBAL_REFERENCES         SET 1
+PASS_RETURN_CODE               SET 1
+SET_SECOND_COPPERLIST          SET 1
+
+
+  INCLUDE "macros.i"
+
+
   INCLUDE "equals.i"
 
 requires_030_cpu               EQU FALSE  
@@ -138,16 +140,12 @@ visible_lines_number           EQU 256
 MINROW                         EQU VSTART_256_LINES
 
 pf_pixel_per_datafetch         EQU 16 ;1x
-DDFSTRT_bits                   EQU DDFSTART_320_pixel
-DDFSTOP_bits                   EQU DDFSTOP_OVERSCAN_16_pixel
 spr_pixel_per_datafetch        EQU 64 ;4x
 
 display_window_hstart          EQU HSTART_352_PIXEL
 display_window_vstart          EQU MINROW
-diwstrt_bits                   EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)+(display_window_hstart&$ff)
-display_window_hstop           EQU HSTOP_352_pixel
+display_window_hstop           EQU HSTOP_352_PIXEL
 display_window_vstop           EQU MINROW+visible_lines_number
-diwstop_bits                   EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)+(display_window_hstop&$ff)
 
 pf1_plane_width                EQU pf1_x_size3/8
 extra_pf1_plane_width          EQU extra_pf1_x_size/8
@@ -155,6 +153,10 @@ extra_pf2_plane_width          EQU extra_pf2_x_size/8
 data_fetch_width               EQU pixel_per_line/8
 pf1_plane_moduli               EQU (pf1_plane_width*(pf1_depth3-1))+pf1_plane_width-data_fetch_width
 
+diwstrt_bits                   EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)+(display_window_hstart&$ff)
+diwstop_bits                   EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)+(display_window_hstop&$ff)
+ddfstrt_bits                   EQU DDFSTART_320_PIXEL
+ddfstop_bits                   EQU DDFSTOP_OVERSCAN_16_PIXEL
 bplcon0_bits                   EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) 
 bplcon1_bits                   EQU 0
 bplcon2_bits                   EQU BPLCON2F_PF2P2
@@ -199,7 +201,7 @@ vts_buffer_x_size              EQU 192
 vts_buffer_width               EQU vts_buffer_x_size/8
 vts_buffer_y_size              EQU 256
 vts_buffer_depth               EQU vts_image_depth
-vts_buffer_x_position          EQU HSTOP_320_pixel-vts_buffer_x_size
+vts_buffer_x_position          EQU HSTOP_320_PIXEL-vts_buffer_x_size
 vts_buffer_y_position          EQU display_window_vstart
 
 vts_origin_character_x_size    EQU 16
@@ -249,28 +251,18 @@ sllo_x_angle_speed             EQU 2
 ; **** Effects-Handler ****
 eh_trigger_number_max          EQU 8
 
-
 pf1_bitplanes_x_offset         EQU 16
 pf1_BPL1DAT_x_offset           EQU 0
 
 
-; ## Makrobefehle ##
-  INCLUDE "macros.i"
-
-
-; ** Struktur, die alle Exception-Vektoren-Offsets enthält **
   INCLUDE "except-vectors-offsets.i"
 
 
-; ** Struktur, die alle Eigenschaften des Extra-Playfields enthält **
   INCLUDE "extra-pf-attributes-structure.i"
 
 
-; ** Struktur, die alle Eigenschaften der Sprites enthält **
   INCLUDE "sprite-attributes-structure.i"
 
-
-; ** Struktur, die alle Registeroffsets der ersten Copperliste enthält **
 
   RSRESET
 
@@ -481,7 +473,8 @@ spr7_x_size2        EQU spr_x_size2
 spr7_y_size2        EQU sprite7_size/(spr_pixel_per_datafetch/4)
 
 
-; ** Struktur, die alle Variablenoffsets enthält **
+  RSRESET
+
   INCLUDE "variables-offsets.i"
 
 ; **** Vert-Text-Scroll ****
@@ -573,7 +566,6 @@ init_all
   bsr     vts_init_characters_images
   bra     init_first_copperlist
 
-; ** Farben initialisieren **
   CNOP 0,4
 init_color_registers
   CPU_SELECT_COLOR_HIGH_BANK 4
@@ -585,7 +577,6 @@ init_color_registers
   CPU_INIT_COLOR_LOW COLOR16,16,spr_color_table_vert_text_scroll
   rts
 
-; ** Sprites initialisieren **
   CNOP 0,4
 init_sprites
   bsr.s   spr_init_pointers_table
@@ -593,8 +584,6 @@ init_sprites
   bsr     vts_init_sprites
   bra     spr_copy_structures
 
-; ** Tabelle mit Zeigern auf Sprites initialisieren **
-; ----------------------------------------------------
   INIT_SPRITE_POINTERS_TABLE
 
 ; **** Logo ****
@@ -653,7 +642,6 @@ vts_init_sprites
   move.w  d2,spr_pixel_per_datafetch/8(a2) ;SPR6CTL
   rts
 
-; ** Spritedaten kopieren **
   COPY_SPRITE_STRUCTURES
 
 ; **** Background-Image ****
@@ -706,7 +694,6 @@ bg_copy_image_data_loop
   INIT_CHARACTERS_IMAGES vts
 
 
-; ** 1. Copperliste initialisieren **
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_display(a3),a0 ;Darstellen-CL
@@ -795,24 +782,17 @@ no_patch_copperlist1
   COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
 
 
-; ## Hauptprogramm ##
-; a3 ... Basisadresse aller Variablen
-; a4 ... CIA-A-Base
-; a5 ... CIA-B-Base
-; a6 ... DMACONR
   CNOP 0,4
 main_routine
   bsr.s   no_sync_routines
   bra.s   beam_routines
 
 
-; ## Routinen, die nicht mit der Bildwiederholfrequenz gekoppelt sind ##
   CNOP 0,4
 no_sync_routines
   rts
 
 
-; ## Rasterstahl-Routinen ##
   CNOP 0,4
 beam_routines
   bsr     wait_copint
@@ -836,10 +816,8 @@ fast_exit
   rts
 
 
-; ** Sprites vertauschen **
   SWAP_SPRITES_STRUCTURES spr,spr_swap_number
 
-; ** Puffer vertauschen **
   CNOP 0,4
 swap_extra_playfield
   move.l  extra_pf1(a3),d0
@@ -1015,7 +993,6 @@ no_image_fader_out
 
   COLOR_FADER if
 
-; ** Farbwerte in Copperliste kopieren **
   COPY_COLOR_TABLE_TO_COPPERLIST if,pf1,cl1,cl1_COLOR01_high1,cl1_COLOR01_low1
 
 ; ** Logo von links einscrollen **
@@ -1172,7 +1149,6 @@ eh_stop_all
   rts
 
 
-; ## Interrupt-Routinen ##
   INCLUDE "int-autovectors-handlers.i"
 
 ; ** Level-7-Interrupt-Server **
@@ -1181,21 +1157,18 @@ NMI_int_server
   rts
 
 
-; ## Hilfsroutinen ##
   INCLUDE "help-routines.i"
 
 
-; ## Speicherstellen für Tabellen und Strukturen ##
   INCLUDE "sys-structures.i"
 
-; ** Farben des ersten Playfields **
+
   CNOP 0,4
 pf1_color_table
   REPT pf1_colors_number
     DC.L color00_bits
   ENDR
 
-; ** Farben der Sprites **
 spr_color_table_logo
 ; ** Sprite0/1 **
   INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/64x256x16-Resistance.ct"
@@ -1221,7 +1194,6 @@ spr_color_table_vert_text_scroll
     DC.L color00_bits
   ENDR
 
-; ** Adressen der Sprites **
 spr_pointers_construction
   DS.L spr_number
 
@@ -1266,15 +1238,12 @@ ifo_color_table
   ENDR
 
 
-; ## Speicherstellen allgemein ##
   INCLUDE "sys-variables.i"
 
 
-; ## Speicherstellen für Namen ##
   INCLUDE "sys-names.i"
 
 
-; ## Speicherstellen für Texte ##
   INCLUDE "error-texts.i"
 
 ; **** Vert-Textscroll ****
@@ -1515,7 +1484,7 @@ vts_text
   EVEN
 
 
-; ## Grafikdaten nachladen ##
+; ** Grafikdaten nachladen **
 
 ; **** Logo ****
 lg_image_data SECTION lg_gfx,DATA

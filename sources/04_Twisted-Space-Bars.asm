@@ -797,7 +797,7 @@ init_sprites
 
   CNOP 0,4
 init_first_copperlist
-  move.l  cl1_display(a3),a0 ;Darstellen-CL
+  move.l  cl1_display(a3),a0 
   bsr.s   cl1_init_playfield_registers
   bsr.s   cl1_init_sprite_pointers
   bsr     cl1_init_color_registers

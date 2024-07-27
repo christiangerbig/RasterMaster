@@ -492,7 +492,7 @@ init_color_registers
 
   CNOP 0,4
 init_first_copperlist
-  move.l  cl1_display(a3),a0 ;Darstellen-CL
+  move.l  cl1_display(a3),a0 
   bsr.s   cl1_init_playfield_registers
   IFEQ open_border_enabled
     COP_MOVEQ TRUE,COPJMP2

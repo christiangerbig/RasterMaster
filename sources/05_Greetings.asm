@@ -1020,7 +1020,7 @@ bf_skip_line
 
   CNOP 0,4
 init_first_copperlist
-  move.l  cl1_display(a3),a0 ;Darstellen-CL
+  move.l  cl1_display(a3),a0 
   bsr.s   cl1_init_playfield_registers
   bsr.s   cl1_init_bitplane_pointers
   bsr     cl1_init_copperlist_branch
@@ -1036,7 +1036,7 @@ init_first_copperlist
   CNOP 0,4
 cl1_init_copperlist_branch
   COP_WAIT cl1_HSTART,cl1_VSTART
-  move.l  cl1_display(a3),d0 ;Darstellen-CL
+  move.l  cl1_display(a3),d0 
   add.l   #cl1_extension3_entry,d0 ;Char-Blit überspringen
   swap    d0                 ;High
   COP_MOVE  d0,COP1LCH

@@ -668,8 +668,7 @@ vbfo_no_vert_start_position_max
   move.w  d2,vbf_display_window_vstart(a3) 
   cmp.w   #vbf_y_position_center,d1 ;Zielwert erreicht ?
   bge.s   vbfo_no_vert_stop_position_min ;Nein -> verzweige
-  moveq   #FALSE,d0
-  move.w  d0,vbfo_active(a3) ;Vert-Border-Fader aus
+  move.w  #FALSE,vbfo_active(a3) ;Vert-Border-Fader aus
   MOVEF.W vbf_y_position_center,d1 ;Zielwert
 vbfo_no_vert_stop_position_min
   move.w  d1,vbf_display_window_vstop(a3) retten

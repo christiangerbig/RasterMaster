@@ -1811,8 +1811,7 @@ ccfi_mode4_column_fader_in
   rts
   CNOP 0,4
 ccfi_stop_column_fader_in
-  moveq   #FALSE,d0
-  move.w  d0,ccfi_active(a3) ;Chunky-Columns-Fader-In aus
+  move.w  #FALSE,ccfi_active(a3) ;Chunky-Columns-Fader-In aus
   rts
 
 ; ** Spalten ausblenden **
@@ -1883,8 +1882,7 @@ ccfo_mode4_column_fader_out
   rts
   CNOP 0,4
 ccfo_stop_column_fader_out
-  moveq   #FALSE,d0
-  move.w  d0,ccfo_active(a3) ;Chunky-Columns-Fader-Out aus
+  move.w  #FALSE,ccfo_active(a3) ;Chunky-Columns-Fader-Out aus
   rts
 
 
@@ -1971,8 +1969,7 @@ eh_stop_twisted_bars31612
   rts
   CNOP 0,4
 eh_disable_barfield_z_restart
-  moveq   #FALSE,d0
-  move.w  d0,bf_z_restart_active(a3) ;Barfield stoppen
+  move.w  #FALSE,bf_z_restart_active(a3) ;Barfield stoppen
   rts
   CNOP 0,4
 eh_stop_all

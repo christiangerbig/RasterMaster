@@ -961,8 +961,7 @@ hst_check_control_codes
   rts
   CNOP 0,4
 hst_stop_horiz_scrolltext
-  moveq   #FALSE,d0
-  move.w  d0,hst_enabled(a3)
+  move.w  #FALSE,hst_enabled(a3)
   moveq   #0,d0          ;Rückgabewert TRUE = Steuerungscode gefunden
   rts
 
@@ -1185,8 +1184,7 @@ sprfi_save_fader_angle
   movem.l (a7)+,a4-a6
   move.w  d6,sprf_colors_counter(a3) ;Sprites-Fader-In fertig ?
   bne.s   no_sprite_fader_in ;Nein -> verzweige
-  moveq   #FALSE,d0
-  move.w  d0,sprfi_active(a3) ;Sprites-Fader-In aus
+  move.w  #FALSE,sprfi_active(a3) ;Sprites-Fader-In aus
 no_sprite_fader_in
   rts
 
@@ -1223,8 +1221,7 @@ sprfo_save_fader_angle
   movem.l (a7)+,a4-a6
   move.w  d6,sprf_colors_counter(a3) ;Sprites-Fader-Out fertig ?
   bne.s   no_sprite_fader_out ;Nein -> verzweige
-  moveq   #FALSE,d0
-  move.w  d0,sprfo_active(a3) ;Sprites-Fader-Out aus
+  move.w  #FALSE,sprfo_active(a3) ;Sprites-Fader-Out aus
 no_sprite_fader_out
   rts
 
@@ -1300,8 +1297,7 @@ ccfi_mode4_column_fader_in
   rts
   CNOP 0,4
 ccfi_stop_column_fader_in
-  moveq   #FALSE,d0
-  move.w  d0,ccfi_active(a3)    ;Chunky-Columns-Fader-In aus
+  move.w  #FALSE,ccfi_active(a3)    ;Chunky-Columns-Fader-In aus
   rts
 
 ; ** Spalten ausblenden **
@@ -1372,8 +1368,7 @@ ccfo_mode4_column_fader_out
   rts
   CNOP 0,4
 ccfo_stop_column_fader_out
-  moveq   #FALSE,d0
-  move.w  d0,ccfo_active(a3) ;Chunky-Columns-Fader-Out aus
+  move.w  #FALSE,ccfo_active(a3) ;Chunky-Columns-Fader-Out aus
   rts
 
 
@@ -1433,8 +1428,7 @@ eh_stop_twisted_bars313
   rts
   CNOP 0,4
 eh_start_twisted_bars312
-  moveq   #FALSE,d0
-  move.w  d0,tb313_active(a3) ;Twisted-Bars 3.1.3 aus
+  move.w  #FALSE,tb313_active(a3) ;Twisted-Bars 3.1.3 aus
   moveq   #0,d0
   move.w  d0,tb312_active(a3) ;Twisted-Bars 3.1.2 an
   move.w  d0,ccfi_start(a3)  ;Startwert zurücksetzen

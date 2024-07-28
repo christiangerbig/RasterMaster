@@ -1138,8 +1138,7 @@ ifi_save_fader_angle
   movem.l (a7)+,a4-a6
   move.w  d6,if_colors_counter(a3) ;Image-Fader-In fertig ?
   bne.s   no_image_fader_in  ;Nein -> verzweige
-  moveq   #FALSE,d0
-  move.w  d0,ifi_active(a3)  ;Image-Fader-In aus
+  move.w  #FALSE,ifi_active(a3)  ;Image-Fader-In aus
 no_image_fader_in
   rts
 
@@ -1176,8 +1175,7 @@ ifo_save_fader_angle
   movem.l (a7)+,a4-a6
   move.w  d6,if_colors_counter(a3) ;Image-Fader-Out fertig ?
   bne.s   no_image_fader_out ;Nein -> verzweige
-  moveq   #FALSE,d0
-  move.w  d0,ifo_active(a3)  ;Image-Fader-Out aus
+  move.w  #FALSE,ifo_active(a3)  ;Image-Fader-Out aus
 no_image_fader_out
   rts
 
@@ -1233,8 +1231,7 @@ no_image_pixel_fader_in
   rts
   CNOP 0,4
 ipfi_finished
-  moveq   #FALSE,d0
-  move.w  d0,ipfi_active(a3) ;Image-Pixel-Fader-In aus
+  move.w  #FALSE,ipfi_active(a3) ;Image-Pixel-Fader-In aus
   rts
 
 ; ** Logo Pixelweise ausblenden **
@@ -1283,8 +1280,7 @@ no_image_pixel_fader_out
   rts
   CNOP 0,4
 ipfo_finished
-  moveq   #FALSE,d0
-  move.w  d0,ipfo_active(a3) ;Image-Pixel-Fader-Out aus
+  move.w  #FALSE,ipfo_active(a3) ;Image-Pixel-Fader-Out aus
   moveq   #0,d0
   move.l  d0,ipf_mask(a3)    ;Maske = NULL
   rts

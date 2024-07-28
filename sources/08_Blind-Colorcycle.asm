@@ -806,8 +806,7 @@ eh_stop_blind_colorcycle521
   rts
   CNOP 0,4
 eh_start_blind_colorcycle523
-  moveq   #FALSE,d0
-  move.w  d0,bcc5212_active(a3) ;Blind-Colorscroll5.2.1 aus
+  move.w  #FALSE,bcc5212_active(a3) ;Blind-Colorscroll5.2.1 aus
   moveq   #0,d0
   move.w  d0,bcc523_active(a3) ;Blind-Colorscroll5.2.3 an
   move.w  d0,bfi_active(a3)  ;Blind-Fader-In an

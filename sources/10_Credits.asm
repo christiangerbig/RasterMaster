@@ -948,8 +948,7 @@ ifi_save_fader_angle
   movem.l (a7)+,a4-a6
   move.w  d6,if_colors_counter(a3) ;Image-Fader-In fertig ?
   bne.s   no_image_fader_in  ;Nein -> verzweige
-  moveq   #FALSE,d0
-  move.w  d0,ifi_active(a3)  ;Image-Fader-In aus
+  move.w  #FALSE,ifi_active(a3)  ;Image-Fader-In aus
 no_image_fader_in
   rts
 
@@ -986,8 +985,7 @@ ifo_save_fader_angle
   movem.l (a7)+,a4-a6
   move.w  d6,if_colors_counter(a3) ;Image-Fader-Out fertig ?
   bne.s   no_image_fader_out ;Nein -> verzweige
-  moveq   #FALSE,d0
-  move.w  d0,ifo_active(a3)  ;Image-Fader-Out aus
+  move.w  #FALSE,ifo_active(a3)  ;Image-Fader-Out aus
 no_image_fader_out
   rts
 
@@ -1120,8 +1118,7 @@ eh_start_scroll_logo_left_in
   rts
   CNOP 0,4
 eh_stop_image_fader_in
-  moveq   #FALSE,d0
-  move.w  d0,ifi_active(a3)  ;Image-Fader-In stoppen
+  move.w  #FALSE,ifi_active(a3)  ;Image-Fader-In stoppen
   rts
   CNOP 0,4
 eh_start_vert_text_scroll

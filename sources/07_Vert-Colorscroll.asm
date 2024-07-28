@@ -830,8 +830,7 @@ eh_stop_vert_colorscroll4
   rts
   CNOP 0,4
 eh_start_vert_colorscroll5
-  moveq   #FALSE,d0
-  move.w  d0,vcs4_active(a3) ;Vert-Colorscroll4 aus
+  move.w  #FALSE,vcs4_active(a3) ;Vert-Colorscroll4 aus
   moveq   #0,d0
   move.w  d0,vcs5_active(a3) ;Vert-Colorscroll5 an
   move.w  d0,bfi_active(a3)  ;Blind-Fader-In an

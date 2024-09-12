@@ -149,7 +149,7 @@ requires_fast_memory       EQU FALSE
 requires_multiscan_monitor EQU FALSE
 
 workbench_start_enabled    EQU TRUE
-workbench_fade_enabled     EQU TRUE
+screen_fader_enabled     EQU TRUE
 text_output_enabled        EQU FALSE
 
 dma_bits                   EQU DMAF_COPPER+DMAF_MASTER+DMAF_SETCLR
@@ -184,7 +184,7 @@ pf2_colors_number          EQU 0
 pf_colors_number           EQU pf1_colors_number+pf2_colors_number
 pf_depth                   EQU pf1_depth3+pf2_depth3
 
-extra_pf_number            EQU 0
+pf_extra_number            EQU 0
 
 spr_number                 EQU 0
 spr_x_size1                EQU 0
@@ -228,10 +228,10 @@ cl1_vstart                 EQU beam_position&$ff
   INCLUDE "except-vectors-offsets.i"
 
 
-  INCLUDE "extra-pf-attributes-structure.i"
+  INCLUDE "extra-pf-attributes.i"
 
 
-  INCLUDE "sprite-attributes-structure.i"
+  INCLUDE "sprite-attributes.i"
 
 
   RSRESET

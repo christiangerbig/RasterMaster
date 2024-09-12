@@ -63,7 +63,7 @@ requires_fast_memory           EQU FALSE
 requires_multiscan_monitor     EQU FALSE
 
 workbench_start_enabled        EQU FALSE
-workbench_fade_enabled         EQU FALSE
+screen_fader_enabled         EQU FALSE
 text_output_enabled            EQU FALSE
 
 dma_bits                       EQU DMAF_SPRITE+DMAF_BLITTER+DMAF_COPPER+DMAF_RASTER+DMAF_SETCLR
@@ -98,7 +98,7 @@ pf2_colors_number              EQU 0
 pf_colors_number               EQU pf1_colors_number+pf2_colors_number
 pf_depth                       EQU pf1_depth3+pf2_depth3
 
-extra_pf_number                EQU 2
+pf_extra_number                EQU 2
 extra_pf1_x_size               EQU 192
 extra_pf1_y_size               EQU 256+(16*2)
 extra_pf1_depth                EQU 1
@@ -258,10 +258,10 @@ pf1_BPL1DAT_x_offset           EQU 0
   INCLUDE "except-vectors-offsets.i"
 
 
-  INCLUDE "extra-pf-attributes-structure.i"
+  INCLUDE "extra-pf-attributes.i"
 
 
-  INCLUDE "sprite-attributes-structure.i"
+  INCLUDE "sprite-attributes.i"
 
 
   RSRESET

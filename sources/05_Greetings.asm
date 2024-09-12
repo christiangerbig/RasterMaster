@@ -64,7 +64,7 @@ requires_fast_memory               EQU FALSE
 requires_multiscan_monitor         EQU FALSE
 
 workbench_start_enabled            EQU FALSE
-workbench_fade_enabled             EQU FALSE
+screen_fader_enabled             EQU FALSE
 text_output_enabled                EQU FALSE
 
 open_border_enabled                EQU FALSE ;Immer FALSE, da Overscan-Playfield
@@ -105,7 +105,7 @@ pf2_colors_number                  EQU 0
 pf_colors_number                   EQU pf1_colors_number+pf2_colors_number
 pf_depth                           EQU pf1_depth3+pf2_depth3
 
-extra_pf_number                    EQU 1
+pf_extra_number                    EQU 1
 extra_pf1_x_size                   EQU 448
 extra_pf1_y_size                   EQU 32+(32)
 extra_pf1_depth                    EQU 1
@@ -333,10 +333,10 @@ pf1_bitplane_y_offset              EQU ss_text_y_position
   INCLUDE "except-vectors-offsets.i"
 
 
-  INCLUDE "extra-pf-attributes-structure.i"
+  INCLUDE "extra-pf-attributes.i"
 
 
-  INCLUDE "sprite-attributes-structure.i"
+  INCLUDE "sprite-attributes.i"
 
 
   RSRESET

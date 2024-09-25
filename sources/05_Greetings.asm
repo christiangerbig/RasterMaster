@@ -711,7 +711,7 @@ start_05_greetings
   INCLUDE "sys-wrapper.i"
 
   CNOP 0,4
-init_own_variables
+init_main_variables
 
 ; **** Sine-Scrolltext ****
   lea     ss_image_data,a0
@@ -763,7 +763,7 @@ init_own_variables
 
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
-init_all
+init_main
   bsr.s   tb31612_init_color_table
   bsr     wcb_init_color_table
   bsr     ss_init_color_table
@@ -1244,7 +1244,7 @@ cl2_init_restore_blit
 
 
   CNOP 0,4
-main_routine
+main
   bsr.s   no_sync_routines
   bra.s   beam_routines
 

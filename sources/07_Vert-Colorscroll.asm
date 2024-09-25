@@ -400,7 +400,7 @@ start_07_vert_colorscroll
 
 ; ** Eigene Variablen initialisieren **
   CNOP 0,4
-init_own_variables
+init_main_variables
 
 ; **** Vert-Colorscroll4 *****
   moveq   #FALSE,d1
@@ -431,7 +431,7 @@ init_own_variables
 
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
-init_all
+init_main
   bsr.s   init_color_registers
   bsr     vcs_init_switch_table
   bsr     init_first_copperlist
@@ -521,7 +521,7 @@ init_second_copperlist
 ; a5 ... CIA-B-Base
 ; a6 ... DMACONR
   CNOP 0,4
-main_routine
+main
   bsr.s   no_sync_routines
   bra.s   beam_routines
 

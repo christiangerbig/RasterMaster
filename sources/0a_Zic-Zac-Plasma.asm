@@ -388,7 +388,7 @@ start_0a_zig_zag_plasma
   INCLUDE "sys-wrapper.i"
 
   CNOP 0,4
-init_own_variables
+init_main_variables
 
 ; **** Zig-Zag-Plasma5 ****
   moveq   #0,d0
@@ -417,7 +417,7 @@ init_own_variables
 
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
-init_all
+init_main
   bsr.s   init_color_registers
   bsr     init_first_copperlist
   bra     init_second_copperlist
@@ -499,7 +499,7 @@ cl2_init_bplcon4_registers_loop
 
 
   CNOP 0,4
-main_routine
+main
   bsr.s   no_sync_routines
   bra.s   beam_routines
 

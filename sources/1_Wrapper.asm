@@ -316,7 +316,7 @@ init_custom_memory_table
   rts
 
   CNOP 0,4
-init_own_variables
+init_main_variables
 ; **** PT-Replay ****
   IFD PROTRACKER_VERSION_2.3A 
     PT2_INIT_VARIABLES NOPOINTERS
@@ -336,7 +336,7 @@ extend_global_references_table
 
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
-init_all
+init_main
   bsr.s   pt_DetectSysFrequ
   bsr.s   pt_decrunch_audio_data
   bsr     pt_InitRegisters
@@ -448,7 +448,7 @@ custom_memory_error
   rts
 
   CNOP 0,4
-main_routine
+main
   bra     start_10_credits
 
 ; ** Speicherbelegung für Custom-Memory freigeben **

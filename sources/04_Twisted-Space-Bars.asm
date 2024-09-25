@@ -651,7 +651,7 @@ start_04_twisted_space_bars
   INCLUDE "sys-wrapper.i"
 
   CNOP 0,4
-init_own_variables
+init_main_variables
 
 ; **** Horiz-Scrolltext ****
   lea     hst_image_data,a0
@@ -711,7 +711,7 @@ init_own_variables
 
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
-init_all
+init_main
   bsr.s   tb_init_color_table
   bsr.s   init_color_registers
   bsr     init_sprites
@@ -842,7 +842,7 @@ init_second_copperlist
 
 
   CNOP 0,4
-main_routine
+main
   bsr.s   no_sync_routines
   bra.s   beam_routines
 

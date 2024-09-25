@@ -315,12 +315,12 @@ variables_size RS.B 0
   INCLUDE "sys-wrapper.i"
 
   CNOP 0,4
-init_own_variables
+init_main_variables
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
-init_all
+init_main
   bsr.s   init_color_registers
   bsr     init_first_copperlist
   bra     init_second_copperlist
@@ -357,7 +357,7 @@ init_second_copperlist
 
 
   CNOP 0,4
-main_routine
+main
   bsr    start_0_pt_replay
   tst.l  d0                  ;Ist ein Fehler aufgetreten ?
   bne.s  no_start_1_pt_replay ;Ja -> verzweige

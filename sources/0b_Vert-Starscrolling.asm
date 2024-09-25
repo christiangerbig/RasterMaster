@@ -656,7 +656,7 @@ start_0b_vert_starscrolling
   INCLUDE "sys-wrapper.i"
 
   CNOP 0,4
-init_own_variables
+init_main_variables
 
 ; **** Vert-Starscrolling ****
   move.l  chip_memory(a3),a0
@@ -711,7 +711,7 @@ init_own_variables
 
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
-init_all
+init_main
   bsr.s   init_color_registers
   bsr.s   init_sprites
   bsr     vss_convert_image_data
@@ -871,7 +871,7 @@ init_second_copperlist
 
 
   CNOP 0,4
-main_routine
+main
   bsr.s   no_sync_routines
   bra.s   beam_routines
 

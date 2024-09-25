@@ -415,7 +415,7 @@ start_08_blind_colorcycle
   INCLUDE "sys-wrapper.i"
 
   CNOP 0,4
-init_own_variables
+init_main_variables
 
 ; **** Blind-Colorcycle5.2.1 ****
   moveq   #FALSE,d1
@@ -448,7 +448,7 @@ init_own_variables
 
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
-init_all
+init_main
   bsr.s   init_color_registers
   bsr     bcc_init_mirror_switch_table
   bsr     init_first_copperlist
@@ -522,7 +522,7 @@ init_second_copperlist
 
 
   CNOP 0,4
-main_routine
+main
   bsr.s   no_sync_routines
   bra.s   beam_routines
 

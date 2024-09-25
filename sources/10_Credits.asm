@@ -515,7 +515,7 @@ start_10_credits
 
 ; ** Eigene Variablen initialisieren **
   CNOP 0,4
-init_own_variables
+init_main_variables
 
 ; **** Vert-Text-Scroll ****
   lea     vts_image_data,a0
@@ -556,7 +556,7 @@ init_own_variables
 
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
-init_all
+init_main
   bsr.s   init_color_registers
   bsr     init_sprites
   bsr     bg_copy_image_to_bitplane
@@ -783,7 +783,7 @@ no_patch_copperlist1
 
 
   CNOP 0,4
-main_routine
+main
   bsr.s   no_sync_routines
   bra.s   beam_routines
 

@@ -549,7 +549,7 @@ start_00_title_screen
   INCLUDE "sys-wrapper.i"
 
   CNOP 0,4
-init_own_variables
+init_main_variables
 
 ; **** Wobble-Display ****
   moveq   #FALSE,d1
@@ -590,7 +590,7 @@ init_own_variables
 
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
-init_all
+init_main
   bsr.s   init_color_registers
   bsr     init_sprites
   bsr     bg_copy_image_to_bitplane
@@ -753,7 +753,7 @@ no_patch_copperlist2
 
 
   CNOP 0,4
-main_routine
+main
   bsr.s   no_sync_routines
   bra.s   beam_routines
 

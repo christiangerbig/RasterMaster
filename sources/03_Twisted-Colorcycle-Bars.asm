@@ -421,7 +421,7 @@ start_03_twisted_colorcycle_bars
   INCLUDE "sys-wrapper.i"
 
   CNOP 0,4
-init_own_variables
+init_main_variables
 
 ; **** Colorcycle ****
   moveq   #0,d0
@@ -450,7 +450,7 @@ init_own_variables
 
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
-init_all
+init_main
   bsr.s   tccb_init_color_table
   IFEQ tccb_quick_clear_enabled
     IFNE 256-pf_colors_number
@@ -560,7 +560,7 @@ cl1_init_color_registers
   COPY_COPPERLIST cl1,3
 
   CNOP 0,4
-main_routine
+main
   bsr.s   no_sync_routines
   bra.s   beam_routines
 

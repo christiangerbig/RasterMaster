@@ -418,14 +418,14 @@ init_main_variables
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
 init_main
-  bsr.s   init_color_registers
+  bsr.s   init_colors
   bsr     init_first_copperlist
   bra     init_second_copperlist
 
   CNOP 0,4
-init_color_registers
+init_colors
   CPU_SELECT_COLOR_HIGH_BANK 0
-  CPU_INIT_COLOR_HIGH COLOR00,32,pf1_color_table
+  CPU_INIT_COLOR_HIGH COLOR00,32,pf1_rgb8_color_table
   CPU_SELECT_COLOR_HIGH_BANK 1
   CPU_INIT_COLOR_HIGH COLOR00,32
   CPU_SELECT_COLOR_HIGH_BANK 2
@@ -442,7 +442,7 @@ init_color_registers
   CPU_INIT_COLOR_HIGH COLOR00,32
 
   CPU_SELECT_COLOR_LOW_BANK 0
-  CPU_INIT_COLOR_LOW COLOR00,32,pf1_color_table
+  CPU_INIT_COLOR_LOW COLOR00,32,pf1_rgb8_color_table
   CPU_SELECT_COLOR_LOW_BANK 1
   CPU_INIT_COLOR_LOW COLOR00,32
   CPU_SELECT_COLOR_LOW_BANK 2
@@ -463,10 +463,10 @@ init_color_registers
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_display(a3),a0 
-  bsr.s   cl1_init_playfield_registers
-  bsr     cl1_init_bitplane_pointers
+  bsr.s   cl1_init_playfield_props
+  bsr     cl1_init_plane_ptrs
   COP_MOVEQ TRUE,COPJMP2
-  bra     cl1_set_bitplane_pointers
+  bra     cl1_set_plane_ptrs
 
   COP_INIT_PLAYFIELD_REGISTERS cl1
 
@@ -477,20 +477,20 @@ init_first_copperlist
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_construction2(a3),a0 
-  bsr.s   cl2_init_bplcon4_registers
+  bsr.s   cl2_init_bplcon4
   bsr.s   cl2_init_copper_interrupt
   COP_LISTEND
   bsr     copy_second_copperlist
   bra     swap_second_copperlist
 
   CNOP 0,4
-cl2_init_bplcon4_registers
+cl2_init_bplcon4
   move.l  #(BPLCON4<<16)+bplcon4_bits,d0
   COP_WAIT cl2_hstart1,cl2_vstart1
   move.w  #(cl2_display_width*cl2_display_y_size)-1,d7 ;Anzahl der Spalten
-cl2_init_bplcon4_registers_loop
+cl2_init_bplcon4_loop
   move.l  d0,(a0)+           ;BPLCON4
-  dbf     d7,cl2_init_bplcon4_registers_loop
+  dbf     d7,cl2_init_bplcon4_loop
   rts
 
   COP_INIT_COPINT cl2
@@ -516,7 +516,7 @@ beam_routines
   bsr     effects_handler
   bsr     vert_border_fader_out
   bsr     vert_shade_bars
-  bsr     zzp5_get_y_coordinates
+  bsr     zzp5_get_y_coords
   jsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
@@ -585,7 +585,7 @@ no_vert_shade_bars
 
 ; ** Y-Koordinaten berechnen und Bars setzen **
   CNOP 0,4
-zzp5_get_y_coordinates
+zzp5_get_y_coords
   movem.l a3-a5,-(a7)
   move.l  a7,save_a7(a3)     
   bsr     zzp5_init_copy_blit
@@ -614,7 +614,7 @@ zzp5_get_y_coordinates
   move.l  chip_memory(a3),a7 ;Zeiger auf Tabelle mit Switchwerten
   lea     BLTAPT-DMACONR(a6),a3
   moveq   #cl2_display_width-1,d7 ;Anzahl der Spalten
-zzp5_get_y_coordinates_loop
+zzp5_get_y_coords_loop
   move.w  d2,d0
   muls.w  2(a0,d3.w*4),d0    ;y'=(yr'*sin(w))/2^15
   swap    d0
@@ -627,7 +627,7 @@ zzp5_get_y_coordinates_loop
   add.w   d5,d3              ;nächster Y-Winkel
   addq.w  #4,a2              ;nächste Spalte in CL
   and.w   d6,d3              ;Überlauf entfernen
-  dbf     d7,zzp5_get_y_coordinates_loop
+  dbf     d7,zzp5_get_y_coords_loop
   move.l  variables+save_a7(pc),a7 ;Stackpointer
   movem.l (a7)+,a3-a5
   move.w  #DMAF_BLITHOG,DMACON-DMACONR(a6) ;BLTPRI aus
@@ -733,7 +733,7 @@ NMI_int_server
 
 
   CNOP 0,4
-pf1_color_table
+pf1_rgb8_color_table
   INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/0b_zzp5_Colorgradient.ct"
 
 

@@ -454,7 +454,7 @@ init_main
   bsr.s   tccb_init_color_table
   IFEQ tccb_quick_clear_enabled
     IFNE 256-pf_colors_number
-      bsr     init_color_registers
+      bsr     init_colors
     ENDC
   ENDC
   bsr     tccb_init_mirror_switch_table
@@ -487,11 +487,11 @@ tccb_init_color_table_loop2
 
   IFEQ tccb_quick_clear_enabled
     IFNE pf_colors_number-256
-init_color_registers
+init_colors
       CPU_SELECT_COLOR_HIGH_BANK 7,bplcon3_bits3
-      CPU_INIT_COLOR_HIGH COLOR31,1,pf1_color_table
+      CPU_INIT_COLOR_HIGH COLOR31,1,pf1_rgb8_color_table
       CPU_SELECT_COLOR_LOW_BANK 7,bplcon3_bits4
-      CPU_INIT_COLOR_LOW COLOR31,1,pf1_color_table
+      CPU_INIT_COLOR_LOW COLOR31,1,pf1_rgb8_color_table
       rts
     ENDC
   ENDC
@@ -502,18 +502,18 @@ init_color_registers
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_construction1(a3),a0 
-  bsr.s   cl1_init_playfield_registers
-  bsr     cl1_init_color_registers
+  bsr.s   cl1_init_playfield_props
+  bsr     cl1_init_colors
   IFEQ open_border_enabled
-    bsr     cl1_init_bplcon4_registers
+    bsr     cl1_init_bplcon4
     bsr     cl1_init_copper_interrupt
     COP_LISTEND
   ELSE
-    bsr     cl1_init_bitplane_pointers
-    bsr     cl1_init_bplcon4_registers
+    bsr     cl1_init_plane_ptrs
+    bsr     cl1_init_bplcon4
     bsr     cl1_init_copper_interrupt
     COP_LISTEND
-    bsr     cl1_set_bitplane_pointers
+    bsr     cl1_set_plane_ptrs
   ENDC
   bra     copy_first_copperlist
   
@@ -526,8 +526,8 @@ init_first_copperlist
   ENDC
 
   CNOP 0,4
-cl1_init_color_registers
-  COP_INIT_COLOR_HIGH COLOR00,32,pf1_color_table
+cl1_init_colors
+  COP_INIT_COLOR_HIGH COLOR00,32,pf1_rgb8_color_table
   COP_SELECT_COLOR_HIGH_BANK 1
   COP_INIT_COLOR_HIGH COLOR00,32
   COP_SELECT_COLOR_HIGH_BANK 2
@@ -540,7 +540,7 @@ cl1_init_color_registers
   COP_INIT_COLOR_HIGH COLOR00,1
 
   COP_SELECT_COLOR_LOW_BANK 0
-  COP_INIT_COLOR_LOW COLOR00,32,pf1_color_table
+  COP_INIT_COLOR_LOW COLOR00,32,pf1_rgb8_color_table
   COP_SELECT_COLOR_LOW_BANK 1
   COP_INIT_COLOR_LOW COLOR00,32
   COP_SELECT_COLOR_LOW_BANK 2
@@ -612,7 +612,7 @@ colorcycle
   sub.l   #color_x_values_number*segments_number,d0 ;Neustart
 cc_no_restart_color_table1
   move.l  d0,cc_color_table_start(a3) ;Startwert retten
-  move.w  #$0f0f,d4          ;Maske RGB-Nibbles
+  move.w  #GB_NIBBLES_MASK,d4          ;Maske RGB-Nibbles
   moveq   #1*8,d5            ;Farbregister-Zähler
   move.l  extra_memory(a3),a1 ;Zeiger auf Farbtabelle
   move.l  cl1_construction2(a3),a2 
@@ -672,11 +672,11 @@ twisted_colorcycle_bars
   move.w  d5,a7              
   swap    d7                 ;Überlauf retten
   move.w  #cl1_display_width-1,d7 ;Anzahl der Spalten
-tccb_get_y_coordinates_loop1
+tccb_get_y_coords_loop1
   move.l  a5,a1              ;Zeiger auf Tabelle mit Switchwerten
   swap    d7                 ;Überlauf
   moveq   #tccb_bars_number-1,d6 ;Anzahl der Stangen
-tccb_get_y_coordinates_loop2
+tccb_get_y_coords_loop2
   move.l  (a0,d4.w*4),d0     ;sin(w)
   MULUF.L tccb_y_radius*4,d0,d1 ;yr'=(yr*sin(w))/2^15
   swap    d0
@@ -747,14 +747,14 @@ tccb_get_y_coordinates_loop2
   move.b  d3,cl1_extension1_size*28(a4)
   swap    d3
   move.b  d3,cl1_extension1_size*30(a4)
-  dbf     d6,tccb_get_y_coordinates_loop2
+  dbf     d6,tccb_get_y_coords_loop2
   move.w  a7,d5              ;Y-Winkel
   addq.w  #tccb_y_angle_step,d5 ;nächste Spalte
   and.w   d7,d5              ;Überlauf entfernen
   move.w  d5,a7              
   swap    d7                 ;Schleifenzähler
   addq.w  #4,a2              ;nächste Spalte in CL
-  dbf     d7,tccb_get_y_coordinates_loop1
+  dbf     d7,tccb_get_y_coords_loop1
   move.l  variables+save_a7(pc),a7 ;Stackpointer
   movem.l (a7)+,a3-a6
   rts
@@ -935,7 +935,7 @@ NMI_int_server
   INCLUDE "sys-structures.i"
 
   CNOP 0,4
-pf1_color_table
+pf1_rgb8_color_table
   DC.L color00_bits
   DS.L pf1_colors_number-1
 

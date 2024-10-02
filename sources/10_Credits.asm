@@ -224,19 +224,19 @@ vts_copy_character_blit_x_size EQU vts_text_character_x_size
 vts_copy_character_blit_y_size EQU vts_text_character_y_size*vts_text_character_depth
 
 ; **** Image-Fader ****
-if_start_color                 EQU 1
-if_color_table_offset          EQU 1
-if_colors_number               EQU pf1_colors_number-1
+if_rgb8_start_color                 EQU 1
+if_rgb8_color_table_offset          EQU 1
+if_rgb8_colors_number               EQU pf1_colors_number-1
 
-ifi_fader_speed_max            EQU 3
-ifi_fader_radius               EQU ifi_fader_speed_max
-ifi_fader_center               EQU ifi_fader_speed_max+1
-ifi_fader_angle_speed          EQU 3
+ifi_rgb8_fader_speed_max            EQU 3
+ifi_rgb8_fader_radius               EQU ifi_rgb8_fader_speed_max
+ifi_rgb8_fader_center               EQU ifi_rgb8_fader_speed_max+1
+ifi_rgb8_fader_angle_speed          EQU 3
 
-ifo_fader_speed_max            EQU 3
-ifo_fader_radius               EQU ifo_fader_speed_max
-ifo_fader_center               EQU ifo_fader_speed_max+1
-ifo_fader_angle_speed          EQU 1
+ifo_rgb8_fader_speed_max            EQU 3
+ifo_rgb8_fader_radius               EQU ifo_rgb8_fader_speed_max
+ifo_rgb8_fader_center               EQU ifo_rgb8_fader_speed_max+1
+ifo_rgb8_fader_angle_speed          EQU 1
 
 ; **** Scroll-Logo-Left ****
 sll_x_radius                   EQU 88
@@ -251,7 +251,7 @@ sllo_x_angle_speed             EQU 2
 ; **** Effects-Handler ****
 eh_trigger_number_max          EQU 8
 
-pf1_bitplanes_x_offset         EQU 16
+pf1_planes_x_offset         EQU 16
 pf1_BPL1DAT_x_offset           EQU 0
 
 
@@ -483,14 +483,14 @@ vts_variable_vert_scroll_speed RS.W 1
 vts_text_table_start           RS.W 1
 
 ; **** Image-Fader ****
-if_colors_counter              RS.W 1
-if_copy_colors_active          RS.W 1
+if_rgb8_colors_counter              RS.W 1
+if_rgb8_copy_colors_active          RS.W 1
 
-ifi_active                     RS.W 1
-ifi_fader_angle                RS.W 1
+ifi_rgb8_active                     RS.W 1
+ifi_rgb8_fader_angle                RS.W 1
 
-ifo_active                     RS.W 1
-ifo_fader_angle                RS.W 1
+ifo_rgb8_active                     RS.W 1
+ifo_rgb8_fader_angle                RS.W 1
 
 ; **** Scroll-Logo-Left-In ****
 slli_active                    RS.W 1
@@ -526,18 +526,18 @@ init_main_variables
   move.w  d0,vts_text_table_start(a3)
 
 ; **** Image-Fader ****
-  move.w  d0,if_colors_counter(a3)
+  move.w  d0,if_rgb8_colors_counter(a3)
   moveq   #FALSE,d1
-  move.w  d1,if_copy_colors_active(a3)
+  move.w  d1,if_rgb8_copy_colors_active(a3)
 
 ; **** Image-Fader-In ****
-  move.w  d1,ifi_active(a3)
+  move.w  d1,ifi_rgb8_active(a3)
   MOVEF.W sine_table_length/4,d2
-  move.w  d2,ifi_fader_angle(a3) ;90 Grad
+  move.w  d2,ifi_rgb8_fader_angle(a3) ;90 Grad
 
 ; **** Image-Fader-Out ****
-  move.w  d1,ifo_active(a3)
-  move.w  d2,ifo_fader_angle(a3) ;90 Grad
+  move.w  d1,ifo_rgb8_active(a3)
+  move.w  d2,ifo_rgb8_fader_angle(a3) ;90 Grad
 
 ; **** Scroll-Logo-Left ****
   move.w  d1,slli_active(a3)
@@ -557,9 +557,9 @@ init_main_variables
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
 init_main
-  bsr.s   init_color_registers
+  bsr.s   init_colors
   bsr     init_sprites
-  bsr     bg_copy_image_to_bitplane
+  bsr     bg_copy_image_to_plane
   bsr     vts_init_characters_offsets
   bsr     vts_init_characters_x_positions
   bsr     vts_init_characters_y_positions
@@ -567,19 +567,19 @@ init_main
   bra     init_first_copperlist
 
   CNOP 0,4
-init_color_registers
+init_colors
   CPU_SELECT_COLOR_HIGH_BANK 4
-  CPU_INIT_COLOR_HIGH COLOR00,16,spr_color_table_logo
-  CPU_INIT_COLOR_HIGH COLOR16,16,spr_color_table_vert_text_scroll
+  CPU_INIT_COLOR_HIGH COLOR00,16,spr_rgb8_color_table_logo
+  CPU_INIT_COLOR_HIGH COLOR16,16,spr_rgb8_color_table_vert_text_scroll
 
   CPU_SELECT_COLOR_LOW_BANK 4
-  CPU_INIT_COLOR_LOW COLOR00,16,spr_color_table_logo
-  CPU_INIT_COLOR_LOW COLOR16,16,spr_color_table_vert_text_scroll
+  CPU_INIT_COLOR_LOW COLOR00,16,spr_rgb8_color_table_logo
+  CPU_INIT_COLOR_LOW COLOR16,16,spr_rgb8_color_table_vert_text_scroll
   rts
 
   CNOP 0,4
 init_sprites
-  bsr.s   spr_init_pointers_table
+  bsr.s   spr_init_ptrs_table
   bsr.s   lg_init_sprites
   bsr     vts_init_sprites
   bra     spr_copy_structures
@@ -589,7 +589,7 @@ init_sprites
 ; **** Logo ****
   CNOP 0,4
 lg_init_sprites
-  lea     spr_pointers_construction(pc),a2 ;Zeiger auf Sprites
+  lea     spr_ptrs_construction(pc),a2 ;Zeiger auf Sprites
   move.l  (a2)+,a0           ;1. Sprite-Struktur (SPR0)
   ADDF.W  (spr_pixel_per_datafetch/4),a0 ;Sprite-Header überspringen
   move.l  (a2),a1            ;2. Sprite-Struktur (SPR1)
@@ -613,7 +613,7 @@ lg_init_sprites_loop
 vts_init_sprites
   MOVEF.W vts_buffer_x_position*4,d3 ;X
   moveq   #vts_buffer_y_position,d4 ;Y
-  lea     spr_pointers_construction(pc),a2 ;Zeiger auf Sprites
+  lea     spr_ptrs_construction(pc),a2 ;Zeiger auf Sprites
   move.l  8(a2),a0           ;1. Sprite-Struktur (SPR2)
   move.l  16(a2),a1          ;2. Sprite-Struktur (SPR4)
   move.l  24(a2),a2          ;2. Sprite-Struktur (SPR6)
@@ -647,9 +647,9 @@ vts_init_sprites
 ; **** Background-Image ****
 ; ** Objekt ins Playfield kopieren **
   CNOP 0,4
-bg_copy_image_to_bitplane
+bg_copy_image_to_plane
   movem.l a3-a6,-(a7)
-  move.l  #bg_image_data+(pf1_bitplanes_x_offset/8),a1 ;BP0
+  move.l  #bg_image_data+(pf1_planes_x_offset/8),a1 ;BP0
   move.l  pf1_display(a3),a3 ;Ziel
   bsr.s   bg_copy_image_data
   add.l   #bg_image_plane_width,a1 ;BP1
@@ -697,23 +697,23 @@ bg_copy_image_data_loop
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_display(a3),a0 
-  bsr.s   cl1_init_playfield_registers
-  bsr.s   cl1_init_sprite_pointers
-  bsr.s   cl1_init_color_registers
-  bsr     cl1_init_bitplane_pointers
-  bsr     cl1_init_BPLxDAT_registers
+  bsr.s   cl1_init_playfield_props
+  bsr.s   cl1_init_sprite_ptrs
+  bsr.s   cl1_init_colors
+  bsr     cl1_init_plane_ptrs
+  bsr     cl1_init_bpldat
   bsr     cl1_init_copper_interrupt
   COP_LISTEND
-  bsr     cl1_set_sprite_pointers
-  bra     cl1_set_bitplane_pointers
+  bsr     cl1_set_sprite_ptrs
+  bra     cl1_set_plane_ptrs
 
   COP_INIT_PLAYFIELD_REGISTERS cl1
 
   COP_INIT_SPRITE_POINTERS cl1
 
   CNOP 0,4
-cl1_init_color_registers
-  COP_INIT_COLOR_HIGH COLOR00,32,pf1_color_table
+cl1_init_colors
+  COP_INIT_COLOR_HIGH COLOR00,32,pf1_rgb8_color_table
   COP_SELECT_COLOR_HIGH_BANK 1
   COP_INIT_COLOR_HIGH COLOR00,32
   COP_SELECT_COLOR_HIGH_BANK 2
@@ -722,7 +722,7 @@ cl1_init_color_registers
   COP_INIT_COLOR_HIGH COLOR00,32
 
   COP_SELECT_COLOR_LOW_BANK 0
-  COP_INIT_COLOR_LOW COLOR00,32,pf1_color_table
+  COP_INIT_COLOR_LOW COLOR00,32,pf1_rgb8_color_table
   COP_SELECT_COLOR_LOW_BANK 1
   COP_INIT_COLOR_LOW COLOR00,32
   COP_SELECT_COLOR_LOW_BANK 2
@@ -734,7 +734,7 @@ cl1_init_color_registers
   COP_INIT_BITPLANE_POINTERS cl1
 
   CNOP 0,4
-cl1_init_BPLxDAT_registers
+cl1_init_bpldat
   movem.l a4-a5,-(a7)
   move.l  #bg_image_data+(pf1_BPL1DAT_x_offset/8),a1 ;BP0
   move.w  #BPL5DAT,a2
@@ -749,7 +749,7 @@ cl1_init_BPLxDAT_registers
   moveq   #1,d6
   ror.l   #8,d6              ;$01000000 = Additionswert
   MOVEF.W cl1_display_y_size-1,d7 ;Anzahl der Zeilen
-cl1_init_BPLxDAT_registers_loop
+cl1_init_bpldat_loop
   move.l  d0,(a0)+           ;WAIT x,y
   move.w  a5,(a0)+           ;BPL7DAT
   move.w  bg_image_plane_width*6(a1),(a0)+ ;Erste 16 Pixel Bitplane 7
@@ -771,7 +771,7 @@ cl1_init_BPLxDAT_registers_loop
   COP_WAIT CL_X_WRAP_7_BITPLANES_1X,CL_Y_WRAP ;Copperliste patchen
 no_patch_copperlist1
   add.l   d6,d0              ;nächste Zeile
-  dbf     d7,cl1_init_BPLxDAT_registers_loop
+  dbf     d7,cl1_init_bpldat_loop
   movem.l (a7)+,a4-a5
   rts
 
@@ -805,7 +805,7 @@ beam_routines
   bsr     vts_copy_buffer
   bsr     image_fader_in
   bsr     image_fader_out
-  bsr     if_copy_color_table
+  bsr     if_rgb8_copy_color_table
   jsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
@@ -834,7 +834,7 @@ vert_text_scroll
   MOVEF.W (vts_copy_character_blit_y_size*64)+(vts_copy_character_blit_x_size/16),d3 ;BLTSIZE
   MOVEF.W vts_text_character_y_restart,d4 ;Y-Neustart
   lea     vts_characters_y_positions(pc),a1 ;Y-Koords der Chars
-  lea     vts_characters_image_pointers(pc),a2 ;Zeiger auf Adressen der Char-Images
+  lea     vts_characters_image_ptrs(pc),a2 ;Zeiger auf Adressen der Char-Images
   move.l  extra_pf1(a3),a4
   move.l  (a4),a4
   move.w  #vts_text_characters_per_line*4,a5
@@ -889,7 +889,7 @@ vts_init_copy_blit
   CNOP 0,4
 vts_copy_buffer
   move.l  a4,-(a7)
-  lea     spr_pointers_construction(pc),a2 ;Zeiger auf Sprites
+  lea     spr_ptrs_construction(pc),a2 ;Zeiger auf Sprites
   move.l  2*LONGWORD_SIZE(a2),a0 ;1. Sprite-Struktur (SPR2)
   ADDF.W  (spr_pixel_per_datafetch/4),a0 ;Sprite-Header überspringen
   move.l  4*LONGWORD_SIZE(a2),a1 ;2. Sprite-Struktur (SPR4)
@@ -918,80 +918,80 @@ vts_copy_buffer_loop
 ; ** Grafik einblenden **
   CNOP 0,4
 image_fader_in
-  tst.w   ifi_active(a3)     ;Image-Fader-In an ?
+  tst.w   ifi_rgb8_active(a3)     ;Image-Fader-In an ?
   bne.s   no_image_fader_in  ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  ifi_fader_angle(a3),d2 ;Fader-Winkel 
+  move.w  ifi_rgb8_fader_angle(a3),d2 ;Fader-Winkel 
   move.w  d2,d0
-  ADDF.W  ifi_fader_angle_speed,d0 ;nächster Fader-Winkel
+  ADDF.W  ifi_rgb8_fader_angle_speed,d0 ;nächster Fader-Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
-  ble.s   ifi_save_fader_angle ;Ja -> verzweige
+  ble.s   ifi_rgb8_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
-ifi_save_fader_angle
-  move.w  d0,ifi_fader_angle(a3) 
-  MOVEF.W if_colors_number*3,d6 ;Zähler
+ifi_rgb8_save_fader_angle
+  move.w  d0,ifi_rgb8_fader_angle(a3) 
+  MOVEF.W if_rgb8_colors_number*3,d6 ;Zähler
   lea     sine_table,a0      
   move.l  (a0,d2.w*4),d0     ;sin(w)
-  MULUF.L ifi_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
+  MULUF.L ifi_rgb8_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
-  ADDF.W  ifi_fader_center,d0 ;+ Fader-Mittelpunkt
-  lea     pf1_color_table+(if_color_table_offset*LONGWORD_SIZE)(pc),a0 ;Puffer für Farbwerte
-  lea     ifi_color_table+(if_color_table_offset*LONGWORD_SIZE)(pc),a1 ;Sollwerte
+  ADDF.W  ifi_rgb8_fader_center,d0 ;+ Fader-Mittelpunkt
+  lea     pf1_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ;Puffer für Farbwerte
+  lea     ifi_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ;Sollwerte
   move.w  d0,a5              ;Additions-/Subtraktionswert für Blau
   swap    d0                 ;WORDSHIFT
   clr.w   d0                 ;Bits 0-15 löschen
   move.l  d0,a2              ;Additions-/Subtraktionswert für Rot
   lsr.l   #8,d0              ;BYTESHIFT
   move.l  d0,a4              ;Additions-/Subtraktionswert für Grün
-  MOVEF.W if_colors_number-1,d7 ;Anzahl der Farben
-  bsr     if_fader_loop
+  MOVEF.W if_rgb8_colors_number-1,d7 ;Anzahl der Farben
+  bsr     if_rgb8_fader_loop
   movem.l (a7)+,a4-a6
-  move.w  d6,if_colors_counter(a3) ;Image-Fader-In fertig ?
+  move.w  d6,if_rgb8_colors_counter(a3) ;Image-Fader-In fertig ?
   bne.s   no_image_fader_in  ;Nein -> verzweige
-  move.w  #FALSE,ifi_active(a3)  ;Image-Fader-In aus
+  move.w  #FALSE,ifi_rgb8_active(a3)  ;Image-Fader-In aus
 no_image_fader_in
   rts
 
 ; ** Grafik ausblenden **
   CNOP 0,4
 image_fader_out
-  tst.w   ifo_active(a3)     ;Image-Fader-Out an ?
+  tst.w   ifo_rgb8_active(a3)     ;Image-Fader-Out an ?
   bne.s   no_image_fader_out ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  ifo_fader_angle(a3),d2 ;Fader-Winkel 
+  move.w  ifo_rgb8_fader_angle(a3),d2 ;Fader-Winkel 
   move.w  d2,d0
-  ADDF.W  ifo_fader_angle_speed,d0 ;nächster Fader-Winkel
+  ADDF.W  ifo_rgb8_fader_angle_speed,d0 ;nächster Fader-Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
-  ble.s   ifo_save_fader_angle ;Ja -> verzweige
+  ble.s   ifo_rgb8_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
-ifo_save_fader_angle
-  move.w  d0,ifo_fader_angle(a3) 
-  MOVEF.W if_colors_number*3,d6 ;Zähler
+ifo_rgb8_save_fader_angle
+  move.w  d0,ifo_rgb8_fader_angle(a3) 
+  MOVEF.W if_rgb8_colors_number*3,d6 ;Zähler
   lea     sine_table,a0      
   move.l  (a0,d2.w*4),d0     ;sin(w)
-  MULUF.L ifo_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
+  MULUF.L ifo_rgb8_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
-  ADDF.W  ifo_fader_center,d0 ;+ Fader-Mittelpunkt
-  lea     pf1_color_table+(if_color_table_offset*LONGWORD_SIZE)(pc),a0 ;Puffer für Farbwerte
-  lea     ifo_color_table+(if_color_table_offset*LONGWORD_SIZE)(pc),a1 ;Sollwerte
+  ADDF.W  ifo_rgb8_fader_center,d0 ;+ Fader-Mittelpunkt
+  lea     pf1_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ;Puffer für Farbwerte
+  lea     ifo_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ;Sollwerte
   move.w  d0,a5              ;Additions-/Subtraktionswert für Blau
   swap    d0                 ;WORDSHIFT
   clr.w   d0                 ;Bits 0-15 löschen
   move.l  d0,a2              ;Additions-/Subtraktionswert für Rot
   lsr.l   #8,d0              ;BYTESHIFT
   move.l  d0,a4              ;Additions-/Subtraktionswert für Grün
-  MOVEF.W if_colors_number-1,d7 ;Anzahl der Farben
-  bsr.s   if_fader_loop
+  MOVEF.W if_rgb8_colors_number-1,d7 ;Anzahl der Farben
+  bsr.s   if_rgb8_fader_loop
   movem.l (a7)+,a4-a6
-  move.w  d6,if_colors_counter(a3) ;Image-Fader-Out fertig ?
+  move.w  d6,if_rgb8_colors_counter(a3) ;Image-Fader-Out fertig ?
   bne.s   no_image_fader_out ;Nein -> verzweige
-  move.w  #FALSE,ifo_active(a3)  ;Image-Fader-Out aus
+  move.w  #FALSE,ifo_rgb8_active(a3)  ;Image-Fader-Out aus
 no_image_fader_out
   rts
 
-  COLOR_FADER if
+  RGB8_COLOR_FADER if
 
-  COPY_COLOR_TABLE_TO_COPPERLIST if,pf1,cl1,cl1_COLOR01_high1,cl1_COLOR01_low1
+  COPY_RGB8_COLORS_TO_COPPERLIST if,pf1,cl1,cl1_COLOR01_high1,cl1_COLOR01_low1
 
 ; ** Logo von links einscrollen **
   CNOP 0,4
@@ -1014,10 +1014,10 @@ scroll_logo_left_in
   moveq   #lg_image_y_position,d1 ;Y
   MOVEF.W lg_image_y_size,d2 ;Höhe
   add.w   d1,d2              ;Höhe zu Y addieren
-  lea     spr_pointers_construction(pc),a2 ;Zeiger auf Sprites
+  lea     spr_ptrs_construction(pc),a2 ;Zeiger auf Sprites
   move.l  (a2)+,a0           ;1. Sprite-Struktur (SPR0)
   move.l  (a2),a1            ;2. Sprite-Struktur (SPR1)
-  lea     spr_pointers_display(pc),a2 ;Zeiger auf Sprites
+  lea     spr_ptrs_display(pc),a2 ;Zeiger auf Sprites
   move.l  (a2)+,a4           ;1. Sprite-Struktur (SPR0)
   move.l  (a2),a5            ;2. Sprite-Struktur (SPR1)
   SET_SPRITE_POSITION d0,d1,d2
@@ -1055,10 +1055,10 @@ scroll_logo_left_out
   moveq   #lg_image_y_position,d1 ;Y
   MOVEF.W lg_image_y_size,d2 ;Höhe
   add.w   d1,d2              ;Höhe zu Y addieren
-  lea     spr_pointers_construction(pc),a2 ;Zeiger auf Sprites
+  lea     spr_ptrs_construction(pc),a2 ;Zeiger auf Sprites
   move.l  (a2)+,a0           ;1. Sprite-Struktur (SPR0)
   move.l  (a2),a1            ;2. Sprite-Struktur (SPR1)
-  lea     spr_pointers_display(pc),a2 ;Zeiger auf Sprites
+  lea     spr_ptrs_display(pc),a2 ;Zeiger auf Sprites
   move.l  (a2)+,a4           ;1. Sprite-Struktur (SPR0)
   move.l  (a2),a5            ;2. Sprite-Struktur (SPR1)
   SET_SPRITE_POSITION d0,d1,d2
@@ -1107,10 +1107,10 @@ no_effects_handler
   rts
   CNOP 0,4
 eh_start_image_fader_in
-  move.w  #if_colors_number*3,if_colors_counter(a3)
+  move.w  #if_rgb8_colors_number*3,if_rgb8_colors_counter(a3)
   moveq   #0,d0
-  move.w  d0,ifi_active(a3)  ;Image-Fader-In an
-  move.w  d0,if_copy_colors_active(a3) ;Kopieren der Farben an
+  move.w  d0,ifi_rgb8_active(a3)  ;Image-Fader-In an
+  move.w  d0,if_rgb8_copy_colors_active(a3) ;Kopieren der Farben an
   rts
   CNOP 0,4
 eh_start_scroll_logo_left_in
@@ -1118,7 +1118,7 @@ eh_start_scroll_logo_left_in
   rts
   CNOP 0,4
 eh_stop_image_fader_in
-  move.w  #FALSE,ifi_active(a3)  ;Image-Fader-In stoppen
+  move.w  #FALSE,ifi_rgb8_active(a3)  ;Image-Fader-In stoppen
   rts
   CNOP 0,4
 eh_start_vert_text_scroll
@@ -1131,10 +1131,10 @@ eh_stop_vert_text_scroll
   rts
   CNOP 0,4
 eh_start_image_fader_out
-  move.w  #if_colors_number*3,if_colors_counter(a3)
+  move.w  #if_rgb8_colors_number*3,if_rgb8_colors_counter(a3)
   moveq   #0,d0
-  move.w  d0,ifo_active(a3)  ;Image-Fader-Out an
-  move.w  d0,if_copy_colors_active(a3) ;Kopieren der Farben an
+  move.w  d0,ifo_rgb8_active(a3)  ;Image-Fader-Out an
+  move.w  d0,if_rgb8_copy_colors_active(a3) ;Kopieren der Farben an
   rts
   CNOP 0,4
 eh_start_scroll_logo_left_out
@@ -1161,16 +1161,16 @@ NMI_int_server
 
 
   CNOP 0,4
-pf1_color_table
+pf1_rgb8_color_table
   REPT pf1_colors_number
     DC.L color00_bits
   ENDR
 
-spr_color_table_logo
+spr_rgb8_color_table_logo
 ; ** Sprite0/1 **
   INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/64x256x16-Resistance.ct"
 
-spr_color_table_vert_text_scroll
+spr_rgb8_color_table_vert_text_scroll
 ; ** Sprite0 **
   REPT 4
     DC.L color00_bits
@@ -1191,10 +1191,10 @@ spr_color_table_vert_text_scroll
     DC.L color00_bits
   ENDR
 
-spr_pointers_construction
+spr_ptrs_construction
   DS.L spr_number
 
-spr_pointers_display
+spr_ptrs_display
   DS.L spr_number
 
 ; **** Vert-Text-Scroll ****
@@ -1219,17 +1219,17 @@ vts_characters_y_positions
 
 ; ** Tabelle für Char-Image-Adressen **
   CNOP 0,4
-vts_characters_image_pointers
+vts_characters_image_ptrs
   DS.L vts_text_characters_number
 
 ; **** Image-Fader ****
 ; ** Zielfarbwerte für Image-Fader-In **
   CNOP 0,4
-ifi_color_table
+ifi_rgb8_color_table
   INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/352x256x128-RasterMaster.ct"
 
 ; ** Zielfarbwerte für Image-Fader-Out **
-ifo_color_table
+ifo_rgb8_color_table
   REPT pf1_colors_number
     DC.L color00_bits
   ENDR

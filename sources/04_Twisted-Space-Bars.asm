@@ -255,19 +255,19 @@ hst_horiz_scroll_blit_x_size   EQU hst_horiz_scroll_window_x_size
 hst_horiz_scroll_blit_y_size   EQU hst_horiz_scroll_window_y_size*hst_horiz_scroll_window_depth
 
 ; **** Sprites-Fader ****
-sprf_start_color               EQU 1
-sprf_color_table_offset        EQU 1
-sprf_colors_number             EQU spr_colors_number-1
+sprf_rgb8_start_color               EQU 1
+sprf_rgb8_color_table_offset        EQU 1
+sprf_rgb8_colors_number             EQU spr_colors_number-1
 
-sprfi_fader_speed_max          EQU 4
-sprfi_fader_radius             EQU sprfi_fader_speed_max
-sprfi_fader_center             EQU sprfi_fader_speed_max+1
-sprfi_fader_angle_speed        EQU 2
+sprfi_rgb8_fader_speed_max          EQU 4
+sprfi_rgb8_fader_radius             EQU sprfi_rgb8_fader_speed_max
+sprfi_rgb8_fader_center             EQU sprfi_rgb8_fader_speed_max+1
+sprfi_rgb8_fader_angle_speed        EQU 2
 
-sprfo_fader_speed_max          EQU 10
-sprfo_fader_radius             EQU sprfo_fader_speed_max
-sprfo_fader_center             EQU sprfo_fader_speed_max+1
-sprfo_fader_angle_speed        EQU 1
+sprfo_rgb8_fader_speed_max          EQU 10
+sprfo_rgb8_fader_radius             EQU sprfo_rgb8_fader_speed_max
+sprfo_rgb8_fader_center             EQU sprfo_rgb8_fader_speed_max+1
+sprfo_rgb8_fader_angle_speed        EQU 1
 
 ; **** Chunky-Columns-Fader ****
 ccfi_mode1                     EQU 0
@@ -288,8 +288,8 @@ ccfo_delay_speed               EQU 1
 eh_trigger_number_max          EQU 9
 
 
-pf1_bitplane_x_offset          EQU 1*pf_pixel_per_datafetch
-pf1_bitplane_y_offset          EQU 0
+pf1_plane_x_offset          EQU 1*pf_pixel_per_datafetch
+pf1_plane_y_offset          EQU 0
 
 
   INCLUDE "except-vectors-offsets.i"
@@ -615,14 +615,14 @@ tb312_y_angle              RS.W 1
 tb312_y_radius_angle       RS.W 1
 
 ; **** Sprites-Fader ****
-sprf_colors_counter        RS.W 1
-sprf_copy_colors_active    RS.W 1
+sprf_rgb8_colors_counter        RS.W 1
+sprf_rgb8_copy_colors_active    RS.W 1
 
-sprfi_active               RS.W 1
-sprfi_fader_angle          RS.W 1
+sprfi_rgb8_active               RS.W 1
+sprfi_rgb8_fader_angle          RS.W 1
 
-sprfo_active               RS.W 1
-sprfo_fader_angle          RS.W 1
+sprfo_rgb8_active               RS.W 1
+sprfo_rgb8_fader_angle          RS.W 1
 
 ; **** Chunky-Columns-Fader ****
 ccfi_active                RS.W 1
@@ -674,16 +674,16 @@ init_main_variables
   move.w  d0,tb312_y_radius_angle(a3)
 
 ; **** Sprites-Fader ****
-  move.w  d0,sprf_colors_counter(a3)
+  move.w  d0,sprf_rgb8_colors_counter(a3)
   moveq   #FALSE,d1
-  move.w  d1,sprf_copy_colors_active(a3)
+  move.w  d1,sprf_rgb8_copy_colors_active(a3)
 
-  move.w  d1,sprfi_active(a3)
+  move.w  d1,sprfi_rgb8_active(a3)
   moveq   #sine_table_length/4,d2
-  move.w  d2,sprfi_fader_angle(a3)
+  move.w  d2,sprfi_rgb8_fader_angle(a3)
 
-  move.w  d1,sprfo_active(a3)
-  move.w  d2,sprfo_fader_angle(a3)
+  move.w  d1,sprfo_rgb8_active(a3)
+  move.w  d2,sprfo_rgb8_fader_angle(a3)
 
 ; **** Chunky-Columns-Fader ****
   move.w  d1,ccfi_active(a3)
@@ -713,7 +713,7 @@ init_main_variables
   CNOP 0,4
 init_main
   bsr.s   tb_init_color_table
-  bsr.s   init_color_registers
+  bsr.s   init_colors
   bsr     init_sprites
   bsr     hst_init_characters_offsets
   bsr     hst_init_characters_x_positions
@@ -739,9 +739,9 @@ tb_init_color_table_loop2
   rts
 
   CNOP 0,4
-init_color_registers
+init_colors
   CPU_SELECT_COLOR_HIGH_BANK 0
-  CPU_INIT_COLOR_HIGH COLOR00,16,pf1_color_table
+  CPU_INIT_COLOR_HIGH COLOR00,16,pf1_rgb8_color_table
   CPU_SELECT_COLOR_HIGH_BANK 1
   CPU_INIT_COLOR_HIGH COLOR00,32,tb_color_table
   CPU_SELECT_COLOR_HIGH_BANK 2
@@ -758,7 +758,7 @@ init_color_registers
   CPU_INIT_COLOR_HIGH COLOR00,32
 
   CPU_SELECT_COLOR_LOW_BANK 0
-  CPU_INIT_COLOR_LOW COLOR00,16,pf1_color_table
+  CPU_INIT_COLOR_LOW COLOR00,16,pf1_rgb8_color_table
   CPU_SELECT_COLOR_LOW_BANK 1
   CPU_INIT_COLOR_LOW COLOR00,32,tb_color_table
   CPU_SELECT_COLOR_LOW_BANK 2
@@ -777,12 +777,12 @@ init_color_registers
 
   CNOP 0,4
 init_sprites
-  bsr.s   spr_init_pointers_table
+  bsr.s   spr_init_ptrs_table
   bra.s   bg_init_attached_sprites_cluster
 
   INIT_SPRITE_POINTERS_TABLE
 
-  INIT_ATTACHED_SPRITES_CLUSTER bg,spr_pointers_display,bg_image_x_position,bg_image_y_position,spr_x_size2,bg_image_y_size,,,REPEAT
+  INIT_ATTACHED_SPRITES_CLUSTER bg,spr_ptrs_display,bg_image_x_position,bg_image_y_position,spr_x_size2,bg_image_y_size,,,REPEAT
 
 ; **** Horiz-Scrolltext ****
 ; ** Offsets der Buchstaben im Characters-Pic berechnen **
@@ -798,25 +798,25 @@ init_sprites
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_display(a3),a0 
-  bsr.s   cl1_init_playfield_registers
-  bsr.s   cl1_init_sprite_pointers
-  bsr     cl1_init_color_registers
-  bsr     cl1_init_bitplane_pointers
+  bsr.s   cl1_init_playfield_props
+  bsr.s   cl1_init_sprite_ptrs
+  bsr     cl1_init_colors
+  bsr     cl1_init_plane_ptrs
   COP_MOVEQ TRUE,COPJMP2
-  bsr     cl1_set_sprite_pointers
-  bsr     cl1_set_bitplane_pointers
-  bra     tb313_get_yz_coordinates2
+  bsr     cl1_set_sprite_ptrs
+  bsr     cl1_set_plane_ptrs
+  bra     tb313_get_yz_coords2
 
   COP_INIT_PLAYFIELD_REGISTERS cl1
 
   COP_INIT_SPRITE_POINTERS cl1
 
   CNOP 0,4
-cl1_init_color_registers
-  COP_INIT_COLOR_HIGH COLOR16,spr_colors_number,spr_color_table
+cl1_init_colors
+  COP_INIT_COLOR_HIGH COLOR16,spr_colors_number,spr_rgb8_color_table
 
   COP_SELECT_COLOR_LOW_BANK 0
-  COP_INIT_COLOR_LOW COLOR16,spr_colors_number,spr_color_table
+  COP_INIT_COLOR_LOW COLOR16,spr_colors_number,spr_rgb8_color_table
   rts
 
   COP_INIT_BITPLANE_POINTERS cl1
@@ -828,7 +828,7 @@ cl1_init_color_registers
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_construction1(a3),a0 
-  bsr.s   cl2_init_bplcon4_registers
+  bsr.s   cl2_init_bplcon4
   bsr.s   cl2_init_copper_interrupt
   COP_LISTEND
   bsr     copy_second_copperlist
@@ -858,7 +858,7 @@ beam_routines
   bsr.s   swap_second_copperlist
   bsr.s   swap_playfield1
   bsr     effects_handler
-  bsr     sprf_copy_color_table
+  bsr     sprf_rgb8_copy_color_table
   tst.w   hst_enabled(a3)
   bne.s   no_horiz_scrolltext
   bsr     horiz_scrolltext
@@ -869,8 +869,8 @@ no_horiz_scrolltext
   bsr     chunky_columns_fader_out
   bsr     tb_set_background_bars
   bsr     tb_set_foreground_bars
-  bsr     tb313_get_yz_coordinates
-  bsr     tb312_get_yz_coordinates
+  bsr     tb313_get_yz_coords
+  bsr     tb312_get_yz_coords
   IFNE tb_quick_clear_enabled
     bsr     restore_second_copperlist
   ENDC
@@ -888,7 +888,7 @@ fast_exit
 
   SWAP_COPPERLIST cl2,3
 
-  SWAP_PLAYFIELD pf1,2,pf1_depth3,pf1_bitplane_x_offset,pf1_bitplane_y_offset
+  SWAP_PLAYFIELD pf1,2,pf1_depth3,pf1_plane_x_offset,pf1_plane_y_offset
 
 
 ; ** Laufschrift **
@@ -899,7 +899,7 @@ horiz_scrolltext
   move.w  #(hst_copy_blit_y_size*64)+(hst_copy_blit_x_size/16),d4 ;BLTSIZE
   move.w  #hst_text_character_x_restart,d5
   lea     hst_characters_x_positions(pc),a0 ;X-Positionen der Chars
-  lea     hst_characters_image_pointers(pc),a1 ;Zeiger auf Adressen der Chars-Images
+  lea     hst_characters_image_ptrs(pc),a1 ;Zeiger auf Adressen der Chars-Images
   move.l  pf1_construction2(a3),a2
   move.l  (a2),d3
   add.l   #(hst_text_x_position/8)+(hst_text_y_position*pf1_plane_width*pf1_depth3),d3 ;Y-Zentrierung + 32 Pixel überspringen
@@ -987,7 +987,7 @@ hst_horiz_scroll
   CNOP 0,4
 tb_set_background_bars
   movem.l a3-a6,-(a7)
-  lea     tb_yz_coordinates(pc),a0 ;Zeiger auf YZ-Koords
+  lea     tb_yz_coords(pc),a0 ;Zeiger auf YZ-Koords
   move.l  cl2_construction2(a3),a2 
   ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2,a2
   move.w  #tb_bars_number*LONGWORD_SIZE,a3 ;Z + Y überspringen
@@ -1021,7 +1021,7 @@ tb_skip_column1
   CNOP 0,4
 tb_set_foreground_bars
   movem.l a3-a6,-(a7)
-  lea     tb_yz_coordinates(pc),a0 ;Zeiger auf YZ-Koords
+  lea     tb_yz_coords(pc),a0 ;Zeiger auf YZ-Koords
   move.l  cl2_construction2(a3),a2 
   ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2,a2
   move.w  #tb_bars_number*LONGWORD_SIZE,a3 ;Z + Y überspringen
@@ -1053,10 +1053,10 @@ tb_skip_column2
 
 ; ** Y+Z-Koordinaten berechnen **
   CNOP 0,4
-tb313_get_yz_coordinates
+tb313_get_yz_coords
   tst.w   tb313_active(a3)
-  bne.s   tb313_no_get_yz_coordinates
-tb313_get_yz_coordinates2
+  bne.s   tb313_no_get_yz_coords
+tb313_get_yz_coords2
   movem.l a4-a5,-(a7)
   moveq   #tb313_y_distance,d3
   move.w  tb313_y_angle(a3),d4 ;1. Y-Winkel
@@ -1068,14 +1068,14 @@ tb313_get_yz_coordinates2
   addq.b  #tb313_y_radius_speed,d0
   move.w  d0,tb313_y_radius_angle(a3) 
   lea     sine_table(pc),a0 
-  lea     tb_yz_coordinates(pc),a1 ;Zeiger auf Y+Z-Koords-Tabelle
+  lea     tb_yz_coords(pc),a1 ;Zeiger auf Y+Z-Koords-Tabelle
   move.w  #tb313_y_center,a2
   move.w  #tb313_y_radius_center,a4
   moveq   #cl2_display_width-1,d7 ;Anzahl der Spalten
-tb313_get_yz_coordinates_loop1
+tb313_get_yz_coords_loop1
   move.w  d4,d2              ;Y-Winkel
   moveq   #tb_bars_number-1,d6 ;Anzahl der Stangen
-tb313_get_yz_coordinates_loop2
+tb313_get_yz_coords_loop2
   moveq   #-(sine_table_length/4),d1 ;- 90 Grad
   move.l  (a0,d5.w*4),d0     ;sin(w)
   add.w   d2,d1              ;Y-Winkel - 90 Grad
@@ -1091,18 +1091,18 @@ tb313_get_yz_coordinates_loop2
   move.w  d0,(a1)+           ;Y retten
   add.b   d3,d2              ;Y-Abstand zur nächsten Bar
   addq.b  #tb313_y_radius_step,d5 ;nächster Y-Radius-Winkel
-  dbf     d6,tb313_get_yz_coordinates_loop2
+  dbf     d6,tb313_get_yz_coords_loop2
   addq.b  #tb313_y_angle_step,d4 ;nächster Y-Winkel
-  dbf     d7,tb313_get_yz_coordinates_loop1
+  dbf     d7,tb313_get_yz_coords_loop1
   movem.l (a7)+,a4-a5
-tb313_no_get_yz_coordinates
+tb313_no_get_yz_coords
   rts
 
 ; ** Y+Z-Koordinaten berechnen **
   CNOP 0,4
-tb312_get_yz_coordinates
+tb312_get_yz_coords
   tst.w   tb312_active(a3)
-  bne.s   tb312_no_get_yz_coordinates
+  bne.s   tb312_no_get_yz_coords
   movem.l a4-a5,-(a7)
   moveq   #tb312_y_distance,d3
   move.w  tb312_y_angle(a3),d4 ;1. Y-Winkel
@@ -1114,18 +1114,18 @@ tb312_get_yz_coordinates
   addq.b  #tb312_y_radius_speed,d0
   move.w  d0,tb312_y_radius_angle(a3) 
   lea     sine_table(pc),a0 
-  lea     tb_yz_coordinates(pc),a1 ;Zeiger auf Y+Z-Koords-Tabelle
+  lea     tb_yz_coords(pc),a1 ;Zeiger auf Y+Z-Koords-Tabelle
   move.w  #tb312_y_center,a2
   move.w  #tb312_y_radius_center,a4
   moveq   #cl2_display_width-1,d7 ;Anzahl der Spalten
-tb312_get_yz_coordinates_loop1
+tb312_get_yz_coords_loop1
   move.l  (a0,d5.w*4),d0     ;sin(w)
   MULUF.L tb312_y_radius*2,d0,d1
   move.w  d4,d2              ;Y-Winkel
   swap    d0
   add.w   a4,d0              ;y' + Y-Radius-Mittelpunkt
   moveq   #tb_bars_number-1,d6 ;Anzahl der Stangen
-tb312_get_yz_coordinates_loop2
+tb312_get_yz_coords_loop2
   moveq   #-(sine_table_length/4),d1 ;- 90 Grad
   add.w   d2,d1              ;Y-Winkel - 90 Grad
   ext.w   d1                 ;Vorzeichenrichtig auf ein Wort erweitern
@@ -1137,12 +1137,12 @@ tb312_get_yz_coordinates_loop2
   MULUF.W cl2_extension1_size/4,d1,a5 ;Y-Offset in CL
   move.w  d1,(a1)+           ;Y retten
   add.b   d3,d2              ;Y-Abstand zur nächsten Bar
-  dbf     d6,tb312_get_yz_coordinates_loop2
+  dbf     d6,tb312_get_yz_coords_loop2
   addq.b  #tb312_y_angle_step,d4 ;nächster Y-Winkel
   addq.b  #tb312_y_radius_step,d5 ;nächster Y-Radius-Winkel
-  dbf     d7,tb312_get_yz_coordinates_loop1
+  dbf     d7,tb312_get_yz_coords_loop1
   movem.l (a7)+,a4-a5
-tb312_no_get_yz_coordinates
+tb312_no_get_yz_coords
   rts
 
 ; ** Copper-WAIT-Befehle wiederherstellen **
@@ -1154,80 +1154,80 @@ tb312_no_get_yz_coordinates
 ; ** Hintergrundbild einblenden **
   CNOP 0,4
 sprite_fader_in
-  tst.w   sprfi_active(a3)     ;Sprites-Fader-In an ?
+  tst.w   sprfi_rgb8_active(a3)     ;Sprites-Fader-In an ?
   bne.s   no_sprite_fader_in   ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  sprfi_fader_angle(a3),d2 ;Fader-Winkel 
+  move.w  sprfi_rgb8_fader_angle(a3),d2 ;Fader-Winkel 
   move.w  d2,d0
-  ADDF.W  sprfi_fader_angle_speed,d0 ;nächster Fader-Winkel
+  ADDF.W  sprfi_rgb8_fader_angle_speed,d0 ;nächster Fader-Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
-  ble.s   sprfi_save_fader_angle ;Ja -> verzweige
+  ble.s   sprfi_rgb8_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
-sprfi_save_fader_angle
-  move.w  d0,sprfi_fader_angle(a3) 
-  MOVEF.W sprf_colors_number*3,d6 ;Zähler
+sprfi_rgb8_save_fader_angle
+  move.w  d0,sprfi_rgb8_fader_angle(a3) 
+  MOVEF.W sprf_rgb8_colors_number*3,d6 ;Zähler
   lea     sine_table(pc),a0  
   move.l  (a0,d2.w*4),d0     ;sin(w)
-  MULUF.L sprfi_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
+  MULUF.L sprfi_rgb8_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
-  ADDF.W  sprfi_fader_center,d0 ;+ Fader-Mittelpunkt
-  lea     spr_color_table+(sprf_color_table_offset*LONGWORD_SIZE)(pc),a0 ;Puffer für Farbwerte
-  lea     sprfi_color_table+(sprf_color_table_offset*LONGWORD_SIZE)(pc),a1 ;Sollwerte
+  ADDF.W  sprfi_rgb8_fader_center,d0 ;+ Fader-Mittelpunkt
+  lea     spr_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ;Puffer für Farbwerte
+  lea     sprfi_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ;Sollwerte
   move.w  d0,a5              ;Additions-/Subtraktionswert für Blau
   swap    d0                 ;WORDSHIFT
   clr.w   d0                 ;Bits 0-15 löschen
   move.l  d0,a2              ;Additions-/Subtraktionswert für Rot
   lsr.l   #8,d0              ;BYTESHIFT
   move.l  d0,a4              ;Additions-/Subtraktionswert für Grün
-  MOVEF.W sprf_colors_number-1,d7 ;Anzahl der Farben
-  bsr     sprf_fader_loop
+  MOVEF.W sprf_rgb8_colors_number-1,d7 ;Anzahl der Farben
+  bsr     sprf_rgb8_fader_loop
   movem.l (a7)+,a4-a6
-  move.w  d6,sprf_colors_counter(a3) ;Sprites-Fader-In fertig ?
+  move.w  d6,sprf_rgb8_colors_counter(a3) ;Sprites-Fader-In fertig ?
   bne.s   no_sprite_fader_in ;Nein -> verzweige
-  move.w  #FALSE,sprfi_active(a3) ;Sprites-Fader-In aus
+  move.w  #FALSE,sprfi_rgb8_active(a3) ;Sprites-Fader-In aus
 no_sprite_fader_in
   rts
 
 ; ** Hintergrundbild ausblenden **
   CNOP 0,4
 sprite_fader_out
-  tst.w   sprfo_active(a3)     ;Sprites-Fader-Out an ?
+  tst.w   sprfo_rgb8_active(a3)     ;Sprites-Fader-Out an ?
   bne.s   no_sprite_fader_out  ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  sprfo_fader_angle(a3),d2 ;Fader-Winkel 
+  move.w  sprfo_rgb8_fader_angle(a3),d2 ;Fader-Winkel 
   move.w  d2,d0
-  ADDF.W  sprfo_fader_angle_speed,d0 ;nächster Fader-Winkel
+  ADDF.W  sprfo_rgb8_fader_angle_speed,d0 ;nächster Fader-Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
-  ble.s   sprfo_save_fader_angle ;Ja -> verzweige
+  ble.s   sprfo_rgb8_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
-sprfo_save_fader_angle
-  move.w  d0,sprfo_fader_angle(a3) 
-  MOVEF.W sprf_colors_number*3,d6 ;Zähler
+sprfo_rgb8_save_fader_angle
+  move.w  d0,sprfo_rgb8_fader_angle(a3) 
+  MOVEF.W sprf_rgb8_colors_number*3,d6 ;Zähler
   lea     sine_table(pc),a0  
   move.l  (a0,d2.w*4),d0     ;sin(w)
-  MULUF.L sprfo_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
+  MULUF.L sprfo_rgb8_fader_radius*2,d0,d1 ;y'=(yr*sin(w))/2^15
   swap    d0
-  ADDF.W  sprfo_fader_center,d0 ;+ Fader-Mittelpunkt
-  lea     spr_color_table+(sprf_color_table_offset*LONGWORD_SIZE)(pc),a0 ;Puffer für Farbwerte
-  lea     sprfo_color_table+(sprf_color_table_offset*LONGWORD_SIZE)(pc),a1 ;Sollwerte
+  ADDF.W  sprfo_rgb8_fader_center,d0 ;+ Fader-Mittelpunkt
+  lea     spr_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ;Puffer für Farbwerte
+  lea     sprfo_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ;Sollwerte
   move.w  d0,a5              ;Additions-/Subtraktionswert für Blau
   swap    d0                 ;WORDSHIFT
   clr.w   d0                 ;Bits 0-15 löschen
   move.l  d0,a2              ;Additions-/Subtraktionswert für Rot
   lsr.l   #8,d0              ;BYTESHIFT
   move.l  d0,a4              ;Additions-/Subtraktionswert für Grün
-  MOVEF.W sprf_colors_number-1,d7 ;Anzahl der Farben
-  bsr.s   sprf_fader_loop
+  MOVEF.W sprf_rgb8_colors_number-1,d7 ;Anzahl der Farben
+  bsr.s   sprf_rgb8_fader_loop
   movem.l (a7)+,a4-a6
-  move.w  d6,sprf_colors_counter(a3) ;Sprites-Fader-Out fertig ?
+  move.w  d6,sprf_rgb8_colors_counter(a3) ;Sprites-Fader-Out fertig ?
   bne.s   no_sprite_fader_out ;Nein -> verzweige
-  move.w  #FALSE,sprfo_active(a3) ;Sprites-Fader-Out aus
+  move.w  #FALSE,sprfo_rgb8_active(a3) ;Sprites-Fader-Out aus
 no_sprite_fader_out
   rts
 
-  COLOR_FADER sprf
+  RGB8_COLOR_FADER sprf
 
-  COPY_COLOR_TABLE_TO_COPPERLIST sprf,spr,cl1,cl1_COLOR17_high1,cl1_COLOR17_low1
+  COPY_RGB8_COLORS_TO_COPPERLIST sprf,spr,cl1,cl1_COLOR17_high1,cl1_COLOR17_low1
 
 ; ** Spalten einblenden **
   CNOP 0,4
@@ -1403,10 +1403,10 @@ no_effects_handler
   rts
   CNOP 0,4
 eh_start_sprite_fader_in
-  move.w  #sprf_colors_number*3,sprf_colors_counter(a3)
+  move.w  #sprf_rgb8_colors_number*3,sprf_rgb8_colors_counter(a3)
   moveq   #0,d0
-  move.w  d0,sprfi_active(a3)  ;Sprites-Fader-In an
-  move.w  d0,sprf_copy_colors_active(a3) ;Kopieren der Farben an
+  move.w  d0,sprfi_rgb8_active(a3)  ;Sprites-Fader-In an
+  move.w  d0,sprf_rgb8_copy_colors_active(a3) ;Kopieren der Farben an
   rts
   CNOP 0,4
 eh_start_twisted_bars313
@@ -1446,10 +1446,10 @@ eh_stop_twisted_bars312
   rts
   CNOP 0,4
 eh_start_sprite_fader_out
-  move.w  #sprf_colors_number*3,sprf_colors_counter(a3)
+  move.w  #sprf_rgb8_colors_number*3,sprf_rgb8_colors_counter(a3)
   moveq   #0,d0
-  move.w  d0,sprfo_active(a3)  ;Sprites-Fader-Out an
-  move.w  d0,sprf_copy_colors_active(a3) ;Kopieren der Farben an
+  move.w  d0,sprfo_rgb8_active(a3)  ;Sprites-Fader-Out an
+  move.w  d0,sprf_rgb8_copy_colors_active(a3) ;Kopieren der Farben an
   rts
   CNOP 0,4
 eh_stop_all
@@ -1471,15 +1471,15 @@ NMI_int_server
   INCLUDE "sys-structures.i"
 
   CNOP 0,4
-pf1_color_table
+pf1_rgb8_color_table
   INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/32x32x16-Font.ct"
 
-spr_color_table
+spr_rgb8_color_table
   REPT spr_colors_number
     DC.L color00_bits
   ENDR  
 
-spr_pointers_display
+spr_ptrs_display
   DS.L spr_number
 
 ; **** Twisted-Bars ****
@@ -1499,7 +1499,7 @@ tb_switch_table_foreground
   DC.W $2022,$3033,$4044,$5055,$6066,$7077,$8088,$9099,$a0aa,$b0bb,$c0cc,$d0dd,$e0ee,$f0ff
 
 ; ** YZ-Koordinatentabelle **
-tb_yz_coordinates
+tb_yz_coords
   DS.W tb_bars_number*cl2_display_width*2
 
 ; **** Horiz-Scrolltext ****
@@ -1520,17 +1520,17 @@ hst_characters_x_positions
 
 ; ** Tabelle für Chars-Image-Adressen **
   CNOP 0,4
-hst_characters_image_pointers
+hst_characters_image_ptrs
   DS.L hst_text_characters_number
 
 ; **** Sprites-Fader ****
 ; ** Zielfarbwerte für Sprites-Fader-In **
   CNOP 0,4
-sprfi_color_table
+sprfi_rgb8_color_table
   INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/256x256x16-Nebula.ct"
 
 ; ** Zielfarbwerte für Sprites-Fader-Out **
-sprfo_color_table
+sprfo_rgb8_color_table
   REPT spr_colors_number
     DC.L color00_bits
   ENDR

@@ -460,15 +460,15 @@ init_main_variables
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
 init_main
-  bsr     init_color_registers
+  bsr     init_colors
   bsr     tb315_init_switch_table
   bsr     init_first_copperlist
   bra     init_second_copperlist
 
   CNOP 0,4
-init_color_registers
+init_colors
   CPU_SELECT_COLOR_HIGH_BANK 0
-  CPU_INIT_COLOR_HIGH COLOR00,32,pf1_color_table
+  CPU_INIT_COLOR_HIGH COLOR00,32,pf1_rgb8_color_table
   CPU_SELECT_COLOR_HIGH_BANK 1
   CPU_INIT_COLOR_HIGH COLOR00,32
   CPU_SELECT_COLOR_HIGH_BANK 2
@@ -483,7 +483,7 @@ init_color_registers
   CPU_INIT_COLOR_HIGH COLOR00,1
 
   CPU_SELECT_COLOR_LOW_BANK 0
-  CPU_INIT_COLOR_LOW COLOR00,32,pf1_color_table
+  CPU_INIT_COLOR_LOW COLOR00,32,pf1_rgb8_color_table
   CPU_SELECT_COLOR_LOW_BANK 1
   CPU_INIT_COLOR_LOW COLOR00,32
   CPU_SELECT_COLOR_LOW_BANK 2
@@ -499,9 +499,9 @@ init_color_registers
 
   IFEQ tb_quick_clear_enabled
     CPU_SELECT_COLOR_HIGH_BANK 7,bplcon3_bits3
-    CPU_INIT_COLOR_HIGH COLOR31,1,pf1_color_table
+    CPU_INIT_COLOR_HIGH COLOR31,1,pf1_rgb8_color_table
     CPU_SELECT_COLOR_LOW_BANK 7,bplcon3_bits4
-    CPU_INIT_COLOR_LOW COLOR31,1,pf1_color_table
+    CPU_INIT_COLOR_LOW COLOR31,1,pf1_rgb8_color_table
   ENDC
   rts
 
@@ -513,14 +513,14 @@ init_color_registers
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_display(a3),a0 
-  bsr.s   cl1_init_playfield_registers
+  bsr.s   cl1_init_playfield_props
   IFEQ open_border_enabled
     COP_MOVEQ TRUE,COPJMP2
     rts
   ELSE
-    bsr.s   cl1_init_bitplane_pointers
+    bsr.s   cl1_init_plane_ptrs
     COP_MOVEQ TRUE,COPJMP2
-    bra     cl1_set_bitplane_pointers
+    bra     cl1_set_plane_ptrs
   ENDC
 
   IFEQ open_border_enabled
@@ -534,7 +534,7 @@ init_first_copperlist
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_construction1(a3),a0 
-  bsr.s   cl2_init_bplcon4_registers
+  bsr.s   cl2_init_bplcon4
   bsr.s   cl2_init_copper_interrupt
   COP_LISTEND
   bsr     copy_second_copperlist
@@ -564,8 +564,8 @@ beam_routines
   bsr.s   swap_second_copperlist
   bsr     effects_handler
   bsr     tb_clear_second_copperlist
-  bsr     tb315_get_yz_coordinates
-  bsr     we_get_y_coordinates
+  bsr     tb315_get_yz_coords
+  bsr     we_get_y_coords
   bsr     tb315_set_background_bars
   bsr     tb315_set_foreground_bars
   IFNE tb_quick_clear_enabled
@@ -593,7 +593,7 @@ fast_exit
 ; **** Twisted-Bars3.1.5 ****
 ; ** Y+Z-Koordinaten berechnen **
   CNOP 0,4
-tb315_get_yz_coordinates
+tb315_get_yz_coords
   move.w  tb315_y_angle_speed_angle(a3),d1 ;Y-Winkel-Geschwindigkeits-Winkel
   move.w  d1,d0
   addq.b  #tb315_y_angle_speed2,d0
@@ -607,12 +607,12 @@ tb315_get_yz_coordinates
   add.b   d1,d0              ;nächster Y-Winkel
   move.w  d0,tb315_y_angle(a3)  
   moveq   #tb315_y_distance,d3
-  lea     tb315_yz_coordinates(pc),a1 ;Zeiger auf Y+Z-Koords-Tabelle
+  lea     tb315_yz_coords(pc),a1 ;Zeiger auf Y+Z-Koords-Tabelle
   move.w  #tb315_y_center,a2
   moveq   #cl2_display_width-1,d7 ;Anzahl der Spalten
-tb315_get_yz_coordinates_loop1
+tb315_get_yz_coords_loop1
   moveq   #tb315_bars_number-1,d6  ;Anzahl der Stangen
-tb315_get_yz_coordinates_loop2
+tb315_get_yz_coords_loop2
   moveq   #-(sine_table_length/4),d1 ;- 90 Grad
   move.l  (a0,d2.w*4),d0     ;sin(w)
   add.w   d2,d1              ;Y-Winkel - 90 Grad
@@ -624,14 +624,14 @@ tb315_get_yz_coordinates_loop2
   MULUF.W cl2_extension1_size/4,d0,d1 ;Y-Offset in CL
   move.w  d0,(a1)+           ;Y retten
   add.b   d3,d2              ;Y-Abstand zur nächsten Bar
-  dbf     d6,tb315_get_yz_coordinates_loop2
+  dbf     d6,tb315_get_yz_coords_loop2
   addq.b  #tb315_y_angle_step,d2
-  dbf     d7,tb315_get_yz_coordinates_loop1
+  dbf     d7,tb315_get_yz_coords_loop1
   rts
 
 ; ** Y-Koordinaten für Wave-Effect berechnen **
   CNOP 0,4
-we_get_y_coordinates
+we_get_y_coords
   move.w  we_y_radius_angle(a3),d2 ;1. Winkel Y-Radius
   move.w  d2,d0              
   move.w  we_y_angle(a3),d3  ;1. Y-Winkel
@@ -641,10 +641,10 @@ we_get_y_coordinates
   addq.b  #we_y_angle_speed,d0 ;nächster Y-Winkel
   move.w  d0,we_y_angle(a3)  
   lea     sine_table(pc),a0 
-  lea     we_y_coordinates(pc),a1 ;Y-Koord.
+  lea     we_y_coords(pc),a1 ;Y-Koord.
   move.w  #we_y_center,a2
   moveq   #cl2_display_width-1,d7 ;Anzahl der Spalten
-we_get_y_coordinates_loop
+we_get_y_coords_loop
   move.l  (a0,d2.w*4),d0     ;sin(w)
   MULUF.L we_y_radius*2,d0,d1
   swap    d0                 ;yr'=(yr*sin(w))/2^15
@@ -655,7 +655,7 @@ we_get_y_coordinates_loop
   MULUF.W cl2_extension1_size/4,d0,d1 ;Y-Offset in CL
   move.w  d0,(a1)+           ;Y-Offset
   addq.b  #we_y_angle_step,d3 ;nächster Y-Winkel
-  dbf     d7,we_get_y_coordinates_loop
+  dbf     d7,we_get_y_coords_loop
   rts
 
 ; ** Hintere Stangen in Copperliste kopieren **
@@ -663,11 +663,11 @@ we_get_y_coordinates_loop
 tb315_set_background_bars
   movem.l a3-a6,-(a7)
   moveq   #tb315_bar_height,d4
-  lea     tb315_yz_coordinates(pc),a0 ;Zeiger auf YZ-Koords
+  lea     tb315_yz_coords(pc),a0 ;Zeiger auf YZ-Koords
   move.l  cl2_construction2(a3),a2 
   ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2,a2
   move.l  extra_memory(a3),a5 ;Zeiger auf Tabelle mit Switchwerten
-  lea     we_y_coordinates(pc),a6 ;Zeiger auf Y-Koords
+  lea     we_y_coords(pc),a6 ;Zeiger auf Y-Koords
   moveq   #cl2_display_width-1,d7 ;Anzahl der Spalten
 tb315_set_background_bars_loop1
   move.w  (a6)+,d0           ;2. Y-Offset
@@ -696,11 +696,11 @@ tb315_skip_background_bar
 tb315_set_foreground_bars
   movem.l a3-a6,-(a7)
   moveq   #tb315_bar_height,d4
-  lea     tb315_yz_coordinates(pc),a0 ;Zeiger auf YZ-Koords
+  lea     tb315_yz_coords(pc),a0 ;Zeiger auf YZ-Koords
   move.l  cl2_construction2(a3),a2 
   ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2,a2
   move.l  extra_memory(a3),a5 ;Zeiger auf Tabelle mit Switchwerten
-  lea     we_y_coordinates(pc),a6 ;Zeiger auf Y-Koords
+  lea     we_y_coords(pc),a6 ;Zeiger auf Y-Koords
   moveq   #cl2_display_width-1,d7 ;Anzahl der Spalten
 tb315_set_foreround_bars_loop1
   move.w  (a6)+,d0           ;2. Y-Offset
@@ -901,18 +901,18 @@ NMI_int_server
   INCLUDE "sys-structures.i"
 
   CNOP 0,4
-pf1_color_table
+pf1_rgb8_color_table
   INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/03_tb_Colorgradient.ct"
 
 ; **** Twisted-Bars3.1.5 ****
 ; ** Y-Koordinatentabelle **
-tb315_yz_coordinates
+tb315_yz_coords
   DS.W tb315_bars_number*cl2_display_width*2
 
 ; **** Wave-Effect ****
 ; ** Y-Koordinatentabelle **
   CNOP 0,2
-we_y_coordinates
+we_y_coords
   DS.W cl2_display_width
 
 ; **** Blind-Fader ****

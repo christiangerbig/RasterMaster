@@ -500,15 +500,15 @@ init_main_variables
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
 init_main
-  bsr     init_color_registers
+  bsr     init_colors
   bsr     vcs_init_switch_table
   bsr     init_first_copperlist
   bra     init_second_copperlist
 
   CNOP 0,4
-init_color_registers
+init_colors
   CPU_SELECT_COLOR_HIGH_BANK 0
-  CPU_INIT_COLOR_HIGH COLOR00,32,pf1_color_table
+  CPU_INIT_COLOR_HIGH COLOR00,32,pf1_rgb8_color_table
   CPU_SELECT_COLOR_HIGH_BANK 1
   CPU_INIT_COLOR_HIGH COLOR00,32
   CPU_SELECT_COLOR_HIGH_BANK 2
@@ -525,7 +525,7 @@ init_color_registers
   CPU_INIT_COLOR_HIGH COLOR00,32
 
   CPU_SELECT_COLOR_LOW_BANK 0
-  CPU_INIT_COLOR_LOW COLOR00,32,pf1_color_table
+  CPU_INIT_COLOR_LOW COLOR00,32,pf1_rgb8_color_table
   CPU_SELECT_COLOR_LOW_BANK 1
   CPU_INIT_COLOR_LOW COLOR00,32
   CPU_SELECT_COLOR_LOW_BANK 2
@@ -550,14 +550,14 @@ init_color_registers
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_display(a3),a0 
-  bsr.s   cl1_init_playfield_registers
+  bsr.s   cl1_init_playfield_props
   IFEQ open_border_enabled
     COP_MOVEQ TRUE,COPJMP2
     rts
   ELSE
-    bsr.s   cl1_init_bitplane_pointers
+    bsr.s   cl1_init_plane_ptrs
     COP_MOVEQ TRUE,COPJMP2
-    bra     cl1_set_bitplane_pointers
+    bra     cl1_set_plane_ptrs
   ENDC
 
   IFEQ open_border_enabled
@@ -571,7 +571,7 @@ init_first_copperlist
   CNOP 0,4
 init_second_copperlist
   move.l  cl2_construction2(a3),a0 
-  bsr.s   cl2_init_bplcon4_registers
+  bsr.s   cl2_init_bplcon4
   bsr.s   cl2_init_copper_interrupt
   COP_LISTEND
   bsr     copy_second_copperlist
@@ -1134,7 +1134,7 @@ NMI_int_server
   INCLUDE "sys-structures.i"
 
   CNOP 0,4
-pf1_color_table
+pf1_rgb8_color_table
   INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/02_vcs3112_Colorgradient.ct"
 
 ; **** Blind-Fader ****

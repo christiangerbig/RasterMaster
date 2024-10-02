@@ -70,17 +70,9 @@ text_output_enabled        EQU FALSE
 CUSTOM_MEMORY_CHIP         EQU $00000000
 CUSTOM_MEMORY_FAST         EQU $00000001
 
-  IFD PROTRACKER_VERSION_2.3A 
-    INCLUDE "music-tracker/pt2-equals.i"
-  ENDC
-  IFD PROTRACKER_VERSION_3.0B
-    INCLUDE "music-tracker/pt3-equals.i"
-  ENDC
 pt_ciatiming_enabled       EQU TRUE
 pt_finetune_enabled        EQU FALSE
-  IFD PROTRACKER_VERSION_3.0B
 pt_metronome_enabled       EQU FALSE
-  ENDC
 pt_mute_enabled            EQU FALSE
 pt_track_volumes_enabled   EQU FALSE
 pt_track_periods_enabled   EQU FALSE
@@ -345,7 +337,7 @@ init_main
   IFEQ pt_finetune_enabled
     bsr     pt_InitFtuPeriodTableStarts
   ENDC
-  bsr     init_color_registers
+  bsr     init_colors
   bsr     init_CIA_timers
   bra     init_first_copperlist
 
@@ -389,12 +381,12 @@ pt_decrunch_audio_data
 
 
   CNOP 0,4
-init_color_registers
+init_colors
   CPU_SELECT_COLOR_HIGH_BANK 0
-  CPU_INIT_COLOR_HIGH COLOR00,1,pf1_color_table
+  CPU_INIT_COLOR_HIGH COLOR00,1,pf1_rgb8_color_table
 
   CPU_SELECT_COLOR_LOW_BANK 0
-  CPU_INIT_COLOR_LOW COLOR00,1,pf1_color_table
+  CPU_INIT_COLOR_LOW COLOR00,1,pf1_rgb8_color_table
   rts
 
 ; ** CIA-Timer initialisieren **
@@ -406,7 +398,7 @@ init_CIA_timers
   CNOP 0,4
 init_first_copperlist
   move.l  cl1_display(a3),a0 
-  bsr.s   cl1_init_playfield_registers
+  bsr.s   cl1_init_playfield_props
   bsr     cl1_init_copper_interrupt
   COP_LISTEND
   rts
@@ -530,7 +522,7 @@ NMI_int_server
 
 
   CNOP 0,4
-pf1_color_table
+pf1_rgb8_color_table
   DC.L color00_bits
 
 ; ** Tables for effect commands **

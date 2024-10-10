@@ -149,7 +149,7 @@ requires_fast_memory       EQU FALSE
 requires_multiscan_monitor EQU FALSE
 
 workbench_start_enabled    EQU TRUE
-screen_fader_enabled     EQU TRUE
+screen_fader_enabled       EQU TRUE
 text_output_enabled        EQU FALSE
 
 dma_bits                   EQU DMAF_COPPER+DMAF_MASTER+DMAF_SETCLR

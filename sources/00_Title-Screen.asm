@@ -4,8 +4,8 @@
 ; # Datum:    01.12.2023          #
 ; # Version:  1.2 beta            #
 ; # CPU:      68020+              #
-; # FASTMEM:  -                   #
-; # Chipset:  AGA                 #
+; # Fast-Memory: -                #
+; # Chipset:  AGA PAL             #
 ; # OS:       3.0+                #
 ; #################################
 
@@ -121,6 +121,7 @@ disk_memory_size            EQU 0
 extra_memory_size           EQU 0
 
 chip_memory_size            EQU 0
+
 ciaa_ta_time                EQU 0
 ciaa_tb_time                EQU 0
 ciab_ta_time                EQU 0
@@ -165,7 +166,8 @@ fmode_bits                  EQU FMODEF_SPR32+FMODEF_SPAGEM
 cl2_display_x_size          EQU 0
 cl2_display_width           EQU cl2_display_x_size/8
 cl2_display_y_size          EQU visible_lines_number
-cl2_hstart1                 EQU display_window_hstart-(pf1_depth3*CMOVE_SLOT_PERIOD)-(1*CMOVE_SLOT_PERIOD)-4
+cl2_hstart1                 EQU (ddfstrt_bits*2)-((pf1_depth3*CMOVE_SLOT_PERIOD)+(1*CMOVE_SLOT_PERIOD))
+
 cl2_vstart1                 EQU MINROW
 cl2_hstart2                 EQU $00
 cl2_vstart2                 EQU beam_position&$ff

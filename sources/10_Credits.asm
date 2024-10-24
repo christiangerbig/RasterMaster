@@ -4,8 +4,8 @@
 ; # Datum:    21.12.2023       #
 ; # Version:  1.3 beta         #
 ; # CPU:      68020+           #
-; # FASTMEM:  -                #
-; # Chipset:  AGA              #
+; # Fast-Memory: -             #
+; # Chipset:  AGA PAL          #
 ; # OS:       3.0+             #
 ; ##############################
 
@@ -169,7 +169,7 @@ fmode_bits                     EQU FMODEF_SPR32+FMODEF_SPAGEM
 cl1_display_x_size             EQU 0
 cl1_display_width              EQU cl1_display_x_size/8
 cl1_display_y_size             EQU visible_lines_number
-cl1_hstart1                    EQU display_window_hstart-(pf1_depth3*CMOVE_SLOT_PERIOD)-4
+cl1_hstart1                    EQU (ddfstrt_bits*2)-(pf1_depth3*CMOVE_SLOT_PERIOD)
 cl1_vstart1                    EQU MINROW
 cl1_hstart2                    EQU $00
 cl1_vstart2                    EQU beam_position&$ff
@@ -1027,7 +1027,7 @@ scroll_logo_left_in
   move.w  d1,(a5)
   move.w  d2,spr_pixel_per_datafetch/8(a0) ;SPR0CTL
   move.w  d2,spr_pixel_per_datafetch/8(a4)
-  tas     d2                 ;Attached-Bit setzen
+  or.b    #SPRCTLF_ATT,d2                 ;Attached-Bit setzen
   move.w  d2,spr_pixel_per_datafetch/8(a1) ;SPR1CTL
   move.w  d2,spr_pixel_per_datafetch/8(a5)
   movem.l (a7)+,a4-a5
@@ -1068,7 +1068,7 @@ scroll_logo_left_out
   move.w  d1,(a5)
   move.w  d2,spr_pixel_per_datafetch/8(a0) ;SPR0CTL
   move.w  d2,spr_pixel_per_datafetch/8(a4)
-  tas     d2                 ;Attached-Bit setzen
+  or.b    #SPRCTLF_ATT,d2                 ;Attached-Bit setzen
   move.w  d2,spr_pixel_per_datafetch/8(a1) ;SPR1CTL
   move.w  d2,spr_pixel_per_datafetch/8(a5)
   movem.l (a7)+,a4-a5

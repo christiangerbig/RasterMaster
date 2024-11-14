@@ -129,7 +129,7 @@
   INCLUDE "hardware/intbits.i"
 
 
-  INCDIR "Daten:Asm-Sources.AGA/normsource-includes/"
+  INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
 
 
 PASS_GLOBAL_REFERENCES     SET 1

@@ -48,7 +48,7 @@
   INCLUDE "hardware/intbits.i"
 
 
-  INCDIR "Daten:Asm-Sources.AGA/normsource-includes/"
+  INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
 
 
 SYS_TAKEN_OVER              SET 1
@@ -536,7 +536,7 @@ ipfo_delay_angle              RS.W 1
 eh_trigger_number             RS.W 1
 
 ; **** Main ****
-fx_active                     RS.W 1
+stop_fx_active                     RS.W 1
 
 variables_size                RS.B 0
 
@@ -587,7 +587,7 @@ init_main_variables
   move.w  d0,eh_trigger_number(a3)
 
 ; **** Main ****
-  move.w  d1,fx_active(a3)
+  move.w  d1,stop_fx_active(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
@@ -781,7 +781,7 @@ beam_routines
   bsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   fx_active(a3)      ;Effekte beendet ?
+  tst.w   stop_fx_active(a3)      ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
   move.w  custom_error_code(a3),d1
@@ -822,27 +822,27 @@ get_chans_data
 ; a2 ... Zeiger auf Amplitudenwerte des Kanals
 ; d7 ... Anzahl der Samplebytes zum Auslesen
 get_sample_data
-  tst.b   n_note_trigger(a0) ;Neue Note angespielt ?
+  tst.b   n_notetrigger(a0) ;Neue Note angespielt ?
   bne.s   cs_no_new_note     ;Nein -> verzweige
-  move.l  n_start(a0),n_current_start(a0) ;Aktuelle Startadresse des Samples
-  move.l  n_length(a0),n_current_length(a0) ;Aktuelle Länge und Periode
+  move.l  n_start(a0),n_currentstart(a0) ;Aktuelle Startadresse des Samples
+  move.l  n_length(a0),n_currentlength(a0) ;Aktuelle Länge und Periode
   moveq   #0,d0
-  move.w  d0,n_chan_data_position(a0) ;Position in Sampledaten zurücksetzen
-  move.b  #FALSE,n_note_trigger(a0) ;Note Trigger Flag zurücksetzen
+  move.w  d0,n_chandatapos(a0) ;Position in Sampledaten zurücksetzen
+  move.b  #FALSE,n_notetrigger(a0) ;Note Trigger Flag zurücksetzen
 cs_no_new_note
-  move.w  n_current_period(a0),d0 ;Aktuelle Periode 
+  move.w  n_currentperiod(a0),d0 ;Aktuelle Periode
   beq.s   no_get_sample_data ;Wenn NULL -> verzweige
   moveq   #TRUE,d2           ;Langwort-Zugriff
-  move.w  n_chan_data_position(a0),d2 ;Position in Sampledaten
+  move.w  n_chandatapos(a0),d2 ;Position in Sampledaten
   move.l  d6,d3              ;PAL-Clockkonstante / PAL-Frequenz
-  move.l  n_current_start(a0),a1 ;Aktuelle Startadresse des Samples
+  move.l  n_currentstart(a0),a1 ;Aktuelle Startadresse des Samples
   divu.w  d0,d3              ;PAL-Clockkonstante / (PAL-Frequenz * aktuelle Periode) = Samplebytes pro PAL-Frame
   moveq   #TRUE,d4           ;Langwort-Zugriff
-  move.w  n_current_length(a0),d4 ;Aktuelle Länge des Samples
+  move.w  n_currentlength(a0),d4 ;Aktuelle Länge des Samples
   ext.l   d3                 ;Auf 32 Bit erweitern
   MULUF.W 2,d4               ;*2 = Länge in Bytes
   moveq   #TRUE,d1           ;Langwort-Zugriff
-  move.w  n_current_volume(a0),d1 ;Aktuelle Kanallautstärke
+  move.w  n_currentvolume(a0),d1 ;Aktuelle Kanallautstärke
   move.l  d2,d5              ;Position in Sampledaten retten
 get_sample_data_loop
   move.b  (a1,d2.l),d0       ;Samplebyte lesen
@@ -873,12 +873,12 @@ cs_restart_loop
   bra.s   cs_save_current_pos
   CNOP 0,4
 cs_set_loop_start
-  move.l  n_loopstart(a0),n_current_start(a0) ;Aktuelle Startadresse des Samples = Schleifenstart
+  move.l  n_loopstart(a0),n_currentstart(a0) ;Aktuelle Startadresse des Samples = Schleifenstart
 cs_restart_sample
-  move.w  d0,n_current_length(a0) ;Neue aktuelle Länge retten
+  move.w  d0,n_currentlength(a0) ;Neue aktuelle Länge retten
   moveq   #TRUE,d5           ;Position in Sampledaten zurücksetzen
 cs_save_current_pos
-  move.w  d5,n_chan_data_position(a0) ;Neue Position retten
+  move.w  d5,n_chandatapos(a0) ;Neue Position retten
 no_get_sample_data
   rts
 
@@ -921,9 +921,9 @@ image_fader_in
   tst.w   ifi_rgb8_active(a3)     ;Image-Fader-In an ?
   bne.s   no_image_fader_in  ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  ifi_rgb8_fader_angle(a3),d2 ;Fader-Winkel 
+  move.w  ifi_rgb8_fader_angle(a3),d2 ;Winkel 
   move.w  d2,d0
-  ADDF.W  ifi_rgb8_fader_angle_speed,d0 ;nächster Fader-Winkel
+  ADDF.W  ifi_rgb8_fader_angle_speed,d0 ;nächster Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
   ble.s   ifi_rgb8_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
@@ -958,9 +958,9 @@ image_fader_out
   tst.w   ifo_rgb8_active(a3)     ;Image-Fader-Out an ?
   bne.s   no_image_fader_out ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  ifo_rgb8_fader_angle(a3),d2 ;Fader-Winkel 
+  move.w  ifo_rgb8_fader_angle(a3),d2 ;Winkel 
   move.w  d2,d0
-  ADDF.W  ifo_rgb8_fader_angle_speed,d0 ;nächster Fader-Winkel
+  ADDF.W  ifo_rgb8_fader_angle_speed,d0 ;nächster Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
   ble.s   ifo_rgb8_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
@@ -1223,7 +1223,7 @@ eh_start_image_fader_out
   rts
   CNOP 0,4
 eh_stop_all
-  clr.w   fx_active(a3)      ;Effekte beendet
+  clr.w   stop_fx_active(a3)      ;Effekte beendet
   rts
 
   CNOP 0,4

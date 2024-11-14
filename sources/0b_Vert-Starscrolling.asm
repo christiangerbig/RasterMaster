@@ -41,7 +41,7 @@
   INCLUDE "hardware/intbits.i"
 
 
-  INCDIR "Daten:Asm-Sources.AGA/normsource-includes/"
+  INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
 
 
 SYS_TAKEN_OVER              SET 1
@@ -234,7 +234,7 @@ vss_y_restart               EQU cl2_display_y_size+vss_star_y_size3
 
 vss_stars_per_plane_number  EQU 6
 
-vss_switch_table_number     EQU 2
+vss_bplam_table_number     EQU 2
 vss_switch_buffer_number    EQU 3
 vss_switch_buffer_x_size    EQU 44
 vss_switch_buffer_y_size    EQU cl2_display_y_size+(vss_star_y_size3*2)+1
@@ -295,10 +295,10 @@ ct_size1                    EQU color_values_number1*segments_number1
 ct_size2                    EQU color_values_number2*segments_number2
 ct_size3                    EQU color_values_number3*segments_number3
 
-vss_switch_table_size       EQU vss_image_x_size*vss_image_y_size
+vss_bplam_table_size       EQU vss_image_x_size*vss_image_y_size
 vss_switch_buffer_size      EQU vss_switch_buffer_x_size*vss_switch_buffer_y_size
 
-chip_memory_size            EQU ((vss_switch_table_size*vss_switch_table_number)+(vss_switch_buffer_size*vss_switch_buffer_number))*BYTE_SIZE
+chip_memory_size            EQU ((vss_bplam_table_size*vss_bplam_table_number)+(vss_switch_buffer_size*vss_switch_buffer_number))*BYTE_SIZE
 
 
   INCLUDE "except-vectors-offsets.i"
@@ -613,8 +613,8 @@ spr7_y_size2     EQU sprite7_size/(spr_x_size2/8)
 save_a7                         RS.L 1
 
 ; **** Vert-Starscrolling ****
-vss_switch_table                RS.L 1
-vss_switch_table_mask           RS.L 1
+vss_bplam_table                RS.L 1
+vss_bplam_table_mask           RS.L 1
 
 vss_switch_buffer_construction1 RS.L 1
 vss_switch_buffer_construction2 RS.L 1
@@ -646,7 +646,7 @@ ipfo_delay_angle                RS.W 1
 eh_trigger_number               RS.W 1
 
 ; **** Main ****
-fx_active                       RS.W 1
+stop_fx_active                       RS.W 1
 
 variables_size                  RS.B 0
 
@@ -660,10 +660,10 @@ init_main_variables
 
 ; **** Vert-Starscrolling ****
   move.l  chip_memory(a3),a0
-  move.l  a0,vss_switch_table(a3) ;Vorlage der Sterne
-  add.l   #vss_switch_table_size,a0
-  move.l  a0,vss_switch_table_mask(a3) ;Maske der Sterne
-  add.l   #vss_switch_table_size,a0
+  move.l  a0,vss_bplam_table(a3) ;Vorlage der Sterne
+  add.l   #vss_bplam_table_size,a0
+  move.l  a0,vss_bplam_table_mask(a3) ;Maske der Sterne
+  add.l   #vss_bplam_table_size,a0
 
   move.l  a0,vss_switch_buffer_construction1(a3)
   add.l   #vss_switch_buffer_size,a0
@@ -706,7 +706,7 @@ init_main_variables
   move.w  d0,eh_trigger_number(a3)
 
 ; **** Main ****
-  move.w  d1,fx_active(a3)
+  move.w  d1,stop_fx_active(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
@@ -715,7 +715,7 @@ init_main
   bsr.s   init_colors
   bsr.s   init_sprites
   bsr     vss_convert_image_data
-  bsr     vss_init_switch_table_mask
+  bsr     vss_init_bplam_table_mask
   bsr     vss_init_xy_coords
   bsr     init_first_copperlist
   bra     init_second_copperlist
@@ -745,28 +745,28 @@ init_sprites
   INIT_ATTACHED_SPRITES_CLUSTER lg,spr_ptrs_display,lg_image_x_position,lg_image_y_position,spr_x_size2,lg_image_y_size,,BLANK
 
 ; ** Bilddaten in Switchwerte umwandeln **
-  CONVERT_IMAGE_TO_BPLCON4_CHUNKY.B vss,vss_switch_table,a3
+  CONVERT_IMAGE_TO_BPLCON4_CHUNKY.B vss,vss_bplam_table,a3
 
 ; ** Switchtabellenmaske initialisieren **
   CNOP 0,4
-vss_init_switch_table_mask
+vss_init_bplam_table_mask
   MOVEF.L vss_image_plane_width*(vss_image_depth-1),d3
   lea     vss_image_mask,a0  ;Plane0
-  move.l  vss_switch_table_mask(a3),a1 ;Tabelle mit Switchwerten
+  move.l  vss_bplam_table_mask(a3),a1 ;Tabelle mit Switchwerten
   moveq   #vss_image_y_size-1,d7 ;Anzahl der Zeilen
-vss_init_switch_table_mask_loop1
+vss_init_bplam_table_mask_loop1
   moveq   #vss_image_plane_width-1,d6 ;Anzahl der Bytes pro Zeile
-vss_init_switch_table_mask_loop2
+vss_init_bplam_table_mask_loop2
   move.b  (a0)+,d0           ;8 Pixel lesen
   moveq   #8-1,d5            ;Länge eines Bytes in Pixeln
-vss_init_switch_table_mask_loop3
+vss_init_bplam_table_mask_loop3
   add.b   d0,d0              ;nächstes Bit
   scs     d2                 ;Wenn Übertragsbit gesetzt $ff setzen
   move.b  d2,(a1)+           ;Maskenwert eintragen
-  dbf     d5,vss_init_switch_table_mask_loop3
-  dbf     d6,vss_init_switch_table_mask_loop2
+  dbf     d5,vss_init_bplam_table_mask_loop3
+  dbf     d6,vss_init_bplam_table_mask_loop2
   add.l   d3,a0              ;nächste Zeile in Plane0
-  dbf     d7,vss_init_switch_table_mask_loop1
+  dbf     d7,vss_init_bplam_table_mask_loop1
   rts
 
 ; ** Stern-Koordinaten initialisieren **
@@ -899,7 +899,7 @@ beam_routines
   jsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   fx_active(a3)      ;Effekte beendet ?
+  tst.w   stop_fx_active(a3)      ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
   move.w  custom_error_code(a3),d1
@@ -930,9 +930,9 @@ vert_starscrolling
   MOVEF.W vss_y_restart,d4
   moveq   #vss_star_x_size,d5 ;Offset für nächsten Stern
   lea     vss_xy_coords(pc),a0 ;Zeiger auf XY-Koords
-  move.l  vss_switch_table(a3),a1 ;BOB
+  move.l  vss_bplam_table(a3),a1 ;BOB
   add.l   #(vss_z_planes_number-1)*vss_star_x_size,a1 ;Zeiger auf letzten Stern
-  move.l  vss_switch_table_mask(a3),a2 ;Maske
+  move.l  vss_bplam_table_mask(a3),a2 ;Maske
   add.l   #(vss_z_planes_number-1)*vss_star_x_size,a2 ;Zeiger auf letzte Maske
   move.l  vss_switch_buffer_construction2(a3),a4 ;Ziel = Puffer
   move.w  #BC0F_SRCA+BC0F_SRCB+BC0F_SRCC+BC0F_DEST+NANBC+NABC+ABNC+ABC,a3 ;Minterm D=A+B
@@ -1111,9 +1111,9 @@ image_fader_in
   tst.w   ifi_rgb8_active(a3)     ;Image-Fader-In an ?
   bne.s   no_image_fader_in  ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  ifi_rgb8_fader_angle(a3),d2 ;Fader-Winkel 
+  move.w  ifi_rgb8_fader_angle(a3),d2 ;Winkel 
   move.w  d2,d0
-  addq.w  #ifi_rgb8_fader_angle_speed,d0 ;nächster Fader-Winkel
+  addq.w  #ifi_rgb8_fader_angle_speed,d0 ;nächster Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
   ble.s   ifi_rgb8_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
@@ -1148,9 +1148,9 @@ image_fader_out
   tst.w   ifo_rgb8_active(a3)     ;Image-Fader-Out an ?
   bne.s   no_image_fader_out ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  ifo_rgb8_fader_angle(a3),d2 ;Fader-Winkel 
+  move.w  ifo_rgb8_fader_angle(a3),d2 ;Winkel 
   move.w  d2,d0
-  addq.w  #ifo_rgb8_fader_angle_speed,d0 ;nächster Fader-Winkel
+  addq.w  #ifo_rgb8_fader_angle_speed,d0 ;nächster Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
   ble.s   ifo_rgb8_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
@@ -1408,7 +1408,7 @@ eh_start_image_pixel_fader_out
   rts
   CNOP 0,4
 eh_stop_all
-  clr.w   fx_active(a3)      ;Effekt beenden
+  clr.w   stop_fx_active(a3)      ;Effekt beenden
   rts
 
 

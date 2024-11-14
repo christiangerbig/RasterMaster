@@ -42,7 +42,7 @@
   INCLUDE "hardware/intbits.i"
 
 
-  INCDIR "Daten:Asm-Sources.AGA/normsource-includes/"
+  INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
 
 
 SYS_TAKEN_OVER                 SET 1
@@ -504,7 +504,7 @@ sllo_x_angle                   RS.W 1
 eh_trigger_number              RS.W 1
 
 ; **** Main ****
-fx_active                      RS.W 1
+stop_fx_active                      RS.W 1
 
 variables_size                 RS.B 0
 
@@ -551,7 +551,7 @@ init_main_variables
   move.w  d0,eh_trigger_number(a3)
 
 ; **** Main ****
-  move.w  d1,fx_active(a3)
+  move.w  d1,stop_fx_active(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
@@ -797,6 +797,7 @@ no_sync_routines
 beam_routines
   bsr     wait_copint
   bsr.s   spr_swap_structures
+  bsr.s   spr_set_sprite_ptrs
   bsr.s   swap_extra_playfield
   bsr     effects_handler
   bsr     scroll_logo_left_in
@@ -809,14 +810,16 @@ beam_routines
   jsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   fx_active(a3)      ;Effekte beendet ?
+  tst.w   stop_fx_active(a3)      ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
   move.w  custom_error_code(a3),d1
   rts
 
 
-  SWAP_SPRITES_STRUCTURES spr,spr_swap_number
+  SWAP_SPRITES spr,spr_swap_number
+
+  SET_SPRITES spr,spr_swap_number
 
   CNOP 0,4
 swap_extra_playfield
@@ -921,9 +924,9 @@ image_fader_in
   tst.w   ifi_rgb8_active(a3)     ;Image-Fader-In an ?
   bne.s   no_image_fader_in  ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  ifi_rgb8_fader_angle(a3),d2 ;Fader-Winkel 
+  move.w  ifi_rgb8_fader_angle(a3),d2 ;Winkel 
   move.w  d2,d0
-  ADDF.W  ifi_rgb8_fader_angle_speed,d0 ;nächster Fader-Winkel
+  ADDF.W  ifi_rgb8_fader_angle_speed,d0 ;nächster Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
   ble.s   ifi_rgb8_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
@@ -958,9 +961,9 @@ image_fader_out
   tst.w   ifo_rgb8_active(a3)     ;Image-Fader-Out an ?
   bne.s   no_image_fader_out ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  ifo_rgb8_fader_angle(a3),d2 ;Fader-Winkel 
+  move.w  ifo_rgb8_fader_angle(a3),d2 ;Winkel 
   move.w  d2,d0
-  ADDF.W  ifo_rgb8_fader_angle_speed,d0 ;nächster Fader-Winkel
+  ADDF.W  ifo_rgb8_fader_angle_speed,d0 ;nächster Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
   ble.s   ifo_rgb8_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
@@ -1142,7 +1145,7 @@ eh_start_scroll_logo_left_out
   rts
   CNOP 0,4
 eh_stop_all
-  clr.w   fx_active(a3)      ;Effekte beendet
+  clr.w   stop_fx_active(a3)      ;Effekte beendet
   rts
 
 

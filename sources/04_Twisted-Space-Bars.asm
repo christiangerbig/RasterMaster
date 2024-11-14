@@ -41,7 +41,7 @@
   INCLUDE "hardware/intbits.i"
 
 
-  INCDIR "Daten:Asm-Sources.AGA/normsource-includes/"
+  INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
 
 
 SYS_TAKEN_OVER                 SET 1
@@ -641,7 +641,7 @@ ccfo_delay_reset           RS.W 1
 eh_trigger_number          RS.W 1
 
 ; **** Main ****
-fx_active                  RS.W 1
+stop_fx_active                  RS.W 1
 
 variables_size             RS.B 0
 
@@ -706,7 +706,7 @@ init_main_variables
   move.w  d0,eh_trigger_number(a3)
 
 ; **** Main ****
-  move.w  d1,fx_active(a3)
+  move.w  d1,stop_fx_active(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
@@ -857,6 +857,7 @@ beam_routines
   bsr     wait_copint
   bsr.s   swap_second_copperlist
   bsr.s   swap_playfield1
+  bsr.s   set_playfield1
   bsr     effects_handler
   bsr     sprf_rgb8_copy_color_table
   tst.w   hst_enabled(a3)
@@ -879,7 +880,7 @@ no_horiz_scrolltext
   bsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   fx_active(a3)      ;Effekte beendet ?
+  tst.w   stop_fx_active(a3)      ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
   move.w  custom_error_code(a3),d1
@@ -888,7 +889,9 @@ fast_exit
 
   SWAP_COPPERLIST cl2,3
 
-  SWAP_PLAYFIELD pf1,2,pf1_depth3,pf1_plane_x_offset,pf1_plane_y_offset
+  SWAP_PLAYFIELD pf1,2
+
+  SET_PLAYFIELD pf1,pf1_depth3,pf1_plane_x_offset,pf1_plane_y_offset
 
 
 ; ** Laufschrift **
@@ -991,7 +994,7 @@ tb_set_background_bars
   move.l  cl2_construction2(a3),a2 
   ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2,a2
   move.w  #tb_bars_number*LONGWORD_SIZE,a3 ;Z + Y überspringen
-  lea     tb_switch_table_background(pc),a5 ;Zeiger auf Tabelle mit Switchwerten
+  lea     tb_bplam_table_background(pc),a5 ;Zeiger auf Tabelle mit Switchwerten
   lea     ccf_fader_columns_mask(pc),a6 ;Tabelle mit Status der Spalten
   moveq   #cl2_display_width-1,d7 ;Anzahl der Spalten
 tb_set_background_bars_loop1
@@ -1025,7 +1028,7 @@ tb_set_foreground_bars
   move.l  cl2_construction2(a3),a2 
   ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2,a2
   move.w  #tb_bars_number*LONGWORD_SIZE,a3 ;Z + Y überspringen
-  lea     tb_switch_table_foreground(pc),a5 ;Zeiger auf Tabelle mit Switchwerten
+  lea     tb_bplam_table_foreground(pc),a5 ;Zeiger auf Tabelle mit Switchwerten
   lea     ccf_fader_columns_mask(pc),a6 ;Tabelle mit Status der Spalten
   moveq   #cl2_display_width-1,d7 ;Anzahl der Spalten
 tb_set_foreround_bars_loop1
@@ -1157,9 +1160,9 @@ sprite_fader_in
   tst.w   sprfi_rgb8_active(a3)     ;Sprites-Fader-In an ?
   bne.s   no_sprite_fader_in   ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  sprfi_rgb8_fader_angle(a3),d2 ;Fader-Winkel 
+  move.w  sprfi_rgb8_fader_angle(a3),d2 ;Winkel 
   move.w  d2,d0
-  ADDF.W  sprfi_rgb8_fader_angle_speed,d0 ;nächster Fader-Winkel
+  ADDF.W  sprfi_rgb8_fader_angle_speed,d0 ;nächster Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
   ble.s   sprfi_rgb8_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
@@ -1194,9 +1197,9 @@ sprite_fader_out
   tst.w   sprfo_rgb8_active(a3)     ;Sprites-Fader-Out an ?
   bne.s   no_sprite_fader_out  ;Nein -> verzweige
   movem.l a4-a6,-(a7)
-  move.w  sprfo_rgb8_fader_angle(a3),d2 ;Fader-Winkel 
+  move.w  sprfo_rgb8_fader_angle(a3),d2 ;Winkel 
   move.w  d2,d0
-  ADDF.W  sprfo_rgb8_fader_angle_speed,d0 ;nächster Fader-Winkel
+  ADDF.W  sprfo_rgb8_fader_angle_speed,d0 ;nächster Winkel
   cmp.w   #sine_table_length/2,d0 ;Y-Winkel <= 180 Grad ?
   ble.s   sprfo_rgb8_save_fader_angle ;Ja -> verzweige
   MOVEF.W sine_table_length/2,d0 ;180 Grad
@@ -1453,7 +1456,7 @@ eh_start_sprite_fader_out
   rts
   CNOP 0,4
 eh_stop_all
-  clr.w   fx_active(a3)      ;Effekte beendet
+  clr.w   stop_fx_active(a3)      ;Effekte beendet
   rts
 
 
@@ -1492,10 +1495,10 @@ tb_color_table
   DS.L spr_colors_number*tb_bar_height
 
 ; ** Tabellen mit Switchwerten der Bar **
-tb_switch_table_background
+tb_bplam_table_background
   DC.W $0022,$0033,$0044,$0055,$0066,$0077,$0088,$0099,$00aa,$00bb,$00cc,$00dd,$00ee,$00ff
 
-tb_switch_table_foreground
+tb_bplam_table_foreground
   DC.W $2022,$3033,$4044,$5055,$6066,$7077,$8088,$9099,$a0aa,$b0bb,$c0cc,$d0dd,$e0ee,$f0ff
 
 ; ** YZ-Koordinatentabelle **

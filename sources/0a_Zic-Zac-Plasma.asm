@@ -41,7 +41,7 @@
   INCLUDE "hardware/intbits.i"
 
 
-  INCDIR "Daten:Asm-Sources.AGA/normsource-includes/"
+  INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
 
 SYS_TAKEN_OVER             SET 1
 PASS_GLOBAL_REFERENCES     SET 1
@@ -167,7 +167,7 @@ zzp5_y_center              EQU 64
 zzp5_y_radius_angle_speed  EQU 1
 zzp5_y_angle_speed         EQU 1
 zzp5_y_angle_step          EQU 9
-zzp5_switch_table_step     EQU 1
+zzp5_bplam_table_step     EQU 1
 
 zzp5_copy_blit_x_size      EQU 16
 zzp5_copy_blit_width       EQU zzp5_copy_blit_x_size/8
@@ -201,10 +201,10 @@ segments_number1           EQU 2
 
 ct_size1                   EQU color_values_number1*segments_number1
 
-zzp5_switch_table_size1    EQU ct_size1
-zzp5_switch_table_size2    EQU cl2_display_y_size+(zzp5_y_radius*2)
+zzp5_bplam_table_size1    EQU ct_size1
+zzp5_bplam_table_size2    EQU cl2_display_y_size+(zzp5_y_radius*2)
 
-chip_memory_size           EQU zzp5_switch_table_size2*WORD_SIZE
+chip_memory_size           EQU zzp5_bplam_table_size2*WORD_SIZE
 
 
   INCLUDE "except-vectors-offsets.i"
@@ -378,7 +378,7 @@ vbfo_active               RS.W 1
 eh_trigger_number         RS.W 1
 
 ; **** Main ****
-fx_active                 RS.W 1
+stop_fx_active                 RS.W 1
 
 variables_size            RS.B 0
 
@@ -412,7 +412,7 @@ init_main_variables
   move.w  d0,eh_trigger_number(a3)
 
 ; **** Main ****
-  move.w  d1,fx_active(a3)
+  move.w  d1,stop_fx_active(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
@@ -520,7 +520,7 @@ beam_routines
   jsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   fx_active(a3)      ;Effekte beendet ?
+  tst.w   stop_fx_active(a3)      ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
   move.w  custom_error_code(a3),d1
@@ -648,9 +648,9 @@ zzp5_init_copy_blit
 vert_border_fader_out
   tst.w   vbfo_active(a3)    ;Vert-Border-Fader an ?
   bne.s   no_vert_border_fader_out ;Nein -> verzweige
-  move.w  vbf_fader_angle(a3),d1 ;Fader-Winkel 
+  move.w  vbf_fader_angle(a3),d1 ;Winkel 
   move.w  d1,d0              
-  subq.w  #vbfo_fader_angle_speed,d0 ;nächster Fader-Winkel
+  subq.w  #vbfo_fader_angle_speed,d0 ;nächster Winkel
   move.w  d0,vbf_fader_angle(a3) 
   lea     sine_table_512,a0  
   move.l  (a0,d1.w*4),d0     ;sin(w)
@@ -714,7 +714,7 @@ eh_start_vert_border_fader_out
   rts
   CNOP 0,4
 eh_stop_all
-  clr.w   fx_active(a3)      ;Effekt beenden
+  clr.w   stop_fx_active(a3)      ;Effekt beenden
   rts
 
 

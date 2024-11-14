@@ -41,7 +41,7 @@
   INCLUDE "hardware/intbits.i"
 
 
-  INCDIR "Daten:Asm-Sources.AGA/normsource-includes/"
+  INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
 
 
 SYS_TAKEN_OVER             SET 1
@@ -214,9 +214,9 @@ segments_number1           EQU bcc_5242_bars_number
 
 ct_size1                   EQU color_values_number1*segments_number1
 
-bcc_5242_switch_table_size EQU ct_size1*2
+bcc_5242_bplam_table_size EQU ct_size1*2
 
-extra_memory_size          EQU bcc_5242_switch_table_size*BYTE_SIZE
+extra_memory_size          EQU bcc_5242_bplam_table_size*BYTE_SIZE
 
 
   INCLUDE "except-vectors-offsets.i"
@@ -356,7 +356,7 @@ spr7_y_size2       EQU 0
   INCLUDE "variables-offsets.i"
 
 ; **** Blind-Colorcycle ****
-bcc_5242_switch_table_start RS.W 1
+bcc_5242_bplam_table_start RS.W 1
 bcc_5242_step2_angle        RS.W 1
 
 ; **** Blind-Fader ****
@@ -372,7 +372,7 @@ bfo_active                  RS.W 1
 eh_trigger_number           RS.W 1
 
 ; **** Main *****
-fx_active                   RS.W 1
+stop_fx_active                   RS.W 1
 
 variables_size              RS.B 0
 
@@ -386,7 +386,7 @@ init_main_variables
 
 ; **** Blind-Colorcycle5.2.4.2 ****
   moveq   #0,d0
-  move.w  d0,bcc_5242_switch_table_start(a3)
+  move.w  d0,bcc_5242_bplam_table_start(a3)
   moveq   #sine_table_length/4,d2
   move.w  d2,bcc_5242_step2_angle(a3)
   moveq   #FALSE,d1
@@ -404,14 +404,14 @@ init_main_variables
   move.w  d0,eh_trigger_number(a3)
 
 ; **** Main ****
-  move.w  d1,fx_active(a3)
+  move.w  d1,stop_fx_active(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
 init_main
   bsr.s   init_colors
-  bsr     bcc5242_init_mirror_switch_table
+  bsr     bcc5242_init_mirror_bplam_table
   bsr     init_first_copperlist
   bra     init_second_copperlist
 
@@ -442,7 +442,7 @@ init_colors
 
 ; **** Blind-Colorcycle ****
 ; ** Referenz-Switchtabelle initialisieren **
-  INIT_MIRROR_SWITCH_TABLE.B bcc5242,1,1,segments_number1,color_values_number1,extra_memory,a3
+  INIT_MIRROR_bplam_table.B bcc5242,1,1,segments_number1,color_values_number1,extra_memory,a3
 
 
   CNOP 0,4
@@ -506,7 +506,7 @@ beam_routines
   jsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   fx_active(a3)      ;Effekte beendet ?
+  tst.w   stop_fx_active(a3)      ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
   move.w  custom_error_code(a3),d1
@@ -522,12 +522,12 @@ blind_colorcycle5242
   movem.l a4-a6,-(a7)
   move.w  bcc_5242_step2_angle(a3),d3 ;Winkel 
   move.w  d3,d0              
-  move.w  bcc_5242_switch_table_start(a3),d4 ;Startwert in Farbtabelle 
+  move.w  bcc_5242_bplam_table_start(a3),d4 ;Startwert in Farbtabelle 
   addq.b  #bcc_5242_step2_angle_speed,d0 ;nächster Winkel
   move.w  d0,bcc_5242_step2_angle(a3) ;neuen Winkel retten
   move.w  d4,d0              
   addq.b  #bcc_5242_speed,d0      ;Startwert der Farbtabelle erhöhen
-  move.w  d0,bcc_5242_switch_table_start(a3) 
+  move.w  d0,bcc_5242_bplam_table_start(a3) 
   move.l  extra_memory(a3),a0 ;Tabelle mit Switchwerten
   move.l  cl2_construction2(a3),a2 
   ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2,a2
@@ -714,7 +714,7 @@ eh_start_blind_fader_out
   rts
   CNOP 0,4
 eh_stop_all
-  clr.w   fx_active(a3)      ;Effekt beenden
+  clr.w   stop_fx_active(a3)      ;Effekt beenden
   rts
 
 

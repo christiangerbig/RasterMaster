@@ -41,7 +41,7 @@
   INCLUDE "hardware/intbits.i"
 
 
-  INCDIR "Daten:Asm-Sources.AGA/normsource-includes/"
+  INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
 
 
 SYS_TAKEN_OVER                  SET 1
@@ -66,10 +66,10 @@ text_output_enabled             EQU FALSE
 
 open_border_enabled             EQU TRUE
 
-vcs3112_switch_table_length_256 EQU TRUE
-vcs3121_switch_table_length_256 EQU TRUE
-vcs3122_switch_table_length_256 EQU TRUE
-vcs3111_switch_table_length_256 EQU TRUE
+vcs3112_bplam_table_length_256 EQU TRUE
+vcs3121_bplam_table_length_256 EQU TRUE
+vcs3122_bplam_table_length_256 EQU TRUE
+vcs3111_bplam_table_length_256 EQU TRUE
 
   IFEQ open_border_enabled
 dma_bits                        EQU DMAF_COPPER+DMAF_SETCLR
@@ -265,9 +265,9 @@ segments_number1                EQU vcs3112_bars_number*2
 
 ct_size1                        EQU color_values_number1*segments_number1
 
-vcs_switch_table_size           EQU ct_size1
+vcs_bplam_table_size           EQU ct_size1
 
-extra_memory_size               EQU vcs_switch_table_size*BYTE_SIZE
+extra_memory_size               EQU vcs_bplam_table_size*BYTE_SIZE
 
 
   INCLUDE "except-vectors-offsets.i"
@@ -414,22 +414,22 @@ save_a7                    RS.L 1
 
 ; **** Vert-Colorscroll3.1.1.2 ****
 vcs3112_active             RS.W 1
-vcs3112_switch_table_start RS.W 1
+vcs3112_bplam_table_start RS.W 1
 vcs3112_step1_angle        RS.W 1
 
 ; **** Vert-Colorscroll3.1.2.1 ****
 vcs3121_active             RS.W 1
-vcs3121_switch_table_start RS.W 1
+vcs3121_bplam_table_start RS.W 1
 vcs3121_step1_angle        RS.W 1
 
 ; **** Vert-Colorscroll3.1.2.2 ****
 vcs3122_active             RS.W 1
-vcs3122_switch_table_start RS.W 1
+vcs3122_bplam_table_start RS.W 1
 vcs3122_step2_angle        RS.W 1
 
 ; **** Vert-Colorscroll3.1.1.1 ****
 vcs3111_active             RS.W 1
-vcs3111_switch_table_start RS.W 1
+vcs3111_bplam_table_start RS.W 1
 vcs3111_step2_angle        RS.W 1
 
 ; **** Blind-Fader ****
@@ -445,7 +445,7 @@ bfo_active                 RS.W 1
 eh_trigger_number          RS.W 1
 
 ; **** Main ****
-fx_active                  RS.W 1
+stop_fx_active                  RS.W 1
 
 variables_size             RS.B 0
 
@@ -461,25 +461,25 @@ init_main_variables
   moveq   #FALSE,d1
   move.w  d1,vcs3112_active(a3)
   moveq   #0,d0
-  move.w  d0,vcs3112_switch_table_start(a3)
+  move.w  d0,vcs3112_bplam_table_start(a3)
   moveq   #sine_table_length/4,d2
   move.w  d2,vcs3112_step1_angle(a3)
 
 ; **** Vert-Colorscroll3.1.2.1 ****
   move.w  d1,vcs3121_active(a3)
-  move.w  d0,vcs3121_switch_table_start(a3)
+  move.w  d0,vcs3121_bplam_table_start(a3)
   moveq   #sine_table_length/4,d2
   move.w  d2,vcs3121_step1_angle(a3)
 
 ; **** Vert-Colorscroll3.1.2.2 ****
   move.w  d1,vcs3122_active(a3)
-  move.w  d0,vcs3122_switch_table_start(a3)
+  move.w  d0,vcs3122_bplam_table_start(a3)
   moveq   #sine_table_length/4,d2
   move.w  d2,vcs3122_step2_angle(a3)
 
 ; **** Vert-Colorscroll3.1.1.1 ****
   move.w  d1,vcs3111_active(a3)
-  move.w  d0,vcs3111_switch_table_start(a3)
+  move.w  d0,vcs3111_bplam_table_start(a3)
   moveq   #sine_table_length/4,d2
   move.w  d2,vcs3111_step2_angle(a3)
 
@@ -494,14 +494,14 @@ init_main_variables
 
 ; **** Effects-Handler ****
   move.w  d0,eh_trigger_number(a3)
-  move.w  d1,fx_active(a3)
+  move.w  d1,stop_fx_active(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
 init_main
   bsr     init_colors
-  bsr     vcs_init_switch_table
+  bsr     vcs_init_bplam_table
   bsr     init_first_copperlist
   bra     init_second_copperlist
 
@@ -544,7 +544,7 @@ init_colors
 
 ; **** Vert-Colorscroll ****
 ; ** Referenz-Switchtabelle initialisieren **
-  INIT_SWITCH_TABLE.B vcs,0,1,color_values_number1*segments_number1,extra_memory,a3
+  INIT_bplam_table.B vcs,0,1,color_values_number1*segments_number1,extra_memory,a3
 
 
   CNOP 0,4
@@ -611,7 +611,7 @@ beam_routines
   bsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   fx_active(a3)      ;Effekte beendet ?
+  tst.w   stop_fx_active(a3)      ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
   move.w  custom_error_code(a3),d1
@@ -628,17 +628,17 @@ vert_colorscroll3112
   bne     no_vert_colorscroll3112 ;Nein -> verzweige
   movem.l a3-a6,-(a7)
   move.l  a7,save_a7(a3)     
-  move.w  vcs3112_switch_table_start(a3),d2 ;Startwert in Farbtabelle 
+  move.w  vcs3112_bplam_table_start(a3),d2 ;Startwert in Farbtabelle 
   move.w  d2,d0              
   move.w  vcs3112_step1_angle(a3),d4 ;Y-Step-Winkel 
-  IFEQ vcs3112_switch_table_length_256
+  IFEQ vcs3112_bplam_table_length_256
     addq.b  #vcs3112_speed,d0 ;Startwert der Switchtabelle erhöhen
   ELSE
-    MOVEF.W vcs3112_switch_table_size-1,d3 ;Anzahl der Einträge
+    MOVEF.W vcs3112_bplam_table_size-1,d3 ;Anzahl der Einträge
     addq.w  #vcs3112_speed,d0 ;Startwert der Farbtabelle erhöhen
     and.w   d3,d0            ;Überlauf entfernen
   ENDC
-  move.w  d0,vcs3112_switch_table_start(a3) 
+  move.w  d0,vcs3112_bplam_table_start(a3) 
   move.w  d4,d0              
   addq.b  #vcs3112_step1_angle_speed,d0 ;nächster Y-Winkel
   move.w  d0,vcs3112_step1_angle(a3) 
@@ -671,14 +671,14 @@ vert_colorscroll3112_loop2
   addq.b  #vcs3112_step1_angle_step,d4 ;nächster Y-Winkel
   swap    d0
   add.w   #vcs3112_step1_center,d0 ;+ Y-Mittelpunkt
-  IFEQ vcs3112_switch_table_length_256
+  IFEQ vcs3112_bplam_table_length_256
     sub.b   d0,d1            ;nächster Wert aus Tabelle
   ELSE
     sub.w   d0,d1            ;nächster Wert aus Tabelle
     and.w   d3,d1            ;Überlauf entfernen
   ENDC
   dbf     d6,vert_colorscroll3112_loop2
-  IFEQ vcs3112_switch_table_length_256
+  IFEQ vcs3112_bplam_table_length_256
     subq.b  #vcs3112_step2,d2 ;Startwert verringern
   ELSE
     subq.w  #vcs3112_step2,d2 ;Startwert verringern
@@ -701,17 +701,17 @@ vert_colorscroll3121
   bne     no_vert_colorscroll3121 ;Nein -> verzweige
   movem.l a3-a6,-(a7)
   move.l  a7,save_a7(a3)     
-  move.w  vcs3121_switch_table_start(a3),d2 ;Startwert in Farbtabelle 
+  move.w  vcs3121_bplam_table_start(a3),d2 ;Startwert in Farbtabelle 
   move.w  d2,d0              
   move.w  vcs3121_step1_angle(a3),d4 ;Y-Step-Winkel 
-  IFEQ vcs3121_switch_table_length_256
+  IFEQ vcs3121_bplam_table_length_256
     addq.b  #vcs3121_speed,d0 ;Startwert der Switchtabelle erhöhen
   ELSE
-    MOVEF.W vcs3121_switch_table_size-1,d3 ;Anzahl der Einträge
+    MOVEF.W vcs3121_bplam_table_size-1,d3 ;Anzahl der Einträge
     addq.w  #vcs3121_speed,d0 ;Startwert der Farbtabelle erhöhen
     and.w   d3,d0            ;Überlauf entfernen
   ENDC
-  move.w  d0,vcs3121_switch_table_start(a3) 
+  move.w  d0,vcs3121_bplam_table_start(a3) 
   move.w  d4,d0              
   addq.b  #vcs3121_step1_angle_speed,d0 ;nächster Y-Winkel
   move.w  d0,vcs3121_step1_angle(a3) 
@@ -744,14 +744,14 @@ vert_colorscroll3121_loop2
   addq.b  #vcs3121_step1_angle_step,d4 ;nächster Y-Winkel
   swap    d0
   addq.w  #vcs3121_step1_center,d0 ;+ Y-Mittelpunkt
-  IFEQ vcs3121_switch_table_length_256
+  IFEQ vcs3121_bplam_table_length_256
     sub.b   d0,d1            ;Startwert verringern
   ELSE
     sub.w   d0,d1            ;Startwert verringern
     and.w   d3,d1            ;Überlauf entfernen
   ENDC
   dbf     d6,vert_colorscroll3121_loop2
-  IFEQ vcs3121_switch_table_length_256
+  IFEQ vcs3121_bplam_table_length_256
     subq.b  #vcs3121_step2,d2 ;nächster Wert aus Tabelle
   ELSE
     subq.w  #vcs3121_step2,d2 ;nächster Wert aus Tabelle
@@ -774,17 +774,17 @@ vert_colorscroll3122
   bne     no_vert_colorscroll3122 ;Nein -> verzweige
   movem.l a3-a6,-(a7)
   move.l  a7,save_a7(a3)     
-  move.w  vcs3122_switch_table_start(a3),d2 ;Startwert in Farbtabelle 
+  move.w  vcs3122_bplam_table_start(a3),d2 ;Startwert in Farbtabelle 
   move.w  d2,d0              
   move.w  vcs3122_step2_angle(a3),d4 ;Y-Step-Winkel 
-  IFEQ vcs3122_switch_table_length_256
+  IFEQ vcs3122_bplam_table_length_256
     addq.b  #vcs3122_speed,d0 ;Startwert der Switchtabelle erhöhen
   ELSE
-    MOVEF.W vcs3122_switch_table_size-1,d3 ;Anzahl der Einträge
+    MOVEF.W vcs3122_bplam_table_size-1,d3 ;Anzahl der Einträge
     addq.w  #vcs3122_speed,d0 ;Startwert der Farbtabelle erhöhen
     and.w   d3,d0            ;Überlauf entfernen
   ENDC
-  move.w  d0,vcs3122_switch_table_start(a3) 
+  move.w  d0,vcs3122_bplam_table_start(a3) 
   move.w  d4,d0              
   addq.b  #vcs3122_step2_angle_speed,d0 ;nächster Y-Winkel
   move.w  d0,vcs3122_step2_angle(a3) 
@@ -811,7 +811,7 @@ vert_colorscroll3122_loop2
   move.b  d0,(a4)
   add.l   a6,a4              ;3. Quadrant nächste Zeile in CL
   move.b  d0,(a5)
-  IFEQ vcs3122_switch_table_length_256
+  IFEQ vcs3122_bplam_table_length_256
     subq.b   #vcs3122_step1,d1 ;Startwert verringern
   ELSE
     subq.w   #vcs3122_step1,d1 ;Startwert verringern
@@ -824,7 +824,7 @@ vert_colorscroll3122_loop2
   addq.b  #vcs3122_step2_angle_step,d4 ;nächster Y-Winkel
   swap    d0
   addq.w  #vcs3122_step2_center,d0 ;+ Y-Mittelpunkt
-  IFEQ vcs3122_switch_table_length_256
+  IFEQ vcs3122_bplam_table_length_256
     sub.b   d0,d2            ;nächster Wert aus Tabelle
   ELSE
     sub.b   d0,d2            ;nächster Wert aus Tabelle
@@ -847,17 +847,17 @@ vert_colorscroll3111
   bne     no_vert_colorscroll3111 ;Nein -> verzweige
   movem.l a3-a6,-(a7)
   move.l  a7,save_a7(a3)     
-  move.w  vcs3111_switch_table_start(a3),d2 ;Startwert in Farbtabelle 
+  move.w  vcs3111_bplam_table_start(a3),d2 ;Startwert in Farbtabelle 
   move.w  d2,d0              
   move.w  vcs3111_step2_angle(a3),d4 ;Y-Step-Winkel 
-  IFEQ vcs3111_switch_table_length_256
+  IFEQ vcs3111_bplam_table_length_256
     addq.b  #vcs3111_speed,d0 ;Startwert der Farbtabelle erhöhen
   ELSE
-    MOVEF.W vcs3111_switch_table_size-1,d3 ;Anzahl der Einträge
+    MOVEF.W vcs3111_bplam_table_size-1,d3 ;Anzahl der Einträge
     addq.w  #vcs3111_speed,d0 ;Startwert der Farbtabelle erhöhen
     and.w   d3,d0            ;Überlauf entfernen
   ENDC
-  move.w  d0,vcs3111_switch_table_start(a3) 
+  move.w  d0,vcs3111_bplam_table_start(a3) 
   move.w  d4,d0              
   addq.b  #vcs3111_step2_angle_speed,d0 ;nächster Y-Winkel
   move.w  d0,vcs3111_step2_angle(a3) 
@@ -884,7 +884,7 @@ vert_colorscroll_loop2
   move.b  d0,(a4)
   add.l   a6,a4              ;3. Quadrant nächste Zeile in CL
   move.b  d0,(a5)
-  IFEQ vcs3111_switch_table_length_256
+  IFEQ vcs3111_bplam_table_length_256
     subq.b  #vcs3111_step1,d1 ;nächster Wert aus Tabelle
   ELSE
     subq.w  #vcs3111_step1,d1 ;nächster Wert aus Tabelle
@@ -897,7 +897,7 @@ vert_colorscroll_loop2
   addq.b  #vcs3111_step2_angle_step,d4 ;nächster Y-Winkel
   swap    d0
   add.w   #vcs3111_step2_center,d0 ;+ Y-Mittelpunkt
-  IFEQ vcs3111_switch_table_length_256
+  IFEQ vcs3111_bplam_table_length_256
     sub.b   d0,d2            ;Startwert verringern
   ELSE
     sub.w   d0,d2            ;Startwert verringern
@@ -1116,7 +1116,7 @@ eh_stop_vert_colorscroll3111
   rts
   CNOP 0,4
 eh_stop_all
-  clr.w   fx_active(a3)      ;Effekte beendet
+  clr.w   stop_fx_active(a3)      ;Effekte beendet
   rts
 
 

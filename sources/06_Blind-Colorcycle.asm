@@ -41,7 +41,7 @@
   INCLUDE "hardware/intbits.i"
 
 
-  INCDIR "Daten:Asm-Sources.AGA/normsource-includes/"
+  INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
 
 
 SYS_TAKEN_OVER                 SET 1
@@ -66,8 +66,8 @@ text_output_enabled            EQU FALSE
 
 open_border_enabled            EQU TRUE
 
-bcc512_switch_table_length_256 EQU TRUE
-bcc514_switch_table_length_256 EQU TRUE
+bcc512_bplam_table_length_256 EQU TRUE
+bcc514_bplam_table_length_256 EQU TRUE
 
   IFEQ open_border_enabled
 dma_bits                       EQU DMAF_COPPER+DMAF_SETCLR
@@ -241,9 +241,9 @@ segments_number1               EQU bcc512_bars_number
 
 ct_size1                       EQU color_values_number1*segments_number1
 
-bcc_switch_table_size          EQU ct_size1*2
+bcc_bplam_table_size          EQU ct_size1*2
 
-extra_memory_size              EQU bcc_switch_table_size*BYTE_SIZE
+extra_memory_size              EQU bcc_bplam_table_size*BYTE_SIZE
 
 
   INCLUDE "except-vectors-offsets.i"
@@ -390,12 +390,12 @@ save_a7                   RS.L 1
 
 ; **** Blind-Colorcycle5.1.2 ****
 bcc512_active             RS.W 1
-bcc512_switch_table_start RS.W 1
+bcc512_bplam_table_start RS.W 1
 bcc512_step3_angle        RS.W 1
 
 ; **** Blind-Colorcycle5.1.4 ****
 bcc514_active             RS.W 1
-bcc514_switch_table_start RS.W 1
+bcc514_bplam_table_start RS.W 1
 bcc514_step2_angle        RS.W 1
 
 ; **** Blind-Fader ****
@@ -411,7 +411,7 @@ bfo_active                RS.W 1
 eh_trigger_number         RS.W 1
 
 ; **** Main ****
-fx_active                 RS.W 1
+stop_fx_active                 RS.W 1
 
 variables_size            RS.B 0
 
@@ -427,13 +427,13 @@ init_main_variables
   moveq   #FALSE,d1
   move.w  d1,bcc512_active(a3)
   moveq   #0,d0
-  move.w  d0,bcc512_switch_table_start(a3)
+  move.w  d0,bcc512_bplam_table_start(a3)
   moveq   #sine_table_length/4,d2
   move.w  d2,bcc512_step3_angle(a3)
 
 ; **** Blind-Colorcycle5.1.4 ****
   move.w  d1,bcc514_active(a3)
-  move.w  d0,bcc514_switch_table_start(a3)
+  move.w  d0,bcc514_bplam_table_start(a3)
   move.w  d0,bcc514_step2_angle(a3)
 
 ; **** Blind-Fader ****
@@ -449,14 +449,14 @@ init_main_variables
   move.w  d0,eh_trigger_number(a3)
 
 ; **** Main ****
-  move.w  d1,fx_active(a3)
+  move.w  d1,stop_fx_active(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
 init_main
   bsr     init_colors
-  bsr     bcc_init_mirror_switch_table
+  bsr     bcc_init_mirror_bplam_table
   bsr     init_first_copperlist
   bra     init_second_copperlist
 
@@ -487,7 +487,7 @@ init_colors
 
 ; **** Blind-Colorcycle ****
 ; ** Referenz-Switchtabelle initialisieren **
-  INIT_MIRROR_SWITCH_TABLE.B bcc,1,1,segments_number1,color_values_number1,extra_memory,a3
+  INIT_MIRROR_bplam_table.B bcc,1,1,segments_number1,color_values_number1,extra_memory,a3
 
 
   CNOP 0,4
@@ -552,7 +552,7 @@ beam_routines
   jsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   fx_active(a3)      ;Effekte beendet ?
+  tst.w   stop_fx_active(a3)      ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
   move.w  custom_error_code(a3),d1
@@ -578,16 +578,16 @@ blind_colorcycle512
   MULUF.L bcc512_step3_radius*2,d4,d0 ;r'=r*cow(w)/2^15
   swap    d4
   ADDF.W  bcc512_step3_center,d4 ;+ Mittelpunkt
-  move.w  bcc512_switch_table_start(a3),d3 ;Startwert in Farbtabelle 
+  move.w  bcc512_bplam_table_start(a3),d3 ;Startwert in Farbtabelle 
   move.w  d3,d0              
-  IFEQ bcc512_switch_table_length_256
+  IFEQ bcc512_bplam_table_length_256
     addq.b  #bcc512_speed,d0
   ELSE
-    MOVEF.W bcc512_switch_table_size-1,d7 ;Anzahl der Einträge
+    MOVEF.W bcc512_bplam_table_size-1,d7 ;Anzahl der Einträge
     addq.w  #bcc512_speed,d0    ;Startwert der Farbtabelle erhöhen
     and.w   d7,d0            ;Überlauf entfernen
   ENDC
-  move.w  d0,bcc512_switch_table_start(a3) 
+  move.w  d0,bcc512_bplam_table_start(a3) 
   move.l  extra_memory(a3),a0 ;Tabelle mit Switchwerten
   move.l  cl2_construction2(a3),a1 
   ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ;Start in CL 2. Quadrant
@@ -597,7 +597,7 @@ blind_colorcycle512
   lea     cl2_extension1_size(a2),a5 ;Start in CL 4. Quadrant
   move.w  #cl2_extension1_size,a6
   move.w  #(cl2_extension1_size*(bcc512_lamellas_number/2)*bcc512_lamella_height)+4,a7
-  IFEQ bcc512_switch_table_length_256
+  IFEQ bcc512_bplam_table_length_256
     moveq   #(cl2_display_width/2)-1,d7 ;Anzahl der Spalten
   ELSE
     swap    d7
@@ -605,7 +605,7 @@ blind_colorcycle512
   ENDC
 blind_colorcycle512_loop1
   move.w  d3,d2              ;Startwert 
-  IFNE bcc512_switch_table_length_256
+  IFNE bcc512_bplam_table_length_256
     swap    d7               
   ENDC
   moveq   #(bcc512_lamellas_number/2)-1,d6 ;Anzahl der Lamellen
@@ -621,7 +621,7 @@ blind_colorcycle512_loop3
   move.b  d0,(a4)
   add.l   a6,a4              ;3. Quadrant nächste Zeile in CL
   move.b  d0,(a5)
-  IFEQ bcc512_switch_table_length_256
+  IFEQ bcc512_bplam_table_length_256
     subq.b  #bcc512_step1,d1    ;nächster Wert aus Tabelle
   ELSE
     subq.w  #bcc512_step1,d1    ;nächster Wert aus Tabelle
@@ -629,14 +629,14 @@ blind_colorcycle512_loop3
   ENDC
   add.l   a6,a5              ;4. Quadrant nächste Zeile in CL
   dbf     d5,blind_colorcycle512_loop3
-  IFEQ bcc512_switch_table_length_256
+  IFEQ bcc512_bplam_table_length_256
     subq.b  #bcc512_step2,d2    ;nächster Wert aus Tabelle
   ELSE
     subq.w  #bcc512_step2,d2    ;nächster Wert aus Tabelle
     and.w   d7,d2            ;Überlauf entfernen
   ENDC
   dbf     d6,blind_colorcycle512_loop2
-  IFEQ bcc512_switch_table_length_256
+  IFEQ bcc512_bplam_table_length_256
     sub.b   d4,d3            ;nächster Wert aus Tabelle
   ELSE
     sub.w   d4,d3            ;nächster Wert aus Tabelle
@@ -662,18 +662,18 @@ blind_colorcycle514
   move.l  a7,save_a7(a3)     
   move.w  bcc514_step2_angle(a3),d4
   move.w  d4,d0
-  move.w  bcc514_switch_table_start(a3),d3 ;Startwert in Farbtabelle 
+  move.w  bcc514_bplam_table_start(a3),d3 ;Startwert in Farbtabelle 
   addq.b  #bcc514_step2_angle_speed,d0
   move.w  d0,bcc514_step2_angle(a3)
   move.w  d3,d0              
-  IFEQ bcc514_switch_table_length_256
+  IFEQ bcc514_bplam_table_length_256
     addq.b  #bcc514_speed,d0
   ELSE
-    MOVEF.W bcc514_switch_table_size-1,d7 ;Anzahl der Einträge
+    MOVEF.W bcc514_bplam_table_size-1,d7 ;Anzahl der Einträge
     addq.w  #bcc514_speed,d0    ;Startwert der Farbtabelle erhöhen
     and.w   d7,d0            ;Überlauf entfernen
   ENDC
-  move.w  d0,bcc514_switch_table_start(a3) 
+  move.w  d0,bcc514_bplam_table_start(a3) 
   move.l  extra_memory(a3),a0 ;Tabelle mit Switchwerten
   move.l  cl2_construction2(a3),a1 
   ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ;Start in CL 2. Quadrant
@@ -683,7 +683,7 @@ blind_colorcycle514
   lea     cl2_extension1_size(a2),a5 ;Start in CL 4. Quadrant
   move.w  #cl2_extension1_size,a6
   move.w  #(cl2_extension1_size*(bcc514_lamellas_number/2)*bcc514_lamella_height)+4,a7
-  IFEQ bcc514_switch_table_length_256
+  IFEQ bcc514_bplam_table_length_256
     moveq   #(cl2_display_width/2)-1,d7 ;Anzahl der Spalten
   ELSE
     swap    d7
@@ -691,7 +691,7 @@ blind_colorcycle514
   ENDC
 blind_colorcycle514_loop1
   move.w  d3,d2              ;Startwert 
-  IFNE bcc514_switch_table_length_256
+  IFNE bcc514_bplam_table_length_256
     swap d7
   ENDC
   moveq   #(bcc514_lamellas_number/2)-1,d6 ;Anzahl der Lamellen
@@ -707,7 +707,7 @@ blind_colorcycle514_loop3
   move.b  d0,(a4)
   add.l   a6,a4              ;3. Quadrant nächste Zeile in CL
   move.b  d0,(a5)
-  IFEQ bcc514_switch_table_length_256
+  IFEQ bcc514_bplam_table_length_256
     subq.b  #bcc514_step1,d1    ;nächster Wert aus Tabelle
   ELSE
     subq.w  #bcc514_step1,d1    ;nächster Wert aus Tabelle
@@ -715,7 +715,7 @@ blind_colorcycle514_loop3
   ENDC
   add.l   a6,a5              ;4. Quadrant nächste Zeile in CL
   dbf     d5,blind_colorcycle514_loop3
-  IFEQ bcc514_switch_table_length_256
+  IFEQ bcc514_bplam_table_length_256
     subq.b  #bcc514_step1,d2    ;nächster Wert aus Tabelle
   ELSE
     subq.w  #bcc514_step1,d2    ;nächster Wert aus Tabelle
@@ -727,7 +727,7 @@ blind_colorcycle514_loop3
   swap    d0
   addq.b  #bcc514_step2_angle_step,d4
   add.w   #bcc514_step2_center,d0
-  IFEQ bcc514_switch_table_length_256
+  IFEQ bcc514_bplam_table_length_256
     sub.b   d0,d3            ;nächster Wert aus Tabelle
   ELSE
     sub.w   d0,d3            ;nächster Wert aus Tabelle
@@ -915,7 +915,7 @@ eh_stop_blind_colorscroll514
   rts
   CNOP 0,4
 eh_stop_all
-  clr.w   fx_active(a3)      ;Alle Effekte beendet
+  clr.w   stop_fx_active(a3)      ;Alle Effekte beendet
   rts
 
 

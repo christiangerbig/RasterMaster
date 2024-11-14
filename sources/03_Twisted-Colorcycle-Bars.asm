@@ -40,7 +40,7 @@
   INCLUDE "hardware/dmabits.i"
   INCLUDE "hardware/intbits.i"
 
-  INCDIR "Daten:Asm-Sources.AGA/normsource-includes/"
+  INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
 
 
 SYS_TAKEN_OVER                  SET 1
@@ -248,7 +248,7 @@ segments_number                 EQU 5
 
 ct_size                         EQU color_y_values_number*segments_number*color_x_values_number
 
-tccb_switch_table_size          EQU tccb_bar_height*tccb_bars_number
+tccb_bplam_table_size          EQU tccb_bar_height*tccb_bars_number
 
 
   INCLUDE "except-vectors-offsets.i"
@@ -381,7 +381,7 @@ spr7_y_size2          EQU 0
   RSRESET
 
 em_color_table    RS.L ct_size
-em_switch_table   RS.B tccb_switch_table_size
+em_bplam_table   RS.B tccb_bplam_table_size
 extra_memory_size RS.B 0
 
 
@@ -411,7 +411,7 @@ bfo_active               RS.W 1
 eh_trigger_number        RS.W 1
 
 ; **** Main ****
-fx_active                RS.W 1
+stop_fx_active                RS.W 1
 
 variables_size           RS.B 0
 
@@ -445,7 +445,7 @@ init_main_variables
   move.w  d0,eh_trigger_number(a3)
 
 ; **** Main ****
-  move.w  d1,fx_active(a3)
+  move.w  d1,stop_fx_active(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
@@ -457,7 +457,7 @@ init_main
       bsr     init_colors
     ENDC
   ENDC
-  bsr     tccb_init_mirror_switch_table
+  bsr     tccb_init_mirror_bplam_table
   bra     init_first_copperlist
 
 ; **** Twisted-Colorcycle-Bars ****
@@ -496,7 +496,7 @@ init_colors
     ENDC
   ENDC
 
-  INIT_MIRROR_SWITCH_TABLE.B tccb,1,1,tccb_bars_number,color_y_values_number,extra_memory,a3,em_switch_table
+  INIT_MIRROR_bplam_table.B tccb,1,1,tccb_bars_number,color_y_values_number,extra_memory,a3,em_bplam_table
 
 
   CNOP 0,4
@@ -588,7 +588,7 @@ beam_routines
   bsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   fx_active(a3)      ;Effekte beendet ?
+  tst.w   stop_fx_active(a3)      ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
   move.w  custom_error_code(a3),d1
@@ -612,7 +612,7 @@ colorcycle
   sub.l   #color_x_values_number*segments_number,d0 ;Neustart
 cc_no_restart_color_table1
   move.l  d0,cc_color_table_start(a3) ;Startwert retten
-  move.w  #GB_NIBBLES_MASK,d4          ;Maske RGB-Nibbles
+  move.w  #RB_NIBBLES_MASK,d4          ;Maske RGB-Nibbles
   moveq   #1*8,d5            ;Farbregister-Zähler
   move.l  extra_memory(a3),a1 ;Zeiger auf Farbtabelle
   move.l  cl1_construction2(a3),a2 
@@ -667,7 +667,7 @@ twisted_colorcycle_bars
   ADDF.W cl1_extension1_entry+cl1_ext1_BPLCON4_1+2,a2
   move.l  extra_memory(a3),a5
   move.w  #tccb_y_distance,a3
-  add.l   #em_switch_table,a5 ;Zeiger auf Tabelle mit Switchwerten
+  add.l   #em_bplam_table,a5 ;Zeiger auf Tabelle mit Switchwerten
   move.w  #tccb_y_center,a6
   move.w  d5,a7              
   swap    d7                 ;Überlauf retten
@@ -917,7 +917,7 @@ eh_start_blind_fader_out
   rts
   CNOP 0,4
 eh_stop_all
-  clr.w   fx_active(a3)      ;Effekte beendet
+  clr.w   stop_fx_active(a3)      ;Effekte beendet
   rts
 
 

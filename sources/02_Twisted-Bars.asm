@@ -43,7 +43,7 @@
   INCLUDE "hardware/intbits.i"
 
 
-  INCDIR "Daten:Asm-Sources.AGA/normsource-includes/"
+  INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
 
 
 SYS_TAKEN_OVER                SET 1
@@ -251,9 +251,9 @@ segments_number1              EQU tb315_bars_number*2
 
 ct_size1                      EQU color_values_number1*segments_number1
 
-tb315_switch_table_size       EQU ct_size1*BYTE_SIZE
+tb315_bplam_table_size       EQU ct_size1*BYTE_SIZE
 
-extra_memory_size             EQU tb315_switch_table_size*BYTE_SIZE
+extra_memory_size             EQU tb315_bplam_table_size*BYTE_SIZE
 
 
   INCLUDE "except-vectors-offsets.i"
@@ -419,7 +419,7 @@ bfo_active                RS.W 1
 eh_trigger_number         RS.W 1
 
 ; **** Main ****
-fx_active                 RS.W 1
+stop_fx_active                 RS.W 1
 
 variables_size            RS.B 0
 
@@ -454,14 +454,14 @@ init_main_variables
   move.w  d0,eh_trigger_number(a3)
 
 ; **** Main ****
-  move.w  d1,fx_active(a3)
+  move.w  d1,stop_fx_active(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
 init_main
   bsr     init_colors
-  bsr     tb315_init_switch_table
+  bsr     tb315_init_bplam_table
   bsr     init_first_copperlist
   bra     init_second_copperlist
 
@@ -507,7 +507,7 @@ init_colors
 
 ; **** Twisted-Bars ****
 ; ** Referenz-Switchtabelle initialisieren **
-  INIT_SWITCH_TABLE.B tb315,1,1,color_values_number1*segments_number1,extra_memory,a3
+  INIT_bplam_table.B tb315,1,1,color_values_number1*segments_number1,extra_memory,a3
 
 
   CNOP 0,4
@@ -578,7 +578,7 @@ beam_routines
   bsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   fx_active(a3)      ;Effekte beendet ?
+  tst.w   stop_fx_active(a3)      ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
   move.w  custom_error_code(a3),d1
@@ -883,7 +883,7 @@ eh_start_blind_fader_out
   rts
   CNOP 0,4
 eh_stop_all
-  clr.w   fx_active(a3)      ;Effekte beendet
+  clr.w   stop_fx_active(a3)      ;Effekte beendet
   rts
 
 

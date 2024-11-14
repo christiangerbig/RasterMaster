@@ -40,7 +40,7 @@
   INCLUDE "hardware/intbits.i"
 
 
-  INCDIR "Daten:Asm-Sources.AGA/normsource-includes/"
+  INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
 
 
 SYS_TAKEN_OVER             SET 1
@@ -201,7 +201,7 @@ vcs5_bars_number           EQU 4
 vcs5_twist_lines_number    EQU 16
 vcs5_shift_value           EQU 3
 vcs5_twist_speed           EQU 1
-vcs5_switch_table_step     EQU 2
+vcs5_bplam_table_step     EQU 2
 
 ; **** Blind-Fader ****
 bf_lamella_height          EQU 16
@@ -222,9 +222,9 @@ segments_number1           EQU vcs4_bars_number
 
 ct_size1                   EQU color_values_number1*segments_number1
 
-vcs_switch_table_size      EQU ct_size1
+vcs_bplam_table_size      EQU ct_size1
 
-extra_memory_size          EQU vcs_switch_table_size*BYTE_SIZE
+extra_memory_size          EQU vcs_bplam_table_size*BYTE_SIZE
 
 
   INCLUDE "except-vectors-offsets.i"
@@ -369,12 +369,12 @@ spr7_y_size2      EQU 0
 
 ; **** Vert-Colorscroll4 ****
 vcs4_active              RS.W 1
-vcs4_switch_table_start  RS.W 1
+vcs4_bplam_table_start  RS.W 1
 
 ; **** Vert-Colorscroll5 ****
 vcs5_active              RS.W 1
-vcs5_switch_table_start1 RS.W 1
-vcs5_switch_table_start2 RS.W 1
+vcs5_bplam_table_start1 RS.W 1
+vcs5_bplam_table_start2 RS.W 1
 
 ; **** Blind-Fader ****
   IFEQ open_border_enabled
@@ -389,7 +389,7 @@ bfo_active               RS.W 1
 eh_trigger_number        RS.W 1
 
 ; **** Main ****
-fx_active                RS.W 1
+stop_fx_active                RS.W 1
 
 variables_size           RS.B 0
 
@@ -406,12 +406,12 @@ init_main_variables
   moveq   #FALSE,d1
   move.w  d1,vcs4_active(a3)
   moveq   #0,d0
-  move.w  d0,vcs4_switch_table_start(a3)
+  move.w  d0,vcs4_bplam_table_start(a3)
 
 ; **** Vert-Colorscroll5 *****
   move.w  d1,vcs5_active(a3)
-  move.w  d0,vcs5_switch_table_start1(a3)
-  move.w  d0,vcs5_switch_table_start2(a3)
+  move.w  d0,vcs5_bplam_table_start1(a3)
+  move.w  d0,vcs5_bplam_table_start2(a3)
 
 ; **** Blind-Fader ****
   IFEQ open_border_enabled
@@ -426,14 +426,14 @@ init_main_variables
   move.w  d0,eh_trigger_number(a3)
 
 ; **** Main ****
-  move.w  d1,fx_active(a3)
+  move.w  d1,stop_fx_active(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
   CNOP 0,4
 init_main
   bsr.s   init_colors
-  bsr     vcs_init_switch_table
+  bsr     vcs_init_bplam_table
   bsr     init_first_copperlist
   bra     init_second_copperlist
 
@@ -475,7 +475,7 @@ init_colors
   rts
 
 ; ** Referenz-Switchtabelle initialisieren **
-  INIT_SWITCH_TABLE.B vcs,0,1,color_values_number1*segments_number1,extra_memory,a3
+  INIT_bplam_table.B vcs,0,1,color_values_number1*segments_number1,extra_memory,a3
 
 
   CNOP 0,4
@@ -551,7 +551,7 @@ no_vert_colorscroll5
   jsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   fx_active(a3)      ;Effekte beendet ?
+  tst.w   stop_fx_active(a3)      ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
   move.w  custom_error_code(a3),d1
@@ -567,10 +567,10 @@ vert_colorscroll4
   tst.w   vcs4_active(a3)
   bne.s   no_vert_colorscroll4
   movem.l a4-a5,-(a7)
-  move.w  vcs4_switch_table_start(a3),d1 ;Startwert 
+  move.w  vcs4_bplam_table_start(a3),d1 ;Startwert 
   move.w  d1,d0              
   addq.b  #vcs4_speed,d0     ;Startwert der Tabelle erhöhen
-  move.w  d0,vcs4_switch_table_start(a3) ;Startwert retten
+  move.w  d0,vcs4_bplam_table_start(a3) ;Startwert retten
   moveq   #vcs4_step1,d2
   MOVEF.L cl2_extension1_size,d3
   move.l  extra_memory(a3),a0 ;Tabelle mit Switchwerten
@@ -602,10 +602,10 @@ no_vert_colorscroll4
 ; ** Vertical-Colorscroll5 **
   CNOP 0,4
 vert_colorscroll5_1
-  move.w  vcs5_switch_table_start1(a3),d2 ;Startwert in Farbtabelle 
+  move.w  vcs5_bplam_table_start1(a3),d2 ;Startwert in Farbtabelle 
   move.w  d2,d0              
   addq.b  #vcs5_twist_speed,d0 ;nächster Startwert
-  move.w  d0,vcs5_switch_table_start1(a3) 
+  move.w  d0,vcs5_bplam_table_start1(a3) 
   move.l  extra_memory(a3),a0 ;Switchtabelle
   move.l  cl2_construction2(a3),a1 ;Copperliste
   ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2,a1
@@ -622,7 +622,7 @@ vert_colorscroll5_1_loop2
   move.b  d0,cl2_extension1_size*vcs5_twist_lines_number*3*2(a1)
   move.b  d0,cl2_extension1_size*vcs5_twist_lines_number*4*2(a1)
   move.b  d0,cl2_extension1_size*vcs5_twist_lines_number*5*2(a1)
-  addq.b  #vcs5_switch_table_step,d1 ;nächster Wert aus Tabelle
+  addq.b  #vcs5_bplam_table_step,d1 ;nächster Wert aus Tabelle
   move.b  d0,(cl2_extension1_size*vcs5_twist_lines_number*6*2,a1)
   addq.w  #4,a1              ;nächste Spalte
   move.b  d0,((cl2_extension1_size*vcs5_twist_lines_number*7*2)-4,a1) ;Switchwert aus Tabelle in CL eintragen
@@ -637,10 +637,10 @@ vert_colorscroll5_1_loop2
 
   CNOP 0,4
 vert_colorscroll5_2
-  move.w  vcs5_switch_table_start2(a3),d2 ;Startwert in Farbtabelle 
+  move.w  vcs5_bplam_table_start2(a3),d2 ;Startwert in Farbtabelle 
   move.w  d2,d0              
   subq.b  #vcs5_twist_speed,d0 ;nächster Startwert
-  move.w  d0,vcs5_switch_table_start2(a3) 
+  move.w  d0,vcs5_bplam_table_start2(a3) 
   move.l  extra_memory(a3),a0 ;Switchtabelle
   move.l  cl2_construction2(a3),a1 ;Copperliste
   ADDF.W  cl2_extension1_entry+cl2_ext1_BPLCON4_1+2+(cl2_extension1_size*vcs5_twist_lines_number*1),a1
@@ -657,7 +657,7 @@ vert_colorscroll5_2_loop2
   move.b  d0,cl2_extension1_size*vcs5_twist_lines_number*3*2(a1)
   move.b  d0,cl2_extension1_size*vcs5_twist_lines_number*4*2(a1)
   move.b  d0,cl2_extension1_size*vcs5_twist_lines_number*5*2(a1)
-  addq.b  #vcs5_switch_table_step,d1 ;nächster Wert aus Tabelle
+  addq.b  #vcs5_bplam_table_step,d1 ;nächster Wert aus Tabelle
   move.b  d0,(cl2_extension1_size*vcs5_twist_lines_number*6*2,a1)
   addq.w  #4,a1              ;nächste Spalte
   move.b  d0,((cl2_extension1_size*vcs5_twist_lines_number*7*2)-4,a1)
@@ -841,7 +841,7 @@ eh_stop_vert_colorscroll5
   rts
   CNOP 0,4
 eh_stop_all
-  clr.w   fx_active(a3)      ;Alle Effekte beendet
+  clr.w   stop_fx_active(a3)      ;Alle Effekte beendet
   rts
 
 

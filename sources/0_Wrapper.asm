@@ -60,7 +60,7 @@
   INCLUDE "hardware/intbits.i"
 
 
-  INCDIR "Daten:Asm-Sources.AGA/normsource-includes/"
+  INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
 
 
 SYS_TAKEN_OVER             SET 1
@@ -461,7 +461,6 @@ custom_memory_error
 
   CNOP 0,4
 main
-;  move.w  #25,pt_SongPosition(a3)
   bsr     start_00_title_screen
   bsr     start_01_vert_colorscroll
   bsr     start_02_twisted_bars

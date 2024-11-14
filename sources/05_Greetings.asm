@@ -44,7 +44,7 @@
   INCLUDE "hardware/dmabits.i"
   INCLUDE "hardware/intbits.i"
 
-  INCDIR "Daten:Asm-Sources.AGA/normsource-includes/"
+  INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
 
 
 SYS_TAKEN_OVER                     SET 1
@@ -323,8 +323,8 @@ ct_size2                           EQU color_values_number2*segments_number2
 ct_size3                           EQU color_values_number3*segments_number3
 ct_size4                           EQU color_values_number4*segments_number4
 
-tb31612_switch_table_size          EQU ct_size1*2
-wcb_switch_table_size              EQU ct_size2
+tb31612_bplam_table_size          EQU ct_size1*2
+wcb_bplam_table_size              EQU ct_size2
 
 pf1_plane_x_offset              EQU 0
 pf1_plane_y_offset              EQU ss_text_y_position
@@ -644,8 +644,8 @@ spr7_y_size2         EQU 0
 
   RSRESET
 
-em_switch_table1  RS.B tb31612_switch_table_size
-em_switch_table2  RS.B wcb_switch_table_size
+em_bplam_table1  RS.B tb31612_bplam_table_size
+em_bplam_table2  RS.B wcb_bplam_table_size
   RS_ALIGN_LONGWORD
 em_color_table1   RS.L bf_source_bar_y_size*2*(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)
 em_color_table2   RS.L bf_source_bar_y_size*2*(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)
@@ -701,7 +701,7 @@ ccfo_columns_delay_reset   RS.W 1
 eh_trigger_number          RS.W 1
 
 ; **** Main ****
-fx_active                  RS.W 1
+stop_fx_active                  RS.W 1
 
 variables_size             RS.B 0
 
@@ -758,7 +758,7 @@ init_main_variables
   move.w  d0,eh_trigger_number(a3)
 
 ; **** Main ****
-  move.w  d1,fx_active(a3)
+  move.w  d1,stop_fx_active(a3)
   rts
 
 ; ** Alle Initialisierungsroutinen ausführen **
@@ -768,9 +768,9 @@ init_main
   bsr     wcb_init_color_table
   bsr     ss_init_color_table
   bsr     init_colors
-  bsr     tb31612_init_mirror_switch_table
+  bsr     tb31612_init_mirror_bplam_table
   bsr     tb31612_get_yz_coords
-  bsr     wcb_init_switch_table
+  bsr     wcb_init_bplam_table
   bsr     ss_init_characters_offsets
   bsr     bf_init_color_table
   bsr     bf_init_color_table_ptrs
@@ -858,12 +858,12 @@ init_colors
 ; **** Twisted-Bars3.16.1.2 ****
 ; ** Referenz-Switchtabelle für Twisted-Bars initialisieren **
 
-  INIT_MIRROR_SWITCH_TABLE.B tb31612,0,2,segments_number1,color_values_number1,extra_memory,a3
+  INIT_MIRROR_bplam_table.B tb31612,0,2,segments_number1,color_values_number1,extra_memory,a3
 
 ; **** Wave-Center-Bar/Sine-Scrolltext ****
 ; ** Referenz-Switchtabelle für Wave-Wave-Center-Bar initialisieren **
 
-  INIT_SWITCH_TABLE.B wcb,color_values_number1*segments_number1*2,2,color_values_number2*2,extra_memory,a3,em_switch_table2
+  INIT_bplam_table.B wcb,color_values_number1*segments_number1*2,2,color_values_number2*2,extra_memory,a3,em_bplam_table2
 
 ; **** Sine-Scrolltext ****
 ; ** Offsets der Buchstaben im Characters-Pic berechnen **
@@ -1258,7 +1258,8 @@ no_sync_routines
 beam_routines
   bsr     wait_copint
   bsr.s   swap_second_copperlist
-  bsr.s   swap_playfield1
+  bsr     swap_playfield1
+  bsr     set_playfield1
   bsr     effects_handler
   bsr     ss_horiz_scrolltext
   bsr     tb31612_clear_second_copperlist
@@ -1282,7 +1283,7 @@ no_barfield
   bsr     mouse_handler
   tst.l   d0                 ;Abbruch ?
   bne.s   fast_exit          ;Ja -> verzweige
-  tst.w   fx_active(a3)      ;Effekte beendet ?
+  tst.w   stop_fx_active(a3)      ;Effekte beendet ?
   bne.s   beam_routines      ;Nein -> verzweige
 fast_exit
   move.l  nop_second_copperlist,COP2LC-DMACONR(a6) ;2. Copperliste deaktivieren
@@ -1293,7 +1294,9 @@ fast_exit
 
   SWAP_COPPERLIST cl2,3
 
-  SWAP_PLAYFIELD pf1,2,pf1_depth3,pf1_plane_x_offset,pf1_plane_y_offset
+  SWAP_PLAYFIELD pf1,2
+
+  SET_PLAYFIELD pf1,pf1_depth3,pf1_plane_x_offset,pf1_plane_y_offset
 
 
 ; ** Laufschrift **
@@ -1436,7 +1439,7 @@ set_wave_center_bar
   move.l  cl2_construction2(a3),a2 
   ADDF.W  cl2_extension7_entry+cl2_ext7_BPLCON4_1+2,a2 
   move.l  extra_memory(a3),a5
-  add.l   #em_switch_table2,a5 ;Zeiger auf Tabelle mit Switchwerten
+  add.l   #em_bplam_table2,a5 ;Zeiger auf Tabelle mit Switchwerten
   lea     wcb_fader_columns_mask(pc),a6
   moveq   #cl2_display_width-1,d7 ;Anzahl der Spalten
 set_center_bar_loop1
@@ -1656,7 +1659,7 @@ bf_restart_z_plane
   CNOP 0,4
 bf_copy_buffer
   movem.l a4-a5,-(a7)
-  move.w  #GB_NIBBLES_MASK,d3          ;Maske RGB-Nibbles
+  move.w  #RB_NIBBLES_MASK,d3          ;Maske RGB-Nibbles
   move.l  extra_memory(a3),a0
   add.l   #em_color_buffer+(bf_bar_height*4),a0 ;Puffer
   move.l  cl2_construction2(a3),a1 
@@ -1973,7 +1976,7 @@ eh_disable_barfield_z_restart
   rts
   CNOP 0,4
 eh_stop_all
-  clr.w   fx_active(a3)      ;Effekte beendet
+  clr.w   stop_fx_active(a3)      ;Effekte beendet
   rts
 
 

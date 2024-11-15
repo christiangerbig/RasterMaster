@@ -501,6 +501,7 @@ ciab_ta_int_server
 VERTB_int_server
 	ENDC
 
+; **** PT-Replay ****
 	IFEQ pt_music_fader_enabled
 		bsr.s	pt_music_fader
 		bra.s	pt_PlayMusic
@@ -513,6 +514,7 @@ VERTB_int_server
 	IFD PROTRACKER_VERSION_2.3A 
 		PT2_REPLAY pt_SetSoftInterrupt
 	ENDC
+
 	IFD PROTRACKER_VERSION_3.0B
 		PT3_REPLAY pt_SetSoftInterrupt
 	ENDC
@@ -753,6 +755,7 @@ sc_newd1
 	IFD PROTRACKER_VERSION_2.3A 
 		INCLUDE "music-tracker/pt2-period-table.i"
 	ENDC
+
 	IFD PROTRACKER_VERSION_3.0B
 		INCLUDE "music-tracker/pt3-period-table.i"
 	ENDC

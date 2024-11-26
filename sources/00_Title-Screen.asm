@@ -1239,7 +1239,7 @@ mouse_handler_skip
 	INCLUDE "int-autovectors-handlers.i"
 
 	CNOP 0,4
-NMI_int_server
+nmi_int_server
 	rts
 
 

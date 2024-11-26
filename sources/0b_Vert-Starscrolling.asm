@@ -1023,7 +1023,7 @@ vss_copy_switch_buffer_loop
 	lsr.l	#8,d0
 	move.b	d0,(a1)
 	swap	d0
-	move.b	d0,LONGWORD_SIZE*2(a1)
+	move.b	d0,QUADWORD_SIZE(a1)
 	move.b	d1,LONGWORD_SIZE*7(a1)
 	swap	d1
 	move.b	d1,LONGWORD_SIZE*5(a1)
@@ -1052,26 +1052,26 @@ vss_copy_switch_buffer_loop
 	move.b	d4,LONGWORD_SIZE*16(a1)
 	swap	d4
 	move.b	d4,LONGWORD_SIZE*18(a1)
-	move.b	d5,LONGWORD_SIZE*23(a1)
+	move.b	d5,QUADWORD_SIZE3(a1)
 	swap	d5
-	move.b	d5,LONGWORD_SIZE*21(a1)
+	move.b	d5,QUADWORD_SIZE1(a1)
 	lsr.l	#8,d5
-	move.b	d5,LONGWORD_SIZE*20(a1)
+	move.b	d5,QUADWORD_SIZE0(a1)
 	swap	d5
-	move.b	d5,LONGWORD_SIZE*22(a1)
-	move.b	d6,LONGWORD_SIZE*27(a1)
+	move.b	d5,QUADWORD_SIZE2(a1)
+	move.b	d6,QUADWORD_SIZE7(a1)
 	swap	d6
-	move.b	d6,LONGWORD_SIZE*25(a1)
+	move.b	d6,QUADWORD_SIZE5(a1)
 	lsr.l	#8,d6
-	move.b	d6,LONGWORD_SIZE*24(a1)
+	move.b	d6,QUADWORD_SIZE4(a1)
 	swap	d6
-	move.b	d6,LONGWORD_SIZE*26(a1)
+	move.b	d6,QUADWORD_SIZE6(a1)
 	movem.l (a0)+,d0-d3		; 16 Switchwerte lesen
 	move.b	d0,LONGWORD_SIZE*31(a1)
 	swap	d0
-	move.b	d0,LONGWORD_SIZE*29(a1)
+	move.b	d0,QUADWORD_SIZE9(a1)
 	lsr.l	#8,d0
-	move.b	d0,LONGWORD_SIZE*28(a1)
+	move.b	d0,QUADWORD_SIZE8(a1)
 	swap	d0
 	move.b	d0,LONGWORD_SIZE*30(a1)
 	move.b	d1,LONGWORD_SIZE*35(a1)
@@ -1400,7 +1400,7 @@ eh_stop_all
 	INCLUDE "int-autovectors-handlers.i"
 
 	CNOP 0,4
-NMI_int_server
+nmi_int_server
 	rts
 
 

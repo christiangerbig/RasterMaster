@@ -58,7 +58,7 @@ requires_030_cpu		EQU FALSE
 requires_040_cpu		EQU FALSE
 requires_060_cpu		EQU FALSE
 requires_fast_memory		EQU FALSE
-requires_multiscan_monitor	 EQU FALSE
+requires_multiscan_monitor	EQU FALSE
 
 workbench_start_enabled		EQU FALSE
 screen_fader_enabled		EQU FALSE
@@ -117,10 +117,10 @@ ciaa_ta_time			EQU 0
 ciaa_tb_time			EQU 0
 ciab_ta_time			EQU 0
 ciab_tb_time			EQU 0
-ciaa_ta_continuous_enabled	 EQU FALSE
-ciaa_tb_continuous_enabled	 EQU FALSE
-ciab_ta_continuous_enabled	 EQU FALSE
-ciab_tb_continuous_enabled	 EQU FALSE
+ciaa_ta_continuous_enabled	EQU FALSE
+ciaa_tb_continuous_enabled	EQU FALSE
+ciab_ta_continuous_enabled	EQU FALSE
+ciab_tb_continuous_enabled	EQU FALSE
 
 beam_position			EQU $136
 
@@ -226,7 +226,7 @@ cl1_begin			RS.B 0
 
 cl1_COPJMP2			RS.L 1
 
-copperlist1_size		 RS.B 0
+copperlist1_size		RS.B 0
 
 
 	RSRESET
@@ -291,14 +291,14 @@ cl2_ext1_BPLCON4_55		RS.L 1
 cl2_ext1_BPLCON4_56		RS.L 1
 cl2_ext1_BPLCON4_57		RS.L 1
 
-cl2_extension1_size		 RS.B 0
+cl2_extension1_size		RS.B 0
 
 	RSRESET
 
 cl2_begin			RS.B 0
 
 cl2_WAIT			RS.L 1
-cl2_extension1_entry		 RS.B cl2_extension1_size*cl2_display_y_size
+cl2_extension1_entry		RS.B cl2_extension1_size*cl2_display_y_size
 
 cl2_WAIT1			RS.L 1
 cl2_INTREQ			RS.L 1
@@ -720,7 +720,7 @@ eh_stop_all
 	INCLUDE "int-autovectors-handlers.i"
 
 	CNOP 0,4
-NMI_int_server
+nmi_int_server
 	rts
 
 

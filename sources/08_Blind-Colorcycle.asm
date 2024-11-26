@@ -131,10 +131,10 @@ ciaa_ta_time			EQU 0
 ciaa_tb_time			EQU 0
 ciab_ta_time			EQU 0
 ciab_tb_time			EQU 0
-ciaa_ta_continuous_enabled	 EQU FALSE
-ciaa_tb_continuous_enabled	 EQU FALSE
-ciab_ta_continuous_enabled	 EQU FALSE
-ciab_tb_continuous_enabled	 EQU FALSE
+ciaa_ta_continuous_enabled	EQU FALSE
+ciaa_tb_continuous_enabled	EQU FALSE
+ciab_ta_continuous_enabled	EQU FALSE
+ciab_tb_continuous_enabled	EQU FALSE
 
 beam_position			EQU $136
 
@@ -286,7 +286,7 @@ cl2_ext1_BPLCON4_7		RS.L 1
 cl2_ext1_BPLCON4_8		RS.L 1
 cl2_ext1_BPLCON4_9		RS.L 1
 cl2_ext1_BPLCON4_10		RS.L 1
-cl2_ext1_BPLCON4_11		 RS.L 1
+cl2_ext1_BPLCON4_11		RS.L 1
 cl2_ext1_BPLCON4_12		RS.L 1
 cl2_ext1_BPLCON4_13		RS.L 1
 cl2_ext1_BPLCON4_14		RS.L 1
@@ -324,7 +324,7 @@ cl2_extension1_size 		RS.B 0
 
 cl2_begin			RS.B 0
 
-cl2_extension1_entry		 RS.B cl2_extension1_size*cl2_display_y_size
+cl2_extension1_entry		RS.B cl2_extension1_size*cl2_display_y_size
 
 cl2_WAIT1			RS.L 1
 cl2_INTREQ			RS.L 1
@@ -388,7 +388,7 @@ save_a7				RS.L 1
 
 ; **** Blind-Colorcycle5.2.1 ****
 bcc5212_active			RS.W 1
-bcc5212_bplam_table_start	 RS.W 1
+bcc5212_bplam_table_start	RS.W 1
 bcc5212_speed_angle		RS.W 1
 
 ; **** Blind-Colorcycle ****
@@ -819,7 +819,7 @@ eh_stop_all
 	INCLUDE "int-autovectors-handlers.i"
 
 	CNOP 0,4
-NMI_int_server
+nmi_int_server
 	rts
 
 

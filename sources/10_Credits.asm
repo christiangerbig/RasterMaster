@@ -894,7 +894,7 @@ vert_text_scroll_init
 vts_copy_buffer
 	move.l	a4,-(a7)
 	lea	spr_ptrs_construction(pc),a2
-	move.l	2*LONGWORD_SIZE(a2),a0	; 1. Sprite-Struktur
+	move.l	QUADWORD_SIZE(a2),a0	; 1. Sprite-Struktur
 	ADDF.W	(spr_pixel_per_datafetch/4),a0 ; Sprite-Header überspringen
 	move.l	4*LONGWORD_SIZE(a2),a1	; 2. Sprite-Struktur
 	ADDF.W	(spr_pixel_per_datafetch/4),a1 ; Sprite-Header überspringen
@@ -1146,7 +1146,7 @@ eh_stop_all
 	INCLUDE "int-autovectors-handlers.i"
 
 	CNOP 0,4
-NMI_int_server
+nmi_int_server
 	rts
 
 

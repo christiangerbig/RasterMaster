@@ -714,7 +714,7 @@ vert_colorscroll3121
 	addq.b	#vcs3121_step1_angle_speed,d0 ; nächster Y-Winkel
 	move.w	d0,vcs3121_step1_angle(a3) 
 	MOVEF.L (cl2_extension1_size*(cl2_display_y_size/2))+4,d5
-	move.l	extra_memory(a3),a0	 ; Tabelle mit Switchwerten
+	move.l	extra_memory(a3),a0	; Tabelle mit Switchwerten
 	move.l	cl2_construction2(a3),a1 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ; 2. Quadrant
 	lea	LONGWORD_SIZE(a1),a2 ; 1. Quadrant
@@ -1108,7 +1108,7 @@ eh_stop_all
 	INCLUDE "int-autovectors-handlers.i"
 
 	CNOP 0,4
-NMI_int_server
+nmi_int_server
 	rts
 
 

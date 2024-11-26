@@ -150,7 +150,7 @@ requires_030_cpu		EQU FALSE
 requires_040_cpu		EQU FALSE
 requires_060_cpu		EQU FALSE
 requires_fast_memory		EQU FALSE
-requires_multiscan_monitor	 EQU FALSE
+requires_multiscan_monitor	EQU FALSE
 
 workbench_start_enabled		EQU TRUE
 screen_fader_enabled		EQU TRUE
@@ -374,7 +374,7 @@ main_quit
 	INCLUDE "int-autovectors-handlers.i"
 
 	CNOP 0,4
-NMI_int_server
+nmi_int_server
 	rts
 
 

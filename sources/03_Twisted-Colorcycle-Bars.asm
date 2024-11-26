@@ -483,7 +483,7 @@ tccb_init_color_table_loop2
 	dbf	d6,tccb_init_color_table_loop2
 	add.l	a5,a2			; nächstes Segment
 	dbf	d7,tccb_init_color_table_loop1
-	INIT_COLOR_GRADIENT_GROUP_RGB8 color_x_values_number,tccb_bar_height/2,segments_number,color_x_step,extra_memory,a3,0,1
+	INIT_COLOR_GRADIENTS_RGB8 color_x_values_number,tccb_bar_height/2,segments_number,color_x_step,extra_memory,a3,0,1
 	movem.l (a7)+,a4-a6
 	rts
 
@@ -920,7 +920,7 @@ eh_stop_all
 	INCLUDE "int-autovectors-handlers.i"
 
 	CNOP 0,4
-NMI_int_server
+nmi_int_server
 	rts
 
 

@@ -802,7 +802,7 @@ tb31612_init_color_table_loop
 	CNOP 0,4
 wcb_init_color_table
 	lea	wcb_bar_color_table(pc),a0
-	lea	pf1_rgb8_color_table+(color_values_number1*segments_number1*2*LONGWORD_SIZE)(pc),a1
+	lea	pf1_rgb8_color_table+(color_values_number1*segments_number1*QUADWORD_SIZE)(pc),a1
 	MOVEF.W (color_values_number2*segments_number2)-1,d7
 wcb_init_color_table_loop
 	move.l	(a0)+,(a1)		; COLOR00
@@ -1951,7 +1951,7 @@ eh_stop_all
 	INCLUDE "int-autovectors-handlers.i"
 
 	CNOP 0,4
-NMI_int_server
+nmi_int_server
 	rts
 
 

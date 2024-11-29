@@ -93,6 +93,7 @@ pt_ciatiming_enabled		EQU TRUE
 pt_finetune_enabled		EQU FALSE
 pt_metronome_enabled		EQU FALSE
 pt_mute_enabled			EQU FALSE
+pt_track_notes_played_enabled	EQU TRUE
 pt_track_volumes_enabled	EQU TRUE
 pt_track_periods_enabled	EQU TRUE
 pt_music_fader_enabled		EQU FALSE

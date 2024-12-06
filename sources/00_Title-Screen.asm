@@ -73,6 +73,8 @@ workbench_start_enabled		EQU FALSE
 screen_fader_enabled		EQU FALSE
 text_output_enabled		EQU FALSE
 
+pt_track_notes_played_enabled	EQU TRUE
+
 dma_bits			EQU DMAF_SPRITE|DMAF_COPPER|DMAF_RASTER|DMAF_SETCLR
 
 intena_bits			EQU INTF_SETCLR
@@ -239,7 +241,7 @@ eh_trigger_number_max		EQU 6
 
 
 pf1_planes_x_offset		EQU 16
-pf1_BPL1DAT_x_offset		EQU 0
+pf1_bpl1dat_x_offset		EQU 0
 
 
 	INCLUDE "except-vectors-offsets.i"

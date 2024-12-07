@@ -31,6 +31,7 @@
 	XREF start_0b_vert_starscrolling
 
 	XDEF start_0_pt_replay
+	XDEF pt_track_notes_played_enabled
 	XDEF pt_track_volumes_enabled
 	XDEF pt_track_periods_enabled
 	XDEF pt_audchan1temp

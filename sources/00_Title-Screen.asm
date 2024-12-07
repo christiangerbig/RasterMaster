@@ -17,6 +17,7 @@
 
 
 	XREF color00_bits
+	XREF pt_track_notes_played_enabled
 	XREF pt_track_volumes_enabled
 	XREF pt_track_periods_enabled
 	XREF pt_audchan1temp
@@ -72,8 +73,6 @@ requires_multiscan_monitor	EQU FALSE
 workbench_start_enabled		EQU FALSE
 screen_fader_enabled		EQU FALSE
 text_output_enabled		EQU FALSE
-
-pt_track_notes_played_enabled	EQU TRUE
 
 dma_bits			EQU DMAF_SPRITE|DMAF_COPPER|DMAF_RASTER|DMAF_SETCLR
 

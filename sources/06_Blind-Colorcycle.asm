@@ -591,7 +591,7 @@ blind_colorcycle512
 		and.w	d7,d0		; Überlauf entfernen
 	ENDC
 	move.w	d0,bcc512_bplam_table_start(a3) 
-	move.l	extra_memory(a3),a0 	; Tabelle mit Switchwerten
+	move.l	extra_memory(a3),a0 	; Tabelle mit BPLAM-Werten
 	move.l	cl2_construction2(a3),a1 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ; 2. Quadrant
 	lea	LONGWORD_SIZE(a1),a2 	; 1. Quadrant
@@ -616,14 +616,14 @@ blind_colorcycle512_loop2
 	move.w	d2,d1			; Startwert
 	moveq	#bcc512_lamella_height-1,d5 ; Höhe einer Lamelle
 blind_colorcycle512_loop3
-	move.b	(a0,d1.w),d0		; Switchwert aus Tabelle
-	move.b	d0,(a1)
+	move.b	(a0,d1.w),d0		; BPLAM-Wert aus Tabelle
+	move.b	d0,(a1)			; BPLCON4 high
 	sub.l	a6,a1			; 2. Quadrant vorletzte Zeile in CL
-	move.b	d0,(a2)
+	move.b	d0,(a2)			; BPLCON4 high
 	sub.l	a6,a2			; 1. Quadrant vorletzte Zeile in CL
-	move.b	d0,(a4)
+	move.b	d0,(a4)			; BPLCON4 high
 	add.l	a6,a4			; 3. Quadrant nächste Zeile in CL
-	move.b	d0,(a5)
+	move.b	d0,(a5)			; BPLCON4 high
 	IFEQ bcc512_bplam_table_length_256
 		subq.b	#bcc512_step1,d1 ; nächster Wert aus Tabelle
 	ELSE
@@ -676,7 +676,7 @@ blind_colorcycle514
 		and.w	d7,d0		; Überlauf entfernen
 	ENDC
 	move.w	d0,bcc514_bplam_table_start(a3) 
-	move.l	extra_memory(a3),a0	; Tabelle mit Switchwerten
+	move.l	extra_memory(a3),a0	; Tabelle mit BPLAM-Werten
 	move.l	cl2_construction2(a3),a1 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ; 2. Quadrant
 	lea	LONGWORD_SIZE(a1),a2	; 1. Quadrant
@@ -701,14 +701,14 @@ blind_colorcycle514_loop2
 	move.w	d2,d1			; Startwert
 	moveq	#bcc514_lamella_height-1,d5
 blind_colorcycle514_loop3
-	move.b	(a0,d1.w),d0		; Switchwert
-	move.b	d0,(a1)
+	move.b	(a0,d1.w),d0		; BPLAM-Wert
+	move.b	d0,(a1)			; BPLCON4 high
 	sub.l	a6,a1			; 2. Quadrant vorletzte Zeile in CL
-	move.b	d0,(a2)
+	move.b	d0,(a2)			; BPLCON4 high
 	sub.l	a6,a2			; 1. Quadrant vorletzte Zeile in CL
-	move.b	d0,(a4)
+	move.b	d0,(a4)			; BPLCON4 high
 	add.l	a6,a4			; 3. Quadrant nächste Zeile in CL
-	move.b	d0,(a5)
+	move.b	d0,(a5)			; BPLCON4 high
 	IFEQ bcc514_bplam_table_length_256
 		subq.b	#bcc514_step1,d1 ; nächster Wert aus Tabelle
 	ELSE

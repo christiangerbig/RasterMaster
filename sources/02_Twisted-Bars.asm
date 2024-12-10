@@ -667,18 +667,18 @@ tb315_set_background_bars
 	lea	tb315_yz_coords(pc),a0
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
-	move.l	extra_memory(a3),a5 	; Zeiger auf Tabelle mit Switchwerten
+	move.l	extra_memory(a3),a5 	; Zeiger auf Tabelle mit BPLAM-Werten
 	lea	we_y_coords(pc),a6
 	moveq	#cl2_display_width-1,d7	; Anzahl der Spalten
 tb315_set_background_bars_loop1
 	move.w	(a6)+,d0		; 2. Y-Offset
-	move.l	a5,a1			; Zeiger auf Tabelle mit Switchwerten
+	move.l	a5,a1			; Zeiger auf Tabelle mit BPLAM-Werten
 	lea	(a2,d0.w*4),a3		; + 2. Y-Offset
 	moveq	#tb315_bars_number-1,d6
 tb315_set_background_bars_loop2
 	move.l	(a0)+,d0		; Bits 0-15: Y, Bits 15-31: Z-Vektor
 	bpl.s	tb315_set_background_bars_skip1
-	add.l	d4,a1			; Switchwerte überspringen
+	add.l	d4,a1			; BPLAM-Werte überspringen
 	bra	tb315_set_background_bars_skip2
 	CNOP 0,4
 tb315_set_background_bars_skip1
@@ -699,18 +699,18 @@ tb315_set_foreground_bars
 	lea	tb315_yz_coords(pc),a0
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
-	move.l	extra_memory(a3),a5 	; Zeiger auf Tabelle mit Switchwerten
+	move.l	extra_memory(a3),a5 	; Zeiger auf Tabelle mit BPLAM-Werten
 	lea	we_y_coords(pc),a6
 	moveq	#cl2_display_width-1,d7	; Anzahl der Spalten
 tb315_set_foreround_bars_loop1
 	move.w	(a6)+,d0		; 2. Y-Offset
-	move.l	a5,a1			; Zeiger auf Tabelle mit Switchwerten
+	move.l	a5,a1			; Zeiger auf Tabelle mit BPLAM-Werten
 	lea	(a2,d0.w*4),a3		; + 2. Y-Offset
 	moveq	#tb315_bars_number-1,d6
 tb315_set_foreround_bars_loop2
 	move.l	(a0)+,d0		; Bits 0-15: Y, Bits 15-31: Z-Vektor
 	bmi.s	tb315_set_foreround_bars_skip1
-	add.l	d4,a1			; Switchwerte überspringen
+	add.l	d4,a1			; BPLAM-Werte überspringen
 	bra	tb315_set_foreround_bars_skip2
 	CNOP 0,4
 tb315_set_foreround_bars_skip1

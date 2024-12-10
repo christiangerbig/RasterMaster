@@ -612,7 +612,7 @@ zzp5_get_y_coords
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
 	lea	BLTDPT-DMACONR(a6),a4
 	lea	BLTSIZE-DMACONR(a6),a5
-	move.l	chip_memory(a3),a7 	; Zeiger auf Tabelle mit Switchwerten
+	move.l	chip_memory(a3),a7 	; Zeiger auf Tabelle mit BPLCON4-Werten
 	lea	BLTAPT-DMACONR(a6),a3
 	moveq	#cl2_display_width-1,d7 ; Anzahl der Spalten
 zzp5_get_y_coords_loop
@@ -622,8 +622,8 @@ zzp5_get_y_coords_loop
 	add.w	d1,d0			; y' + Y-Mittelpunkt
 	WAITBLIT
 	move.l	a2,(a4)			; Ziel = CL
-	lea	(a7,d0.w*2),a1		; Y-Offset in Switch-Tabelle
-	move.l	a1,(a3)			; Quelle = Switch-Tabelle
+	lea	(a7,d0.w*2),a1		; Y-Offset in BPLCON4-Tabelle
+	move.l	a1,(a3)			; Quelle = BPLCON4-Tabelle
 	move.w	d4,(a5)			; Blitter starten
 	add.w	d5,d3			; nächster Y-Winkel
 	addq.w	#LONGWORD_SIZE,a2	; nächste Spalte in CL

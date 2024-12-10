@@ -992,7 +992,7 @@ tb_set_background_bars
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
 	move.w	#tb_bars_number*LONGWORD_SIZE,a3
-	lea	tb_bplam_table_background(pc),a5 ; Zeiger auf Tabelle mit Switchwerten
+	lea	tb_bplcon4_table_background(pc),a5 ; Zeiger auf Tabelle mit BPLAM-Werten
 	lea	ccf_columns_mask(pc),a6
 	moveq	#cl2_display_width-1,d7	; Anzahl der Spalten
 tb_set_background_bars_loop1
@@ -1006,7 +1006,7 @@ tb_set_background_bars_skip1
 tb_set_background_bars_loop2
 	move.l	(a0)+,d0		; Bits 0-15: Y, Bits 16-31: Z-Vektor
 	bmi.s	tb_set_background_bars_skip2
-	move.l	a5,a1			; Zeiger auf Tabelle mit Switchwerten
+	move.l	a5,a1			; Zeiger auf Tabelle mit BPLAM-Werten
 	lea	(a2,d0.w*4),a4		; Y-Offset
 	COPY_TWISTED_BAR.W tb,cl2,extension1,bar_height
 tb_set_background_bars_skip2
@@ -1024,7 +1024,7 @@ tb_set_foreground_bars
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
 	move.w	#tb_bars_number*LONGWORD_SIZE,a3
-	lea	tb_bplam_table_foreground(pc),a5 ; Zeiger auf Tabelle mit Switchwerten
+	lea	tb_bplcon4_table_foreground(pc),a5 ; Zeiger auf Tabelle mit BPLAM-Werten
 	lea	ccf_columns_mask(pc),a6
 	moveq	#cl2_display_width-1,d7 ; Anzahl der Spalten
 tb_set_foreround_bars_loop1
@@ -1038,7 +1038,7 @@ tb_set_foreround_bars_skip1
 tb_set_foreround_bars_loop2
 	move.l	(a0)+,d0		; Bits 0-15: Y, Bits 16-31: Z-Vektor
 	bpl.s	tb_set_foreround_bars_skip2
-	move.l	a5,a1			; Zeiger auf Tabelle mit Switchwerten
+	move.l	a5,a1			; Zeiger auf Tabelle mit BPLAM-Werten
 	lea	(a2,d0.w*4),a4		; Y-Offset
 	COPY_TWISTED_BAR.W tb,cl2,extension1,bar_height
 tb_set_foreround_bars_skip2
@@ -1476,11 +1476,11 @@ tb_color_table
 	DS.L spr_colors_number*tb_bar_height
 
 	CNOP 0,4
-tb_bplam_table_background
+tb_bplcon4_table_background
 	DC.W $0022,$0033,$0044,$0055,$0066,$0077,$0088,$0099,$00aa,$00bb,$00cc,$00dd,$00ee,$00ff
 
 	CNOP 0,4
-tb_bplam_table_foreground
+tb_bplcon4_table_foreground
 	DC.W $2022,$3033,$4044,$5055,$6066,$7077,$8088,$9099,$a0aa,$b0bb,$c0cc,$d0dd,$e0ee,$f0ff
 
 	CNOP 0,4

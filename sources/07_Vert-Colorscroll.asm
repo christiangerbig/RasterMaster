@@ -571,7 +571,7 @@ vert_colorscroll4
 	move.w	d0,vcs4_bplam_table_start(a3)
 	moveq	#vcs4_step1,d2
 	MOVEF.L cl2_extension1_size,d3
-	move.l	extra_memory(a3),a0 	; Tabelle mit Switchwerten
+	move.l	extra_memory(a3),a0 	; Tabelle mit BPLAM-Werten
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
 	lea	(cl2_display_width-1)*4(a2),a5 ; Ende einer Copperzeile
@@ -581,7 +581,7 @@ vert_colorscroll_loop1
 	move.l	a5,a4			; Ende der Copperzeile
 	MOVEF.W cl2_display_y_size-1,d6
 vert_colorscroll_loop2
-	move.b	(a0,d1.w),d0		; Switchwert
+	move.b	(a0,d1.w),d0		; BPLAM-Wert
 	move.b	d0,(a1)			; BPLCON4 high
 	add.l	d3,a1			; nächste Zeile in CL
 	move.b	d0,(a4)			; BPLCON4 high
@@ -612,7 +612,7 @@ vert_colorscroll5_even_loop1
 	addq.b	#vcs5_shift_value,d2 	; Additionswert
 	moveq	#cl2_display_width-1,d6 ; Anzahl der Spalten
 vert_colorscroll5_even_loop2
-	move.b	(a0,d1.w),d0		; Switchwert
+	move.b	(a0,d1.w),d0		; BPLAM-Wert
 	move.b	d0,(a1)			; BPLCON4 high
 	move.b	d0,cl2_extension1_size*vcs5_twist_lines_number*1*2(a1)
 	move.b	d0,cl2_extension1_size*vcs5_twist_lines_number*2*2(a1)
@@ -647,7 +647,7 @@ vert_colorscroll5_odd_loop1
 	addq.b	#vcs5_shift_value,d2 	; Additionswert
 	moveq	#cl2_display_width-1,d6 ; Anzahl der Spalten
 vert_colorscroll5_odd_loop2
-	move.b	(a0,d1.w),d0		; Switchwert
+	move.b	(a0,d1.w),d0		; BPLAM-Wert
 	move.b	d0,(a1)			; BPLCON4 high
 	move.b	d0,cl2_extension1_size*vcs5_twist_lines_number*1*2(a1)
 	move.b	d0,cl2_extension1_size*vcs5_twist_lines_number*2*2(a1)

@@ -578,7 +578,7 @@ blind_colorcycle5212
 	move.w	d4,d0		
 	add.b	d3,d0			; Startwert erhöhen
 	move.w	d0,bcc5212_bplam_table_start(a3) 
-	move.l	extra_memory(a3),a0 	; Tabelle mit Switchwerten
+	move.l	extra_memory(a3),a0 	; Tabelle mit BPLAM-Werten
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
 	move.w	#cl2_extension1_size,a4
@@ -622,7 +622,7 @@ blind_colorcycle523
 	move.w	d4,d0		
 	addq.b	#bcc523_speed,d0	; Startwert erhöhen
 	move.w	d0,bcc523_bplam_table_start(a3) 
-	move.l	extra_memory(a3),a0 	; Tabelle mit Switchwerten
+	move.l	extra_memory(a3),a0 	; Tabelle mit BPLAM-Werten
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
 	move.w	#cl2_extension1_size,a4

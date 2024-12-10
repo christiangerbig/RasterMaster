@@ -754,7 +754,7 @@ init_sprites
 vss_init_bplam_table_mask
 	MOVEF.L vss_image_plane_width*(vss_image_depth-1),d3
 	lea	vss_image_mask,a0	; Plane0
-	move.l	vss_bplam_table_mask(a3),a1 ; Tabelle mit Switchwerten
+	move.l	vss_bplam_table_mask(a3),a1 ; Tabelle mit BPLAM-Werten
 	moveq	#vss_image_y_size-1,d7
 vss_init_bplam_table_mask_loop1
 	moveq	#vss_image_plane_width-1,d6 ; Anzahl der Bytes pro Zeile
@@ -994,7 +994,7 @@ vert_starscrolling_init
 
 	CNOP 0,4
 vss_clear_switch_buffer
-	move.l	vss_switch_buffer_construction1(a3),a0 ; Zeiger auf Tabelle mit Switchwerten
+	move.l	vss_switch_buffer_construction1(a3),a0 ; Zeiger auf Tabelle mit BPLAM-Werten
 	WAITBLIT
 	move.l	#(BC0F_DEST+ANBNC+ANBC+ABNC+ABC)<<16,BLTCON0-DMACONR(a6) ; Minterm D=A
 	moveq	#FALSE,d0
@@ -1009,15 +1009,15 @@ vss_clear_switch_buffer
 
 	CNOP 0,4
 vss_copy_switch_buffer
-	move.l	vss_switch_buffer_construction2(a3),a0 ; Tabelle mit Switchwerten
+	move.l	vss_switch_buffer_construction2(a3),a0 ; Tabelle mit BPLAM-Werten
 	add.l	#vss_switch_buffer_x_size*vss_star_y_size3,a0 ; n Zeilen überspringen
 	move.l	cl2_construction2(a3),a1 
 	ADDF.W cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a1
 	move.w	#cl2_extension1_size,a2
 	MOVEF.W cl2_display_y_size-1,d7
 vss_copy_switch_buffer_loop
-	movem.l (a0)+,d0-d6		; 28 Switchwerte lesen
-	move.b	d0,LONGWORD_SIZE*3(a1)
+	movem.l (a0)+,d0-d6		; 28 Werte lesen
+	move.b	d0,LONGWORD_SIZE*3(a1)	; BPLCON4 high
 	swap	d0
 	move.b	d0,LONGWORD_SIZE*1(a1)
 	lsr.l	#8,d0
@@ -1066,7 +1066,7 @@ vss_copy_switch_buffer_loop
 	move.b	d6,LONGWORD_SIZE*24(a1)
 	swap	d6
 	move.b	d6,LONGWORD_SIZE*26(a1)
-	movem.l (a0)+,d0-d3		; 16 Switchwerte lesen
+	movem.l (a0)+,d0-d3		; 16 Werte lesen
 	move.b	d0,LONGWORD_SIZE*31(a1)
 	swap	d0
 	move.b	d0,LONGWORD_SIZE*29(a1)

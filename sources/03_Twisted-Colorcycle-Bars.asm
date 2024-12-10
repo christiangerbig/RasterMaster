@@ -668,13 +668,13 @@ twisted_colorcycle_bars
 	ADDF.W cl1_extension1_entry+cl1_ext1_BPLCON4_1+WORD_SIZE,a2
 	move.l	extra_memory(a3),a5
 	move.w	#tccb_y_distance,a3
-	add.l	#em_bplam_table,a5 	; Zeiger auf Tabelle mit Switchwerten
+	add.l	#em_bplam_table,a5 	; Zeiger auf Tabelle mit BPLAM-Werten
 	move.w	#tccb_y_center,a6
 	move.w	d5,a7		
 	swap	d7			; Überlauf retten
 	move.w	#cl1_display_width-1,d7	; Anzahl der Spalten
 tccb_get_y_coords_loop1
-	move.l	a5,a1			; Zeiger auf Tabelle mit Switchwerten
+	move.l	a5,a1			; Zeiger auf Tabelle mit BPLAM-Werten
 	swap	d7			; Überlauf
 	moveq	#tccb_bars_number-1,d6
 tccb_get_y_coords_loop2
@@ -686,8 +686,8 @@ tccb_get_y_coords_loop2
 	add.w	a6,d0			; y' + Y-Mittelpunkt
 	MULUF.W cl1_extension1_size/4,d0,d1 ; Y-Offset in CL
 	lea	(a2,d0.w*4),a4		; Y-Offset
-	movem.l (a1)+,d0-d3		; 16 Switchwerte lesen
-	move.b	d0,cl1_extension1_size*3(a4)
+	movem.l (a1)+,d0-d3		; 16 Werte lesen
+	move.b	d0,cl1_extension1_size*3(a4) ; BPLCON4 high
 	swap	d0
 	move.b	d0,cl1_extension1_size*1(a4)
 	lsr.l	#8,d0
@@ -716,7 +716,7 @@ tccb_get_y_coords_loop2
 	move.b	d3,cl1_extension1_size*12(a4)
 	swap	d3
 	move.b	d3,cl1_extension1_size*14(a4)
-	movem.l (a1)+,d0-d3		; 16 Switchwerte lesen
+	movem.l (a1)+,d0-d3		; 16 Werte lesen
 	move.b	d0,cl1_extension1_size*19(a4)
 	swap	d0
 	move.b	d0,cl1_extension1_size*17(a4)

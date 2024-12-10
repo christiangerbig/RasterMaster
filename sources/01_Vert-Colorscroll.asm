@@ -642,7 +642,7 @@ vert_colorscroll3112
 	addq.b	#vcs3112_step1_angle_speed,d0 ; nächster Y-Winkel
 	move.w	d0,vcs3112_step1_angle(a3) 
 	MOVEF.L (cl2_extension1_size*(cl2_display_y_size/2))+LONGWORD_SIZE,d5
-	move.l	extra_memory(a3),a0	; Tabelle mit Switchwerten
+	move.l	extra_memory(a3),a0	; Tabelle mit BPLAM-werten
 	move.l	cl2_construction2(a3),a1 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ; 2. Quadrant
 	lea	LONGWORD_SIZE(a1),a2	; 1. Quadrant
@@ -656,14 +656,14 @@ vert_colorscroll3112_loop1
 	move.w	d2,d1			; Startwert
 	MOVEF.W (cl2_display_y_size/2)-1,d6
 vert_colorscroll3112_loop2
-	move.b	(a0,d1.w),d0		; Switchwert
-	move.b	d0,(a1)
+	move.b	(a0,d1.w),d0		; BPLAM
+	move.b	d0,(a1)			; BPLCON4 high
 	sub.l	a6,a1			; 2. Quadrant vorletzte Zeile in CL
-	move.b	d0,(a2)
+	move.b	d0,(a2)			; BPLCON4 high
 	sub.l	a6,a2			; 1. Quadrant vorletzte Zeile in CL
-	move.b	d0,(a4)
+	move.b	d0,(a4)			; BPLCON4 high
 	add.l	a6,a4			; 3. Quadrant nächste Zeile in CL
-	move.b	d0,(a5)
+	move.b	d0,(a5)			; BPLCON4 high
 	add.l	a6,a5			; 4. Quadrant nächste Zeile in CL
 	move.l	(a3,d4.w*4),d0		; sin(w)
 	MULUF.L vcs3112_step1_radius*2,d0 ; y'=(yr*sin(w))/2^15
@@ -714,7 +714,7 @@ vert_colorscroll3121
 	addq.b	#vcs3121_step1_angle_speed,d0 ; nächster Y-Winkel
 	move.w	d0,vcs3121_step1_angle(a3) 
 	MOVEF.L (cl2_extension1_size*(cl2_display_y_size/2))+4,d5
-	move.l	extra_memory(a3),a0	; Tabelle mit Switchwerten
+	move.l	extra_memory(a3),a0	; Tabelle mit BPLAM-Werten
 	move.l	cl2_construction2(a3),a1 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ; 2. Quadrant
 	lea	LONGWORD_SIZE(a1),a2 ; 1. Quadrant
@@ -728,7 +728,7 @@ vert_colorscroll3121_loop1
 	move.w	d2,d1			; Startwert
 	MOVEF.W (cl2_display_y_size/2)-1,d6
 vert_colorscroll3121_loop2
-	move.b	(a0,d1.w),d0		; Switchwert
+	move.b	(a0,d1.w),d0		; BPLAM
 	move.b	d0,(a1)
 	sub.l	a6,a1			; 2. Quadrant vorletzte Zeile in CL
 	move.b	d0,(a2)
@@ -786,7 +786,7 @@ vert_colorscroll3122
 	addq.b	#vcs3122_step2_angle_speed,d0 ; nächster Y-Winkel
 	move.w	d0,vcs3122_step2_angle(a3) 
 	MOVEF.L (cl2_extension1_size*(cl2_display_y_size/2))+LONGWORD_SIZE,d5
-	move.l	extra_memory(a3),a0 	; Tabelle mit Switchwerten
+	move.l	extra_memory(a3),a0 	; Tabelle mit BPLAM-werten
 	move.l	cl2_construction2(a3),a1 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ; 2. Quadrant
 	lea	LONGWORD_SIZE(a1),a2	; 1. Quadrant
@@ -800,7 +800,7 @@ vert_colorscroll3122_loop1
 	move.w	d2,d1			; Startwert
 	MOVEF.W (cl2_display_y_size/2)-1,d6
 vert_colorscroll3122_loop2
-	move.b	(a0,d1.w),d0		; Switchwert
+	move.b	(a0,d1.w),d0		; BPLAM
 	move.b	d0,(a1)
 	sub.l	a6,a1			; 2. Quadrant vorletzte Zeile in CL
 	move.b	d0,(a2)
@@ -858,7 +858,7 @@ vert_colorscroll3111
 	addq.b	#vcs3111_step2_angle_speed,d0 ; nächster Y-Winkel
 	move.w	d0,vcs3111_step2_angle(a3) 
 	MOVEF.L (cl2_extension1_size*(cl2_display_y_size/2))+4,d5
-	move.l	extra_memory(a3),a0 	; Tabelle mit Switchwerten
+	move.l	extra_memory(a3),a0 	; Tabelle mit BPLAM-werten
 	move.l	cl2_construction2(a3),a1 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ; 2. Quadrant
 	lea	LONGWORD_SIZE(a1),a2	; 1. Quadrant
@@ -872,7 +872,7 @@ vert_colorscroll_loop1
 	move.w	d2,d1			; Startwert
 	MOVEF.W (cl2_display_y_size/2)-1,d6
 vert_colorscroll_loop2
-	move.b	(a0,d1.w),d0		; Switchwert
+	move.b	(a0,d1.w),d0		; BPLAM
 	move.b	d0,(a1)
 	sub.l	a6,a1			; 2. Quadrant vorletzte Zeile in CL
 	move.b	d0,(a2)

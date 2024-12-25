@@ -20,6 +20,7 @@
 	XREF pt_track_notes_played_enabled
 	XREF pt_track_volumes_enabled
 	XREF pt_track_periods_enabled
+	XREF pt_track_data_enabled
 	XREF pt_audchan1temp
 	XREF pt_audchan2temp
 	XREF pt_audchan3temp

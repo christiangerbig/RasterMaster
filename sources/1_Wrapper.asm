@@ -51,7 +51,7 @@ WRAPPER				SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
 CUSTOM_MEMORY_USED		SET 1
-PROTRACKER_VERSION_3.0B		SET 1
+PROTRACKER_VERSION_3		SET 1
 
 
 	INCLUDE "macros.i"
@@ -79,6 +79,7 @@ pt_mute_enabled			EQU FALSE
 pt_track_notes_played_enabled	EQU FALSE
 pt_track_volumes_enabled	EQU FALSE
 pt_track_periods_enabled	EQU FALSE
+pt_track_data_enabled		EQU FALSE
 pt_music_fader_enabled		EQU FALSE
 pt_split_module_enabled		EQU TRUE
 pt_usedfx			EQU %1001010100000000
@@ -135,10 +136,10 @@ spr_y_size2			EQU 0
 spr_depth			EQU 0
 spr_colors_number		EQU 0
 
-	IFD PROTRACKER_VERSION_2.3A 
+	IFD PROTRACKER_VERSION_2 
 audio_memory_size		EQU 0
 	ENDC
-	IFD PROTRACKER_VERSION_3.0B
+	IFD PROTRACKER_VERSION_3
 audio_memory_size		EQU 2
 	ENDC
 
@@ -266,10 +267,10 @@ spr7_y_size2			EQU 0
 ; ** Relative offsets for variables **
 
 ; **** PT-Replay ****
-	IFD PROTRACKER_VERSION_2.3A 
+	IFD PROTRACKER_VERSION_2 
 		INCLUDE "music-tracker/pt2-variables-offsets.i"
 	ENDC
-	IFD PROTRACKER_VERSION_3.0B
+	IFD PROTRACKER_VERSION_3
 		INCLUDE "music-tracker/pt3-variables-offsets.i"
 	ENDC
 
@@ -318,10 +319,10 @@ init_custom_memory_table
 init_main_variables
 
 ; **** PT-Replay ****
-	IFD PROTRACKER_VERSION_2.3A 
+	IFD PROTRACKER_VERSION_2 
 		PT2_INIT_VARIABLES NOPOINTERS
 	ENDC
-	IFD PROTRACKER_VERSION_3.0B
+	IFD PROTRACKER_VERSION_3
 		PT3_INIT_VARIABLES NOPOINTERS
 	ENDC
 	rts
@@ -486,11 +487,11 @@ VERTB_int_server
 	ENDC
 
 ; **** PT-Replay ****
-	IFD PROTRACKER_VERSION_2.3A 
+	IFD PROTRACKER_VERSION_2 
 		PT2_REPLAY pt_SetSoftInterrupt
 	ENDC
 
-	IFD PROTRACKER_VERSION_3.0B
+	IFD PROTRACKER_VERSION_3
 		PT3_REPLAY pt_SetSoftInterrupt
 	ENDC
 
@@ -526,11 +527,11 @@ pf1_rgb8_color_table
 
 	INCLUDE "music-tracker/pt-vibrato-tremolo-table.i"
 
-	IFD PROTRACKER_VERSION_2.3A 
+	IFD PROTRACKER_VERSION_2 
 		INCLUDE "music-tracker/pt2-period-table.i"
 	ENDC
 
-	IFD PROTRACKER_VERSION_3.0B
+	IFD PROTRACKER_VERSION_3
 		INCLUDE "music-tracker/pt3-period-table.i"
 	ENDC
 

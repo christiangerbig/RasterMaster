@@ -73,7 +73,6 @@ CUSTOM_MEMORY_CHIP		EQU $00000000
 CUSTOM_MEMORY_FAST		EQU $00000001
 
 pt_ciatiming_enabled		EQU TRUE
-pt_finetune_enabled		EQU FALSE
 pt_metronome_enabled		EQU FALSE
 pt_mute_enabled			EQU FALSE
 pt_track_notes_played_enabled	EQU FALSE
@@ -343,9 +342,7 @@ init_main
 	bsr	pt_InitRegisters
 	bsr	pt_InitAudTempStrucs
 	bsr	pt_ExamineSongStruc
-	IFEQ pt_finetune_enabled
-		bsr	pt_InitFtuPeriodTableStarts
-	ENDC
+	bsr	pt_InitFtuPeriodTableStarts
 	bsr	init_colors
 	bsr	init_CIA_timers
 	bra	init_first_copperlist
@@ -377,9 +374,7 @@ pt_decrunch_audio_data
 
 	PT_EXAMINE_SONG_STRUCTURE
 
-	IFEQ pt_finetune_enabled
-		PT_INIT_FINETUNE_TABLE_STARTS
-	ENDC
+	PT_INIT_FINETUNE_TABLE_STARTS
 
 	CNOP 0,4
 init_colors

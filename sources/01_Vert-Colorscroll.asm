@@ -6,12 +6,9 @@
 
 ; Requirements
 ; CPU:		68020+
-; Fast-Memory:	-
 ; hipset:	AGA PAL
 ; OS:		3.0+
 
-
-	SECTION code_and_variables,CODE
 
 	MC68040
 
@@ -199,7 +196,7 @@ cl2_vstart2			EQU beam_position&$ff
 
 sine_table_length		EQU 256
 
-; **** Vert-Colorscroll3.1.1.2 ****
+; Vert-Colorscroll3.1.1.2
 vcs3112_bar_height		EQU 128
 vcs3112_bars_number		EQU 2
 vcs3112_step1_min		EQU 1
@@ -212,7 +209,7 @@ vcs3112_step1_angle_step	EQU 1
 vcs3112_step2			EQU 5
 vcs3112_speed			EQU 2
 
-; **** Vert-Colorscroll3.1.2.1 ****
+; Vert-Colorscroll3.1.2.1
 vcs3121_bar_height		EQU 128
 vcs3121_bars_number		EQU 2
 vcs3121_step1_min		EQU 0
@@ -225,7 +222,7 @@ vcs3121_step1_angle_step	EQU 5
 vcs3121_step2			EQU 4
 vcs3121_speed			EQU 2
 
-; **** Vert-Colorscroll3.1.2.2 ****
+; Vert-Colorscroll3.1.2.2
 vcs3122_bar_height		EQU 128
 vcs3122_bars_number		EQU 2
 vcs3122_step1			EQU 1
@@ -238,7 +235,7 @@ vcs3122_step2_angle_speed	EQU 2
 vcs3122_step2_angle_step	EQU 1
 vcs3122_speed			EQU 2
 
-; **** Vert-Colorscroll3.1.1.1 ****
+; Vert-Colorscroll3.1.1.1
 vcs3111_bar_height		EQU 128
 vcs3111_bars_number		EQU 2
 vcs3111_step1			EQU 1
@@ -251,7 +248,7 @@ vcs3111_step2_angle_speed	EQU 2
 vcs3111_step2_angle_step	EQU 6
 vcs3111_speed			EQU 4
 
-; **** Blind-Fader ****
+; Blind-Fader
 bf_lamella_height		EQU 14
 bf_lamellas_number		EQU visible_lines_number/bf_lamella_height
 bf_step1			EQU 1
@@ -260,7 +257,7 @@ bf_speed			EQU 2
 
 bf_registers_table_length	EQU bf_lamella_height*6
 
-; **** Effects-Handler ****
+; Effects-Handler
 eh_trigger_number_max		EQU 9
 
 color_step1			EQU 256/(vcs3112_bar_height/2)
@@ -364,7 +361,6 @@ cl2_end				RS.L 1
 copperlist2_size		RS.B 0
 
 
-; ** Konstanten für die Größe der Copperlisten **
 cl1_size1			EQU 0
 cl1_size2			EQU 0
 cl1_size3			EQU copperlist1_size
@@ -374,7 +370,6 @@ cl2_size2			EQU copperlist2_size
 cl2_size3			EQU copperlist2_size
 
 
-; ** Konstanten für die Größe der Spritestrukturen **
 spr0_x_size1			EQU spr_x_size1
 spr0_y_size1			EQU 0
 spr1_x_size1			EQU spr_x_size1
@@ -416,27 +411,27 @@ spr7_y_size2			EQU 0
 
 save_a7				RS.L 1
 
-; **** Vert-Colorscroll3.1.1.2 ****
+; Vert-Colorscroll3.1.1.2
 vcs3112_active			RS.W 1
 vcs3112_bplam_table_start	RS.W 1
 vcs3112_step1_angle		RS.W 1
 
-; **** Vert-Colorscroll3.1.2.1 ****
+; Vert-Colorscroll3.1.2.1
 vcs3121_active			RS.W 1
 vcs3121_bplam_table_start	RS.W 1
 vcs3121_step1_angle		RS.W 1
 
-; **** Vert-Colorscroll3.1.2.2 ****
+; Vert-Colorscroll3.1.2.2
 vcs3122_active			RS.W 1
 vcs3122_bplam_table_start	RS.W 1
 vcs3122_step2_angle		RS.W 1
 
-; **** Vert-Colorscroll3.1.1.1 ****
+; Vert-Colorscroll3.1.1.1
 vcs3111_active			RS.W 1
 vcs3111_bplam_table_start	RS.W 1
 vcs3111_step2_angle		RS.W 1
 
-; **** Blind-Fader ****
+; Blind-Fader
 	IFEQ open_border_enabled
 bf_registers_table_start	RS.W 1
 
@@ -445,16 +440,20 @@ bfi_active			RS.W 1
 bfo_active			RS.W 1
 	ENDC
 
-; **** Effects-Handler ****
+; Effects-Handler
 eh_trigger_number		RS.W 1
 
-; **** Main ****
+; Main
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
 
 
+	SECTION code,CODE
+
+
 start_01_vert_colorscroll
+
 
 	INCLUDE "sys-wrapper.i"
 
@@ -462,29 +461,29 @@ start_01_vert_colorscroll
 	CNOP 0,4
 init_main_variables
 
-; **** Vert-Colorscroll3.1.1.2 ****
+; Vert-Colorscroll3.1.1.2
 	moveq	#FALSE,d1
 	move.w	d1,vcs3112_active(a3)
 	moveq	#TRUE,d0
 	move.w	d0,vcs3112_bplam_table_start(a3)
 	move.w	#sine_table_length/4,vcs3112_step1_angle(a3) ; 90 Grad
 
-; **** Vert-Colorscroll3.1.2.1 ****
+; Vert-Colorscroll3.1.2.1
 	move.w	d1,vcs3121_active(a3)
 	move.w	d0,vcs3121_bplam_table_start(a3)
 	move.w	#sine_table_length/4,vcs3121_step1_angle(a3) ; 90 Grad
 
-; **** Vert-Colorscroll3.1.2.2 ****
+; Vert-Colorscroll3.1.2.2
 	move.w	d1,vcs3122_active(a3)
 	move.w	d0,vcs3122_bplam_table_start(a3)
 	move.w	#sine_table_length/4,vcs3122_step2_angle(a3) ; 90 Grad
 
-; **** Vert-Colorscroll3.1.1.1 ****
+; Vert-Colorscroll3.1.1.1
 	move.w	d1,vcs3111_active(a3)
 	move.w	d0,vcs3111_bplam_table_start(a3)
 	move.w	#sine_table_length/4,vcs3111_step2_angle(a3) ; 90 Grad
 
-; **** Blind-Fader ****
+; Blind-Fader
 	IFEQ open_border_enabled
 		move.w	d0,bf_registers_table_start(a3)
 
@@ -493,7 +492,7 @@ init_main_variables
 		move.w	d1,bfo_active(a3)
 	ENDC
 
-; **** Effects-Handler ****
+; Effects-Handler
 	move.w	d0,eh_trigger_number(a3)
 	move.w	d1,stop_fx_active(a3)
 	rts
@@ -543,7 +542,7 @@ init_colors
 	CPU_INIT_COLOR_LOW COLOR00,32
 	rts
 
-; **** Vert-Colorscroll ****
+; Vert-Colorscroll
 	INIT_bplam_table.B vcs,0,1,color_values_number1*segments_number1,extra_memory,a3
 
 
@@ -1121,7 +1120,7 @@ nmi_int_server
 pf1_rgb8_color_table
 	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/02_vcs3112_Colorgradient.ct"
 
-; **** Blind-Fader ****
+; Blind-Fader
 	IFEQ open_border_enabled
 		CNOP 0,2
 bf_registers_table

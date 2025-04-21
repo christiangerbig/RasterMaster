@@ -6,11 +6,9 @@
 
 ; Requirements
 ; CPU:		68020+
-; Fast-Memory:	-
 ; Chipset:	AGA PAL
 ; OS:		3.0+
 
-	SECTION code_and_variables,CODE
 
 	MC68040
 
@@ -163,7 +161,7 @@ cl2_vstart2			EQU beam_position&$ff
 
 sine_table_length		EQU 512
 
-; **** Zig-Zag-Plasma5 ****
+; Zig-Zag-Plasma5
 zzp5_y_radius			EQU 64
 zzp5_y_center			EQU 64
 zzp5_y_radius_angle_speed	EQU 1
@@ -175,7 +173,7 @@ zzp5_copy_blit_x_size		EQU 16
 zzp5_copy_blit_width		EQU zzp5_copy_blit_x_size/8
 zzp5_copy_blit_y_size		EQU cl2_display_y_size
 
-; **** Vert-Shade-Bars ****
+; Vert-Shade-Bars
 vsb_bar_height			EQU 16
 vsb_bars_number			EQU 4
 vsb_y_radius			EQU ((visible_lines_number+(zzp5_y_radius*2))-vsb_bar_height)/2
@@ -185,7 +183,7 @@ vsb_y_radius_angle_step		EQU 1
 vsb_y_angle_speed		EQU 2
 vsb_y_angle_step		EQU sine_table_length/vsb_bars_number
 
-; **** Vert-Border-Fader ****
+; Vert-Border-Fader
 vbf_FPS				EQU 50
 vbf_y_position_center		EQU display_window_vstart+(visible_lines_number/2)
 
@@ -194,7 +192,7 @@ vbfo_fader_radius		EQU vbfo_fader_speed_max
 vbfo_fader_center		EQU vbfo_fader_speed_max+1
 vbfo_fader_angle_speed		EQU 2
 
-; **** Effects-Handler ****
+; Effects-Handler
 eh_trigger_number_max		EQU 3
 
 color_step1			EQU 256/128
@@ -308,7 +306,6 @@ cl2_end				RS.L 1
 copperlist2_size		RS.B 0
 
 
-; ** Konstanten für die Größe der Copperlisten **
 cl1_size1			EQU 0
 cl1_size2			EQU 0
 cl1_size3			EQU copperlist1_size
@@ -318,7 +315,6 @@ cl2_size2			EQU copperlist2_size
 cl2_size3			EQU copperlist2_size
 
 
-; ** Konstanten für die Größe der Spritestrukturen **
 spr0_x_size1			EQU spr_x_size1
 spr0_y_size1			EQU 0
 spr1_x_size1			EQU spr_x_size1
@@ -360,32 +356,36 @@ spr7_y_size2			EQU 0
 
 save_a7				RS.L 1
 
-; **** Zig-Zag-Plasma5 ****
+; Zig-Zag-Plasma5
 zzp5_y_radius_angle		RS.W 1
 zzp5_y_angle			RS.W 1
 
-; **** Vert-Shade-Bars ****
+; Vert-Shade-Bars
 vsb_active			RS.W 1
 vsb_y_radius_angle		RS.W 1
 vsb_y_angle			RS.W 1
 
-; **** Vert-Border-Fader ****
+; Vert-Border-Fader
 vbf_fader_angle			RS.W 1
 vbf_display_window_vstart RS.W 1
 vbf_display_window_vstop	RS.W 1
 
 vbfo_active			RS.W 1
 
-; **** Effects-Handler ****
+; Effects-Handler
 eh_trigger_number		RS.W 1
 
-; **** Main ****
+; Main
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
 
 
+	SECTION code,CODE
+
+
 start_0a_zig_zag_plasma
+
 
 	INCLUDE "sys-wrapper.i"
 
@@ -393,17 +393,17 @@ start_0a_zig_zag_plasma
 	CNOP 0,4
 init_main_variables
 
-; **** Zig-Zag-Plasma5 ****
+; Zig-Zag-Plasma5
 	moveq	#TRUE,d0
 	move.w	d0,zzp5_y_radius_angle(a3)
 	move.w	d0,zzp5_y_angle(a3)
 
-; **** Vert-Shade-Bars ****
+; Vert-Shade-Bars
 	move.w	d0,vsb_active(a3)
 	move.w	#sine_table_length/4,vsb_y_radius_angle(a3)
 	move.w	d0,vsb_y_angle(a3)
 
-; **** Vert-Border-Fader ****
+; Vert-Border-Fader
 	move.w	#sine_table_length/4,vbf_fader_angle(a3)
 	move.w	#display_window_vstart,vbf_display_window_vstart(a3)
 	move.w	#display_window_vstop,vbf_display_window_vstop(a3)
@@ -411,10 +411,10 @@ init_main_variables
 	moveq	#FALSE,d1
 	move.w	d1,vbfo_active(a3)
 
-; **** Effects-Handler ****
+; Effects-Handler
 	move.w	d0,eh_trigger_number(a3)
 
-; **** Main ****
+; Main
 	move.w	d1,stop_fx_active(a3)
 	rts
 
@@ -490,7 +490,7 @@ init_second_copperlist
 cl2_init_bplcon4
 	move.l	#(BPLCON4<<16)+bplcon4_bits,d0
 	COP_WAIT cl2_hstart1,cl2_vstart1
-	move.w	#(cl2_display_width*cl2_display_y_size)-1,d7 ;Anzahl der Spalten
+	move.w	#(cl2_display_width*cl2_display_y_size)-1,d7 ; Anzahl der Spalten
 cl2_init_bplcon4_loop
 	move.l	d0,(a0)+		; BPLCON4
 	dbf	d7,cl2_init_bplcon4_loop

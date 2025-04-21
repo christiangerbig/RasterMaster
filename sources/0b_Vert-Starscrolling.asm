@@ -6,12 +6,9 @@
 
 ; Requirements
 ; CPU:		68020+
-; Fast-Memory:	-
 ; Chipset:	AGA PAL
 ; OS:		3.0+
 
-
-	SECTION code_and_variables,CODE
 
 	MC68040
 
@@ -205,7 +202,7 @@ cl2_vstart2			EQU beam_position&$ff
 
 sine_table_length		EQU 256
 
-; **** Logo ****
+; Logo
 lg_image_x_size			EQU 256
 lg_image_plane_width		EQU lg_image_x_size/8
 lg_image_y_size			EQU 87
@@ -216,7 +213,7 @@ lg_image_y_center		EQU (visible_lines_number-lg_image_y_size)/2
 lg_image_x_position		EQU display_window_hstart+10+lg_image_x_center
 lg_image_y_position		EQU display_window_vstart+lg_image_y_center
 
-; **** Vert-Starscrolling ****
+; Vert-Starscrolling
 vss_image_x_size		EQU 64
 vss_image_plane_width		EQU vss_image_x_size/8
 vss_image_y_size		EQU 56
@@ -248,44 +245,44 @@ vss_copy_blit_width		EQU vss_copy_blit_x_size/8
 vss_copy_blit_y_size		EQU vss_star_y_size1
 vss_copy_blit_depth		EQU 1
 
-; **** Clear-Blit ****
+; Clear-Blit
 vss_clear_blit_x_size		EQU cl2_display_x_size
 vss_clear_blit_y_size		EQU cl2_display_y_size
 
-; **** Image-Fader ****
+; Image-Fader
 if_rgb8_start_color		EQU 1
 if_rgb8_color_table_offset	EQU 1
 if_rgb8_colors_number		EQU pf1_colors_number-1
 
-; **** Image-Fader-In ****
+; Image-Fader-In
 ifi_rgb8_fader_speed_max	EQU 4
 ifi_rgb8_fader_radius		EQU ifi_rgb8_fader_speed_max
 ifi_rgb8_fader_center		EQU ifi_rgb8_fader_speed_max+1
 ifi_rgb8_fader_angle_speed	EQU 1
 
-; **** Image-Fader-Out ****
+; Image-Fader-Out
 ifo_rgb8_fader_speed_max	EQU 3
 ifo_rgb8_fader_radius		EQU ifo_rgb8_fader_speed_max
 ifo_rgb8_fader_center		EQU ifo_rgb8_fader_speed_max+1
 ifo_rgb8_fader_angle_speed	EQU 1
 
-; **** Image-Pixel-Fader ****
+; Image-Pixel-Fader
 ipf_source_size			EQU 32
 ipf_destination_size_min	EQU 1
 
-; **** Image-Pixel-Fader-In ****
+; Image-Pixel-Fader-In
 ipfi_delay			EQU 6
 ipfi_delay_radius		EQU ipfi_delay
 ipfi_delay_center		EQU ipfi_delay+1
 ipfi_delay_angle_speed	EQU 1
 
-; **** Image-Pixel-Fader-Out ****
+; Image-Pixel-Fader-Out
 ipfo_delay			EQU 8
 ipfo_delay_radius		EQU ipfo_delay
 ipfo_delay_center		EQU ipfo_delay+1
 ipfo_delay_angle_speed		EQU 1
 
-; **** Effects-Handler ****
+; Effects-Handler
 eh_trigger_number_max		EQU 5
 
 
@@ -398,7 +395,6 @@ cl2_end				RS.L 1
 copperlist2_size		RS.B 0
 
 
-; ** Konstanten für die Größe der Copperlisten **
 cl1_size1			EQU 0
 cl1_size2			EQU 0
 cl1_size3			EQU copperlist1_size
@@ -408,7 +404,7 @@ cl2_size2			EQU copperlist2_size
 cl2_size3			EQU copperlist2_size
 
 
-; ** Sprite0-Zusatzstruktur **
+; Sprite0-Zusatzstruktur
 	RSRESET
 
 spr0_extension1			RS.B 0
@@ -418,7 +414,7 @@ spr0_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr0_extension1_size		RS.B 0
 
-; ** Sprite0-Hauptstruktur **
+; Sprite0-Hauptstruktur
 	RSRESET
 
 spr0_begin			RS.B 0
@@ -429,7 +425,7 @@ spr0_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite0_size			RS.B 0
 
-; ** Sprite1-Zusatzstruktur **
+; Sprite1-Zusatzstruktur
 	RSRESET
 
 spr1_extension1	RS.B 0
@@ -439,7 +435,7 @@ spr1_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr1_extension1_size		RS.B 0
 
-; ** Sprite1-Hauptstruktur **
+; Sprite1-Hauptstruktur
 	RSRESET
 
 spr1_begin			RS.B 0
@@ -450,7 +446,7 @@ spr1_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite1_size			RS.B 0
 
-; ** Sprite2-Zusatzstruktur **
+; Sprite2-Zusatzstruktur
 	RSRESET
 
 spr2_extension1			RS.B 0
@@ -460,7 +456,7 @@ spr2_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr2_extension1_size		RS.B 0
 
-; ** Sprite2-Hauptstruktur **
+; Sprite2-Hauptstruktur
 	RSRESET
 
 spr2_begin			RS.B 0
@@ -471,7 +467,7 @@ spr2_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite2_size			RS.B 0
 
-; ** Sprite3-Zusatzstruktur **
+; Sprite3-Zusatzstruktur
 	RSRESET
 
 spr3_extension1			RS.B 0
@@ -481,7 +477,7 @@ spr3_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr3_extension1_size		RS.B 0
 
-; ** Sprite3-Hauptstruktur **
+; Sprite3-Hauptstruktur
 	RSRESET
 
 spr3_begin			RS.B 0
@@ -492,7 +488,7 @@ spr3_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite3_size			RS.B 0
 
-; ** Sprite4-Zusatzstruktur **
+; Sprite4-Zusatzstruktur
 	RSRESET
 
 spr4_extension1			RS.B 0
@@ -502,7 +498,7 @@ spr4_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr4_extension1_size		RS.B 0
 
-; ** Sprite4-Hauptstruktur **
+; Sprite4-Hauptstruktur
 	RSRESET
 
 spr4_begin			RS.B 0
@@ -513,7 +509,7 @@ spr4_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite4_size			RS.B 0
 
-; ** Sprite5-Zusatzstruktur **
+; Sprite5-Zusatzstruktur
 	RSRESET
 
 spr5_extension1	RS.B 0
@@ -523,7 +519,7 @@ spr5_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr5_extension1_size		RS.B 0
 
-; ** Sprite5-Hauptstruktur **
+; Sprite5-Hauptstruktur
 	RSRESET
 
 spr5_begin			RS.B 0
@@ -534,7 +530,7 @@ spr5_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite5_size			RS.B 0
 
-; ** Sprite6-Zusatzstruktur **
+; Sprite6-Zusatzstruktur
 	RSRESET
 
 spr6_extension1	RS.B 0
@@ -544,7 +540,7 @@ spr6_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr6_extension1_size		RS.B 0
 
-; ** Sprite6-Hauptstruktur **
+; Sprite6-Hauptstruktur
 	RSRESET
 
 spr6_begin			RS.B 0
@@ -555,7 +551,7 @@ spr6_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite6_size			RS.B 0
 
-; ** Sprite7-Zusatzstruktur **
+; Sprite7-Zusatzstruktur
 	RSRESET
 
 spr7_extension1	RS.B 0
@@ -565,7 +561,7 @@ spr7_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr7_extension1_size		RS.B 0
 
-; ** Sprite7-Hauptstruktur **
+; Sprite7-Hauptstruktur
 	RSRESET
 
 spr7_begin			RS.B 0
@@ -577,7 +573,6 @@ spr7_end			RS.L 1*(spr_pixel_per_datafetch/16)
 sprite7_size			RS.B 0
 
 
-; ** Konstanten für die Größe der Spritestrukturen **
 spr0_x_size1			EQU spr_x_size1
 spr0_y_size1			EQU 0
 spr1_x_size1			EQU spr_x_size1
@@ -613,14 +608,13 @@ spr7_x_size2			EQU spr_x_size2
 spr7_y_size2			EQU sprite7_size/(spr_x_size2/8)
 
 
-
 	RSRESET
 
 	INCLUDE "variables-offsets.i"
 
 save_a7				RS.L 1
 
-; **** Vert-Starscrolling ****
+; Vert-Starscrolling
 vss_bplam_table			RS.L 1
 vss_bplam_table_mask		RS.L 1
 
@@ -628,42 +622,46 @@ vss_switch_buffer_construction1	RS.L 1
 vss_switch_buffer_construction2	RS.L 1
 vss_switch_buffer_display	RS.L 1
 
-; **** Image-Fader ****
+; Image-Fader
 if_rgb8_colors_counter		RS.W 1
 if_rgb8_copy_colors_active	RS.W 1
 
-; **** Image-Fader-In ****
+; Image-Fader-In
 ifi_rgb8_active			RS.W 1
 ifi_rgb8_fader_angle		RS.W 1
 
-; **** Image-Fader-Out ****
+; Image-Fader-Out
 ifo_rgb8_active			RS.W 1
 ifo_rgb8_fader_angle		RS.W 1
 
-; **** Image-Pixel-Fader ****
+; Image-Pixel-Fader
 ipf_mask			RS.L 1
 ipf_destination_size		RS.W 1
 
-; **** Image-Pixel-Fader-In ****
+; Image-Pixel-Fader-In
 ipfi_active			RS.W 1
 ipfi_delay_counter		RS.W 1
 ipfi_delay_angle		RS.W 1
 
-; **** Image-Pixel-Fader-Out ****
+; Image-Pixel-Fader-Out
 ipfo_active			RS.W 1
 ipfo_delay_counter		RS.W 1
 ipfo_delay_angle		RS.W 1
 
-; **** Effects-Handler ****
+; Effects-Handler
 eh_trigger_number		RS.W 1
 
-; **** Main ****
+; Main
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
 
 
+	SECTION code,CODE
+
+
 start_0b_vert_starscrolling
+
 
 	INCLUDE "sys-wrapper.i"
 
@@ -671,7 +669,7 @@ start_0b_vert_starscrolling
 	CNOP 0,4
 init_main_variables
 
-; **** Vert-Starscrolling ****
+; Vert-Starscrolling
 	move.l	chip_memory(a3),a0
 	move.l	a0,vss_bplam_table(a3)	; Vorlage der Sterne
 	add.l	#vss_bplam_table_size,a0
@@ -684,38 +682,38 @@ init_main_variables
 	add.l	#vss_switch_buffer_size,a0
 	move.l	a0,vss_switch_buffer_display(a3)
 
-; **** Image-Fader ****
+; Image-Fader
 	moveq	#TRUE,d0
 	move.w	d0,if_rgb8_colors_counter(a3)
 	moveq	#FALSE,d1
 	move.w	d1,if_rgb8_copy_colors_active(a3)
 
-; **** Image-Fader-In ****
+; Image-Fader-In
 	move.w	d1,ifi_rgb8_active(a3)
 	move.w	#sine_table_length/4,ifi_rgb8_fader_angle(a3) ; 90 Grad
 
-; **** Image-Fader-Out ****
+; Image-Fader-Out
 	move.w	d1,ifo_rgb8_active(a3)
 	move.w	#sine_table_length/4,ifo_rgb8_fader_angle(a3) ; 90 Grad
 
-; **** Image-Pixel-Fader ****
+; Image-Pixel-Fader
 	move.l	d0,ipf_mask(a3)
 	move.w	#ipf_destination_size_min,ipf_destination_size(a3)
 
-; **** Image-Pixel-Fader-In ****
+; Image-Pixel-Fader-In
 	move.w	d1,ipfi_active(a3)
 	move.w	d0,ipfi_delay_counter(a3)
 	move.w	#sine_table_length/4,ipfi_delay_angle(a3) ; 90 Grad
 
-; **** Image-Pixel-Fader-Out ****
+; Image-Pixel-Fader-Out
 	move.w	d1,ipfo_active(a3)
 	move.w	d0,ipfo_delay_counter(a3)
 	move.w	#sine_table_length/4,ipfo_delay_angle(a3) ; 90 Grad
 
-; **** Effects-Handler ****
+; Effects-Handler
 	move.w	d0,eh_trigger_number(a3)
 
-; **** Main ****
+; Main
 	move.w	d1,stop_fx_active(a3)
 	rts
 
@@ -738,7 +736,7 @@ init_colors
 	CPU_INIT_COLOR_LOW COLOR00,16,spr_rgb8_color_table
 	rts
 
-; **** Logo ****
+; Logo
 	CNOP 0,4
 init_sprites
 	bsr.s	spr_init_ptrs_table
@@ -771,7 +769,7 @@ vss_init_bplam_table_mask_loop3
 	dbf	d7,vss_init_bplam_table_mask_loop1
 	rts
 
-; ** Stern-Koordinaten initialisieren **
+; Stern-Koordinaten initialisieren
 	CNOP 0,4
 vss_init_xy_coords
 	move.l	#$0000ffff,d3
@@ -1424,12 +1422,12 @@ spr_rgb8_color_table
 spr_ptrs_display
 	DS.L spr_number
 
-; **** Vert-Starscrolling ****
+; Vert-Starscrolling
 	CNOP 0,2
 vss_xy_coords
 	DS.W vss_z_planes_number*vss_stars_per_plane_number*2
 
-; **** Image-Fader ****
+; Image-Fader
 	CNOP 0,4
 ifi_rgb8_color_table
 	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/0c_vss_Colorgradient.ct"
@@ -1450,15 +1448,15 @@ ifo_rgb8_color_table
 	INCLUDE "error-texts.i"
 
 
-; ## Grafikdaten nachladen ##
+; Grafikdaten nachladen
 
-; **** Vert-Starscrolling ****
+; Vert-Starscrolling
 vss_image_data SECTION vss_gfx,DATA
 	INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/graphics/64x56x64-3D-Stars.rawblit"
 vss_image_mask
 	INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/graphics/64x56x64-3D-Stars-Mask.rawblit"
 
-; **** Logo ****
+; Logo
 lg_image_data SECTION lg_gfx,DATA
 	INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/graphics/256x87x16-TheEnd.rawblit"
 

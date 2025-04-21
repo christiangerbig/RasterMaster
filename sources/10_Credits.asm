@@ -6,12 +6,9 @@
 
 ; Requirements
 ; CPU:		68020+
-; Fast-Memory: 	-
 ; Chipset:	AGA PAL
 ; OS:		3.0+
 
-
-	SECTION code_and_variables,CODE
 
 	MC68040
 
@@ -136,7 +133,7 @@ ciaa_tb_continuous_enabled	EQU FALSE
 ciab_ta_continuous_enabled	EQU FALSE
 ciab_tb_continuous_enabled	EQU FALSE
 
-beam_position			EQU $136
+beam_position			EQU $135
 
 pixel_per_line			EQU 336
 visible_pixels_number		EQU 352
@@ -180,13 +177,13 @@ cl1_vstart2			EQU beam_position&$ff
 
 sine_table_length		EQU 256
 
-; **** Background-Image ****
+; Background-Image
 bg_image_x_size			EQU 352
 bg_image_plane_width		EQU bg_image_x_size/8
 bg_image_y_size			EQU 256
 bg_image_depth			EQU 7
 
-; **** Logo ****
+; Logo
 lg_image_x_size			EQU 64
 lg_image_plane_width		EQU lg_image_x_size/8
 lg_image_y_size			EQU 256
@@ -195,7 +192,7 @@ lg_image_depth			EQU 16
 lg_image_x_position		EQU HSTART_320_PIXEL
 lg_image_y_position		EQU display_window_vstart
 
-; **** Vert-Text-Scroll ****
+; Vert-Text-Scroll
 vts_image_x_size		EQU 320
 vts_image_plane_width		EQU vts_image_x_size/8
 vts_image_depth			EQU 1
@@ -228,34 +225,34 @@ vts_text_characters_number	EQU vts_text_characters_per_line*vts_text_characters_
 vts_copy_character_blit_x_size 	EQU vts_text_character_x_size
 vts_copy_character_blit_y_size 	EQU vts_text_character_y_size*vts_text_character_depth
 
-; **** Image-Fader ****
+; Image-Fader
 if_rgb8_start_color		EQU 1
 if_rgb8_color_table_offset	EQU 1
 if_rgb8_colors_number		EQU pf1_colors_number-1
 
-; **** Image-Fader-In ****
+; Image-Fader-In
 ifi_rgb8_fader_speed_max	EQU 3
 ifi_rgb8_fader_radius		EQU ifi_rgb8_fader_speed_max
 ifi_rgb8_fader_center		EQU ifi_rgb8_fader_speed_max+1
 ifi_rgb8_fader_angle_speed	EQU 3
 
-; **** Image-Fader-Out ****
+; Image-Fader-Out
 ifo_rgb8_fader_speed_max	EQU 3
 ifo_rgb8_fader_radius		EQU ifo_rgb8_fader_speed_max
 ifo_rgb8_fader_center		EQU ifo_rgb8_fader_speed_max+1
 ifo_rgb8_fader_angle_speed	EQU 1
 
-; **** Scroll-Logo-Left ****
+; Scroll-Logo-Left
 sll_x_radius			EQU 88
 sll_x_center			EQU 88
 
-; **** Scroll-Logo-Left-In ****
+; Scroll-Logo-Left-In
 slli_x_angle_speed		EQU 1
 
-; **** Scroll-Logo-Left-Out ****
+; Scroll-Logo-Left-Out
 sllo_x_angle_speed		EQU 2
 
-; **** Effects-Handler ****
+; Effects-Handler
 eh_trigger_number_max		EQU 8
 
 
@@ -303,7 +300,6 @@ cl1_end				RS.L 1
 copperlist1_size 		RS.B 0
 
 
-; ** Konstanten für die größe der Copperlisten **
 cl1_size1			EQU 0
 cl1_size2			EQU 0
 cl1_size3			EQU copperlist1_size
@@ -312,7 +308,7 @@ cl2_size2			EQU 0
 cl2_size3			EQU 0
 
 
-; ** Sprite0-Zusatzstruktur **
+; Sprite0-Zusatzstruktur
 	RSRESET
 
 spr0_extension1	RS.B 0
@@ -322,7 +318,7 @@ spr0_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr0_extension1_size		RS.B 0
 
-; ** Sprite0-Hauptstruktur **
+; Sprite0-Hauptstruktur
 	RSRESET
 
 spr0_begin			RS.B 0
@@ -333,7 +329,7 @@ spr0_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite0_size			RS.B 0
 
-; ** Sprite1-Zusatzstruktur **
+; Sprite1-Zusatzstruktur
 	RSRESET
 
 spr1_extension1	RS.B 0
@@ -343,7 +339,7 @@ spr1_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr1_extension1_size		RS.B 0
 
-; ** Sprite1-Hauptstruktur **
+; Sprite1-Hauptstruktur
 	RSRESET
 
 spr1_begin			RS.B 0
@@ -354,7 +350,7 @@ spr1_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite1_size			RS.B 0
 
-; ** Sprite2-Zusatzstruktur **
+; Sprite2-Zusatzstruktur
 	RSRESET
 
 spr2_extension1	RS.B 0
@@ -364,7 +360,7 @@ spr2_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr2_extension1_size		RS.B 0
 
-; ** Sprite2-Hauptstruktur **
+; Sprite2-Hauptstruktur
 	RSRESET
 
 spr2_begin			RS.B 0
@@ -375,7 +371,7 @@ spr2_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite2_size			RS.B 0
 
-; ** Sprite3-Hauptstruktur **
+; Sprite3-Hauptstruktur
 	RSRESET
 
 spr3_begin			RS.B 0
@@ -384,7 +380,7 @@ spr3_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite3_size			RS.B 0
 
-; ** Sprite4-Zusatzstruktur **
+; Sprite4-Zusatzstruktur
 	RSRESET
 
 spr4_extension1	RS.B 0
@@ -394,7 +390,7 @@ spr4_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr4_extension1_size		RS.B 0
 
-; ** Sprite4-Hauptstruktur **
+; Sprite4-Hauptstruktur
 	RSRESET
 
 spr4_begin			RS.B 0
@@ -405,7 +401,7 @@ spr4_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite4_size			RS.B 0
 
-; ** Sprite5-Hauptstruktur **
+; Sprite5-Hauptstruktur
 	RSRESET
 
 spr5_begin			RS.B 0
@@ -414,7 +410,7 @@ spr5_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite5_size			RS.B 0
 
-; ** Sprite6-Zusatzstruktur **
+; Sprite6-Zusatzstruktur
 	RSRESET
 
 spr6_extension1			RS.B 0
@@ -424,7 +420,7 @@ spr6_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr6_extension1_size		RS.B 0
 
-; ** Sprite6-Hauptstruktur **
+; Sprite6-Hauptstruktur
 	RSRESET
 
 spr6_begin			RS.B 0
@@ -435,7 +431,7 @@ spr6_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite6_size			RS.B 0
 
-; ** Sprite7-Hauptstruktur **
+; Sprite7-Hauptstruktur
 	RSRESET
 
 spr7_begin			RS.B 0
@@ -445,7 +441,6 @@ spr7_end			RS.L 1*(spr_pixel_per_datafetch/16)
 sprite7_size			RS.B 0
 
 
-; ** Konstanten für die Größe der Spritestrukturen **
 spr0_x_size1			EQU spr_x_size1
 spr0_y_size1			EQU sprite0_size/(spr_pixel_per_datafetch/4)
 spr1_x_size1			EQU spr_x_size1
@@ -485,41 +480,45 @@ spr7_y_size2			EQU sprite7_size/(spr_pixel_per_datafetch/4)
 
 	INCLUDE "variables-offsets.i"
 
-; **** Vert-Text-Scroll ****
+; Vert-Text-Scroll
 vts_image			RS.L 1
 vts_vert_scroll_speed 		RS.W 1
 vts_text_table_start		RS.W 1
 
-; **** Image-Fader ****
+; Image-Fader
 if_rgb8_colors_counter		RS.W 1
 if_rgb8_copy_colors_active	RS.W 1
 
-; **** Image-Fader-In ****
+; Image-Fader-In
 ifi_rgb8_active			RS.W 1
 ifi_rgb8_fader_angle		RS.W 1
 
-; **** Image-Fader-Out ****
+; Image-Fader-Out
 ifo_rgb8_active			RS.W 1
 ifo_rgb8_fader_angle		RS.W 1
 
-; **** Scroll-Logo-Left-In ****
+; Scroll-Logo-Left-In
 slli_active			RS.W 1
 slli_x_angle			RS.W 1
 
-; **** Scroll-Logo-Left-Out ****
+; Scroll-Logo-Left-Out
 sllo_active			RS.W 1
 sllo_x_angle			RS.W 1
 
-; **** Effects-Handler ****
+; Effects-Handler
 eh_trigger_number		RS.W 1
 
-; **** Main ****
+; Main
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
 
 
+	SECTION code,CODE
+
+
 start_10_credits
+
 
 	INCLUDE "sys-wrapper.i"
 
@@ -527,38 +526,38 @@ start_10_credits
 	CNOP 0,4
 init_main_variables
 
-; **** Vert-Text-Scroll ****
+; Vert-Text-Scroll
 	lea	vts_image_data,a0
 	move.l	a0,vts_image(a3)
 	moveq	#TRUE,d0
 	move.w	d0,vts_vert_scroll_speed(a3)
 	move.w	d0,vts_text_table_start(a3)
 
-; **** Image-Fader ****
+; Image-Fader
 	move.w	d0,if_rgb8_colors_counter(a3)
 	moveq	#FALSE,d1
 	move.w	d1,if_rgb8_copy_colors_active(a3)
 
-; **** Image-Fader-In ****
+; Image-Fader-In
 	move.w	d1,ifi_rgb8_active(a3)
 	move.w	#sine_table_length/4,ifi_rgb8_fader_angle(a3) ; 90 Grad
 
-; **** Image-Fader-Out ****
+; Image-Fader-Out
 	move.w	d1,ifo_rgb8_active(a3)
 	move.w	#sine_table_length/4,ifo_rgb8_fader_angle(a3) ; 90 Grad
 
-; **** Scroll-Logo-Left-In ****
+; Scroll-Logo-Left-In
 	move.w	d1,slli_active(a3)
 	move.w	d0,slli_x_angle(a3)	; 0 Grad
 
-; **** Scroll-Logo-Left-Out ****
+; Scroll-Logo-Left-Out
 	move.w	d1,sllo_active(a3)
 	move.w	#sine_table_length/4,sllo_x_angle(a3) ; 90 Grad
 
-; **** Effects-Handler ****
+; Effects-Handler
 	move.w	d0,eh_trigger_number(a3)
 
-; **** Main ****
+; Main
 	move.w	d1,stop_fx_active(a3)
 	rts
 
@@ -594,7 +593,7 @@ init_sprites
 
 	INIT_SPRITE_POINTERS_TABLE
 
-; **** Logo ****
+; Logo
 	CNOP 0,4
 lg_init_sprites
 	lea	spr_ptrs_construction(pc),a2
@@ -616,7 +615,7 @@ lg_init_sprites_loop
 	dbf	d7,lg_init_sprites_loop
 	rts
 
-; **** Vert-Scroll-Text ****
+; Vert-Scroll-Text
 	CNOP 0,4
 vts_init_sprites
 	MOVEF.W vts_buffer_x_position*SHIRES_PIXEL_FACTOR,d3 ; X
@@ -652,7 +651,7 @@ vts_init_sprites
 
 	COPY_SPRITE_STRUCTURES
 
-; **** Background-Image ****
+; Background-Image
 	CNOP 0,4
 bg_copy_image_to_plane
 	movem.l a3-a6,-(a7)
@@ -687,7 +686,7 @@ bg_copy_image_data_loop
 	dbf	d7,bg_copy_image_data_loop
 	rts
 
-; **** Vert-Text-Scroll ****
+; Vert-Text-Scroll
 	INIT_CHARACTERS_OFFSETS.W vts
 
 	INIT_CHARACTERS_X_POSITIONS vts,LORES,,text_characters_per_line
@@ -753,7 +752,7 @@ cl1_init_bpldat
 	ror.l	#8,d6			; $01000000 = Additionswert
 	MOVEF.W cl1_display_y_size-1,d7
 cl1_init_bpldat_loop
-	move.l	d0,(a0)+		; WAIT x,y
+	move.l	d0,(a0)+		; CWAIT x,y
 	move.w	a5,(a0)+		; BPL7DAT
 	move.w	bg_image_plane_width*6(a1),(a0)+ ; Erste 16 Pixel Bitplane 7
 	move.w	a4,(a0)+		; BPL6DAT
@@ -889,7 +888,7 @@ vert_text_scroll_init
 
 	GET_NEW_CHARACTER_IMAGE.W vts
 
-; ** Puffer in Sprite-Strukturen kopieren **
+; Puffer in Sprite-Strukturen kopieren
 	CNOP 0,4
 vts_copy_buffer
 	move.l	a4,-(a7)
@@ -1164,26 +1163,26 @@ pf1_rgb8_color_table
 
 	CNOP 0,4
 spr_rgb8_color_table_logo
-; ** Sprite0/1 **
+; Sprite0/1
 	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/64x256x16-Resistance.ct"
 
 	CNOP 0,4
 spr_rgb8_color_table_vert_text_scroll
-; ** Sprite0 **
+; Sprite0
 	REPT 4
 		DC.L color00_bits
 	ENDR
-; ** Sprite2 **
+; Sprite2
 	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/16x15x2-Font.ct"
 	REPT 2
 		DC.L color00_bits
 	ENDR
-; ** Sprite4 **
+; Sprite4
 	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/16x15x2-Font.ct"
 	REPT 2
 		DC.L color00_bits
 	ENDR
-; ** Sprite6 **
+; Sprite6
 	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/16x15x2-Font.ct"
 	REPT 2
 		DC.L color00_bits
@@ -1197,7 +1196,7 @@ spr_ptrs_construction
 spr_ptrs_display
 	DS.L spr_number
 
-; **** Vert-Text-Scroll ****
+; Vert-Text-Scroll
 vts_ascii
 	DC.B "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.!?-'():\/&<>#* "
 vts_ascii_end
@@ -1219,7 +1218,7 @@ vts_characters_y_positions
 vts_characters_image_ptrs
 	DS.L vts_text_characters_number
 
-; **** Image-Fader ****
+; Image-Fader
 	CNOP 0,4
 ifi_rgb8_color_table
 	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/352x256x128-RasterMaster.ct"
@@ -1239,7 +1238,7 @@ ifo_rgb8_color_table
 
 	INCLUDE "error-texts.i"
 
-; **** Vert-Textscroll ****
+; Vert-Textscroll
 vts_text
 	REPT vts_text_characters_per_column*vts_text_characters_per_line
 		DC.B " "
@@ -1476,13 +1475,13 @@ vts_text
 	EVEN
 
 
-; ## Grafikdaten nachladen ##
+; Grafikdaten nachladen
 
-; **** Logo ****
+; Logo
 lg_image_data SECTION lg_gfx,DATA
 	INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/graphics/64x256x16-Resistance.rawblit"
 
-; **** Vert-Text-Scroll ****
+; Vert-Text-Scroll
 vts_image_data SECTION vts_gfx,DATA_C
 	INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/fonts/16x15x2-Font.rawblit"
 	DS.B vts_image_plane_width*vts_image_depth ; Leerzeile

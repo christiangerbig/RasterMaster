@@ -1,12 +1,5 @@
-; Programm:	Main
-; Autor:	Christian Gerbig
-; Datum:	23.04.2024
-; Version:	1.6
-
-
 ; Requirements
 ; CPU:		68020+
-; Fast-Memory:	-
 ; Chipset:	AGA PAL
 ; OS:		3.0+
 
@@ -90,8 +83,6 @@
 ; - Die Nop-Copperliste2 wird einmal im Main-Teil generiert und exportiert.
 
 
-	SECTION code_and_variables,CODE
-
 	MC68040
 
 
@@ -136,9 +127,9 @@
 	INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
 
 
-PASS_GLOBAL_REFERENCES	SET 1
+PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
-SET_SECOND_COPPERLIST	SET 1
+SET_SECOND_COPPERLIST		SET 1
 
 
 	INCLUDE "macros.i"
@@ -264,7 +255,6 @@ cl2_end				RS.L 1
 copperlist2_size RS.B 0
 
 
-; ** Konstanten für die größe der Copperlisten **
 cl1_size1			EQU 0
 cl1_size2			EQU 0
 cl1_size3			EQU copperlist1_size
@@ -273,7 +263,6 @@ cl2_size2			EQU 0
 cl2_size3			EQU copperlist2_size
 
 
-; ** Konstanten für die Größe der Spritestrukturen **
 spr0_x_size1			EQU spr_x_size1
 spr0_y_size1			EQU 0
 spr1_x_size1			EQU spr_x_size1
@@ -316,7 +305,14 @@ spr7_y_size2			EQU 0
 variables_size 			RS.B 0
 
 
+	SECTION code,CODE
+
+
+start
+
+
 	INCLUDE "sys-wrapper.i"
+
 
 	CNOP 0,4
 init_main_variables
@@ -400,7 +396,10 @@ nop_second_copperlist		DC.L 0
 	INCLUDE "error-texts.i"
 
 
-	DC.B "$VER: RSE-RasterMaster 1.6 23.4.24)",0
+	DC.B "$VER: "
+	DC.B "RSE-RasterMaster "
+	DC.B "1.6 "
+	DC.B "(23.4.24)",0
 	EVEN
 
 	END

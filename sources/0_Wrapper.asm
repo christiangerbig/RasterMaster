@@ -6,12 +6,9 @@
 
 ; Requirements
 ; CPU:		68020+
-; Fast-Memory:	-
 ; Chipset:	AGA PAL
 ; OS:		3.0+
 
-
-	SECTION code_and_variables,CODE
 
 	MC68040
 
@@ -91,16 +88,22 @@ CUSTOM_MEMORY_CHIP		EQU $00000000
 CUSTOM_MEMORY_FAST		EQU $00000001
 
 pt_ciatiming_enabled		EQU TRUE
-pt_metronome_enabled		EQU FALSE
+pt_usedfx			EQU %1011010100001001
+pt_usedefx			EQU %0000000000000000
 pt_mute_enabled			EQU FALSE
+pt_music_fader_enabled		EQU FALSE
+pt_fade_out_delay		EQU 2	; Ticks
+pt_split_module_enabled		EQU TRUE
 pt_track_notes_played_enabled	EQU TRUE
 pt_track_volumes_enabled	EQU TRUE
 pt_track_periods_enabled	EQU TRUE
 pt_track_data_enabled		EQU TRUE
-pt_music_fader_enabled		EQU FALSE
-pt_split_module_enabled		EQU TRUE
-pt_usedfx			EQU %1011010100001001
-pt_usedefx			EQU %0000000000000000
+	IFD PROTRACKER_VERSION_3
+pt_metronome_enabled		EQU FALSE
+pt_metrochanbits		EQU pt_metrochan1
+pt_metrospeedbits		EQU pt_metrospeed4th
+	ENDC
+
 
 dma_bits			EQU DMAF_COPPER|DMAF_SETCLR
 
@@ -157,7 +160,7 @@ spr_colors_number		EQU 0
 audio_memory_size		EQU 0
 	ENDC
 	IFD PROTRACKER_VERSION_3
-audio_memory_size		EQU 2
+audio_memory_size		EQU 1*WORD_SIZE
 	ENDC
 
 disk_memory_size		EQU 0
@@ -168,7 +171,7 @@ chip_memory_size		EQU 0
 	IFEQ pt_ciatiming_enabled
 ciab_cra_bits			EQU CIACRBF_LOAD
 	ENDC
-ciab_crb_bits			EQU CIACRBF_LOAD|CIACRBF_RUNMODE ; Oneshot mode
+ciab_crb_bits			EQU CIACRBF_LOAD|CIACRBF_RUNMODE ; oneshot mode
 ciaa_ta_time			EQU 0
 ciaa_tb_time			EQU 0
 	IFEQ pt_ciatiming_enabled
@@ -198,13 +201,10 @@ bplcon4_bits			EQU 0
 cl1_hstart			EQU $00
 cl1_vstart			EQU beam_position&$ff
 
-; **** Custom Memory ****
+; Custom Memory
 custom_memory_number		EQU 2
-part_00_audio_memory_size1 	EQU 29756 ;Song
-part_00_audio_memory_size2 	EQU 224266 ;Samples
-
-; **** PT-Replay ****
-pt_fade_out_delay		EQU 2	; Ticks
+part_00_audio_memory_size1 	EQU 29756 ; Song
+part_00_audio_memory_size2 	EQU 224266 ; Samples
 
 
 	INCLUDE "except-vectors-offsets.i"
@@ -214,6 +214,24 @@ pt_fade_out_delay		EQU 2	; Ticks
 
 
 	INCLUDE "sprite-attributes.i"
+
+
+; PT-Replay
+	INCLUDE "music-tracker/pt-song.i"
+
+	INCLUDE "music-tracker/pt-temp-channel.i"
+
+
+; Custom-Memory
+	RSRESET
+
+custom_memory_entry		RS.B 0
+
+cme_memory_size			RS.L 1
+cme_memory_type			RS.L 1
+cme_memory_pointer		RS.L 1
+
+custom_memory_entry_size	RS.B 0
 
 
 	RSRESET
@@ -232,7 +250,6 @@ cl1_end				RS.L 1
 copperlist1_size RS.B 0
 
 
-; ** Konstanten für die größe der Copperlisten **
 cl1_size1			EQU 0
 cl1_size2			EQU 0
 cl1_size3			EQU copperlist1_size
@@ -240,7 +257,7 @@ cl2_size1			EQU 0
 cl2_size2			EQU 0
 cl2_size3			EQU 0
 
-; ** Konstanten für die Größe der Spritestrukturen **
+
 spr0_x_size1			EQU spr_x_size1
 spr0_y_size1			EQU 0
 spr1_x_size1			EQU spr_x_size1
@@ -280,7 +297,7 @@ spr7_y_size2			EQU 0
 
 	INCLUDE "variables-offsets.i"
 
-; **** PT-Replay ****
+; PT-Replay
 	IFD PROTRACKER_VERSION_2 
 	INCLUDE "music-tracker/pt2-variables-offsets.i"
 	ENDC
@@ -291,25 +308,12 @@ spr7_y_size2			EQU 0
 variables_size 			RS.B 0
 
 
-; **** PT-Replay ****
-	INCLUDE "music-tracker/pt-song.i"
-
-	INCLUDE "music-tracker/pt-temp-channel.i"
-
-; **** Custom-Memory ****
-	RSRESET
-
-custom_memory_entry		RS.B 0
-
-cme_memory_size			RS.L 1
-cme_memory_type			RS.L 1
-cme_memory_pointer		RS.L 1
-
-custom_memory_entry_size	RS.B 0
+	SECTION code,CODE
 
 
 start_0_pt_replay
 
+	
 	INCLUDE "sys-wrapper.i"
 
 
@@ -330,7 +334,7 @@ init_custom_memory_table
 	CNOP 0,4
 init_main_variables
 
-; **** PT-Replay ****
+; PT-Replay
 	IFD PROTRACKER_VERSION_2 
 		PT2_INIT_VARIABLES NOPOINTERS
 	ENDC
@@ -339,7 +343,7 @@ init_main_variables
 	ENDC
 	rts
 
-; **** Main ****
+; Main
 	CNOP 0,4
 extend_global_references_table
 	move.l	global_references_table(a3),a0
@@ -359,7 +363,7 @@ init_main
 	bsr	init_CIA_timers
 	bra	init_first_copperlist
 
-; **** PT-Replay ****
+; PT-Replay
 	PT_DETECT_SYS_FREQUENCY
 
 	CNOP 0,4
@@ -402,7 +406,7 @@ init_colors
 	CNOP 0,4
 init_CIA_timers
 
-; **** PT-Replay ****
+; PT-Replay
 	PT_INIT_TIMERS
 	rts
 
@@ -499,7 +503,7 @@ ciab_ta_int_server
 VERTB_int_server
 	ENDC
 
-; **** PT-Replay ****
+; PT-Replay
 	IFEQ pt_music_fader_enabled
 		bsr.s	pt_music_fader
 		bra.s	pt_PlayMusic
@@ -537,14 +541,13 @@ nmi_int_server
 
 	INCLUDE "help-routines.i"
 
-; **** Stone-Cracker ****
+; Stone-Cracker
 	CNOP 0,4
 sc_start
 ; Input
-; a0	... Gepackte Daten
-; a1	... Entpackte Daten
+; a0.l	Gepackte Daten
+; a1.l	Entpackte Daten
 ; Result
-; d0.l	... Kein Rückgabewert
 	addq.w	#QUADWORD_SIZE,a0	; ID string & security length überspringen
 	move.l	a1,a5
 	add.l	(a0)+,a1
@@ -730,7 +733,7 @@ sc_len3b
 	bpl.s	sc_2ins1
 	subq.w	#QUADWORD_SIZE,d7
 	dbf	d3,sc_2ins2
-	rts				; Sicherheitshalber ergänzt
+	rts				; sicherheitshalber ergänzt
 
 
 	INCLUDE "sys-structures.i"
@@ -740,12 +743,12 @@ sc_len3b
 pf1_rgb8_color_table
 	DC.L color00_bits
 
-; **** Stone-Cracher ****
+; Stone-Cracher
 sc_newd1
 	DC.B $08,$07,$06,$05,$04,$03,$02,$01
 	DC.B $88,$87,$86,$85,$84,$83,$82,$81
 
-; **** PT-Replay ****
+; PT-Replay
 	INCLUDE "music-tracker/pt-invert-table.i"
 
 	INCLUDE "music-tracker/pt-vibrato-tremolo-table.i"
@@ -764,7 +767,7 @@ sc_newd1
 
 	INCLUDE "music-tracker/pt-finetune-starts-table.i"
 
-; **** Custom Memory ****
+; Custom Memory
 	CNOP 0,4
 custom_memory_table
 	DS.B custom_memory_entry_size*custom_memory_number
@@ -779,9 +782,9 @@ custom_memory_table
 	INCLUDE "error-texts.i"
 
 
-; ## Audiodaten nachladen ##
+; Audiodaten nachladen
 
-; **** PT-Replay ****
+; PT-Replay
 	IFEQ pt_split_module_enabled
 pt_auddata SECTION pt_audio,DATA
 		INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/modules/mod.Gone(re-remix).song.stc"

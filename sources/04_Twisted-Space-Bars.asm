@@ -6,12 +6,9 @@
 
 ; Requirements
 ; CPU:		68020+
-; Fast-Memory:	-
 ; Chipset:	AGA PAL
 ; OS:		3.0+
 
-
-	SECTION code_and_variables,CODE
 
 	MC68040
 
@@ -179,7 +176,7 @@ cl2_vstart2			EQU beam_position&CL_Y_WRAP
 
 sine_table_length		EQU 256
 
-; **** Background-Image ****
+; Background-Image
 bg_image_x_size			EQU 256
 bg_image_plane_width		EQU bg_image_x_size/8
 bg_image_y_size			EQU 256
@@ -187,11 +184,11 @@ bg_image_depth			EQU 16
 bg_image_x_position		EQU 0
 bg_image_y_position		EQU MINROW
 
-; **** Twisted-Bars ****
+; Twisted-Bars
 tb_bars_number			EQU 6
 tb_bar_height			EQU 14
 
-; **** Twisted-Bars3.1.3 ****
+; Twisted-Bars3.1.3
 tb313_y_radius_min		EQU (tb_bar_height+2)*4
 tb313_y_radius_max		EQU cl2_display_y_size-(tb_bar_height+2)
 tb313_y_radius			EQU ((tb313_y_radius_max-tb313_y_radius_min)/2)
@@ -203,7 +200,7 @@ tb313_y_angle_speed		EQU 2
 tb313_y_angle_step		EQU 1
 tb313_y_distance		EQU sine_table_length/tb_bars_number
 
-; **** Twisted-Bars3.1.2 ****
+; Twisted-Bars3.1.2
 tb312_y_radius_min		EQU (tb_bar_height+2)*4
 tb312_y_radius_max		EQU cl2_display_y_size-16-(tb_bar_height+2)
 tb312_y_radius			EQU ((tb312_y_radius_max-tb312_y_radius_min)/2)
@@ -215,7 +212,7 @@ tb312_y_angle_speed		EQU 5
 tb312_y_angle_step		EQU 3
 tb312_y_distance		EQU sine_table_length/tb_bars_number
 
-; ***** Clear-Blit ****
+; *Clear-Blit
 tb_clear_blit_x_size		EQU 16
 	IFEQ open_border_enabled
 tb_clear_blit_y_size		EQU cl2_display_y_size*(cl2_display_width+2)
@@ -223,12 +220,12 @@ tb_clear_blit_y_size		EQU cl2_display_y_size*(cl2_display_width+2)
 tb_clear_blit_y_size		EQU cl2_display_y_size*(cl2_display_width+1)
 	ENDC
 
-; **** Restore-Blit ****
+; Restore-Blit
 tb_restore_blit_x_size		EQU 16
 tb_restore_blit_width		EQU tb_restore_blit_x_size/8
 tb_restore_blit_y_size		EQU cl2_display_y_size
 
-; **** Horiz-Scrolltext ****
+; Horiz-Scrolltext
 hst_image_x_size		EQU 320
 hst_image_plane_width		EQU hst_image_x_size/8
 hst_image_depth			EQU 4
@@ -258,7 +255,7 @@ hst_copy_blit_y_size		EQU hst_text_character_y_size*hst_text_character_depth
 hst_horiz_scroll_blit_x_size	EQU hst_horiz_scroll_window_x_size
 hst_horiz_scroll_blit_y_size	EQU hst_horiz_scroll_window_y_size*hst_horiz_scroll_window_depth
 
-; **** Sprites-Fader ****
+; Sprites-Fader
 sprf_rgb8_start_color		EQU 1
 sprf_rgb8_color_table_offset	EQU 1
 sprf_rgb8_colors_number		EQU spr_colors_number-1
@@ -273,7 +270,7 @@ sprfo_rgb8_fader_radius		EQU sprfo_rgb8_fader_speed_max
 sprfo_rgb8_fader_center		EQU sprfo_rgb8_fader_speed_max+1
 sprfo_rgb8_fader_angle_speed	EQU 1
 
-; **** Chunky-Columns-Fader ****
+; Chunky-Columns-Fader
 ccfi_mode1			EQU 0
 ccfi_mode2			EQU 1
 ccfi_mode3			EQU 2
@@ -288,7 +285,7 @@ ccfo_mode4			EQU 3
 ccfo_delay			EQU 1
 ccfo_delay_speed		EQU 1
 
-; **** Effects-Handler ****
+; Effects-Handler
 eh_trigger_number_max		EQU 9
 
 
@@ -382,7 +379,6 @@ cl2_end				RS.L 1
 copperlist2_size		RS.B 0
 
 
-; ** Konstanten für die Größe der Copperlisten **
 cl1_size1			EQU 0
 cl1_size2			EQU 0
 cl1_size3			EQU copperlist1_size
@@ -392,7 +388,7 @@ cl2_size2			EQU copperlist2_size
 cl2_size3			EQU copperlist2_size
 
 
-; ** Sprite0-Zusatzstruktur **
+; Sprite0-Zusatzstruktur*
 	RSRESET
 
 spr0_extension1	RS.B 0
@@ -402,7 +398,7 @@ spr0_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr0_extension1_size		RS.B 0
 
-; ** Sprite0-Hauptstruktur **
+; Sprite0-Hauptstruktur
 	RSRESET
 
 spr0_begin			RS.B 0
@@ -413,7 +409,7 @@ spr0_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite0_size			RS.B 0
 
-; ** Sprite1-Zusatzstruktur **
+; Sprite1-Zusatzstruktur
 	RSRESET
 
 spr1_extension1			RS.B 0
@@ -423,7 +419,7 @@ spr1_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr1_extension1_size		RS.B 0
 
-; ** Sprite1-Hauptstruktur **
+; Sprite1-Hauptstruktur
 	RSRESET
 
 spr1_begin			RS.B 0
@@ -434,7 +430,7 @@ spr1_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite1_size			RS.B 0
 
-; ** Sprite2-Zusatzstruktur **
+; Sprite2-Zusatzstruktur
 	RSRESET
 
 spr2_extension1			RS.B 0
@@ -444,7 +440,7 @@ spr2_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr2_extension1_size		RS.B 0
 
-; ** Sprite2-Hauptstruktur **
+; Sprite2-Hauptstruktur
 	RSRESET
 
 spr2_begin			RS.B 0
@@ -455,7 +451,7 @@ spr2_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite2_size			RS.B 0
 
-; ** Sprite3-Zusatzstruktur **
+; Sprite3-Zusatzstruktur
 	RSRESET
 
 spr3_extension1			RS.B 0
@@ -465,7 +461,7 @@ spr3_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr3_extension1_size		RS.B 0
 
-; ** Sprite3-Hauptstruktur **
+; Sprite3-Hauptstruktur
 	RSRESET
 
 spr3_begin			RS.B 0
@@ -476,7 +472,7 @@ spr3_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite3_size			RS.B 0
 
-; ** Sprite4-Zusatzstruktur **
+; Sprite4-Zusatzstruktur
 	RSRESET
 
 spr4_extension1			RS.B 0
@@ -486,7 +482,7 @@ spr4_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr4_extension1_size		RS.B 0
 
-; ** Sprite4-Hauptstruktur **
+; Sprite4-Hauptstruktur
 	RSRESET
 
 spr4_begin			RS.B 0
@@ -497,7 +493,7 @@ spr4_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite4_size			RS.B 0
 
-; ** Sprite5-Zusatzstruktur **
+; Sprite5-Zusatzstruktur
 	RSRESET
 
 spr5_extension1			RS.B 0
@@ -507,7 +503,7 @@ spr5_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr5_extension1_size		RS.B 0
 
-; ** Sprite5-Hauptstruktur **
+; Sprite5-Hauptstruktur
 	RSRESET
 
 spr5_begin			RS.B 0
@@ -518,7 +514,7 @@ spr5_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite5_size			RS.B 0
 
-; ** Sprite6-Zusatzstruktur **
+; Sprite6-Zusatzstruktur
 	RSRESET
 
 spr6_extension1			RS.B 0
@@ -528,7 +524,7 @@ spr6_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr6_extension1_size		RS.B 0
 
-; ** Sprite6-Hauptstruktur **
+; Sprite6-Hauptstruktur
 	RSRESET
 
 spr6_begin			RS.B 0
@@ -539,7 +535,7 @@ spr6_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite6_size			RS.B 0
 
-; ** Sprite7-Zusatzstruktur **
+; Sprite7-Zusatzstruktur
 	RSRESET
 
 spr7_extension1			RS.B 0
@@ -549,7 +545,7 @@ spr7_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*bg_image_y_size
 
 spr7_extension1_size		RS.B 0
 
-; ** Sprite7-Hauptstruktur **
+; Sprite7-Hauptstruktur
 	RSRESET
 
 spr7_begin			RS.B 0
@@ -561,7 +557,6 @@ spr7_end			RS.L 1*(spr_pixel_per_datafetch/16)
 sprite7_size			RS.B 0
 
 
-; ** Konstanten für die Größe der Spritestrukturen **
 spr0_x_size1			EQU spr_x_size1
 spr0_y_size1			EQU 0
 spr1_x_size1			EQU spr_x_size1
@@ -601,7 +596,7 @@ spr7_y_size2			EQU sprite7_size/(spr_pixel_per_datafetch/4)
 
 	INCLUDE "variables-offsets.i"
 
-; **** Horiz-Scrolltext ****
+; Horiz-Scrolltext
 	RS_ALIGN_LONGWORD
 hst_image			RS.L 1
 hst_enabled			RS.W 1
@@ -609,17 +604,17 @@ hst_text_table_start		RS.W 1
 hst_text_bltcon0_bits		RS.W 1
 hst_character_toggle_image	RS.W 1
 
-; **** Twisted-Bars3.1.3 ****
+; Twisted-Bars3.1.3
 tb313_active			RS.W 1
 tb313_y_angle			RS.W 1
 tb313_y_radius_angle		RS.W 1
 
-; **** Twisted-Bars3.1.2 ****
+; Twisted-Bars3.1.2
 tb312_active			RS.W 1
 tb312_y_angle			RS.W 1
 tb312_y_radius_angle		RS.W 1
 
-; **** Sprites-Fader ****
+; Sprites-Fader
 sprf_rgb8_colors_counter	RS.W 1
 sprf_rgb8_copy_colors_active	RS.W 1
 
@@ -629,7 +624,7 @@ sprfi_rgb8_fader_angle		RS.W 1
 sprfo_rgb8_active		RS.W 1
 sprfo_rgb8_fader_angle		RS.W 1
 
-; **** Chunky-Columns-Fader ****
+; Chunky-Columns-Fader
 ccfi_active			RS.W 1
 ccfi_current_mode		RS.W 1
 ccfi_start			RS.W 1
@@ -642,16 +637,20 @@ ccfo_start			RS.W 1
 ccfo_delay_counter		RS.W 1
 ccfo_delay_reset		RS.W 1
 
-; **** Effects-Handler ****
+; Effects-Handler
 eh_trigger_number		RS.W 1
 
-; **** Main ****
+; Main
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
 
 
+	SECTION code,CODE
+
+
 start_04_twisted_space_bars
+
 
 	INCLUDE "sys-wrapper.i"
 
@@ -659,7 +658,7 @@ start_04_twisted_space_bars
 	CNOP 0,4
 init_main_variables
 
-; **** Horiz-Scrolltext ****
+; Horiz-Scrolltext
 	lea	hst_image_data,a0
 	move.l	a0,hst_image(a3)
 	moveq	#FALSE,d1
@@ -669,17 +668,17 @@ init_main_variables
 	move.w	d0,hst_text_bltcon0_bits(a3)
 	move.w	d0,hst_character_toggle_image(a3)
 
-; **** Twisted-Bars3.1.3 ****
+; Twisted-Bars3.1.3
 	move.w	d1,tb313_active(a3)
 	move.w	d0,tb313_y_angle(a3)
 	move.w	d0,tb313_y_radius_angle(a3)
 
-; **** Twisted-Bars3.1.2 ****
+; Twisted-Bars3.1.2
 	move.w	d1,tb312_active(a3)
 	move.w	d0,tb312_y_angle(a3)
 	move.w	d0,tb312_y_radius_angle(a3)
 
-; **** Sprites-Fader ****
+; Sprites-Fader
 	move.w	d0,sprf_rgb8_colors_counter(a3)
 	move.w	d1,sprf_rgb8_copy_colors_active(a3)
 
@@ -689,7 +688,7 @@ init_main_variables
 	move.w	d1,sprfo_rgb8_active(a3)
 	move.w	#sine_table_length/4,sprfo_rgb8_fader_angle(a3) ; 90 Grad
 
-; **** Chunky-Columns-Fader ****
+; Chunky-Columns-Fader
 	move.w	d1,ccfi_active(a3)
 	move.w	#ccfi_mode2,ccfi_current_mode(a3)
 	move.w	d0,ccfi_start(a3)
@@ -702,10 +701,10 @@ init_main_variables
 	move.w	d0,ccfo_delay_counter(a3)
 	move.w	#ccfo_delay,ccfo_delay_reset(a3)
 
-; **** Effects-Handler ****
+; Effects-Handler
 	move.w	d0,eh_trigger_number(a3)
 
-; **** Main ****
+; Main
 	move.w	d1,stop_fx_active(a3)
 	rts
 
@@ -721,7 +720,7 @@ init_main
 	bsr	init_first_copperlist
 	bra	init_second_copperlist
 
-; **** Twisted-Bars ****
+; Twisted-Bars
 	CNOP 0,4
 tb_init_color_table
 	move.l	#color00_bits,d1
@@ -784,7 +783,7 @@ init_sprites
 
 	INIT_ATTACHED_SPRITES_CLUSTER bg,spr_ptrs_display,bg_image_x_position,bg_image_y_position,spr_x_size2,bg_image_y_size,,,REPEAT
 
-; **** Horiz-Scrolltext ****
+; Horiz-Scrolltext
 	INIT_CHARACTERS_OFFSETS.W hst
 
 	INIT_CHARACTERS_X_POSITIONS hst,LORES
@@ -957,9 +956,9 @@ hst_get_text_softscroll
 	CNOP 0,4
 hst_check_control_codes
 ; Input
-; d0.b	... ASCII-Code
+; d0.b	ASCII-Code
 ; Result
-; d0.l	... Rückgabewert: Return-Code
+; d0.l	Rückgabewert: Return-Code
 	cmp.b	#ASCII_CTRL_S,d0
 	beq.s	hst_stop_horiz_scrolltext
 	rts
@@ -1145,7 +1144,7 @@ tb312_get_yz_coords_quit
 	ENDC
 
 
-; ** Hintergrundbild einblenden **
+; Hintergrundbild einblenden
 	CNOP 0,4
 sprite_fader_in
 	movem.l a4-a6,-(a7)
@@ -1182,7 +1181,7 @@ sprite_fader_in_quit
 	movem.l (a7)+,a4-a6
 	rts
 
-; ** Hintergrundbild ausblenden **
+; Hintergrundbild ausblenden
 	CNOP 0,4
 sprite_fader_out
 	movem.l a4-a6,-(a7)
@@ -1243,7 +1242,7 @@ chunky_columns_fader_in
 	beq.s	ccfi_fader_mode_4
 chunky_columns_fader_in_quit
 	rts
-; ** Spalten von links nach rechts einblenden **
+; Spalten von links nach rechts einblenden
 	CNOP 0,4
 ccfi_fader_mode_1
 	clr.b	(a0,d1.w)		; Spaltenstatus: einblenden
@@ -1252,7 +1251,7 @@ ccfi_fader_mode_1
 	bgt.s	ccfi_fader_mode_skip
 	move.w	d1,ccfi_start(a3)
 	rts
-; ** Spalten von rechts nach links einblenden **
+; Spalten von rechts nach links einblenden
 	CNOP 0,4
 ccfi_fader_mode_2
 	move.w	d1,d0			; Startwert
@@ -1263,7 +1262,7 @@ ccfi_fader_mode_2
 	bgt.s	ccfi_fader_mode_skip
 	move.w	d1,ccfi_start(a3)
 	rts
-; ** Spalten gleichzeitig von links und rechts zur Mitte hin einblenden **
+; Spalten gleichzeitig von links und rechts zur Mitte hin einblenden
 	CNOP 0,4
 ccfi_fader_mode_3
 	clr.b	(a0,d1.w)		; Spaltenstatus: einblenden
@@ -1276,7 +1275,7 @@ ccfi_fader_mode_3
 	bgt.s	ccfi_fader_mode_skip
 	move.w	d1,ccfi_start(a3)
 	rts
-; ** Jede 2. Spalte gleichzeitig von links und rechts einblenden **
+; Jede 2. Spalte gleichzeitig von links und rechts einblenden
 	CNOP 0,4
 ccfi_fader_mode_4
 	clr.b	(a0,d1.w)		; Spaltenstatus: einblenden
@@ -1313,7 +1312,7 @@ chunky_columns_fader_out
 	beq.s	ccfo_fader_mode_4
 chunky_columns_fader_out_quit
 	rts
-; ** Spalten von links nach rechts ausblenden **
+; Spalten von links nach rechts ausblenden
 	CNOP 0,4
 ccfo_fader_mode_1
 	move.b	#FALSE,(a0,d1.w)	; Spaltenstatus: ausblenden
@@ -1322,7 +1321,7 @@ ccfo_fader_mode_1
 	bgt.s	ccfo_fader_mode_skip
 	move.w	d1,ccfo_start(a3)
 	rts
-; ** Spalten von rechts nach links ausblenden **
+; Spalten von rechts nach links ausblenden
 	CNOP 0,4
 ccfo_fader_mode_2
 	move.w	d1,d0			; Startwert
@@ -1333,7 +1332,7 @@ ccfo_fader_mode_2
 	bgt.s	ccfo_fader_mode_skip
 	move.w	d1,ccfo_start(a3)
 	rts
-; ** Spalten gleichzeitig von links und rechts zur Mitte hin ausblenden **
+; Spalten gleichzeitig von links und rechts zur Mitte hin ausblenden
 	CNOP 0,4
 ccfo_fader_mode_3
 	move.b	#FALSE,(a0,d1.w)	; Spaltenstatus: ausblenden
@@ -1346,7 +1345,7 @@ ccfo_fader_mode_3
 	bgt.s	ccfo_fader_mode_skip
 	move.w	d1,ccfo_start(a3)
 	rts
-; ** Jede 2. Spalte gleichzeitig von links und rechts ausblenden **
+; Jede 2. Spalte gleichzeitig von links und rechts ausblenden
 	CNOP 0,4
 ccfo_fader_mode_4
 	move.b	#FALSE,(a0,d1.w)	; Spaltenstatus: ausblenden
@@ -1452,6 +1451,7 @@ nmi_int_server
 
 	INCLUDE "sys-structures.i"
 
+
 	CNOP 0,4
 pf1_rgb8_color_table
 	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/32x32x16-Font.ct"
@@ -1466,7 +1466,7 @@ spr_rgb8_color_table
 spr_ptrs_display
 	DS.L spr_number
 
-; **** Twisted-Bars ****
+; Twisted-Bars
 	CNOP 0,4
 tb_color_gradient
 	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/05_tb_Colorgradient.ct"
@@ -1487,7 +1487,7 @@ tb_bplcon4_table_foreground
 tb_yz_coords
 	DS.W tb_bars_number*cl2_display_width*2
 
-; **** Horiz-Scrolltext ****
+; Horiz-Scrolltext
 hst_ascii
 	DC.B "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?'():\/ "
 hst_ascii_end
@@ -1505,13 +1505,13 @@ hst_characters_x_positions
 hst_characters_image_ptrs
 	DS.L hst_text_characters_number
 
-; **** Chunky-Columns-Fader ****
+; Chunky-Columns-Fader
 ccf_columns_mask
 	REPT cl2_display_width
 		DC.B FALSE
 	ENDR
 
-; **** Sprites-Fader ****
+; Sprites-Fader
 	CNOP 0,4
 sprfi_rgb8_color_table
 	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/256x256x16-Nebula.ct"
@@ -1531,7 +1531,7 @@ sprfo_rgb8_color_table
 
 	INCLUDE "error-texts.i"
 
-; **** Horiz-Scrolltext ****
+; Horiz-Scrolltext
 hst_text
 	REPT hst_text_characters_number/(hst_origin_character_x_size/hst_text_character_x_size)
 		DC.B " "
@@ -1545,13 +1545,13 @@ hst_stop_text
 	EVEN
 
 
-; ## Grafikdaten nachladen ##
+; Grafikdaten nachladen
 
-; **** Background-Image ****
+; Background-Image
 bg_image_data SECTION bg_gfx,DATA
 	INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/graphics/256x256x16-Nebula.rawblit"
 
-; **** Horiz-Scrolltext ****
+; Horiz-Scrolltext
 hst_image_data SECTION hst_gfx,DATA_C
 	INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/fonts/32x32x16-Font.rawblit"
 

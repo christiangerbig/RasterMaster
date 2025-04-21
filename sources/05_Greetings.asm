@@ -6,12 +6,9 @@
 
 
 ; Requirements
-; Fast-Memory:	-
 ; Chipset:	AGA PAL
 ; OS:		3.0+
 
-
-	SECTION code_and_variables,CODE
 
 	MC68040
 
@@ -186,7 +183,7 @@ cl2_vstart2			EQU beam_position&$ff
 
 sine_table_length		EQU 256
 
-; **** Twisted-Bars3.16.1.2 ****
+; Twisted-Bars3.16.1.2
 tb31612_bars_number		EQU 3
 tb31612_bar_height		EQU 32
 tb31612_y_radius		EQU 56
@@ -195,7 +192,7 @@ tb31612_y_angle_speed		EQU 4
 tb31612_y_angle_step		EQU 6
 tb31612_y_distance		EQU sine_table_length/tb31612_bars_number
 
-; **** Clear-Blit ****
+; Clear-Blit
 tb31612_clear_blit_x_size	EQU 16
 	IFEQ open_border_enabled
 tb31612_clear_blit_y_size	EQU cl2_display_y_size*(cl2_display_width+6)
@@ -203,23 +200,23 @@ tb31612_clear_blit_y_size	EQU cl2_display_y_size*(cl2_display_width+6)
 tb31612_clear_blit_y_size	EQU cl2_display_y_size*(cl2_display_width+5)
 	ENDC
 
-; **** Restore-Blit ****
+; Restore-Blit
 tb31612_restore_blit_x_size	EQU 16
 tb31612_restore_blit_width	EQU tb31612_restore_blit_x_size/8
 tb31612_restore_blit_y_size	EQU cl2_display_y_size
 
-; **** Wave-Center-Bar ****
+; Wave-Center-Bar
 wcb_bar_height			EQU 80
 wcb_y_center			EQU (cl2_display_y_size-wcb_bar_height)/2
 
-; **** Wave-Effect ****
+; Wave-Effect
 we_y_radius			EQU 48
 we_y_angle_speed		EQU 1
 we_y_angle_step			EQU 2
 we_y_radius_angle_speed		EQU 2
 we_y_radius_angle_step		EQU 4
 
-; **** Sine-Scrolltext ****
+; Sine-Scrolltext
 ss_image_x_size			EQU 320
 ss_image_plane_width		EQU ss_image_x_size/8
 ss_image_depth			EQU 1
@@ -271,7 +268,7 @@ ss_copy_column_blit_y_size1	EQU ss_sine_character_y_size1*ss_sine_character_dept
 ss_copy_column_blit_x_size2	EQU ss_sine_character_x_size
 ss_copy_column_blit_y_size2	EQU ss_sine_character_y_size2*ss_sine_character_depth
 
-; **** Barfield ****
+; Barfield
 bf_bars_planes_number		EQU 6
 bf_bars_per_plane		EQU 1
 bf_bar_height			EQU 40
@@ -288,7 +285,7 @@ bf_y_max			EQU visible_lines_number+bf_bar_height
 bf_z_min			EQU 0
 bf_d				EQU 64
 
-; **** Chunky-Columns-Fader-In ****
+; Chunky-Columns-Fader-In
 ccfi_mode1			EQU 0
 ccfi_mode2			EQU 1
 ccfi_mode3			EQU 2
@@ -297,7 +294,7 @@ ccfi_delay_speed		EQU 1
 ccfi_columns_delay1		EQU 2
 ccfi_columns_delay2		EQU 27
 
-; **** Chunky-Columns-Fader-Out ****
+; Chunky-Columns-Fader-Out
 ccfo_mode1			EQU 0
 ccfo_mode2			EQU 1
 ccfo_mode3			EQU 2
@@ -305,7 +302,7 @@ ccfo_mode4			EQU 3
 ccfo_delay_speed		EQU 1
 ccfo_columns_delay		EQU 1
 
-; **** Effects-Handler ****
+; Effects-Handler
 eh_trigger_number_max		EQU 9
 
 
@@ -600,7 +597,6 @@ cl2_end				RS.L 1
 copperlist2_size		RS.B 0
 
 
-; ** Konstanten für die Größe der Copperlisten **
 cl1_size1			EQU 0
 cl1_size2			EQU 0
 cl1_size3			EQU copperlist1_size
@@ -610,7 +606,6 @@ cl2_size2			EQU copperlist2_size
 cl2_size3			EQU copperlist2_size
 
 
-; ** Konstanten für die Größe der Spritestrukturen **
 spr0_x_size1			EQU spr_x_size1
 spr0_y_size1			EQU 0
 spr1_x_size1			EQU spr_x_size1
@@ -667,25 +662,25 @@ extra_memory_size 		RS.B 0
 
 save_a7				RS.L 1
 
-; **** Sine-Scrolltext ****
+; Sine-Scrolltext
 ss_image			RS.L 1
 ss_enabled RS.W 1
 ss_text_table_start		RS.W 1
 ss_text_character_x_shift	RS.W 1
 ss_character_toggle_image	RS.W 1
 
-; **** Twisted-Bars3.16.1.2 ****
+; Twisted-Bars3.16.1.2
 tb31612_y_angle			RS.W 1
 
-; **** Wave-Effect ****
+; Wave-Effect
 we_radius_y_angle		RS.W 1
 we_y_angle			RS.W 1
 
-; **** Barfield ****
+; Barfield
 bf_active			RS.W 1
 bf_z_restart_active		RS.W 1
 
-; **** Chunky-Columns-Fader ****
+; Chunky-Columns-Fader
 	RS_ALIGN_LONGWORD
 ccf_fader_columns_mask		RS.L 1
 
@@ -701,16 +696,20 @@ ccfo_start			RS.W 1
 ccfo_columns_delay_counter	RS.W 1
 ccfo_columns_delay_reset	RS.W 1
 
-; **** Effects-Handler ****
+; Effects-Handler
 eh_trigger_number		RS.W 1
 
-; **** Main ****
+; Main
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
 
 
+	SECTION code,CODE
+
+
 start_05_greetings
+
 
 	INCLUDE "sys-wrapper.i"
 
@@ -718,7 +717,7 @@ start_05_greetings
 	CNOP 0,4
 init_main_variables
 
-; **** Sine-Scrolltext ****
+; Sine-Scrolltext
 	lea	ss_image_data,a0
 	move.l	a0,ss_image(a3)
 	moveq	#FALSE,d1
@@ -728,22 +727,22 @@ init_main_variables
 	move.w	d0,ss_text_character_x_shift(a3)
 	move.w	d0,ss_character_toggle_image(a3)
 
-; **** Twisted-Bars3.16.1.2 ****
+; Twisted-Bars3.16.1.2
 	move.w	d0,tb31612_y_angle(a3)
 
-; **** Wave-Effect ****
+; Wave-Effect
 	move.w	d0,we_radius_y_angle(a3)
 	move.w	d0,we_y_angle(a3)
 
-; **** Barfield ****
+; Barfield
 	move.w	d1,bf_active(a3)
 	move.w	d0,bf_z_restart_active(a3)
 
-; **** Chunky-Columns-Fader ****
+; Chunky-Columns-Fader
 	lea	wcb_fader_columns_mask(pc),a0
 	move.l	a0,ccf_fader_columns_mask(a3)
 
-; **** Chunky-Columns-Fader-In ****
+; Chunky-Columns-Fader-In
 	move.w	d1,ccfi_active(a3)
 	moveq	#ccfi_mode2,d2
 	move.w	d2,ccfi_current_mode(a3)
@@ -752,7 +751,7 @@ init_main_variables
 	moveq	#ccfi_columns_delay1,d2
 	move.w	d2,ccfi_columns_delay_reset(a3)
 
-; **** Chunky-Columns-Fader-Out ****
+; Chunky-Columns-Fader-Out
 	move.w	d1,ccfo_active(a3)
 	moveq	#ccfo_mode2,d2
 	move.w	d2,ccfo_current_mode(a3)
@@ -761,10 +760,10 @@ init_main_variables
 	moveq	#ccfo_columns_delay,d2
 	move.w	d2,ccfo_columns_delay_reset(a3)
 
-; **** Effects-Handler ****
+; Effects-Handler
 	move.w	d0,eh_trigger_number(a3)
 
-; **** Main ****
+; Main
 	move.w	d1,stop_fx_active(a3)
 	rts
 
@@ -785,7 +784,8 @@ init_main
 	bsr	init_first_copperlist
 	bra	init_second_copperlist
 
-; ** Farbtabelle initialisieren **
+
+; Twisted-Bars
 	CNOP 0,4
 tb31612_init_color_table
 	lea	tb31612_bars_color_table(pc),a0
@@ -798,7 +798,7 @@ tb31612_init_color_table_loop
 	dbf	d7,tb31612_init_color_table_loop
 	rts
 
-; **** Wave-Center-Bar ****
+; Wave-Center-Bar
 	CNOP 0,4
 wcb_init_color_table
 	lea	wcb_bar_color_table(pc),a0
@@ -810,7 +810,7 @@ wcb_init_color_table_loop
 	dbf	d7,wcb_init_color_table_loop
 	rts
 
-; **** Sine-Scrolltext *****
+; Sine-Scrolltext
 	CNOP 0,4
 ss_init_color_table
 	lea	ss_color_table(pc),a0
@@ -859,16 +859,16 @@ init_colors
 	CPU_INIT_COLOR_LOW COLOR00,32
 	rts
 
-; **** Twisted-Bars3.16.1.2 ****
+; Twisted-Bars3.16.1.2
 	INIT_MIRROR_bplam_table.B tb31612,0,2,segments_number1,color_values_number1,extra_memory,a3
 
-; **** Wave-Center-Bar/Sine-Scrolltext ****
+; Wave-Center-Bar/Sine-Scrolltext
 	INIT_bplam_table.B wcb,color_values_number1*segments_number1*2,2,color_values_number2*2,extra_memory,a3,em_bplam_table2
 
-; **** Sine-Scrolltext ****
+; Sine-Scrolltext
 	INIT_CHARACTERS_OFFSETS.W ss
 
-; **** Barfield ****
+; Barfield
 	CNOP 0,4
 bf_init_color_table
 	lea	bf_color_table(pc),a0
@@ -1050,9 +1050,9 @@ cl1_init_copy_blit
 	move.l	extra_pf1(a3),a1
 	move.l	#(ss_text_character_x_restart/8)+(ss_text_character_y_restart*extra_pf1_plane_width*extra_pf1_depth),d0
 	add.l	(a1),d0
-	swap	d0			;High
-	COP_MOVE d0,BLTDPTH		;Playfield
-	swap	d0			;Low
+	swap	d0			; High
+	COP_MOVE d0,BLTDPTH
+	swap	d0			; Low
 	COP_MOVE d0,BLTDPTL
 	COP_MOVEQ ss_image_plane_width-ss_text_character_width,BLTAMOD
 	COP_MOVEQ extra_pf1_plane_width-ss_text_character_width,BLTDMOD
@@ -1062,7 +1062,7 @@ cl1_init_copy_blit
 	CNOP 0,4
 cl1_init_horiz_scroll_blit
 	COP_WAITBLIT
-	COP_MOVEQ DMAF_BLITHOG+DMAF_SETCLR,DMACON ;BLTPRI an
+	COP_MOVEQ DMAF_BLITHOG+DMAF_SETCLR,DMACON
 	COP_MOVEQ ((-ss_horiz_scroll_speed<<12)+BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC),BLTCON0 ;Minterm D=A
 	COP_MOVEQ 0,BLTCON1
 	move.l	extra_pf1(a3),a1	; Quelle
@@ -1641,7 +1641,7 @@ bf_copy_buffer
 	movem.l a4-a5,-(a7)
 	move.w	#RB_NIBBLES_MASK,d3
 	move.l	extra_memory(a3),a0
-	add.l	#em_color_buffer+(bf_bar_height*LONGWORD_SIZE),a0 ;Puffer
+	add.l	#em_color_buffer+(bf_bar_height*LONGWORD_SIZE),a0 ; Puffer
 	move.l	cl2_construction2(a3),a1 
 	IFEQ tb31612_quick_clear_enabled
 		ADDF.W	cl2_extension7_entry+cl2_ext7_COLOR31_high+WORD_SIZE,a1
@@ -1682,7 +1682,7 @@ bf_copy_buffer_loop
 
 	GET_TWISTED_BARS_YZ_COORDINATES tb31612,256,cl2_extension7_size
 
-; ** Y-Koordinaten für Wave-Effect berechnen **
+; Wave-Effect
 	CNOP 0,4
 we_get_y_coords
 	move.w	we_radius_y_angle(a3),d2 ; 1. Winkel Y-Radius
@@ -1708,7 +1708,7 @@ we_get_y_coords_loop
 	dbf	d7,we_get_y_coords_loop
 	rts
 
-; ** Copper-WAIT-Befehle wiederherstellen **
+; Copper-WAIT-Befehle wiederherstellen
 	IFNE tb31612_quick_clear_enabled
 		RESTORE_BLCON4_CHUNKY_SCREEN tb,cl2,construction2,extension7,32,,tb31612_restore_blit
 		IFNE tb31612_restore_cl_cpu_enabled
@@ -1745,7 +1745,7 @@ chunky_columns_fader_in
 	beq.s	ccfi_fader_mode_4
 chunky_columns_fader_in_quit
 	rts
-; ** Spalten von links nach rechts einblenden **
+; Spalten von links nach rechts einblenden
 	CNOP 0,4
 ccfi_fader_mode_1
 	clr.b	(a0,d1.w)		; Spaltenstatus: einblenden
@@ -1754,7 +1754,7 @@ ccfi_fader_mode_1
 	bgt.s	ccfi_fader_mode_skip
 	move.w	d1,ccfi_start(a3)
 	rts
-; ** Spalten von rechts nach links einblenden **
+; Spalten von rechts nach links einblenden
 	CNOP 0,4
 ccfi_fader_mode_2
 	move.w	d1,d0			; Startwert
@@ -1765,7 +1765,7 @@ ccfi_fader_mode_2
 	bgt.s	ccfi_fader_mode_skip
 	move.w	d1,ccfi_start(a3)
 	rts
-; ** Spalten gleichzeitig von links und rechts zur Mitte hin einblenden **
+; Spalten gleichzeitig von links und rechts zur Mitte hin einblenden
 	CNOP 0,4
 ccfi_fader_mode_3
 	clr.b	(a0,d1.w)		; Spaltenstatus: einblenden
@@ -1778,7 +1778,7 @@ ccfi_fader_mode_3
 	bgt.s	ccfi_fader_mode_skip
 	move.w	d1,ccfi_start(a3)
 	rts
-; ** Jede 2. Spalte gleichzeitig von links und rechts einblenden **
+; Jede 2. Spalte gleichzeitig von links und rechts einblenden
 	CNOP 0,4
 ccfi_fader_mode_4
 	clr.b	(a0,d1.w)		; Spaltenstatus: einblenden
@@ -1815,7 +1815,7 @@ chunky_columns_fader_out
 	beq.s	ccfo_fader_mode_4
 chunky_columns_fader_out_quit
 	rts
-; ** Spalten von links nach rechts ausblenden **
+; Spalten von links nach rechts ausblenden
 	CNOP 0,4
 ccfo_fader_mode_1
 	not.b	(a0,d1.w)		; Spaltenstatus ausblenden
@@ -1824,7 +1824,7 @@ ccfo_fader_mode_1
 	bgt.s	ccfo_fader_mode_skip
 	move.w	d1,ccfo_start(a3)
 	rts
-; ** Spalten von rechts nach links ausblenden **
+; Spalten von rechts nach links ausblenden
 	CNOP 0,4
 ccfo_fader_mode_2
 	move.w	d1,d0			; Startwert
@@ -1835,7 +1835,7 @@ ccfo_fader_mode_2
 	bgt.s	ccfo_fader_mode_skip
 	move.w	d1,ccfo_start(a3)
 	rts
-; ** Spalten gleichzeitig von links und rechts zur Mitte hin ausblenden **
+; Spalten gleichzeitig von links und rechts zur Mitte hin ausblenden
 	CNOP 0,4
 ccfo_fader_mode_3
 	not.b	(a0,d1.w)		; Spaltenstatus: ausblenden
@@ -1848,7 +1848,7 @@ ccfo_fader_mode_3
 	bgt.s	ccfo_fader_mode_skip
 	move.w	d1,ccfo_start(a3)
 	rts
-; ** Jede 2. Spalte gleichzeitig von links und rechts ausblenden **
+; Jede 2. Spalte gleichzeitig von links und rechts ausblenden
 	CNOP 0,4
 ccfo_fader_mode_4
 	not.b	(a0,d1.w)		; Spaltenstatus: ausblenden
@@ -1964,10 +1964,10 @@ nmi_int_server
 	CNOP 0,4
 pf1_rgb8_color_table
 	DC.L color00_bits
-	DS.L 256-2 ;pf1_colors_number-2
+	DS.L 256-2			; pf1_colors_number-2
 	DC.L color255_bits
 
-; **** Twisted-Bars3.16.1.2 ****
+; Twisted-Bars3.16.1.2
 	CNOP 0,4
 tb31612_bars_color_table
 	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/06_tb31612_Colorgradient.ct"
@@ -1981,7 +1981,7 @@ tb31612_fader_columns_mask
 		DC.B FALSE
 	ENDR
 
-; **** Wave-Center-Bar ****
+; Wave-Center-Bar
 	CNOP 0,4
 wcb_bar_color_table
 	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/06_wcb_Colorgradient.ct"
@@ -1991,13 +1991,13 @@ wcb_fader_columns_mask
 		DC.B FALSE
 	ENDR
 
-; **** Wave-Effect ****
+; Wave-Effect
 	CNOP 0,2
 we_y_coords
 	DS.W cl2_display_width
 we_y_coords_end
 
-; **** Sine-Scrolltext ****
+; Sine-Scrolltext
 	CNOP 0,4
 ss_color_table
 	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/06_ss_Colorgradient.ct"
@@ -2011,7 +2011,7 @@ ss_ascii_end
 ss_characters_offsets
 	DS.W ss_ascii_end-ss_ascii
 
-; **** Barfield ****
+; Barfield
 	CNOP 0,4
 bf_color_table
 	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/06_bf_Colorgradient.ct"
@@ -2043,7 +2043,7 @@ bf_yz_coords
 	INCLUDE "error-texts.i"
 
 
-; **** Sine-Scrolltext ****
+; Sine-Scrolltext
 ss_text
 	DC.B "ARTSTATE  "
 	DC.B "DESIRE  "
@@ -2059,9 +2059,9 @@ ss_text
 	EVEN
 
 
-; ## Grafikdaten nachladen ##
+; Grafikdaten nachladen
 
-; **** Sine-Scrolltext ****
+; Sine-Scrolltext
 ss_image_data SECTION ss_gfx,DATA_C
 	INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/fonts/32x32x2-Font.rawblit"
 

@@ -6,12 +6,9 @@
 
 ; Requirements
 ; CPU:		68020+
-; Fast-Memory:	-
 ; Chipset:	AGA PAL
 ; OS:		3.0+
 
-
-	SECTION code_and_variables,CODE
 
 	MC68040
 
@@ -64,7 +61,7 @@ requires_060_cpu		EQU FALSE
 requires_fast_memory		EQU FALSE
 requires_multiscan_monitor	EQU FALSE
 
-workbench_start_enabled	EQU FALSE
+workbench_start_enabled		EQU FALSE
 screen_fader_enabled		EQU FALSE
 text_output_enabled		EQU FALSE
 
@@ -205,7 +202,7 @@ cl2_vstart2			EQU beam_position&$ff
 
 sine_table_length		EQU 256
 
-; **** Twisted-Sine-Bars3.1.5 ****
+; Twisted-Sine-Bars3.1.5
 tb315_bars_number		EQU 4
 tb315_bar_height		EQU 48
 tb315_y_radius			EQU (cl2_display_y_size-80-tb315_bar_height)/2
@@ -215,7 +212,7 @@ tb315_y_angle_speed2		EQU 2
 tb315_y_angle_step		EQU 2
 tb315_y_distance		EQU sine_table_length/tb315_bars_number
 
-; **** Wave-Effect ****
+; Wave-Effect
 we_y_radius			EQU 80
 we_y_center			EQU 40
 we_y_radius_angle_speed		EQU 4
@@ -223,7 +220,7 @@ we_y_radius_angle_step		EQU 8
 we_y_angle_speed		EQU 4
 we_y_angle_step			EQU 2
 
-; **** Clear-Blit ****
+; Clear-Blit
 tb_clear_blit_x_size		EQU 16
 	IFEQ open_border_enabled
 tb_clear_blit_y_size		EQU cl2_display_y_size*(cl2_display_width+2)
@@ -231,12 +228,12 @@ tb_clear_blit_y_size		EQU cl2_display_y_size*(cl2_display_width+2)
 tb_clear_blit_y_size		EQU cl2_display_y_size*(cl2_display_width+1)
 	ENDC
 
-; **** Restore-Blit ****
+; Restore-Blit
 tb_restore_blit_x_size		EQU 16
 tb_restore_blit_width		EQU tb_restore_blit_x_size/8
 tb_restore_blit_y_size		EQU cl2_display_y_size
 
-; **** Blind-Fader ****
+; Blind-Fader
 bf_lamella_height		EQU 16
 bf_lamellas_number		EQU visible_lines_number/bf_lamella_height
 bf_step1			EQU 1
@@ -245,7 +242,7 @@ bf_speed			EQU 2
 
 bf_registers_table_length	EQU bf_lamella_height*4
 
-; **** Effects-Handler ****
+; Effects-Handler
 eh_trigger_number_max		EQU 3
 
 
@@ -350,7 +347,6 @@ cl2_end				RS.L 1
 copperlist2_size		RS.B 0
 
 
-; ** Konstanten für die Größe der Copperlisten **
 cl1_size1			EQU 0
 cl1_size2			EQU 0
 cl1_size3			EQU copperlist1_size
@@ -360,7 +356,6 @@ cl2_size2			EQU copperlist2_size
 cl2_size3			EQU copperlist2_size
 
 
-; ** Konstanten für die Größe der Spritestrukturen **
 spr0_x_size1			EQU spr_x_size1
 spr0_y_size1			EQU 0
 spr1_x_size1			EQU spr_x_size1
@@ -402,15 +397,15 @@ spr7_y_size2			EQU 0
 
 save_a7				RS.L 1
 
-; **** Twisted-Bars3.1.5 ****
+; Twisted-Bars3.1.5
 tb315_y_angle		RS.W 1
 tb315_y_angle_speed_angle RS.W 1
 
-; **** Wave-Effect ****
+; Wave-Effect
 we_y_radius_angle		RS.W 1
 we_y_angle			RS.W 1
 
-; **** Blind-Fader ****
+; Blind-Fader
 	IFEQ open_border_enabled
 bf_registers_table_start	RS.W 1
 
@@ -419,33 +414,38 @@ bfi_active			RS.W 1
 bfo_active			RS.W 1
 	ENDC
 
-; **** Effects-Handler ****
+; Effects-Handler
 eh_trigger_number		RS.W 1
 
-; **** Main ****
+; Main
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
 
 
+	SECTION	code,CODE
+
+
 start_02_twisted_bars
 
+
 	INCLUDE "sys-wrapper.i"
+
 
 	CNOP 0,4
 init_main_variables
 
-; **** Twisted-Bars3.1.5 ****
+; Twisted-Bars3.1.5
 	moveq	#TRUE,d0
 	move.w	d0,tb315_y_angle(a3)
 	moveq	#FALSE,d1
 	move.w	d0,tb315_y_angle_speed_angle(a3)
 
-; **** Wave-Effect ****
+; Wave-Effect
 	move.w	d0,we_y_radius_angle(a3)
 	move.w	d0,we_y_angle(a3)
 
-; **** Blind-Fader ****
+; Blind-Fader
 	IFEQ open_border_enabled
 		move.w	d0,bf_registers_table_start(a3)
 
@@ -454,10 +454,10 @@ init_main_variables
 		move.w	d1,bfo_active(a3)
 	ENDC
 
-; **** Effects-Handler ****
+; Effects-Handler
 	move.w	d0,eh_trigger_number(a3)
 
-; **** Main ****
+; Main
 	move.w	d1,stop_fx_active(a3)
 	rts
 
@@ -509,7 +509,7 @@ init_colors
 	ENDC
 	rts
 
-; **** Twisted-Bars ****
+; Twisted-Bars
 	INIT_bplam_table.B tb315,1,1,color_values_number1*segments_number1,extra_memory,a3
 
 
@@ -593,7 +593,7 @@ beam_routines_exit
 
 	CLEAR_BPLCON4_CHUNKY_SCREEN tb,cl2,construction1,extension1,quick_clear_enabled
 
-; **** Twisted-Bars3.1.5 ****
+; Twisted-Bars3.1.5
 	CNOP 0,4
 tb315_get_yz_coords
 	move.w	tb315_y_angle_speed_angle(a3),d1
@@ -631,7 +631,7 @@ tb315_get_yz_coords_loop2
 	dbf	d7,tb315_get_yz_coords_loop1
 	rts
 
-; ** Wave-Effect **
+; Wave-Effect
 	CNOP 0,4
 we_get_y_coords
 	move.w	we_y_radius_angle(a3),d2 ; 1. Winkel Y-Radius
@@ -896,17 +896,17 @@ nmi_int_server
 pf1_rgb8_color_table
 	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/03_tb_Colorgradient.ct"
 
-; **** Twisted-Bars3.1.5 ****
+; Twisted-Bars3.1.5
 	CNOP 0,4
 tb315_yz_coords
 	DS.W tb315_bars_number*cl2_display_width*2
 
-; **** Wave-Effect ****
+; Wave-Effect
 	CNOP 0,2
 we_y_coords
 	DS.W cl2_display_width
 
-; **** Blind-Fader ****
+; Blind-Fader
 	IFEQ open_border_enabled
 		CNOP 0,2
 bf_registers_table

@@ -6,12 +6,9 @@
 
 ; Requirements
 ; CPU:		68020+
-; Fast-Memory:	-
 ; Chipset:	AGA PAL
 ; OS:		3.0+
 
-
-	SECTION code_and_variables,CODE
 
 	MC68040
 
@@ -179,13 +176,13 @@ cl2_vstart2			EQU beam_position&$ff
 
 sine_table_length		EQU 256
 
-; **** Background-Image ****
+; Background-Image
 bg_image_x_size			EQU 352
 bg_image_plane_width		EQU bg_image_x_size/8
 bg_image_y_size			EQU 256
 bg_image_depth			EQU 7
 
-; **** Logo ****
+; Logo
 lg_image_x_size			EQU 256
 lg_image_plane_width		EQU lg_image_x_size/8
 lg_image_y_size			EQU 75
@@ -196,16 +193,16 @@ lg_image_y_center		EQU (visible_lines_number-lg_image_y_size)/2
 lg_image_x_position		EQU display_window_hstart+lg_image_x_center
 lg_image_y_position		EQU display_window_vstart+lg_image_y_center
 
-; **** Channelscope ****
+; Channelscope
 cs_selected_chan		EQU 2
 cs_scope_x_size			EQU 128
 
-; **** Wobble-Display ****
+; Wobble-Display
 wd_x_speed			EQU 1
 wd_x_step			EQU 1
 wd_table_length			EQU cs_scope_x_size
 
-; **** Image-Fader ****
+; Image-Fader
 if_rgb8_start_color		EQU 1
 if_rgb8_color_table_offset	EQU 1
 if_rgb8_colors_number		EQU pf1_colors_number-1
@@ -220,23 +217,23 @@ ifo_rgb8_fader_radius		EQU ifo_rgb8_fader_speed_max
 ifo_rgb8_fader_center		EQU ifo_rgb8_fader_speed_max+1
 ifo_rgb8_fader_angle_speed	EQU 1
 
-; **** Image-Pixel-Fader ****
+; Image-Pixel-Fader
 ipf_source_size			EQU 32
 ipf_destination_size_min	EQU 1
 
-; **** Image-Pixel-Fader-In ****
+; Image-Pixel-Fader-In
 ipfi_delay			EQU 6
 ipfi_delay_radius		EQU ipfi_delay
 ipfi_delay_center		EQU ipfi_delay+1
 ipfi_delay_angle_speed		EQU 1
 
-; **** Image-Pixel-Fader-Out ****
+; Image-Pixel-Fader-Out
 ipfo_delay			EQU 24
 ipfo_delay_radius		EQU ipfo_delay
 ipfo_delay_center		EQU ipfo_delay+1
 ipfo_delay_angle_speed		EQU 1
 
-; **** Effects-Handler ****
+; Effects-Handler
 eh_trigger_number_max		EQU 6
 
 
@@ -251,6 +248,10 @@ pf1_bpl1dat_x_offset		EQU 0
 
 
 	INCLUDE "sprite-attributes.i"
+
+
+; **** PT-Replay ****
+	INCLUDE "music-tracker/pt-temp-channel.i"
 
 
 	RSRESET
@@ -295,7 +296,6 @@ cl2_end				RS.L 1
 copperlist2_size		RS.B 0
 
 
-; ** Konstanten für die größe der Copperlisten **
 cl1_size1			EQU 0
 cl1_size2			EQU 0
 cl1_size3			EQU copperlist1_size
@@ -304,7 +304,7 @@ cl2_size2			EQU copperlist2_size
 cl2_size3			EQU copperlist2_size
 
 
-; ** Sprite0-Zusatzstruktur **
+; Sprite0-Zusatzstruktur
 	RSRESET
 
 spr0_extension1	RS.B 0
@@ -314,7 +314,7 @@ spr0_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr0_extension1_size		RS.B 0
 
-; ** Sprite0-Hauptstruktur **
+; Sprite0-Hauptstruktur
 	RSRESET
 
 spr0_begin			RS.B 0
@@ -325,7 +325,7 @@ spr0_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite0_size			RS.B 0
 
-; ** Sprite1-Zusatzstruktur **
+; Sprite1-Zusatzstruktur
 	RSRESET
 
 spr1_extension1			RS.B 0
@@ -335,7 +335,7 @@ spr1_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr1_extension1_size		RS.B 0
 
-; ** Sprite1-Hauptstruktur **
+; Sprite1-Hauptstruktur
 	RSRESET
 
 spr1_begin			RS.B 0
@@ -346,7 +346,7 @@ spr1_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite1_size			RS.B 0
 
-; ** Sprite2-Zusatzstruktur **
+; Sprite2-Zusatzstruktur
 	RSRESET
 
 spr2_extension1			RS.B 0
@@ -356,7 +356,7 @@ spr2_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr2_extension1_size		RS.B 0
 
-; ** Sprite2-Hauptstruktur **
+; Sprite2-Hauptstruktur
 	RSRESET
 
 spr2_begin			RS.B 0
@@ -367,7 +367,7 @@ spr2_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite2_size			RS.B 0
 
-; ** Sprite3-Zusatzstruktur **
+; Sprite3-Zusatzstruktur
 	RSRESET
 
 spr3_extension1			RS.B 0
@@ -377,7 +377,7 @@ spr3_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr3_extension1_size		RS.B 0
 
-; ** Sprite3-Hauptstruktur **
+; Sprite3-Hauptstruktur
 	RSRESET
 
 spr3_begin			RS.B 0
@@ -388,7 +388,7 @@ spr3_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite3_size			RS.B 0
 
-; ** Sprite4-Zusatzstruktur **
+; Sprite4-Zusatzstruktur
 	RSRESET
 
 spr4_extension1			RS.B 0
@@ -398,7 +398,7 @@ spr4_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr4_extension1_size		RS.B 0
 
-; ** Sprite4-Hauptstruktur **
+; Sprite4-Hauptstruktur
 	RSRESET
 
 spr4_begin			RS.B 0
@@ -409,7 +409,7 @@ spr4_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite4_size			RS.B 0
 
-; ** Sprite5-Zusatzstruktur **
+; Sprite5-Zusatzstruktur
 	RSRESET
 
 spr5_extension1			RS.B 0
@@ -419,7 +419,7 @@ spr5_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr5_extension1_size		RS.B 0
 
-; ** Sprite5-Hauptstruktur **
+; Sprite5-Hauptstruktur
 	RSRESET
 
 spr5_begin			RS.B 0
@@ -430,7 +430,7 @@ spr5_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite5_size			RS.B 0
 
-; ** Sprite6-Zusatzstruktur **
+; Sprite6-Zusatzstruktur
 	RSRESET
 
 spr6_extension1			RS.B 0
@@ -440,7 +440,7 @@ spr6_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr6_extension1_size		RS.B 0
 
-; ** Sprite6-Hauptstruktur **
+; Sprite6-Hauptstruktur
 	RSRESET
 
 spr6_begin			RS.B 0
@@ -451,7 +451,7 @@ spr6_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite6_size			RS.B 0
 
-; ** Sprite7-Zusatzstruktur **
+; Sprite7-Zusatzstruktur
 	RSRESET
 
 spr7_extension1			RS.B 0
@@ -461,7 +461,7 @@ spr7_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
 
 spr7_extension1_size		RS.B 0
 
-; ** Sprite7-Hauptstruktur **
+; Sprite7-Hauptstruktur
 	RSRESET
 
 spr7_begin			RS.B 0
@@ -472,7 +472,7 @@ spr7_end			RS.L 1*(spr_pixel_per_datafetch/16)
 
 sprite7_size			RS.B 0
 
-; ** Konstanten für die Größe der Spritestrukturen **
+
 spr0_x_size1			EQU spr_x_size1
 spr0_y_size1			EQU 0
 spr1_x_size1			EQU spr_x_size1
@@ -512,10 +512,10 @@ spr7_y_size2			EQU sprite7_size/(spr_x_size2/8)
 
 	INCLUDE "variables-offsets.i"
 
-; **** Wobble-Display ****
+; Wobble-Display
 wd_active			RS.W 1
 
-; **** Image-Fader ****
+; Image-Fader
 if_rgb8_colors_counter		RS.W 1
 if_rgb8_copy_colors_active	RS.W 1
 
@@ -525,35 +525,35 @@ ifi_rgb8_fader_angle		RS.W 1
 ifo_rgb8_active			RS.W 1
 ifo_rgb8_fader_angle		RS.W 1
 
-; **** Image-Pixel-Fader ****
+; Image-Pixel-Fader
 	RS_ALIGN_LONGWORD
 ipf_mask			RS.L 1
 ipf_destination_size 		RS.W 1
 
-; **** Image-Pixel-Fader-In ****
+; Image-Pixel-Fader-In
 ipfi_active			RS.W 1
 ipfi_delay_counter		RS.W 1
 ipfi_delay_angle		RS.W 1
 
-; **** Image-Pixel-Fader-Out ****
+; Image-Pixel-Fader-Out
 ipfo_active			RS.W 1
 ipfo_delay_counter		RS.W 1
 ipfo_delay_angle		RS.W 1
 
-; **** Effects-Handler ****
+; Effects-Handler
 eh_trigger_number		RS.W 1
 
-; **** Main ****
+; Main
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
 
 
-; **** PT-Replay ****
-	INCLUDE "music-tracker/pt-temp-channel.i"
+	SECTION code,CODE
 
 
 start_00_title_screen
+
 
 	INCLUDE "sys-wrapper.i"
 
@@ -561,11 +561,11 @@ start_00_title_screen
 	CNOP 0,4
 init_main_variables
 
-; **** Wobble-Display ****
+; Wobble-Display
 	moveq	#FALSE,d1
 	move.w	d1,wd_active(a3)
 
-; **** Image-Fader ****
+; Image-Fader
 	moveq	#TRUE,d0
 	move.w	d0,if_rgb8_colors_counter(a3)
 	move.w	d1,if_rgb8_copy_colors_active(a3)
@@ -576,24 +576,24 @@ init_main_variables
 	move.w	d1,ifo_rgb8_active(a3)
 	move.w	#sine_table_length/4,ifo_rgb8_fader_angle(a3) ; 90 Grad
 
-; **** Image-Pixel-Fader ****
+; Image-Pixel-Fader
 	move.l	d0,ipf_mask(a3)
 	move.w	#ipf_destination_size_min,ipf_destination_size(a3)
 
-; **** Image-Pixel-Fader-In ****
+; Image-Pixel-Fader-In
 	move.w	d1,ipfi_active(a3)
 	move.w	d0,ipfi_delay_counter(a3)
 	move.w	#sine_table_length/4,ipfi_delay_angle(a3) ; 90 Grad
 
-; **** Image-Pixel-Fader-Out ****
+; Image-Pixel-Fader-Out
 	move.w	d1,ipfo_active(a3)
 	move.w	d0,ipfo_delay_counter(a3)
 	move.w	#sine_table_length/4,ipfo_delay_angle(a3) ; 90 Grad
 
-; **** Effects-Handler ****
+; Effects-Handler
 	move.w	d0,eh_trigger_number(a3)
 
-; **** Main ****
+; Main
 	move.w	d1,stop_fx_active(a3)
 	rts
 
@@ -622,14 +622,14 @@ init_sprites
 
 	INIT_SPRITE_POINTERS_TABLE
 
-; **** Logo ****
+; Logo
 	INIT_ATTACHED_SPRITES_CLUSTER lg,spr_ptrs_display,lg_image_x_position,lg_image_y_position,spr_x_size2,lg_image_y_size,,BLANK
 
-; **** Background-Image ****
+; Background-Image
 	CNOP 0,4
 bg_copy_image_to_plane
 	move.l	a4,-(a7)
-	move.l	#bg_image_data+(pf1_planes_x_offset/8),a1 ; Bitplane1
+	move.l	#bg_image_data+(pf1_planes_x_offset/8),a1
 	move.l	pf1_display(a3),a4 	; Ziel
 	bsr.s	bg_copy_image_data
 	add.l	#bg_image_plane_width,a1 ; Bitplane2
@@ -825,12 +825,11 @@ get_channels_data
 	CNOP 0,4
 get_sample_data
 ; Input
-; d6.l	... PAL-Clockkonstante / PAL-Frequenz
-; d7.w	... Anzahl der Samplebytes zum Auslesen
-; a0	... Temporäre Struktur des Audiokanals
-; a2	... Zeiger auf Amplitudenwerte des Kanals
+; d6.l	PAL-Clockkonstante / PAL-Frequenz
+; d7.w	Anzahl der Samplebytes zum Auslesen
+; a0.l	Temporäre Struktur des Audiokanals
+; a2.l	Zeiger auf Amplitudenwerte des Kanals
 ; Result
-; d0.l	... kein Rückgabewert
 	tst.b	n_notetrigger(a0) 	; Neue Note angespielt ?
 	bne.s	get_sample_data_skip1
 	move.l	n_start(a0),n_currentstart(a0)
@@ -1227,7 +1226,7 @@ eh_stop_all
 mouse_handler
 ; Input
 ; Result
-; d0.l	... Rückgabewert: Return-Code
+; d0.l	Rückgabewert: Return-Code
 	btst	#CIAB_GAMEPORT0,CIAPRA(a4) ; Linke Maustaste gedrückt ?
 	bne.s	mouse_handler_skip
 	moveq	#RETURN_WARN,d0
@@ -1269,12 +1268,12 @@ spr_ptrs_display
 sine_table
 	INCLUDE "sine-table-256x32.i"
 
-; **** Channelscope ****
+; Channelscope
 	CNOP 0,2
 cs_audio_channel_data
 	DS.W cs_scope_x_size
 
-; **** Image-Fader ****
+; Image-Fader-In
 	CNOP 0,4
 ifi_rgb8_color_table
 	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/352x256x128-RasterMaster.ct"
@@ -1295,13 +1294,13 @@ ifo_rgb8_color_table
 	INCLUDE "error-texts.i"
 
 
-; ## Grafikdaten nachladen ##
+; Grafikdaten nachladen
 
-; **** Background-Image ****
+; Background-Image
 bg_image_data SECTION bg_gfx,DATA
 	INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/graphics/352x256x128-RasterMaster.rawblit"
 
-; **** Logo ****
+; Logo
 lg_image_data SECTION lg_gfx,DATA
 	INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/graphics/256x75x16-Resistance.rawblit"
 

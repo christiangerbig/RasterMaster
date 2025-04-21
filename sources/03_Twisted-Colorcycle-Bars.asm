@@ -6,12 +6,9 @@
 
 ; Requirements
 ; CPU:		68020+
-; Fast-Memory:	-
 ; Chipset:	AGA PAL
 ; OS:		3.0+
 
-
-	SECTION code_and_variables,CODE
 
 	MC68040
 
@@ -68,6 +65,7 @@ text_output_enabled		EQU FALSE
 
 open_border_enabled		EQU TRUE
 
+; Twisted-Colorcycle-Bars
 tccb_quick_clear_enabled	EQU TRUE
 tccb_restore_cl_cpu_enabled	EQU TRUE
 tccb_restore_cl_blitter_enabled EQU FALSE
@@ -203,7 +201,7 @@ cl1_vstart2			EQU beam_position&$ff
 
 sine_table_length		EQU 512
 
-; **** Twisted-Colorcycle-Bars ****
+; Twisted-Colorcycle-Bars
 tccb_bars_number		EQU 10
 tccb_bar_height			EQU 32
 tccb_y_radius			EQU (cl1_display_y_size-tccb_bar_height)/2
@@ -214,7 +212,7 @@ tccb_y_angle_speed		EQU 3
 tccb_y_angle_step		EQU 2
 tccb_y_distance			EQU 16
 
-; **** Clear-Blit ****
+; Clear-Blit
 tccb_clear_blit_x_size		EQU 16
 	IFEQ open_border_enabled
 tccb_clear_blit_y_size		EQU cl1_display_y_size*(cl1_display_width+2)
@@ -222,16 +220,16 @@ tccb_clear_blit_y_size		EQU cl1_display_y_size*(cl1_display_width+2)
 tccb_clear_blit_y_size		EQU cl1_display_y_size*(cl1_display_width+1)
 	ENDC
 
-; **** Restore-Blit ****
+; Restore-Blit
 tccb_restore_blit_x_size	EQU 16
 tccb_restore_blit_width		EQU tccb_restore_blit_x_size/8
 tccb_restore_blit_y_size	EQU cl1_display_y_size
 
-; **** Colorcycle	****
+; Colorcycle	****
 cc_speed			EQU 4
 cc_step				EQU 64
 
-; **** Blind-Fader ****
+; Blind-Fader
 bf_lamella_height		EQU 16
 bf_lamellas_number		EQU visible_lines_number/bf_lamella_height
 bf_step1			EQU 1
@@ -240,7 +238,7 @@ bf_speed			EQU 2
 
 bf_registers_table_length	EQU bf_lamella_height*4
 
-; **** Effects-Handler ****
+; Effects-Handler
 eh_trigger_number_max		EQU 3
 
 
@@ -336,7 +334,6 @@ cl1_end				RS.L 1
 copperlist1_size		RS.B 0
 
 
-; ** Konstanten für die Größe der Copperlisten **
 cl1_size1			EQU copperlist1_size
 cl1_size2			EQU copperlist1_size
 cl1_size3			EQU copperlist1_size
@@ -346,7 +343,6 @@ cl2_size2			EQU 0
 cl2_size3			EQU 0
 
 
-; ** Konstanten für die Größe der Spritestrukturen **
 spr0_x_size1			EQU spr_x_size1
 spr0_y_size1			EQU 0
 spr1_x_size1			EQU spr_x_size1
@@ -395,14 +391,14 @@ extra_memory_size 		RS.B 0
 
 save_a7				RS.L 1
 
-; **** Colorcycle ****
+; Colorcycle
 cc_color_table_start		RS.L 1
 
-; **** Twisted-Colorcycle-Bars ****
+; Twisted-Colorcycle-Bars
 tccb_y_angle			RS.W 1
 tccb_y_radius_angle		RS.W 1
 
-; **** Blind-Fader ****
+; Blind-Fader
 	IFEQ open_border_enabled
 bf_registers_table_start 	RS.W 1
 
@@ -411,32 +407,37 @@ bfi_active			RS.W 1
 bfo_active			RS.W 1
 	ENDC
 
-; **** Effects-Handler ****
+; Effects-Handler
 eh_trigger_number		RS.W 1
 
-; **** Main ****
+; Main
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
 
 
+	SECTION code,CODE
+
+
 start_03_twisted_colorcycle_bars
 
+
 	INCLUDE "sys-wrapper.i"
+
 
 	CNOP 0,4
 init_main_variables
 
-; **** Colorcycle ****
+; Colorcycle
 	moveq	#0,d0
 	move.l	d0,cc_color_table_start(a3)
 	moveq	#FALSE,d1
 
-; **** Twisted-Colorcycle-Bars ****
+; Twisted-Colorcycle-Bars
 	move.w	d0,tccb_y_angle(a3)
 	move.w	d0,tccb_y_radius_angle(a3)
 
-; **** Blind-Fader ****
+; Blind-Fader
 	IFEQ open_border_enabled
 		move.w	d0,bf_registers_table_start(a3)
 
@@ -445,10 +446,10 @@ init_main_variables
 		move.w	d1,bfo_active(a3)
 	ENDC
 
-; **** Effects-Handler ****
+; Effects-Handler
 	move.w	d0,eh_trigger_number(a3)
 
-; **** Main ****
+; Main
 	move.w	d1,stop_fx_active(a3)
 	rts
 
@@ -464,11 +465,11 @@ init_main
 	bsr	tccb_init_mirror_bplam_table
 	bra	init_first_copperlist
 
-; **** Twisted-Colorcycle-Bars ****
+; Twisted-Colorcycle-Bars
 	CNOP 0,4
 tccb_init_color_table
 	movem.l a4-a6,-(a7)
-; ** vertikale Farbverläufe **
+; vertikale Farbverläufe
 	lea	tccb_color_gradient(pc),a0
 	move.l	extra_memory(a3),a2 	; Ziel: Farbtabelle
 	move.w	#color_x_values_number*segments_number*LONGWORD_SIZE,a4
@@ -929,6 +930,7 @@ nmi_int_server
 
 	INCLUDE "sys-structures.i"
 
+
 	CNOP 0,4
 pf1_rgb8_color_table
 	DC.L color00_bits
@@ -938,14 +940,14 @@ pf1_rgb8_color_table
 sine_table_512
 	INCLUDE "sine-table-512x32.i"
 
-; **** Twisted-Colorcycle-Bars ****
+; Twisted-Colorcycle-Bars
 	CNOP 0,4
 tccb_color_gradient
 	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/04_tcb_Colorgradient.ct"
 
-; **** Blind-Fader ****
+; Blind-Fader
 	IFEQ open_border_enabled
-; ** Tabelle mit Registeradressen **
+; Tabelle mit Registeradressen
 		CNOP 0,2
 bf_registers_table
 		REPT bf_registers_table_length/2

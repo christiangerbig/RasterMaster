@@ -1043,8 +1043,8 @@ cl1_init_copy_blit
 	COP_WAITBLIT
 	COP_MOVEQ BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ; Minterm D=A
 	COP_MOVEQ 0,BLTCON1
-	COP_MOVEQ FALSE_WORD,BLTAFWM
-	COP_MOVEQ FALSE_WORD,BLTALWM
+	COP_MOVEQ -1,BLTAFWM
+	COP_MOVEQ -1,BLTALWM
 	COP_MOVEQ 0,BLTAPTH
 	COP_MOVEQ 0,BLTAPTL
 	move.l	extra_pf1(a3),a1
@@ -1069,9 +1069,9 @@ cl1_init_horiz_scroll_blit
 	move.l	(a1),d0 
 	add.l	#ss_text_y_position*extra_pf1_plane_width*extra_pf1_depth,d0
 	move.l	d0,d1			; Erste Zeile
-	COP_MOVEQ FALSE_WORD,BLTAFWM
+	COP_MOVEQ -1,BLTAFWM
 	addq.l	#WORD_SIZE,d0		; Erste Zeile, 16 Pixel überspringen
-	COP_MOVEQ FALSE_WORD,BLTALWM
+	COP_MOVEQ -1,BLTALWM
 	swap	d0			; High
 	COP_MOVE d0,BLTAPTH
 	swap	d0			; Low
@@ -1203,7 +1203,7 @@ cl2_init_copperlist_branch
 cl2_init_clear_blit
 	COP_MOVEQ DMAF_BLITHOG,DMACON
 	COP_MOVEQ BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ; Minterm D=A
-	COP_MOVEQ FALSE_WORD,BLTALWM	; Maske aus
+	COP_MOVEQ -1,BLTALWM	; Maske aus
 	COP_MOVEQ 0,BLTDPTH
 	COP_MOVEQ 0,BLTDPTL
 	COP_MOVEQ 2,BLTDMOD

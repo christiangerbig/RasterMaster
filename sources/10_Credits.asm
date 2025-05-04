@@ -892,8 +892,8 @@ vert_text_scroll_init
 	move.w	#DMAF_BLITHOG+DMAF_SETCLR,DMACON-DMACONR(a6)
 	WAITBLIT
 	move.l	#(BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC)<<16,BLTCON0-DMACONR(a6) ; D=A
-	moveq	#FALSE,d0
-	move.l	d0,BLTAFWM-DMACONR(a6)	; keine Ausmaskierung
+	moveq	#-1,d0
+	move.l	d0,BLTAFWM-DMACONR(a6)
 	move.l	#((vts_image_plane_width-vts_text_char_width)<<16)+(vts_buffer_width-vts_text_char_width),BLTAMOD-DMACONR(a6) ; A-Mod + D-Mod
 	rts
 

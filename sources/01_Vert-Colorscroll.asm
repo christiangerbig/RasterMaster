@@ -1,13 +1,7 @@
-; Programm:	01_Vert-Colorscroll.asm
-; Autor:	Christian Gerbig
-; Datum:	21.12.2023
-; Version:	1.3 beta
-
-
 ; Requirements
-; CPU:		68020+
-; hipset:	AGA PAL
-; OS:		3.0+
+; 68020+
+; AGA PAL
+; 3.0+
 
 
 	MC68040
@@ -20,7 +14,7 @@
 	XDEF start_01_vert_colorscroll
 
 
-	INCDIR "Daten:include3.5/"
+	INCDIR "include3.5:"
 
 	INCLUDE "exec/exec.i"
 	INCLUDE "exec/exec_lib.i"
@@ -40,12 +34,12 @@
 	INCLUDE "hardware/intbits.i"
 
 
-	INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
-
-
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
+
+
+	INCDIR "custom-includes-aga:"
 
 
 	INCLUDE "macros.i"
@@ -140,27 +134,21 @@ ciab_tb_continuous_enabled	EQU FALSE
 
 beam_position			EQU $136
 
-	IFNE open_border_enabled 
 pixel_per_line			EQU 32
-	ENDC
 visible_pixels_number		EQU 352
 visible_lines_number		EQU 280
 MINROW				EQU VSTART_OVERSCAN_PAL
 
-	IFNE open_border_enabled 
 pf_pixel_per_datafetch		EQU 16	; 1x
-	ENDC
 
 display_window_hstart		EQU HSTART_44_CHUNKY_PIXEL
 display_window_vstart		EQU MINROW
 display_window_hstop		EQU HSTOP_44_CHUNKY_PIXEL
 display_window_vstop		EQU MINROW+visible_lines_number
 
-	IFNE open_border_enabled 
 pf1_plane_width			EQU pf1_x_size3/8
 data_fetch_width		EQU pixel_per_line/8
 pf1_plane_moduli		EQU -(pf1_plane_width-(pf1_plane_width-data_fetch_width))
-	ENDC
 
 	IFEQ open_border_enabled
 diwstrt_bits			EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)|(display_window_hstart&$ff)
@@ -271,7 +259,7 @@ vcs_bplam_table_size		EQU ct_size1
 extra_memory_size		EQU vcs_bplam_table_size*BYTE_SIZE
 
 
-	INCLUDE "except-vectors-offsets.i"
+	INCLUDE "except-vectors.i"
 
 
 	INCLUDE "extra-pf-attributes.i"
@@ -284,7 +272,7 @@ extra_memory_size		EQU vcs_bplam_table_size*BYTE_SIZE
 
 cl1_begin			RS.B 0
 
-	INCLUDE "copperlist1-offsets.i"
+	INCLUDE "copperlist1.i"
 
 cl1_COPJMP2			RS.L 1
 
@@ -407,7 +395,7 @@ spr7_y_size2			EQU 0
 
 	RSRESET
 
-	INCLUDE "variables-offsets.i"
+	INCLUDE "main-variables.i"
 
 save_a7				RS.L 1
 
@@ -505,6 +493,7 @@ init_main
 	bsr	init_first_copperlist
 	bra	init_second_copperlist
 
+
 	CNOP 0,4
 init_colors
 	CPU_SELECT_COLOR_HIGH_BANK 0
@@ -541,6 +530,7 @@ init_colors
 	CPU_SELECT_COLOR_LOW_BANK 7
 	CPU_INIT_COLOR_LOW COLOR00,32
 	rts
+
 
 ; Vert-Colorscroll
 	INIT_bplam_table.B vcs,0,1,color_values_number1*segments_number1,extra_memory,a3
@@ -692,6 +682,7 @@ vert_colorscroll3112_quit
 	movem.l (a7)+,a3-a6
 	rts
 
+
 	CNOP 0,4
 vert_colorscroll3121
 	movem.l a3-a6,-(a7)
@@ -764,6 +755,7 @@ vert_colorscroll3121_quit
 	movem.l (a7)+,a3-a6
 	rts
 
+
 	CNOP 0,4
 vert_colorscroll3122
 	movem.l a3-a6,-(a7)
@@ -785,7 +777,7 @@ vert_colorscroll3122
 	addq.b	#vcs3122_step2_angle_speed,d0 ; nächster Y-Winkel
 	move.w	d0,vcs3122_step2_angle(a3) 
 	MOVEF.L (cl2_extension1_size*(cl2_display_y_size/2))+LONGWORD_SIZE,d5
-	move.l	extra_memory(a3),a0 	; Tabelle mit BPLAM-werten
+	move.l	extra_memory(a3),a0	; Tabelle mit BPLAM-werten
 	move.l	cl2_construction2(a3),a1 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ; 2. Quadrant
 	lea	LONGWORD_SIZE(a1),a2	; 1. Quadrant
@@ -836,6 +828,7 @@ vert_colorscroll3122_quit
 	movem.l (a7)+,a3-a6
 	rts
 
+
 	CNOP 0,4
 vert_colorscroll3111
 	movem.l a3-a6,-(a7)
@@ -857,7 +850,7 @@ vert_colorscroll3111
 	addq.b	#vcs3111_step2_angle_speed,d0 ; nächster Y-Winkel
 	move.w	d0,vcs3111_step2_angle(a3) 
 	MOVEF.L (cl2_extension1_size*(cl2_display_y_size/2))+4,d5
-	move.l	extra_memory(a3),a0 	; Tabelle mit BPLAM-werten
+	move.l	extra_memory(a3),a0	; Tabelle mit BPLAM-werten
 	move.l	cl2_construction2(a3),a1 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ; 2. Quadrant
 	lea	LONGWORD_SIZE(a1),a2	; 1. Quadrant
@@ -967,7 +960,8 @@ blind_fader_in_skip3
 blind_fader_in_quit
 		move.l	(a7)+,a4
 		rts
-	
+
+
 		CNOP 0,4
 blind_fader_out
 		move.l	a4,-(a7)
@@ -1116,9 +1110,11 @@ nmi_int_server
 
 	INCLUDE "sys-structures.i"
 
+
 	CNOP 0,4
 pf1_rgb8_color_table
-	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/02_vcs3112_Colorgradient.ct"
+	INCLUDE "RasterMaster:colortables/02_vcs3112_Colorgradient.ct"
+
 
 ; Blind-Fader
 	IFEQ open_border_enabled

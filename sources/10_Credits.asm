@@ -1,13 +1,7 @@
-; Programm:	10_Credits
-; Autor:	Christian Gerbig
-; Datum:	21.12.2023
-; Version:	1.3 beta
-
-
 ; Requirements
-; CPU:		68020+
-; Chipset:	AGA PAL
-; OS:		3.0+
+; 68020+
+; AGA PAL
+; 3.0+
 
 
 	MC68040
@@ -21,7 +15,7 @@
 	XDEF start_10_credits
 
 
-	INCDIR "Daten:include3.5/"
+	INCDIR "include3.5:"
 
 	INCLUDE "exec/exec.i"
 	INCLUDE "exec/exec_lib.i"
@@ -41,13 +35,13 @@
 	INCLUDE "hardware/intbits.i"
 
 
-	INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
-
-
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
 SET_SECOND_COPPERLIST		SET 1
+
+
+	INCDIR "custom-includes-aga:"
 
 
 	INCLUDE "macros.i"
@@ -205,25 +199,25 @@ vts_buffer_depth		EQU vts_image_depth
 vts_buffer_x_position		EQU HSTOP_320_PIXEL-vts_buffer_x_size
 vts_buffer_y_position		EQU display_window_vstart
 
-vts_origin_character_x_size	EQU 16
-vts_origin_character_y_size	EQU 15
+vts_origin_char_x_size		EQU 16
+vts_origin_char_y_size		EQU 15
 vst_origin_charcter_depth	EQU vts_image_depth
 
-vts_text_character_x_size	EQU 16
-vts_text_character_width	EQU vts_text_character_x_size/8
-vts_text_character_y_size	EQU vts_origin_character_y_size+1
-vts_text_character_depth	EQU vts_image_depth
+vts_text_char_x_size		EQU 16
+vts_text_char_width		EQU vts_text_char_x_size/8
+vts_text_char_y_size		EQU vts_origin_char_y_size+1
+vts_text_char_depth		EQU vts_image_depth
 
 vts_vert_scroll_speed1		EQU 0
 vts_vert_scroll_speed2		EQU 1
 
-vts_text_character_y_restart	EQU visible_lines_number+vts_text_character_y_size
-vts_text_characters_per_line	EQU vts_buffer_x_size/vts_text_character_x_size
-vts_text_characters_per_column	EQU (visible_lines_number+vts_text_character_y_size)/vts_text_character_y_size
+vts_text_char_y_restart		EQU visible_lines_number+vts_text_char_y_size
+vts_text_characters_per_line	EQU vts_buffer_x_size/vts_text_char_x_size
+vts_text_characters_per_column	EQU (visible_lines_number+vts_text_char_y_size)/vts_text_char_y_size
 vts_text_characters_number	EQU vts_text_characters_per_line*vts_text_characters_per_column
 
-vts_copy_character_blit_x_size 	EQU vts_text_character_x_size
-vts_copy_character_blit_y_size 	EQU vts_text_character_y_size*vts_text_character_depth
+vts_copy_char_blit_x_size	EQU vts_text_char_x_size
+vts_copy_char_blit_y_size	EQU vts_text_char_y_size*vts_text_char_depth
 
 ; Image-Fader
 if_rgb8_start_color		EQU 1
@@ -256,11 +250,11 @@ sllo_x_angle_speed		EQU 2
 eh_trigger_number_max		EQU 8
 
 
-pf1_planes_x_offset		EQU 16
+pf1_plane_x_offset		EQU 16
 pf1_BPL1DAT_x_offset		EQU 0
 
 
-	INCLUDE "except-vectors-offsets.i"
+	INCLUDE "except-vectors.i"
 
 
 	INCLUDE "extra-pf-attributes.i"
@@ -282,13 +276,13 @@ cl1_ext1_BPL3DAT		RS.L 1
 cl1_ext1_BPL2DAT		RS.L 1
 cl1_ext1_BPL1DAT		RS.L 1
 
-cl1_extension1_size 		RS.B 0
+cl1_extension1_size		RS.B 0
 
 	RSRESET
 
 cl1_begin			RS.B 0
 
-	INCLUDE "copperlist1-offsets.i"
+	INCLUDE "copperlist1.i"
 
 cl1_extension1_entry		RS.B (cl1_extension1_size*cl1_display_y_size)+4
 
@@ -297,7 +291,7 @@ cl1_INTREQ			RS.L 1
 
 cl1_end				RS.L 1
 
-copperlist1_size 		RS.B 0
+copperlist1_size		RS.B 0
 
 
 cl1_size1			EQU 0
@@ -313,8 +307,8 @@ cl2_size3			EQU 0
 
 spr0_extension1	RS.B 0
 
-spr0_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr0_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
+spr0_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr0_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size
 
 spr0_extension1_size		RS.B 0
 
@@ -325,7 +319,7 @@ spr0_begin			RS.B 0
 
 spr0_extension1_entry		RS.B spr0_extension1_size
 
-spr0_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr0_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite0_size			RS.B 0
 
@@ -334,8 +328,8 @@ sprite0_size			RS.B 0
 
 spr1_extension1	RS.B 0
 
-spr1_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr1_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
+spr1_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr1_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size
 
 spr1_extension1_size		RS.B 0
 
@@ -346,7 +340,7 @@ spr1_begin			RS.B 0
 
 spr1_extension1_entry		RS.B spr1_extension1_size
 
-spr1_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr1_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite1_size			RS.B 0
 
@@ -355,8 +349,8 @@ sprite1_size			RS.B 0
 
 spr2_extension1	RS.B 0
 
-spr2_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr2_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
+spr2_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr2_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size
 
 spr2_extension1_size		RS.B 0
 
@@ -365,9 +359,9 @@ spr2_extension1_size		RS.B 0
 
 spr2_begin			RS.B 0
 
-spr2_extension1_entry 		RS.B spr2_extension1_size
+spr2_extension1_entry		RS.B spr2_extension1_size
 
-spr2_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr2_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite2_size			RS.B 0
 
@@ -376,7 +370,7 @@ sprite2_size			RS.B 0
 
 spr3_begin			RS.B 0
 
-spr3_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr3_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite3_size			RS.B 0
 
@@ -385,8 +379,8 @@ sprite3_size			RS.B 0
 
 spr4_extension1	RS.B 0
 
-spr4_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr4_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
+spr4_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr4_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size
 
 spr4_extension1_size		RS.B 0
 
@@ -395,9 +389,9 @@ spr4_extension1_size		RS.B 0
 
 spr4_begin			RS.B 0
 
-spr4_extension1_entry 		RS.B spr4_extension1_size
+spr4_extension1_entry		RS.B spr4_extension1_size
 
-spr4_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr4_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite4_size			RS.B 0
 
@@ -406,7 +400,7 @@ sprite4_size			RS.B 0
 
 spr5_begin			RS.B 0
 
-spr5_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr5_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite5_size			RS.B 0
 
@@ -415,8 +409,8 @@ sprite5_size			RS.B 0
 
 spr6_extension1			RS.B 0
 
-spr6_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr6_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
+spr6_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr6_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size
 
 spr6_extension1_size		RS.B 0
 
@@ -427,7 +421,7 @@ spr6_begin			RS.B 0
 
 spr6_extension1_entry		RS.B spr6_extension1_size
 
-spr6_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr6_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite6_size			RS.B 0
 
@@ -436,7 +430,7 @@ sprite6_size			RS.B 0
 
 spr7_begin			RS.B 0
 
-spr7_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr7_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite7_size			RS.B 0
 
@@ -478,11 +472,11 @@ spr7_y_size2			EQU sprite7_size/(spr_pixel_per_datafetch/4)
 
 	RSRESET
 
-	INCLUDE "variables-offsets.i"
+	INCLUDE "main-variables.i"
 
 ; Vert-Text-Scroll
 vts_image			RS.L 1
-vts_vert_scroll_speed 		RS.W 1
+vts_vert_scroll_speed		RS.W 1
 vts_text_table_start		RS.W 1
 
 ; Image-Fader
@@ -573,6 +567,7 @@ init_main
 	bsr	vts_init_characters_images
 	bra	init_first_copperlist
 
+
 	CNOP 0,4
 init_colors
 	CPU_SELECT_COLOR_HIGH_BANK 4
@@ -584,6 +579,7 @@ init_colors
 	CPU_INIT_COLOR_LOW COLOR16,16,spr_rgb8_color_table_vert_text_scroll
 	rts
 
+
 	CNOP 0,4
 init_sprites
 	bsr.s	spr_init_ptrs_table
@@ -592,6 +588,7 @@ init_sprites
 	bra	spr_copy_structures
 
 	INIT_SPRITE_POINTERS_TABLE
+
 
 ; Logo
 	CNOP 0,4
@@ -614,6 +611,7 @@ lg_init_sprites_loop
 	move.l	(a2)+,(a1)+		; Plane4
 	dbf	d7,lg_init_sprites_loop
 	rts
+
 
 ; Vert-Scroll-Text
 	CNOP 0,4
@@ -649,14 +647,16 @@ vts_init_sprites
 	move.w	d2,spr_pixel_per_datafetch/8(a2) ; SPR6CTL
 	rts
 
+
 	COPY_SPRITE_STRUCTURES
+
 
 ; Background-Image
 	CNOP 0,4
 bg_copy_image_to_plane
 	movem.l a3-a6,-(a7)
-	move.l	#bg_image_data+(pf1_planes_x_offset/8),a1 ; Offset Bitplane1
-	move.l	pf1_display(a3),a3 	; Ziel
+	move.l	#bg_image_data+(pf1_plane_x_offset/8),a1 ; Offset Bitplane1
+	move.l	pf1_display(a3),a3	; Ziel
 	bsr.s	bg_copy_image_data
 	add.l	#bg_image_plane_width,a1 ; Offset Bitplane2
 	bsr.s	bg_copy_image_data
@@ -686,6 +686,7 @@ bg_copy_image_data_loop
 	dbf	d7,bg_copy_image_data_loop
 	rts
 
+
 ; Vert-Text-Scroll
 	INIT_CHARACTERS_OFFSETS.W vts
 
@@ -709,9 +710,12 @@ init_first_copperlist
 	bsr	cl1_set_sprite_ptrs
 	bra	cl1_set_plane_ptrs
 
+
 	COP_INIT_PLAYFIELD_REGISTERS cl1
 
+
 	COP_INIT_SPRITE_POINTERS cl1
+
 
 	CNOP 0,4
 cl1_init_colors
@@ -733,7 +737,9 @@ cl1_init_colors
 	COP_INIT_COLOR_LOW COLOR00,32
 	rts
 
+
 	COP_INIT_BITPLANE_POINTERS cl1
+
 
 	CNOP 0,4
 cl1_init_bpldat
@@ -777,9 +783,12 @@ cl1_init_bpldat_skip
 	movem.l (a7)+,a4-a5
 	rts
 
+
 	COP_INIT_COPINT cl1,cl1_hstart2,cl1_vstart2
 
+
 	COP_SET_SPRITE_POINTERS cl1,display,spr_number
+
 
 	COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
 
@@ -821,7 +830,9 @@ beam_routines_exit
 
 	SWAP_SPRITES spr,spr_swap_number
 
+
 	SET_SPRITES spr,spr_swap_number
+
 
 	CNOP 0,4
 swap_extra_playfield
@@ -835,8 +846,8 @@ swap_extra_playfield
 vert_text_scroll
 	movem.l a4-a5,-(a7)
 	bsr.s	vert_text_scroll_init
-	MOVEF.W (vts_copy_character_blit_y_size*64)+(vts_copy_character_blit_x_size/16),d3 ; BLTSIZE
-	MOVEF.W vts_text_character_y_restart,d4
+	MOVEF.W (vts_copy_char_blit_y_size*64)+(vts_copy_char_blit_x_size/WORD_BITS),d3 ; BLTSIZE
+	MOVEF.W vts_text_char_y_restart,d4
 	lea	vts_characters_y_positions(pc),a1
 	lea	vts_characters_image_ptrs(pc),a2
 	move.l	extra_pf1(a3),a4
@@ -858,15 +869,15 @@ vert_text_scroll_loop2
 	add.l	a4,d0			; Playfieldadresse addieren
 	WAITBLIT
 	move.l	(a2)+,BLTAPT-DMACONR(a6) ; Character-Image
-	move.l	d0,BLTDPT-DMACONR(a6) 	; Playfield
-	move.w	d3,BLTSIZE-DMACONR(a6) 	; Blitter starten
+	move.l	d0,BLTDPT-DMACONR(a6)	; Playfield
+	move.w	d3,BLTSIZE-DMACONR(a6)	; Blitter starten
 	dbf	d6,vert_text_scroll_loop2
 	sub.w	vts_vert_scroll_speed(a3),d2 ; Y-Position verringern
 	bpl.s	vert_text_scroll_skip
 	sub.l	a5,a2			; Zeiger auf Anfang setzen
 	moveq	#vts_text_characters_per_line-1,d5
 vert_text_scroll_loop3
-	bsr.s	vts_get_new_character_image
+	bsr.s	vts_get_new_char_image
 	move.l	d0,(a2)+		; Neues Bild für Characteracter
 	dbf	d5,vert_text_scroll_loop3
 	add.w	d4,d2			; Y-Neustart
@@ -883,10 +894,12 @@ vert_text_scroll_init
 	move.l	#(BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC)<<16,BLTCON0-DMACONR(a6) ; D=A
 	moveq	#FALSE,d0
 	move.l	d0,BLTAFWM-DMACONR(a6)	; keine Ausmaskierung
-	move.l	#((vts_image_plane_width-vts_text_character_width)<<16)+(vts_buffer_width-vts_text_character_width),BLTAMOD-DMACONR(a6) ; A-Mod + D-Mod
+	move.l	#((vts_image_plane_width-vts_text_char_width)<<16)+(vts_buffer_width-vts_text_char_width),BLTAMOD-DMACONR(a6) ; A-Mod + D-Mod
 	rts
 
-	GET_NEW_CHARACTER_IMAGE.W vts
+
+	GET_NEW_char_IMAGE.W vts
+
 
 ; Puffer in Sprite-Strukturen kopieren
 	CNOP 0,4
@@ -901,7 +914,7 @@ vts_copy_buffer
 	ADDF.W	(spr_pixel_per_datafetch/4),a2 ; Sprite-Header überspringen
 	move.l	extra_pf2(a3),a4
 	move.l	(a4),a4
-	ADDF.W	vts_text_character_y_size*extra_pf1_plane_width*extra_pf1_depth,a4 ; n Zeilen überspringen
+	ADDF.W	vts_text_char_y_size*extra_pf1_plane_width*extra_pf1_depth,a4 ; n Zeilen überspringen
 	MOVEF.W vts_buffer_y_size-1,d7
 vts_copy_buffer_loop
 	move.l	(a4)+,(a0)+		; Plane1 64 Pixel
@@ -954,6 +967,7 @@ image_fader_in_quit
 	movem.l (a7)+,a4-a6
 	rts
 
+
 	CNOP 0,4
 image_fader_out
 	movem.l a4-a6,-(a7)
@@ -990,9 +1004,12 @@ image_fader_out_quit
 	movem.l (a7)+,a4-a6
 	rts
 
+
 	RGB8_COLOR_FADER if
 
+
 	COPY_RGB8_COLORS_TO_COPPERLIST if,pf1,cl1,cl1_COLOR01_high1,cl1_COLOR01_low1
+
 
 	CNOP 0,4
 scroll_logo_left_in
@@ -1034,12 +1051,13 @@ scroll_logo_left_in_quit
 	movem.l (a7)+,a4-a5
 	rts
 
+
 	CNOP 0,4
 scroll_logo_left_out
 	movem.l a4-a5,-(a7)
 	tst.w	sllo_active(a3)
 	bne	scroll_logo_left_out_quit
-	move.w	sllo_x_angle(a3),d2 	; X-Winkel
+	move.w	sllo_x_angle(a3),d2	; X-Winkel
 	cmp.w	#sine_table_length/2,d2 ; 180 Grad erreicht ?
 	bgt.s	scroll_logo_left_out_quit
 	lea	sine_table,a0	
@@ -1161,10 +1179,12 @@ pf1_rgb8_color_table
 		DC.L color00_bits
 	ENDR
 
+
 	CNOP 0,4
 spr_rgb8_color_table_logo
 ; Sprite0/1
-	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/64x256x16-Resistance.ct"
+	INCLUDE "RasterMaster:colortables/64x256x16-Resistance.ct"
+
 
 	CNOP 0,4
 spr_rgb8_color_table_vert_text_scroll
@@ -1173,28 +1193,31 @@ spr_rgb8_color_table_vert_text_scroll
 		DC.L color00_bits
 	ENDR
 ; Sprite2
-	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/16x15x2-Font.ct"
+	INCLUDE "RasterMaster:colortables/16x15x2-Font.ct"
 	REPT 2
 		DC.L color00_bits
 	ENDR
 ; Sprite4
-	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/16x15x2-Font.ct"
+	INCLUDE "RasterMaster:colortables/16x15x2-Font.ct"
 	REPT 2
 		DC.L color00_bits
 	ENDR
 ; Sprite6
-	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/16x15x2-Font.ct"
+	INCLUDE "RasterMaster:colortables/16x15x2-Font.ct"
 	REPT 2
 		DC.L color00_bits
 	ENDR
+
 
 	CNOP 0,4
 spr_ptrs_construction
 	DS.L spr_number
 
+
 	CNOP 0,4
 spr_ptrs_display
 	DS.L spr_number
+
 
 ; Vert-Text-Scroll
 vts_ascii
@@ -1218,10 +1241,11 @@ vts_characters_y_positions
 vts_characters_image_ptrs
 	DS.L vts_text_characters_number
 
+
 ; Image-Fader
 	CNOP 0,4
 ifi_rgb8_color_table
-	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/352x256x128-RasterMaster.ct"
+	INCLUDE "RasterMaster:colortables/352x256x128-RasterMaster.ct"
 
 	CNOP 0,4
 ifo_rgb8_color_table
@@ -1237,6 +1261,7 @@ ifo_rgb8_color_table
 
 
 	INCLUDE "error-texts.i"
+
 
 ; Vert-Textscroll
 vts_text
@@ -1478,12 +1503,12 @@ vts_text
 ; Grafikdaten nachladen
 
 ; Logo
-lg_image_data SECTION lg_gfx,DATA
-	INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/graphics/64x256x16-Resistance.rawblit"
+lg_image_data			SECTION lg_gfx,DATA
+	INCBIN "RasterMaster:graphics/64x256x16-Resistance.rawblit"
 
 ; Vert-Text-Scroll
-vts_image_data SECTION vts_gfx,DATA_C
-	INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/fonts/16x15x2-Font.rawblit"
+vts_image_data			SECTION vts_gfx,DATA_C
+	INCBIN "RasterMaster:fonts/16x15x2-Font.rawblit"
 	DS.B vts_image_plane_width*vts_image_depth ; Leerzeile
 
 	END

@@ -96,7 +96,7 @@
 	XREF start_1_pt_replay
 
 
-	INCDIR "Daten:include3.5/"
+	INCDIR "include3.5:"
 
 	INCLUDE "exec/exec.i"
 	INCLUDE "exec/exec_lib.i"
@@ -124,12 +124,12 @@
 	INCLUDE "hardware/intbits.i"
 
 
-	INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
-
-
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
 SET_SECOND_COPPERLIST		SET 1
+
+
+	INCDIR "custom-includes-aga:"
 
 
 	INCLUDE "macros.i"
@@ -201,10 +201,10 @@ ciaa_ta_time			EQU 0
 ciaa_tb_time			EQU 0
 ciab_ta_time			EQU 0
 ciab_tb_time			EQU 0
-ciaa_ta_continuous_enabled 	EQU FALSE
-ciaa_tb_continuous_enabled 	EQU FALSE
-ciab_ta_continuous_enabled 	EQU FALSE
-ciab_tb_continuous_enabled 	EQU FALSE
+ciaa_ta_continuous_enabled	EQU FALSE
+ciaa_tb_continuous_enabled	EQU FALSE
+ciab_ta_continuous_enabled	EQU FALSE
+ciab_tb_continuous_enabled	EQU FALSE
 
 beam_position			EQU $136
 
@@ -221,7 +221,7 @@ cl1_hstart			EQU $00
 cl1_vstart			EQU beam_position&$ff
 
 
-	INCLUDE "except-vectors-offsets.i"
+	INCLUDE "except-vectors.i"
 
 
 	INCLUDE "extra-pf-attributes.i"
@@ -234,7 +234,7 @@ cl1_vstart			EQU beam_position&$ff
 
 cl1_begin			RS.B 0
 
-	INCLUDE "copperlist1-offsets.i"
+	INCLUDE "copperlist1.i"
 
 cl1_BPLCON3_2			RS.L 1
 cl1_WAIT1			RS.L 1
@@ -243,7 +243,7 @@ cl1_INTREQ			RS.L 1
 
 cl1_end				RS.L 1
 
-copperlist1_size 		RS.B 0
+copperlist1_size		RS.B 0
 
 
 	RSRESET
@@ -300,9 +300,9 @@ spr7_y_size2			EQU 0
 
 	RSRESET
 
-	INCLUDE "variables-offsets.i"
+	INCLUDE "main-variables.i"
 
-variables_size 			RS.B 0
+variables_size			RS.B 0
 
 
 	SECTION code,CODE
@@ -325,6 +325,7 @@ init_main
 	bsr	init_first_copperlist
 	bra	init_second_copperlist
 
+
 	CNOP 0,4
 init_colors
 	CPU_SELECT_COLOR_HIGH_BANK 0
@@ -346,6 +347,7 @@ init_first_copperlist
 	COP_INIT_PLAYFIELD_REGISTERS cl1,BLANK
 
 	COP_INIT_COPINT cl1,cl1_HSTART,cl1_VSTART,YWRAP
+
 
 	CNOP 0,4
 init_second_copperlist
@@ -386,6 +388,7 @@ pf1_rgb8_color_table
 
 
 	INCLUDE "sys-variables.i"
+
 
 nop_second_copperlist		DC.L 0
 

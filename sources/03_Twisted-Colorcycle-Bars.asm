@@ -1,13 +1,7 @@
-; Programm:	03_Twisted-Colorcycle-Bars
-; Autor:	Christian Gerbig
-; Datum:	21.12.2023
-; Version:	1.3 beta
-
-
 ; Requirements
-; CPU:		68020+
-; Chipset:	AGA PAL
-; OS:		3.0+
+; 68020+
+; AGA PAL
+; 3.0+
 
 
 	MC68040
@@ -20,7 +14,7 @@
 	XDEF sine_table_512
 
 
-	INCDIR "Daten:include3.5/"
+	INCDIR "include3.5:"
 
 	INCLUDE "exec/exec.i"
 	INCLUDE "exec/exec_lib.i"
@@ -39,13 +33,14 @@
 	INCLUDE "hardware/dmabits.i"
 	INCLUDE "hardware/intbits.i"
 
-	INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
-
 
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
 COLOR_GRADIENT_RGB8		SET 1
+
+
+	INCDIR "custom-includes-aga:"
 
 
 	INCLUDE "macros.i"
@@ -140,28 +135,22 @@ ciab_tb_continuous_enabled	EQU FALSE
 
 beam_position			EQU $136
 
-	IFNE open_border_enabled 
 pixel_per_line			EQU 32
-	ENDC
 visible_pixels_number		EQU 352
 visible_lines_number		EQU 256
 
 MINROW				EQU VSTART_256_LINES
 
-	IFNE open_border_enabled 
 pf_pixel_per_datafetch		EQU 16	; 1x
-	ENDC
 
 display_window_hstart		EQU HSTART_44_CHUNKY_PIXEL
 display_window_vstart		EQU MINROW
 display_window_hstop		EQU HSTOP_44_CHUNKY_PIXEL
 display_window_vstop		EQU VSTOP_256_LINES
 
-	IFNE open_border_enabled 
 pf1_plane_width			EQU pf1_x_size3/8
 data_fetch_width		EQU pixel_per_line/8
 pf1_plane_moduli		EQU -(pf1_plane_width-(pf1_plane_width-data_fetch_width))
-	ENDC
 
 	IFEQ open_border_enabled
 diwstrt_bits			EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)|(display_window_hstart&$ff)
@@ -225,7 +214,7 @@ tccb_restore_blit_x_size	EQU 16
 tccb_restore_blit_width		EQU tccb_restore_blit_x_size/8
 tccb_restore_blit_y_size	EQU cl1_display_y_size
 
-; Colorcycle	****
+; Colorcycle
 cc_speed			EQU 4
 cc_step				EQU 64
 
@@ -253,7 +242,7 @@ ct_size				EQU color_y_values_number*segments_number*color_x_values_number
 tccb_bplam_table_size		EQU tccb_bar_height*tccb_bars_number
 
 
-	INCLUDE "except-vectors-offsets.i"
+	INCLUDE "except-vectors.i"
 
 
 	INCLUDE "extra-pf-attributes.i"
@@ -279,7 +268,7 @@ cl1_ext1_BPLCON4_6		RS.L 1
 cl1_ext1_BPLCON4_7		RS.L 1
 cl1_ext1_BPLCON4_8		RS.L 1
 cl1_ext1_BPLCON4_9		RS.L 1
-cl1_ext1_BPLCON4_10 		RS.L 1
+cl1_ext1_BPLCON4_10		RS.L 1
 cl1_ext1_BPLCON4_11		RS.L 1
 cl1_ext1_BPLCON4_12		RS.L 1
 cl1_ext1_BPLCON4_13		RS.L 1
@@ -315,16 +304,16 @@ cl1_ext1_BPLCON4_42		RS.L 1
 cl1_ext1_BPLCON4_43		RS.L 1
 cl1_ext1_BPLCON4_44		RS.L 1
 
-cl1_extension1_size 		RS.B 0
+cl1_extension1_size		RS.B 0
 
 
 	RSRESET
 
 cl1_begin			RS.B 0
 
-	INCLUDE "copperlist1-offsets.i"
+	INCLUDE "copperlist1.i"
 
-cl1_extension1_entry 		RS.B cl1_extension1_size*cl1_display_y_size
+cl1_extension1_entry		RS.B cl1_extension1_size*cl1_display_y_size
 
 cl1_WAIT1			RS.L 1
 cl1_INTREQ			RS.L 1
@@ -382,12 +371,12 @@ spr7_y_size2			EQU 0
 
 em_color_table			RS.L ct_size
 em_bplam_table			RS.B tccb_bplam_table_size
-extra_memory_size 		RS.B 0
+extra_memory_size		RS.B 0
 
 
 	RSRESET
 
-	INCLUDE "variables-offsets.i"
+	INCLUDE "main-variables.i"
 
 save_a7				RS.L 1
 
@@ -400,7 +389,7 @@ tccb_y_radius_angle		RS.W 1
 
 ; Blind-Fader
 	IFEQ open_border_enabled
-bf_registers_table_start 	RS.W 1
+bf_registers_table_start	RS.W 1
 
 bfi_active			RS.W 1
 
@@ -465,13 +454,14 @@ init_main
 	bsr	tccb_init_mirror_bplam_table
 	bra	init_first_copperlist
 
+
 ; Twisted-Colorcycle-Bars
 	CNOP 0,4
 tccb_init_color_table
 	movem.l a4-a6,-(a7)
 ; vertikale Farbverläufe
 	lea	tccb_color_gradient(pc),a0
-	move.l	extra_memory(a3),a2 	; Ziel: Farbtabelle
+	move.l	extra_memory(a3),a2	; Ziel: Farbtabelle
 	move.w	#color_x_values_number*segments_number*LONGWORD_SIZE,a4
 	move.w	#color_x_values_number*1*LONGWORD_SIZE,a5
 	moveq	#segments_number-1,d7
@@ -487,6 +477,7 @@ tccb_init_color_table_loop2
 	INIT_COLOR_GRADIENTS_RGB8 color_x_values_number,tccb_bar_height/2,segments_number,color_x_step,extra_memory,a3,0,1
 	movem.l (a7)+,a4-a6
 	rts
+
 
 	IFEQ tccb_quick_clear_enabled
 		IFNE pf_colors_number-256
@@ -527,6 +518,7 @@ init_first_copperlist
 		COP_INIT_BITPLANE_POINTERS cl1
 		COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
 	ENDC
+
 
 	CNOP 0,4
 cl1_init_colors
@@ -604,6 +596,7 @@ beam_routines_exit
 
 	CLEAR_BPLCON4_CHUNKY_SCREEN tccb,cl1,construction1,extension1,quick_clear_enabled
 
+
 	CNOP 0,4
 colorcycle
 	movem.l a4-a6,-(a7)
@@ -628,7 +621,7 @@ colorcycle_loop1
 	lea	(a1,d3.l*4),a0		; Offset in Farbtabelle
 	moveq	#(tccb_bar_height/2)-1,d6
 colorcycle_loop2
-	move.l	(a0),d0			; RGB8-Farbwert
+	move.l	(a0),d0			; RGB8
 	move.l	d0,d2		
 	RGB8_TO_RGB4_HIGH d0,d1,d4
 	move.w	d0,(a2)			; COLORxx High-Bits
@@ -669,7 +662,7 @@ twisted_colorcycle_bars
 	ADDF.W cl1_extension1_entry+cl1_ext1_BPLCON4_1+WORD_SIZE,a2
 	move.l	extra_memory(a3),a5
 	move.w	#tccb_y_distance,a3
-	add.l	#em_bplam_table,a5 	; Zeiger auf Tabelle mit BPLAM-Werten
+	add.l	#em_bplam_table,a5	; Zeiger auf Tabelle mit BPLAM-Werten
 	move.w	#tccb_y_center,a6
 	move.w	d5,a7		
 	swap	d7			; Überlauf retten
@@ -751,7 +744,7 @@ tccb_get_y_coords_loop2
 	move.b	d3,cl1_extension1_size*30(a4)
 	dbf	d6,tccb_get_y_coords_loop2
 	move.w	a7,d5			; Y-Winkel
-	addq.w	#tccb_y_angle_step,d5 	; nächste Spalte
+	addq.w	#tccb_y_angle_step,d5	; nächste Spalte
 	and.w	d7,d5			; Überlauf entfernen
 	move.w	d5,a7		
 	swap	d7			; Schleifenzähler
@@ -824,7 +817,8 @@ blind_fader_in_skip3
 blind_fader_in_quit
 		move.l	(a7)+,a4
 		rts
-	
+
+
 		CNOP 0,4
 blind_fader_out
 		move.l	a4,-(a7)
@@ -936,14 +930,17 @@ pf1_rgb8_color_table
 	DC.L color00_bits
 	DS.L pf1_colors_number-1
 
+
 	CNOP 0,4
 sine_table_512
 	INCLUDE "sine-table-512x32.i"
 
+
 ; Twisted-Colorcycle-Bars
 	CNOP 0,4
 tccb_color_gradient
-	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/04_tcb_Colorgradient.ct"
+	INCLUDE "RasterMaster:colortables/04_tcb_Colorgradient.ct"
+
 
 ; Blind-Fader
 	IFEQ open_border_enabled

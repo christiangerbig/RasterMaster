@@ -1,13 +1,7 @@
-; Programm:	05_Greetings
-; Autor:	Christian Gerbig
-; Datum:	21.12.2023
-; Version:	1.3 beta
-; CPU:		68020+
-
-
 ; Requirements
-; Chipset:	AGA PAL
-; OS:		3.0+
+; 68020+
+; AGA PAL
+; 3.0+
 
 
 	MC68040
@@ -24,7 +18,7 @@
 	XDEF start_05_greetings
 
 
-	INCDIR "Daten:include3.5/"
+	INCDIR "include3.5:"
 
 	INCLUDE "exec/exec.i"
 	INCLUDE "exec/exec_lib.i"
@@ -43,12 +37,13 @@
 	INCLUDE "hardware/dmabits.i"
 	INCLUDE "hardware/intbits.i"
 
-	INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
-
 
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
+
+
+	INCDIR "custom-includes-aga:"
 
 
 	INCLUDE "macros.i"
@@ -220,53 +215,53 @@ we_y_radius_angle_step		EQU 4
 ss_image_x_size			EQU 320
 ss_image_plane_width		EQU ss_image_x_size/8
 ss_image_depth			EQU 1
-ss_origin_character_x_size	EQU 32
-ss_origin_character_y_size	EQU 32
+ss_origin_char_x_size		EQU 32
+ss_origin_char_y_size		EQU 32
 
-ss_text_character_x_size	EQU 16
-ss_text_character_width		EQU ss_text_character_x_size/8
-ss_text_character_y_size	EQU ss_origin_character_y_size
-ss_text_character_depth		EQU ss_image_depth
+ss_text_char_x_size		EQU 16
+ss_text_char_width		EQU ss_text_char_x_size/8
+ss_text_char_y_size		EQU ss_origin_char_y_size
+ss_text_char_depth		EQU ss_image_depth
 
-ss_sine_character_x_size	EQU 16
-ss_sine_character_width		EQU ss_sine_character_x_size/8
-ss_sine_character_y_size1	EQU extra_pf1_y_size
-ss_sine_character_y_size2	EQU ss_text_character_y_size
-ss_sine_character_depth		EQU pf1_depth3
+ss_sine_char_x_size		EQU 16
+ss_sine_char_width		EQU ss_sine_char_x_size/8
+ss_sine_char_y_size1		EQU extra_pf1_y_size
+ss_sine_char_y_size2		EQU ss_text_char_y_size
+ss_sine_char_depth		EQU pf1_depth3
 
-ss_horiz_scroll_window_x_size	EQU visible_pixels_number+(ss_text_character_x_size*2)
+ss_horiz_scroll_window_x_size	EQU visible_pixels_number+(ss_text_char_x_size*2)
 ss_horiz_scroll_window_width	EQU ss_horiz_scroll_window_x_size/8
-ss_horiz_scroll_window_y_size	EQU ss_text_character_y_size
+ss_horiz_scroll_window_y_size	EQU ss_text_char_y_size
 ss_horiz_scroll_window_depth	EQU ss_image_depth
 ss_horiz_scroll_speed		EQU 4
 
-ss_text_character_x_restart	EQU ss_horiz_scroll_window_x_size-ss_text_character_x_size
-ss_text_character_y_restart	EQU ss_text_character_y_size/2
-ss_text_character_x_shift_max	EQU ss_text_character_x_size
-ss_text_characters_number	EQU ss_horiz_scroll_window_x_size/ss_text_character_x_size
+ss_text_char_x_restart		EQU ss_horiz_scroll_window_x_size-ss_text_char_x_size
+ss_text_char_y_restart		EQU ss_text_char_y_size/2
+ss_text_char_x_shift_max	EQU ss_text_char_x_size
+ss_text_characters_number	EQU ss_horiz_scroll_window_x_size/ss_text_char_x_size
 
 ss_text_x_position		EQU 32
-ss_text_y_position		EQU ss_text_character_y_size/2
-ss_text_y_center		EQU (visible_lines_number-ss_text_character_y_size)/2
+ss_text_y_position		EQU ss_text_char_y_size/2
+ss_text_y_center		EQU (visible_lines_number-ss_text_char_y_size)/2
 
 ss_text_columns_x_size		EQU 8
 ss_text_columns_per_word	EQU 16/ss_text_columns_x_size
 ss_text_columns_number		EQU visible_pixels_number/ss_text_columns_x_size
 
-ss_colorrun_height		EQU ss_text_character_y_size
-ss_colorrun_y_pos		EQU (wcb_bar_height-ss_text_character_y_size)/2
+ss_colorrun_height		EQU ss_text_char_y_size
+ss_colorrun_y_pos		EQU (wcb_bar_height-ss_text_char_y_size)/2
 
-ss_copy_character_blit_x_size	EQU ss_text_character_x_size
-ss_copy_character_blit_y_size	EQU ss_text_character_y_size*ss_text_character_depth
+ss_copy_char_blit_x_size	EQU ss_text_char_x_size
+ss_copy_char_blit_y_size	EQU ss_text_char_y_size*ss_text_char_depth
 
 ss_horiz_scroll_blit_x_size	EQU ss_horiz_scroll_window_x_size
 ss_horiz_scroll_blit_y_size	EQU ss_horiz_scroll_window_y_size*ss_horiz_scroll_window_depth
 
-ss_copy_column_blit_x_size1	EQU ss_sine_character_x_size
-ss_copy_column_blit_y_size1	EQU ss_sine_character_y_size1*ss_sine_character_depth
+ss_copy_column_blit_x_size1	EQU ss_sine_char_x_size
+ss_copy_column_blit_y_size1	EQU ss_sine_char_y_size1*ss_sine_char_depth
 
-ss_copy_column_blit_x_size2	EQU ss_sine_character_x_size
-ss_copy_column_blit_y_size2	EQU ss_sine_character_y_size2*ss_sine_character_depth
+ss_copy_column_blit_x_size2	EQU ss_sine_char_x_size
+ss_copy_column_blit_y_size2	EQU ss_sine_char_y_size2*ss_sine_char_depth
 
 ; Barfield
 bf_bars_planes_number		EQU 6
@@ -331,7 +326,7 @@ pf1_plane_x_offset		EQU 0
 pf1_plane_y_offset		EQU ss_text_y_position
 
 
-	INCLUDE "except-vectors-offsets.i"
+	INCLUDE "except-vectors.i"
 
 
 	INCLUDE "extra-pf-attributes.i"
@@ -349,7 +344,7 @@ cl1_ext1_COP1LCH		RS.L 1
 cl1_ext1_COP1LCL		RS.L 1
 cl1_ext1_COPJMP1		RS.L 1
 
-cl1_extension1_size 		RS.B 0
+cl1_extension1_size		RS.B 0
 
 
 	RSRESET
@@ -369,7 +364,7 @@ cl1_ext2_BLTAMOD		RS.L 1
 cl1_ext2_BLTDMOD		RS.L 1
 cl1_ext2_BLTSIZE		RS.L 1
 
-cl1_extension2_size 		RS.B 0
+cl1_extension2_size		RS.B 0
 
 
 	RSRESET
@@ -390,14 +385,14 @@ cl1_ext3_BLTAMOD		RS.L 1
 cl1_ext3_BLTDMOD		RS.L 1
 cl1_ext3_BLTSIZE		RS.L 1
 
-cl1_extension3_size 		RS.B 0
+cl1_extension3_size		RS.B 0
 
 
 	RSRESET
 
 cl1_begin			RS.B 0
 
-	INCLUDE "copperlist1-offsets.i"
+	INCLUDE "copperlist1.i"
 
 cl1_extension1_entry RS.B cl1_extension1_size
 cl1_extension2_entry RS.B cl1_extension2_size
@@ -417,7 +412,7 @@ cl2_ext1_BLTBMOD		RS.L 1
 cl2_ext1_BLTAMOD		RS.L 1
 cl2_ext1_BLTDMOD		RS.L 1
 
-cl2_extension1_size 		RS.B 0
+cl2_extension1_size		RS.B 0
 
 
 	RSRESET
@@ -433,7 +428,7 @@ cl2_ext2_BLTDPTL		RS.L 1
 cl2_ext2_BLTSIZE		RS.L 1
 cl2_ext2_WAITBLIT		RS.L 1
 
-cl2_extension2_size 		RS.B 0
+cl2_extension2_size		RS.B 0
 
 
 	RSRESET
@@ -442,7 +437,7 @@ cl2_extension3			RS.B 0
 
 cl2_ext3_BLTCON0		RS.L 1
 
-cl2_extension3_size 		RS.B 0
+cl2_extension3_size		RS.B 0
 
 
 	RSRESET
@@ -459,7 +454,7 @@ cl2_ext4_BLTDPTL		RS.L 1
 cl2_ext4_BLTSIZE		RS.L 1
 cl2_ext4_WAITBLIT		RS.L 1
 
-cl2_extension4_size 		RS.B 0
+cl2_extension4_size		RS.B 0
 
 
 	RSRESET
@@ -569,7 +564,7 @@ cl2_ext8_BLTADAT		RS.L 1
 cl2_ext8_BLTSIZE		RS.L 1
 
 cl2_extension8_size		RS.B 0
-	ENDC
+		ENDC
 	ENDC
 
 	RSRESET
@@ -577,9 +572,9 @@ cl2_extension8_size		RS.B 0
 cl2_begin			RS.B 0
 
 cl2_extension1_entry		RS.B cl2_extension1_size
-cl2_extension2_entry		RS.B cl2_extension2_size*(visible_pixels_number/16)
-cl2_extension3_entry		RS.B cl2_extension3_size*(visible_pixels_number/16)
-cl2_extension4_entry		RS.B cl2_extension4_size*(ss_text_columns_number-(visible_pixels_number/16))
+cl2_extension2_entry		RS.B cl2_extension2_size*(visible_pixels_number/WORD_BITS)
+cl2_extension3_entry		RS.B cl2_extension3_size*(visible_pixels_number/WORD_BITS)
+cl2_extension4_entry		RS.B cl2_extension4_size*(ss_text_columns_number-(visible_pixels_number/WORD_BITS))
 cl2_extension5_entry		RS.B cl2_extension5_size
 cl2_extension6_entry		RS.B cl2_extension6_size
 cl2_extension7_entry		RS.B cl2_extension7_size*cl2_display_y_size
@@ -653,12 +648,12 @@ em_color_table4			RS.L bf_source_bar_y_size*2*(((bf_source_bar_y_size-bf_destina
 em_color_table5			RS.L bf_source_bar_y_size*2*(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)
 em_color_table6			RS.L bf_source_bar_y_size*2*(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)
 em_color_buffer			RS.L cl2_display_y_size+(bf_bar_height*2)
-extra_memory_size 		RS.B 0
+extra_memory_size		RS.B 0
 
 
 	RSRESET
 
-	INCLUDE "variables-offsets.i"
+	INCLUDE "main-variables.i"
 
 save_a7				RS.L 1
 
@@ -666,8 +661,8 @@ save_a7				RS.L 1
 ss_image			RS.L 1
 ss_enabled RS.W 1
 ss_text_table_start		RS.W 1
-ss_text_character_x_shift	RS.W 1
-ss_character_toggle_image	RS.W 1
+ss_text_char_x_shift		RS.W 1
+ss_char_toggle_image		RS.W 1
 
 ; Twisted-Bars3.16.1.2
 tb31612_y_angle			RS.W 1
@@ -724,8 +719,8 @@ init_main_variables
 	move.w	d1,ss_enabled(a3)
 	moveq	#0,d0
 	move.w	d0,ss_text_table_start(a3)
-	move.w	d0,ss_text_character_x_shift(a3)
-	move.w	d0,ss_character_toggle_image(a3)
+	move.w	d0,ss_text_char_x_shift(a3)
+	move.w	d0,ss_char_toggle_image(a3)
 
 ; Twisted-Bars3.16.1.2
 	move.w	d0,tb31612_y_angle(a3)
@@ -798,6 +793,7 @@ tb31612_init_color_table_loop
 	dbf	d7,tb31612_init_color_table_loop
 	rts
 
+
 ; Wave-Center-Bar
 	CNOP 0,4
 wcb_init_color_table
@@ -810,6 +806,7 @@ wcb_init_color_table_loop
 	dbf	d7,wcb_init_color_table_loop
 	rts
 
+
 ; Sine-Scrolltext
 	CNOP 0,4
 ss_init_color_table
@@ -821,6 +818,7 @@ ss_init_color_table_loop
 	addq.w	#8,a1
 	dbf	d7,ss_init_color_table_loop
 	rts
+
 
 	CNOP 0,4
 init_colors
@@ -859,14 +857,18 @@ init_colors
 	CPU_INIT_COLOR_LOW COLOR00,32
 	rts
 
+
 ; Twisted-Bars3.16.1.2
 	INIT_MIRROR_bplam_table.B tb31612,0,2,segments_number1,color_values_number1,extra_memory,a3
+
 
 ; Wave-Center-Bar/Sine-Scrolltext
 	INIT_bplam_table.B wcb,color_values_number1*segments_number1*2,2,color_values_number2*2,extra_memory,a3,em_bplam_table2
 
+
 ; Sine-Scrolltext
 	INIT_CHARACTERS_OFFSETS.W ss
+
 
 ; Barfield
 	CNOP 0,4
@@ -916,6 +918,7 @@ bf_init_color_table_loop6
 	dbf	d7,bf_init_color_table_loop6
 	rts
 
+
 	CNOP 0,4
 bf_init_color_table_ptrs
 	move.l	extra_memory(a3),a0
@@ -933,6 +936,7 @@ bf_init_color_table_ptrs
 	lea	(em_color_table6,a0),a2
 	move.l	a2,(a1)
 	rts
+
 
 	CNOP 0,4
 bf_scale_bar_size
@@ -965,6 +969,7 @@ bf_scale_bar_size_loop2
 	movem.l (a7)+,a4-a6
 	rts
 
+
 	CNOP 0,4
 bf_refresh_bitmap_table
 	moveq	#0,d0
@@ -974,6 +979,7 @@ bf_refresh_bitmap_table_loop
 	move.l	d0,(a0)+
 	dbf	d6,bf_refresh_bitmap_table_loop
 	rts
+
 
 	CNOP 0,4
 bf_init_bitmap_lines_table
@@ -995,6 +1001,7 @@ bf_init_bitmap_lines_table_loop
 	addq.b	#1,(a0,d0.w)		; Pixel in Tabelle setzen
 	dbf	d6,bf_init_bitmap_lines_table_loop
 	rts
+
 
 	CNOP 0,4
 bf_do_scale_bar_y_size
@@ -1022,9 +1029,12 @@ init_first_copperlist
 	COP_MOVEQ 0,COPJMP2
 	bra	cl1_set_plane_ptrs
 
+
 	COP_INIT_PLAYFIELD_REGISTERS cl1
 
+
 	COP_INIT_BITPLANE_POINTERS cl1
+
 
 	CNOP 0,4
 cl1_init_copperlist_branch
@@ -1038,6 +1048,7 @@ cl1_init_copperlist_branch
 	COP_MOVEQ 0,COPJMP1
 	rts
 
+
 	CNOP 0,4
 cl1_init_copy_blit
 	COP_WAITBLIT
@@ -1048,16 +1059,17 @@ cl1_init_copy_blit
 	COP_MOVEQ 0,BLTAPTH
 	COP_MOVEQ 0,BLTAPTL
 	move.l	extra_pf1(a3),a1
-	move.l	#(ss_text_character_x_restart/8)+(ss_text_character_y_restart*extra_pf1_plane_width*extra_pf1_depth),d0
+	move.l	#(ss_text_char_x_restart/8)+(ss_text_char_y_restart*extra_pf1_plane_width*extra_pf1_depth),d0
 	add.l	(a1),d0
 	swap	d0			; High
 	COP_MOVE d0,BLTDPTH
 	swap	d0			; Low
 	COP_MOVE d0,BLTDPTL
-	COP_MOVEQ ss_image_plane_width-ss_text_character_width,BLTAMOD
-	COP_MOVEQ extra_pf1_plane_width-ss_text_character_width,BLTDMOD
-	COP_MOVEQ (ss_copy_character_blit_y_size*64)+(ss_copy_character_blit_x_size/16),BLTSIZE
+	COP_MOVEQ ss_image_plane_width-ss_text_char_width,BLTAMOD
+	COP_MOVEQ extra_pf1_plane_width-ss_text_char_width,BLTDMOD
+	COP_MOVEQ (ss_copy_char_blit_y_size*64)+(ss_copy_char_blit_x_size/WORD_BITS),BLTSIZE
 	rts
+
 
 	CNOP 0,4
 cl1_init_horiz_scroll_blit
@@ -1082,10 +1094,11 @@ cl1_init_horiz_scroll_blit
 	COP_MOVE d1,BLTDPTL
 	COP_MOVEQ extra_pf1_plane_width-ss_horiz_scroll_window_width,BLTAMOD
 	COP_MOVEQ extra_pf1_plane_width-ss_horiz_scroll_window_width,BLTDMOD
-	COP_MOVEQ (ss_horiz_scroll_blit_y_size*64)+(ss_horiz_scroll_blit_x_size/16),BLTSIZE
+	COP_MOVEQ (ss_horiz_scroll_blit_y_size*64)+(ss_horiz_scroll_blit_x_size/WORD_BITS),BLTSIZE
 	rts
 
 	COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
+
 
 	CNOP 0,4
 init_second_copperlist
@@ -1134,13 +1147,15 @@ init_second_copperlist
 	ENDC
 	bra	sine_scroll
 
+
 	CNOP 0,4
 cl2_init_blit_steady
 	COP_WAITBLIT
-	COP_MOVEQ pf1_plane_width-ss_text_character_width,BLTBMOD
-	COP_MOVEQ extra_pf1_plane_width-ss_text_character_width,BLTAMOD
-	COP_MOVEQ pf1_plane_width-ss_text_character_width,BLTDMOD
+	COP_MOVEQ pf1_plane_width-ss_text_char_width,BLTBMOD
+	COP_MOVEQ extra_pf1_plane_width-ss_text_char_width,BLTAMOD
+	COP_MOVEQ pf1_plane_width-ss_text_char_width,BLTDMOD
 	rts
+
 
 	CNOP 0,4
 cl2_init_sine_scroll_blits
@@ -1149,7 +1164,7 @@ cl2_init_sine_scroll_blits
 	add.l	(a1),d2
 	move.l	d2,d3			; Quellbild
 	add.l	#ss_text_y_position*extra_pf1_plane_width*extra_pf1_depth,d3 ; Quellbild-2
-	moveq	#(visible_pixels_number/16)-1,d7 ; Anzahl der Wörter
+	moveq	#(visible_pixels_number/WORD_BITS)-1,d7 ; Anzahl der Wörter
 cl2_init_sine_scroll_blits_loop1
 	COP_MOVEQ BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ; D=A
 	MOVEF.W FALSE_BYTE>>(8-ss_text_columns_x_size),d1 ; Maske
@@ -1160,12 +1175,14 @@ cl2_init_sine_scroll_blits_loop1
 	COP_MOVE d2,BLTAPTL
 	COP_MOVEQ 0,BLTDPTH
 	COP_MOVEQ 0,BLTDPTL
-	COP_MOVEQ (ss_copy_column_blit_y_size1*64)+(ss_copy_column_blit_x_size1/16),BLTSIZE
+	COP_MOVEQ (ss_copy_column_blit_y_size1*64)+(ss_copy_column_blit_x_size1/WORD_BITS),BLTSIZE
 	COP_WAITBLIT
+
 
 	COP_MOVEQ BC0F_SRCA+BC0F_SRCB+BC0F_DEST+NABNC+NABC+ANBNC+ANBC+ABNC+ABC,BLTCON0 ; D=A+B
 
-	subq.l	#ss_sine_character_width,d2 ; nächster Char in Quellbild-1
+
+	subq.l	#ss_sine_char_width,d2 ; nächster Char in Quellbild-1
 	moveq	#ss_text_columns_per_word-2,d6 ; Anzahl der Spalten pro Wort
 cl2_init_sine_scroll_blits_loop2
 	IFEQ ss_text_columns_x_size-1
@@ -1186,18 +1203,20 @@ cl2_init_sine_scroll_blits_loop2
 	COP_MOVE d3,BLTAPTL
 	COP_MOVEQ 0,BLTDPTH
 	COP_MOVEQ 0,BLTDPTL
-	COP_MOVEQ (ss_copy_column_blit_y_size2*64)+(ss_copy_column_blit_x_size2/16),BLTSIZE
+	COP_MOVEQ (ss_copy_column_blit_y_size2*64)+(ss_copy_column_blit_x_size2/WORD_BITS),BLTSIZE
 	COP_WAITBLIT
 	dbf	d6,cl2_init_sine_scroll_blits_loop2
-	subq.l	#ss_sine_character_width,d3 ; nächster Character in Quellbild-2
+	subq.l	#ss_sine_char_width,d3 ; nächster Character in Quellbild-2
 	dbf	d7,cl2_init_sine_scroll_blits_loop1
 	rts
+
 
 	CNOP 0,4
 cl2_init_copperlist_branch
 	COP_MOVE cl1_display(a3),COP1LCH
 	COP_MOVE cl1_display+2(a3),COP1LCL
 	rts
+
 
 	CNOP 0,4
 cl2_init_clear_blit
@@ -1216,7 +1235,9 @@ cl2_init_clear_blit
 	COP_MOVEQ tb31612_clear_blit_x_size/16,BLTSIZH
 	rts
 
+
 	COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,tb31612_quick_clear_enabled,TRUE
+
 
 	IFNE tb31612_restore_cl_cpu_enabled
 		IFNE tb31612_quick_clear_enabled
@@ -1227,12 +1248,14 @@ cl2_init_restore_blit
 			COP_MOVEQ 0,BLTDPTL
 			COP_MOVEQ cl2_extension7_size-tb31612_restore_blit_width,BLTDMOD
 			COP_MOVEQ -2,BLTADAT ; Quelle = 2. Wort in CWAIT
-			COP_MOVEQ (tb31612_restore_blit_y_size*64)+(tb31612_restore_blit_x_size/16),BLTSIZE
+			COP_MOVEQ (tb31612_restore_blit_y_size*64)+(tb31612_restore_blit_x_size/WORD_BITS),BLTSIZE
 			rts
 		ENDC
 	ENDC
 
+
 	COP_INIT_COPINT cl2,cl2_hstart2,cl2_vstart2
+
 
 	COPY_COPPERLIST cl2,3
 
@@ -1288,7 +1311,9 @@ beam_routines_exit
 
 	SWAP_COPPERLIST cl2,3
 
+
 	SWAP_PLAYFIELD pf1,2
+
 
 	SET_PLAYFIELD pf1,pf1_depth3,pf1_plane_x_offset,pf1_plane_y_offset
 
@@ -1297,20 +1322,20 @@ beam_routines_exit
 ss_horiz_scrolltext
 	tst.w	ss_enabled(a3)
 	bne.s	ss_no_horiz_scrolltext
-	move.w	ss_text_character_x_shift(a3),d2
+	move.w	ss_text_char_x_shift(a3),d2
 	MOVEF.L cl1_extension3_entry,d3	; Einsprung bei Vertical-Scroll-Blit
 	move.l	cl1_display(a3),a2 
 	addq.w	#ss_horiz_scroll_speed,d2 ; X-Shift erhöhen
-	cmp.w	#ss_text_character_x_shift_max,d2 ; X-Shift-Wert < Maximum ?
+	cmp.w	#ss_text_char_x_shift_max,d2 ; X-Shift-Wert < Maximum ?
 	blt.s	ss_horiz_scrolltext_skip
-	bsr.s	ss_get_new_character_image
+	bsr.s	ss_get_new_char_image
 	move.w	d0,cl1_extension2_entry+cl1_ext2_BLTAPTL+WORD_SIZE(a2) ; Character-Image
 	swap	d0
 	moveq	#0,d2			; X-Shift-Wert zurücksetzen
 	move.w	d0,cl1_extension2_entry+cl1_ext2_BLTAPTH+WORD_SIZE(a2)
 	MOVEF.L cl1_extension2_entry,d3	; Einsprung bei Charset-Blit
 ss_horiz_scrolltext_skip
-	move.w	d2,ss_text_character_x_shift(a3) 
+	move.w	d2,ss_text_char_x_shift(a3) 
 	add.l	a2,d3
 	move.w	d3,cl1_extension1_entry+cl1_ext1_COP1LCL+2(a2) ; Sprungadresse eintragen
 	swap	d3			; High
@@ -1318,7 +1343,9 @@ ss_horiz_scrolltext_skip
 ss_no_horiz_scrolltext
 	rts
 
-	GET_NEW_CHARACTER_IMAGE.W ss
+
+	GET_NEW_char_IMAGE.W ss
+
 
 tb31612_clear_second_copperlist
 	move.l	cl2_construction1(a3),a0
@@ -1330,6 +1357,7 @@ tb31612_clear_second_copperlist
 	move.w	d0,cl2_ext6_BLTDPTH(a0)
 	rts
 
+
 	CNOP 0,4
 sine_scroll
 	move.l	a4,-(a7)
@@ -1339,18 +1367,18 @@ sine_scroll
 	lea	we_y_coords(pc),a0
 	move.l	pf1_construction2(a3),a1
 	move.l	(a1),a1			; Ziel1
-	add.l	#((visible_pixels_number+ss_text_x_position)-ss_text_character_x_size)/8,a1 ; Ende der Zeile in Ziel1
+	add.l	#((visible_pixels_number+ss_text_x_position)-ss_text_char_x_size)/8,a1 ; Ende der Zeile in Ziel1
 	lea	ss_text_y_position*pf1_plane_width*pf1_depth3(a1),a2 ; Ziel2
 	move.l	cl2_construction2(a3),a4 ; Zeiger auf Copperliste
 	ADDF.W	cl2_extension2_entry+2,a4
-	moveq	#(visible_pixels_number/16)-1,d7 ; Anzahl der Wörter
+	moveq	#(visible_pixels_number/WORD_BITS)-1,d7 ; Anzahl der Wörter
 sine_scroll_loop1
 	moveq	#0,d0
 	move.w	(a0)+,d0		; Y-Offset
 	add.w	d2,d0			; y' + Y-Mittelpunkt
 	MULUF.L pf1_plane_width*pf1_depth3,d0,d1 ; Y-Offset in Ziel1
 	add.l	a1,d0			; Ziel1 + Y-Offset
-	subq.w	#ss_sine_character_width,a1 ; nächter Character in Ziel1
+	subq.w	#ss_sine_char_width,a1 ; nächter Character in Ziel1
 	move.w	d0,cl2_ext2_BLTDPTL(a4) ; Playfield schreiben
 	swap	d0			; High
 	add.l	d3,a4			; nächster Blit in CL
@@ -1363,7 +1391,7 @@ sine_scroll_loop1
 	MULUF.L pf1_plane_width*pf1_depth3,d0,d1 ; Y-Offset in Ziel2
 	add.l	a2,d0			; Ziel2 + Y-Offset
 	move.w	d0,cl2_ext4_BLTBPTL(a4) ; Playfield lesen
-	subq.w	#ss_sine_character_width,a2 ; nächster Character in Ziel2
+	subq.w	#ss_sine_char_width,a2 ; nächster Character in Ziel2
 	move.w	d0,cl2_ext4_BLTDPTL(a4) ; Playfield schreiben
 	swap	d0			; High
 	move.w	d0,cl2_ext4_BLTBPTH(a4) ; Playfield lesen
@@ -1374,6 +1402,7 @@ sine_scroll_loop1
 	move.l	(a7)+,a4
 	rts
 
+
 	CNOP 0,4
 tb31612_set_background_bars
 	movem.l	a3-a6,-(a7)
@@ -1383,7 +1412,7 @@ tb31612_set_background_bars
 	move.l	cl2_construction2(a3),a2
 	ADDF.W	cl2_extension7_entry+cl2_ext7_BPLCON4_1+WORD_SIZE,a2
 	move.l	extra_memory(a3),a5	; Zeiger auf Tabelle mit BPLAM-Werten
-	lea 	tb31612_fader_columns_mask(pc),a6
+	lea	tb31612_fader_columns_mask(pc),a6
 	lea	we_y_coords_end(pc),a7
 	moveq	#cl2_display_width-1,d7	; Anzahl der Spalten
 tb31612_set_background_bars_loop1
@@ -1416,6 +1445,7 @@ tb31612_set_background_bars_skip4
 	move.l	variables+save_a7(pc),a7
 	movem.l	(a7)+,a3-a6
 	rts
+
 
 	CNOP 0,4
 set_wave_center_bar
@@ -1520,6 +1550,7 @@ set_center_bar_skip
 	movem.l (a7)+,a4-a6
 	rts
 
+
 	CNOP 0,4
 tb31612_set_foreground_bars
 	movem.l a3-a6,-(a7)
@@ -1528,7 +1559,7 @@ tb31612_set_foreground_bars
 	lea	tb31612_yz_coords(pc),a0
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension7_entry+cl2_ext7_BPLCON4_1+WORD_SIZE,a2
-	move.l	extra_memory(a3),a5 	; Zeiger auf Tabelle mit BPLAM-Werten
+	move.l	extra_memory(a3),a5	; Zeiger auf Tabelle mit BPLAM-Werten
 	lea	tb31612_fader_columns_mask(pc),a6
 	lea	we_y_coords_end(pc),a7
 	moveq	#cl2_display_width-1,d7 ; Anzahl der Spalten
@@ -1563,6 +1594,7 @@ tb31612_set_foreground_bars_skip4
 	movem.l (a7)+,a3-a6
 	rts
 
+
 	CNOP 0,4
 bf_clear_buffer
 	move.l	#color255_bits,d0
@@ -1573,6 +1605,7 @@ bf_clear_buffer_loop
 	move.l	d0,(a0)+
 	dbf	d7,bf_clear_buffer_loop
 	rts
+
 
 	CNOP 0,4
 bf_set_bars
@@ -1623,7 +1656,7 @@ bf_set_bars_skip1
 	dbf	d5,bf_set_bars_loop4
 	dbf	d6,bf_set_bars_loop2
 bf_set_bars_skip2
-	addq.w	#LONGWORD_SIZE,a5 	; nächste Farbtabelle
+	addq.w	#LONGWORD_SIZE,a5	; nächste Farbtabelle
 	dbf	d7,bf_set_bars_loop1
 	move.l	variables+save_a7(pc),a7
 	movem.l (a7)+,a4-a6
@@ -1635,6 +1668,7 @@ bf_set_bars_skip3
 	subq.w	#LONGWORD_SIZE,a0
 	move.w	#bf_z_plane1*bf_z_planes_number,WORD_SIZE(a0) ; Hinterste Z-Ebene setzen
 	bra.s	bf_set_bars_loop2
+
 
 	CNOP 0,4
 bf_copy_buffer
@@ -1682,6 +1716,7 @@ bf_copy_buffer_loop
 
 	GET_TWISTED_BARS_YZ_COORDINATES tb31612,256,cl2_extension7_size
 
+
 ; Wave-Effect
 	CNOP 0,4
 we_get_y_coords
@@ -1707,6 +1742,7 @@ we_get_y_coords_loop
 	addq.b	#we_y_angle_step,d3	; nächster Y-Winkel
 	dbf	d7,we_get_y_coords_loop
 	rts
+
 
 ; Copper-WAIT-Befehle wiederherstellen
 	IFNE tb31612_quick_clear_enabled
@@ -1794,6 +1830,7 @@ ccfi_fader_mode_4
 ccfi_fader_mode_skip
 	move.w	#FALSE,ccfi_active(a3)
 	rts
+
 
 	CNOP 0,4
 chunky_columns_fader_out
@@ -1967,10 +2004,11 @@ pf1_rgb8_color_table
 	DS.L 256-2			; pf1_colors_number-2
 	DC.L color255_bits
 
+
 ; Twisted-Bars3.16.1.2
 	CNOP 0,4
 tb31612_bars_color_table
-	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/06_tb31612_Colorgradient.ct"
+	INCLUDE "RasterMaster:colortables/06_tb31612_Colorgradient.ct"
 
 	CNOP 0,4
 tb31612_yz_coords
@@ -1981,15 +2019,17 @@ tb31612_fader_columns_mask
 		DC.B FALSE
 	ENDR
 
+
 ; Wave-Center-Bar
 	CNOP 0,4
 wcb_bar_color_table
-	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/06_wcb_Colorgradient.ct"
+	INCLUDE "RasterMaster:colortables/06_wcb_Colorgradient.ct"
 
 wcb_fader_columns_mask
 	REPT cl2_display_width
 		DC.B FALSE
 	ENDR
+
 
 ; Wave-Effect
 	CNOP 0,2
@@ -1997,10 +2037,11 @@ we_y_coords
 	DS.W cl2_display_width
 we_y_coords_end
 
+
 ; Sine-Scrolltext
 	CNOP 0,4
 ss_color_table
-	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/06_ss_Colorgradient.ct"
+	INCLUDE "RasterMaster:colortables/06_ss_Colorgradient.ct"
 
 ss_ascii
 	DC.B "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.!?-'():\/ "
@@ -2011,10 +2052,11 @@ ss_ascii_end
 ss_characters_offsets
 	DS.W ss_ascii_end-ss_ascii
 
+
 ; Barfield
 	CNOP 0,4
 bf_color_table
-	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/06_bf_Colorgradient.ct"
+	INCLUDE "RasterMaster:colortables/06_bf_Colorgradient.ct"
 
 	CNOP 0,4
 bf_color_table_ptrs
@@ -2062,7 +2104,7 @@ ss_text
 ; Grafikdaten nachladen
 
 ; Sine-Scrolltext
-ss_image_data SECTION ss_gfx,DATA_C
-	INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/fonts/32x32x2-Font.rawblit"
+ss_image_data			SECTION ss_gfx,DATA_C
+	INCBIN "RasterMaster:fonts/32x32x2-Font.rawblit"
 
 	END

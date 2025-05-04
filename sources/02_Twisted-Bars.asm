@@ -1,13 +1,7 @@
-; Programm:	02_Twisted-Bars
-; Autor:	Christian Gerbig
-; Datum:	21.12.2023
-; Version:	1.3 beta
-
-
 ; Requirements
-; CPU:		68020+
-; Chipset:	AGA PAL
-; OS:		3.0+
+; 68020+
+; AGA PAL
+; 3.0+
 
 
 	MC68040
@@ -22,7 +16,7 @@
 	XDEF start_02_twisted_bars
 
 
-	INCDIR "Daten:include3.5/"
+	INCDIR "include3.5:"
 
 	INCLUDE "exec/exec.i"
 	INCLUDE "exec/exec_lib.i"
@@ -42,12 +36,12 @@
 	INCLUDE "hardware/intbits.i"
 
 
-	INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
-
-
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
+
+
+	INCDIR "custom-includes-aga:"
 
 
 	INCLUDE "macros.i"
@@ -69,7 +63,7 @@ open_border_enabled		EQU TRUE
 
 tb_quick_clear_enabled		EQU TRUE
 tb_restore_cl_cpu_enabled	EQU TRUE
-tb_restore_cl_blitter_enabled 	EQU FALSE
+tb_restore_cl_blitter_enabled	EQU FALSE
 
 	IFEQ open_border_enabled
 dma_bits			EQU DMAF_BLITTER|DMAF_COPPER|DMAF_SETCLR
@@ -141,28 +135,22 @@ ciab_tb_continuous_enabled	EQU FALSE
 
 beam_position			EQU $136
 
-	IFNE open_border_enabled 
 pixel_per_line			EQU 32
-	ENDC
 visible_pixels_number		EQU 352
 visible_lines_number		EQU 256
 
 MINROW				EQU VSTART_256_LINES
 
-	IFNE open_border_enabled 
 pf_pixel_per_datafetch		EQU 16	; 1x
-	ENDC
 
 display_window_hstart		EQU HSTART_44_CHUNKY_PIXEL
 display_window_vstart		EQU MINROW
 display_window_hstop		EQU HSTOP_44_CHUNKY_PIXEL
 display_window_vstop		EQU VSTOP_256_LINES
 
-	IFNE open_border_enabled 
 pf1_plane_width			EQU pf1_x_size3/8
 data_fetch_width		EQU pixel_per_line/8
 pf1_plane_moduli		EQU -(pf1_plane_width-(pf1_plane_width-data_fetch_width))
-	ENDC
 
 	IFEQ open_border_enabled
 diwstrt_bits			EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)|(display_window_hstart&$ff)
@@ -257,7 +245,7 @@ tb315_bplam_table_size		EQU ct_size1*BYTE_SIZE
 extra_memory_size		EQU tb315_bplam_table_size*BYTE_SIZE
 
 
-	INCLUDE "except-vectors-offsets.i"
+	INCLUDE "except-vectors.i"
 
 
 	INCLUDE "extra-pf-attributes.i"
@@ -270,11 +258,11 @@ extra_memory_size		EQU tb315_bplam_table_size*BYTE_SIZE
 
 cl1_begin			RS.B 0
 
-	INCLUDE "copperlist1-offsets.i"
+	INCLUDE "copperlist1.i"
 
 cl1_COPJMP2			RS.L 1
 
-copperlist1_size 		RS.B 0
+copperlist1_size		RS.B 0
 
 
 	RSRESET
@@ -393,7 +381,7 @@ spr7_y_size2			EQU 0
 
 	RSRESET
 
-	INCLUDE "variables-offsets.i"
+	INCLUDE "main-variables.i"
 
 save_a7				RS.L 1
 
@@ -469,6 +457,7 @@ init_main
 	bsr	init_first_copperlist
 	bra	init_second_copperlist
 
+
 	CNOP 0,4
 init_colors
 	CPU_SELECT_COLOR_HIGH_BANK 0
@@ -509,6 +498,7 @@ init_colors
 	ENDC
 	rts
 
+
 ; Twisted-Bars
 	INIT_bplam_table.B tb315,1,1,color_values_number1*segments_number1,extra_memory,a3
 
@@ -534,6 +524,7 @@ init_first_copperlist
 		COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
 	ENDC
 
+
 	CNOP 0,4
 init_second_copperlist
 	move.l	cl2_construction1(a3),a0 
@@ -543,9 +534,12 @@ init_second_copperlist
 	bsr	copy_second_copperlist
 	bra	swap_second_copperlist
 
+
 	COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,tb_quick_clear_enabled,FALSE,NOOP<<16
 
+
 	COP_INIT_COPINT cl2,cl2_hstart2,cl2_vstart2
+
 
 	COPY_COPPERLIST cl2,3
 
@@ -593,6 +587,7 @@ beam_routines_exit
 
 	CLEAR_BPLCON4_CHUNKY_SCREEN tb,cl2,construction1,extension1,quick_clear_enabled
 
+
 ; Twisted-Bars3.1.5
 	CNOP 0,4
 tb315_get_yz_coords
@@ -604,7 +599,7 @@ tb315_get_yz_coords
 	move.l	(a0,d1.w*4),d1		; sin(w)
 	MULUF.L tb315_y_angle_speed*2,d1,d0 ; y'=(yr*sin(w))/2^15
 	swap	d1
-	move.w	tb315_y_angle(a3),d2 	; 1. Y-Winkel
+	move.w	tb315_y_angle(a3),d2	; 1. Y-Winkel
 	move.w	d2,d0		
 	add.b	d1,d0			; nächster Y-Winkel
 	move.w	d0,tb315_y_angle(a3)	
@@ -615,9 +610,9 @@ tb315_get_yz_coords
 tb315_get_yz_coords_loop1
 	moveq	#tb315_bars_number-1,d6
 tb315_get_yz_coords_loop2
-	moveq	#-(sine_table_length/4),d1 ; - 90 Grad
+	moveq	#-(sine_table_length/4),d1 ; - 90°
 	move.l	(a0,d2.w*4),d0		; sin(w)
-	add.w	d2,d1			; Y-Winkel - 90 Grad
+	add.w	d2,d1			; Y-Winkel - 90°
 	ext.w	d1
 	move.w	d1,(a1)+		; Z-Vektor
 	MULUF.L tb315_y_radius*2,d0,d1	; y'=(yr*sin(w))/2^15
@@ -631,6 +626,7 @@ tb315_get_yz_coords_loop2
 	dbf	d7,tb315_get_yz_coords_loop1
 	rts
 
+
 ; Wave-Effect
 	CNOP 0,4
 we_get_y_coords
@@ -640,10 +636,10 @@ we_get_y_coords
 	addq.b	#we_y_radius_angle_speed,d0 ; nächster Y-Radius-Winkel
 	move.w	d0,we_y_radius_angle(a3) 
 	move.w	d3,d0
-	addq.b	#we_y_angle_speed,d0 	; nächster Y-Winkel
+	addq.b	#we_y_angle_speed,d0	; nächster Y-Winkel
 	move.w	d0,we_y_angle(a3)	
 	lea	sine_table(pc),a0 
-	lea	we_y_coords(pc),a1 	; Y-Koord.
+	lea	we_y_coords(pc),a1	; Y-Koord.
 	move.w	#we_y_center,a2
 	moveq	#cl2_display_width-1,d7 ; Anzahl der Spalten
 we_get_y_coords_loop
@@ -656,9 +652,10 @@ we_get_y_coords_loop
 	addq.b	#we_y_radius_angle_step,d2 ; nächster Y-Radius-Winkel
 	MULUF.W cl2_extension1_size/4,d0,d1 ; Y-Offset in CL
 	move.w	d0,(a1)+		; Y-Offset
-	addq.b	#we_y_angle_step,d3 	; nächster Y-Winkel
+	addq.b	#we_y_angle_step,d3	; nächster Y-Winkel
 	dbf	d7,we_get_y_coords_loop
 	rts
+
 
 	CNOP 0,4
 tb315_set_background_bars
@@ -667,7 +664,7 @@ tb315_set_background_bars
 	lea	tb315_yz_coords(pc),a0
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
-	move.l	extra_memory(a3),a5 	; Zeiger auf Tabelle mit BPLAM-Werten
+	move.l	extra_memory(a3),a5	; Zeiger auf Tabelle mit BPLAM-Werten
 	lea	we_y_coords(pc),a6
 	moveq	#cl2_display_width-1,d7	; Anzahl der Spalten
 tb315_set_background_bars_loop1
@@ -699,7 +696,7 @@ tb315_set_foreground_bars
 	lea	tb315_yz_coords(pc),a0
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
-	move.l	extra_memory(a3),a5 	; Zeiger auf Tabelle mit BPLAM-Werten
+	move.l	extra_memory(a3),a5	; Zeiger auf Tabelle mit BPLAM-Werten
 	lea	we_y_coords(pc),a6
 	moveq	#cl2_display_width-1,d7	; Anzahl der Spalten
 tb315_set_foreround_bars_loop1
@@ -722,6 +719,7 @@ tb315_set_foreround_bars_skip2
 	dbf	d7,tb315_set_foreround_bars_loop1
 	movem.l (a7)+,a3-a6
 	rts
+
 
 	IFNE tb_quick_clear_enabled
 		RESTORE_BLCON4_CHUNKY_SCREEN tb,cl2,construction2,extension1,32
@@ -892,19 +890,23 @@ nmi_int_server
 
 	INCLUDE "sys-structures.i"
 
+
 	CNOP 0,4
 pf1_rgb8_color_table
-	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/03_tb_Colorgradient.ct"
+	INCLUDE "RasterMaster:colortables/03_tb_Colorgradient.ct"
+
 
 ; Twisted-Bars3.1.5
 	CNOP 0,4
 tb315_yz_coords
 	DS.W tb315_bars_number*cl2_display_width*2
 
+
 ; Wave-Effect
 	CNOP 0,2
 we_y_coords
 	DS.W cl2_display_width
+
 
 ; Blind-Fader
 	IFEQ open_border_enabled

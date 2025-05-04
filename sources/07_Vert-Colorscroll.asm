@@ -1,13 +1,7 @@
-; Programm:	07_Vert-Colorscroll
-; Autor:	Christian Gerbig
-; Datum:	21.12.2023
-; Version:	1.3 beta
-
-
 ; Requirements
-; CPU:		68020+
-; Chipset:	AGA PAL
-; OS:		3.0+
+; 68020+
+; AGA PAL
+; 3.0+
 
 
 	MC68040
@@ -19,7 +13,7 @@
 	XDEF start_07_vert_colorscroll
 
 
-	INCDIR "Daten:include3.5/"
+	INCDIR "include3.5:"
 
 	INCLUDE "exec/exec.i"
 	INCLUDE "exec/exec_lib.i"
@@ -39,12 +33,12 @@
 	INCLUDE "hardware/intbits.i"
 
 
-	INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
-
-
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
+
+
+	INCDIR "custom-includes-aga:"
 
 
 	INCLUDE "macros.i"
@@ -134,27 +128,21 @@ ciab_tb_continuous_enabled	EQU FALSE
 
 beam_position			EQU $136
 
-	IFNE open_border_enabled 
 pixel_per_line			EQU 32
-	ENDC
 visible_pixels_number		EQU 352
 visible_lines_number		EQU 256
 MINROW				EQU VSTART_256_LINES
 
-	IFNE open_border_enabled 
 pf_pixel_per_datafetch		EQU 16	; 1x
-	ENDC
 
 display_window_hstart		EQU HSTART_44_CHUNKY_PIXEL
 display_window_vstart		EQU MINROW
 display_window_hstop		EQU HSTOP_44_CHUNKY_PIXEL
 display_window_vstop		EQU VSTOP_256_LINES
 
-	IFNE open_border_enabled 
 pf1_plane_width			EQU pf1_x_size3/8
 data_fetch_width		EQU pixel_per_line/8
 pf1_plane_moduli		EQU -(pf1_plane_width-(pf1_plane_width-data_fetch_width))
-	ENDC
 
 	IFEQ open_border_enabled
 diwstrt_bits			EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)|(display_window_hstart&$ff)
@@ -228,7 +216,7 @@ vcs_bplam_table_size		EQU ct_size1
 extra_memory_size		EQU vcs_bplam_table_size*BYTE_SIZE
 
 
-	INCLUDE "except-vectors-offsets.i"
+	INCLUDE "except-vectors.i"
 
 
 	INCLUDE "extra-pf-attributes.i"
@@ -241,7 +229,7 @@ extra_memory_size		EQU vcs_bplam_table_size*BYTE_SIZE
 
 cl1_begin			RS.B 0
 
-	INCLUDE "copperlist1-offsets.i"
+	INCLUDE "copperlist1.i"
 
 cl1_COPJMP2			RS.L 1
 
@@ -364,7 +352,7 @@ spr7_y_size2			EQU 0
 
 	RSRESET
 
-	INCLUDE "variables-offsets.i"
+	INCLUDE "main-variables.i"
 
 ; Vert-Colorscroll4
 vcs4_active			RS.W 1
@@ -372,7 +360,7 @@ vcs4_bplam_table_start		RS.W 1
 
 ; Vert-Colorscroll5
 vcs5_active			RS.W 1
-vcs5_bplam_table_start1 	RS.W 1
+vcs5_bplam_table_start1	RS.W 1
 vcs5_bplam_table_start2		RS.W 1
 
 	IFEQ open_border_enabled
@@ -436,12 +424,14 @@ init_main_variables
 	move.w	d1,stop_fx_active(a3)
 	rts
 
+
 	CNOP 0,4
 init_main
 	bsr.s	init_colors
 	bsr	vcs_init_bplam_table
 	bsr	init_first_copperlist
 	bra	init_second_copperlist
+
 
 	CNOP 0,4
 init_colors
@@ -503,6 +493,7 @@ init_first_copperlist
 		COP_INIT_BITPLANE_POINTERS cl1
 		COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
 	ENDC
+
 
 	CNOP 0,4
 init_second_copperlist
@@ -570,7 +561,7 @@ vert_colorscroll4
 	move.w	d0,vcs4_bplam_table_start(a3)
 	moveq	#vcs4_step1,d2
 	MOVEF.L cl2_extension1_size,d3
-	move.l	extra_memory(a3),a0 	; Tabelle mit BPLAM-Werten
+	move.l	extra_memory(a3),a0	; Tabelle mit BPLAM-Werten
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
 	lea	(cl2_display_width-1)*4(a2),a5 ; Ende einer Copperzeile
@@ -596,19 +587,20 @@ vert_colorscroll4_quit
 	movem.l (a7)+,a4-a5
 	rts
 
+
 	CNOP 0,4
 vert_colorscroll5_even
 	move.w	vcs5_bplam_table_start1(a3),d2
 	move.w	d2,d0		
 	addq.b	#vcs5_twist_speed,d0	; nächster Startwert
 	move.w	d0,vcs5_bplam_table_start1(a3) 
-	move.l	extra_memory(a3),a0 	; Zeiger auf Switchtabelle
+	move.l	extra_memory(a3),a0	; Zeiger auf Switchtabelle
 	move.l	cl2_construction2(a3),a1
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a1
 	moveq	#vcs5_twist_lines_number-1,d7
 vert_colorscroll5_even_loop1
 	move.w	d2,d1			; Startwert
-	addq.b	#vcs5_shift_value,d2 	; Additionswert
+	addq.b	#vcs5_shift_value,d2	; Additionswert
 	moveq	#cl2_display_width-1,d6 ; Anzahl der Spalten
 vert_colorscroll5_even_loop2
 	move.b	(a0,d1.w),d0		; BPLAM-Wert
@@ -631,19 +623,20 @@ vert_colorscroll5_even_loop2
 	dbf	d7,vert_colorscroll5_even_loop1
 	rts
 
+
 	CNOP 0,4
 vert_colorscroll5_odd
 	move.w	vcs5_bplam_table_start2(a3),d2
 	move.w	d2,d0		
 	subq.b	#vcs5_twist_speed,d0	; nächster Startwert
 	move.w	d0,vcs5_bplam_table_start2(a3) 
-	move.l	extra_memory(a3),a0 	; Zeiger auf Switchtabelle
+	move.l	extra_memory(a3),a0	; Zeiger auf Switchtabelle
 	move.l	cl2_construction2(a3),a1
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE+(cl2_extension1_size*vcs5_twist_lines_number*1),a1
 	moveq	#vcs5_twist_lines_number-1,d7
 vert_colorscroll5_odd_loop1
 	move.w	d2,d1			; Startwert
-	addq.b	#vcs5_shift_value,d2 	; Additionswert
+	addq.b	#vcs5_shift_value,d2	; Additionswert
 	moveq	#cl2_display_width-1,d6 ; Anzahl der Spalten
 vert_colorscroll5_odd_loop2
 	move.b	(a0,d1.w),d0		; BPLAM-Wert
@@ -849,7 +842,8 @@ nmi_int_server
 
 	CNOP 0,4
 pf1_rgb8_color_table
-	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/08_vcs4_Colorgradient.ct"
+	INCLUDE "RasterMaster:colortables/08_vcs4_Colorgradient.ct"
+
 
 	IFEQ open_border_enabled
 ; Blind-Fader

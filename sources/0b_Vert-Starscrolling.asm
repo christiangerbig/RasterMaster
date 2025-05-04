@@ -1,9 +1,3 @@
-; Programm:	0b_Vert-Starscrolling
-; Autor:	Christian Gerbig
-; Datum:	21.12.2023
-; Version:	1.3 beta
-
-
 ; Requirements
 ; CPU:		68020+
 ; Chipset:	AGA PAL
@@ -20,7 +14,7 @@
 	XDEF start_0b_vert_starscrolling
 
 
-	INCDIR "Daten:include3.5/"
+	INCDIR "include3.5:"
 
 	INCLUDE "exec/exec.i"
 	INCLUDE "exec/exec_lib.i"
@@ -40,12 +34,12 @@
 	INCLUDE "hardware/intbits.i"
 
 
-	INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
-
-
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
+
+
+	INCDIR "custom-includes-aga:"
 
 
 	INCLUDE "macros.i"
@@ -136,16 +130,12 @@ ciab_tb_continuous_enabled	EQU FALSE
 
 beam_position			EQU $136
 
-	IFNE open_border_enabled 
 pixel_per_line			EQU 32
- ENDC
 visible_pixels_number		EQU 352
 visible_lines_number		EQU 256
 MINROW				EQU VSTART_256_LINES
 
-	IFNE open_border_enabled 
 pf_pixel_per_datafetch		EQU 16	; 1x
-	ENDC
 spr_pixel_per_datafetch		EQU 64	; 4x
 
 display_window_hstart		EQU HSTART_44_CHUNKY_PIXEL
@@ -153,11 +143,9 @@ display_window_vstart		EQU MINROW
 display_window_hstop		EQU HSTOP_44_CHUNKY_PIXEL
 display_window_vstop		EQU VSTOP_256_LINES
 
-	IFNE open_border_enabled 
 pf1_plane_width			EQU pf1_x_size3/8
 data_fetch_width		EQU pixel_per_line/8
 pf1_plane_moduli		EQU -(pf1_plane_width-(pf1_plane_width-data_fetch_width))
-	ENDC
 
 	IFEQ open_border_enabled
 diwstrt_bits			EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)|(display_window_hstart&$ff)
@@ -306,7 +294,7 @@ vss_switch_buffer_size		EQU vss_switch_buffer_x_size*vss_switch_buffer_y_size
 chip_memory_size		EQU ((vss_bplam_table_size*vss_bplam_table_number)+(vss_switch_buffer_size*vss_switch_buffer_number))*BYTE_SIZE
 
 
-	INCLUDE "except-vectors-offsets.i"
+	INCLUDE "except-vectors.i"
 
 
 	INCLUDE "extra-pf-attributes.i"
@@ -319,11 +307,11 @@ chip_memory_size		EQU ((vss_bplam_table_size*vss_bplam_table_number)+(vss_switch
 
 cl1_begin			RS.B 0
 
-	INCLUDE "copperlist1-offsets.i"
+	INCLUDE "copperlist1.i"
 
-cl1_COPJMP2	RS.L 1
+cl1_COPJMP2			RS.L 1
 
-copperlist1_size RS.B 0
+copperlist1_size 		RS.B 0
 
 
 	RSRESET
@@ -409,8 +397,8 @@ cl2_size3			EQU copperlist2_size
 
 spr0_extension1			RS.B 0
 
-spr0_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr0_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
+spr0_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr0_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size
 
 spr0_extension1_size		RS.B 0
 
@@ -421,7 +409,7 @@ spr0_begin			RS.B 0
 
 spr0_extension1_entry		RS.B spr0_extension1_size
 
-spr0_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr0_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite0_size			RS.B 0
 
@@ -430,8 +418,8 @@ sprite0_size			RS.B 0
 
 spr1_extension1	RS.B 0
 
-spr1_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr1_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
+spr1_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr1_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size
 
 spr1_extension1_size		RS.B 0
 
@@ -442,7 +430,7 @@ spr1_begin			RS.B 0
 
 spr1_extension1_entry		RS.B spr1_extension1_size
 
-spr1_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr1_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite1_size			RS.B 0
 
@@ -451,8 +439,8 @@ sprite1_size			RS.B 0
 
 spr2_extension1			RS.B 0
 
-spr2_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr2_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
+spr2_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr2_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size
 
 spr2_extension1_size		RS.B 0
 
@@ -461,9 +449,9 @@ spr2_extension1_size		RS.B 0
 
 spr2_begin			RS.B 0
 
-spr2_extension1_entry 		RS.B spr2_extension1_size
+spr2_extension1_entry		RS.B spr2_extension1_size
 
-spr2_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr2_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite2_size			RS.B 0
 
@@ -472,8 +460,8 @@ sprite2_size			RS.B 0
 
 spr3_extension1			RS.B 0
 
-spr3_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr3_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
+spr3_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr3_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size
 
 spr3_extension1_size		RS.B 0
 
@@ -484,7 +472,7 @@ spr3_begin			RS.B 0
 
 spr3_extension1_entry RS.B spr3_extension1_size
 
-spr3_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr3_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite3_size			RS.B 0
 
@@ -493,8 +481,8 @@ sprite3_size			RS.B 0
 
 spr4_extension1			RS.B 0
 
-spr4_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr4_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
+spr4_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr4_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size
 
 spr4_extension1_size		RS.B 0
 
@@ -503,19 +491,19 @@ spr4_extension1_size		RS.B 0
 
 spr4_begin			RS.B 0
 
-spr4_extension1_entry RS.B spr4_extension1_size
+spr4_extension1_entry		RS.B spr4_extension1_size
 
-spr4_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr4_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite4_size			RS.B 0
 
 ; Sprite5-Zusatzstruktur
 	RSRESET
 
-spr5_extension1	RS.B 0
+spr5_extension1			RS.B 0
 
-spr5_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr5_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
+spr5_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr5_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size
 
 spr5_extension1_size		RS.B 0
 
@@ -524,9 +512,9 @@ spr5_extension1_size		RS.B 0
 
 spr5_begin			RS.B 0
 
-spr5_extension1_entry RS.B spr5_extension1_size
+spr5_extension1_entry 		RS.B spr5_extension1_size
 
-spr5_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr5_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite5_size			RS.B 0
 
@@ -535,8 +523,8 @@ sprite5_size			RS.B 0
 
 spr6_extension1	RS.B 0
 
-spr6_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr6_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
+spr6_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr6_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size
 
 spr6_extension1_size		RS.B 0
 
@@ -545,9 +533,9 @@ spr6_extension1_size		RS.B 0
 
 spr6_begin			RS.B 0
 
-spr6_extension1_entry RS.B spr6_extension1_size
+spr6_extension1_entry		RS.B spr6_extension1_size
 
-spr6_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr6_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite6_size			RS.B 0
 
@@ -556,8 +544,8 @@ sprite6_size			RS.B 0
 
 spr7_extension1	RS.B 0
 
-spr7_ext1_header		RS.L 1*(spr_pixel_per_datafetch/16)
-spr7_ext1_planedata		RS.L (spr_pixel_per_datafetch/16)*lg_image_y_size
+spr7_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
+spr7_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size
 
 spr7_extension1_size		RS.B 0
 
@@ -566,9 +554,9 @@ spr7_extension1_size		RS.B 0
 
 spr7_begin			RS.B 0
 
-spr7_extension1_entry RS.B spr7_extension1_size
+spr7_extension1_entry		RS.B spr7_extension1_size
 
-spr7_end			RS.L 1*(spr_pixel_per_datafetch/16)
+spr7_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite7_size			RS.B 0
 
@@ -610,7 +598,7 @@ spr7_y_size2			EQU sprite7_size/(spr_x_size2/8)
 
 	RSRESET
 
-	INCLUDE "variables-offsets.i"
+	INCLUDE "main-variables.i"
 
 save_a7				RS.L 1
 
@@ -690,11 +678,11 @@ init_main_variables
 
 ; Image-Fader-In
 	move.w	d1,ifi_rgb8_active(a3)
-	move.w	#sine_table_length/4,ifi_rgb8_fader_angle(a3) ; 90 Grad
+	move.w	#sine_table_length/4,ifi_rgb8_fader_angle(a3) ; 90°
 
 ; Image-Fader-Out
 	move.w	d1,ifo_rgb8_active(a3)
-	move.w	#sine_table_length/4,ifo_rgb8_fader_angle(a3) ; 90 Grad
+	move.w	#sine_table_length/4,ifo_rgb8_fader_angle(a3) ; 90°
 
 ; Image-Pixel-Fader
 	move.l	d0,ipf_mask(a3)
@@ -703,12 +691,12 @@ init_main_variables
 ; Image-Pixel-Fader-In
 	move.w	d1,ipfi_active(a3)
 	move.w	d0,ipfi_delay_counter(a3)
-	move.w	#sine_table_length/4,ipfi_delay_angle(a3) ; 90 Grad
+	move.w	#sine_table_length/4,ipfi_delay_angle(a3) ; 90°
 
 ; Image-Pixel-Fader-Out
 	move.w	d1,ipfo_active(a3)
 	move.w	d0,ipfo_delay_counter(a3)
-	move.w	#sine_table_length/4,ipfo_delay_angle(a3) ; 90 Grad
+	move.w	#sine_table_length/4,ipfo_delay_angle(a3) ; 90°
 
 ; Effects-Handler
 	move.w	d0,eh_trigger_number(a3)
@@ -716,6 +704,7 @@ init_main_variables
 ; Main
 	move.w	d1,stop_fx_active(a3)
 	rts
+
 
 	CNOP 0,4
 init_main
@@ -727,6 +716,7 @@ init_main
 	bsr	init_first_copperlist
 	bra	init_second_copperlist
 
+
 	CNOP 0,4
 init_colors
 	CPU_SELECT_COLOR_HIGH_BANK 2
@@ -735,6 +725,7 @@ init_colors
 	CPU_SELECT_COLOR_LOW_BANK 2
 	CPU_INIT_COLOR_LOW COLOR00,16,spr_rgb8_color_table
 	rts
+
 
 ; Logo
 	CNOP 0,4
@@ -768,6 +759,7 @@ vss_init_bplam_table_mask_loop3
 	add.l	d3,a0			; nächste Zeile in Plane0
 	dbf	d7,vss_init_bplam_table_mask_loop1
 	rts
+
 
 ; Stern-Koordinaten initialisieren
 	CNOP 0,4
@@ -837,7 +829,9 @@ init_first_copperlist
 		COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
 	ENDC
 
+
 	COP_INIT_SPRITE_POINTERS cl1
+
 
 	CNOP 0,4
 cl1_init_colors
@@ -851,6 +845,7 @@ cl1_init_colors
 	COP_INIT_COLOR_LOW COLOR00,29
 	rts
 
+
 	COP_SET_SPRITE_POINTERS cl1,display,spr_number
 
 
@@ -863,9 +858,12 @@ init_second_copperlist
 	bsr	copy_second_copperlist
 	bra	swap_second_copperlist
 
+
 	COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,FALSE,FALSE
 
+
 	COP_INIT_COPINT cl2,cl2_hstart2,cl2_vstart2
+
 
 	COPY_COPPERLIST cl2,3
 
@@ -908,6 +906,7 @@ beam_routines_exit
 
 	SWAP_COPPERLIST cl2,3
 
+
 	CNOP 0,4
 vss_swap_switch_buffers
 	move.l	vss_switch_buffer_construction1(a3),a0 ;Puffer Vertauschen
@@ -926,16 +925,16 @@ vert_starscrolling
 	move.l	#((vss_switch_buffer_x_size-(vss_copy_blit_width+2))<<16)+(vss_image_x_size-(vss_copy_blit_width+2)),d2 ; Moduli
 	moveq	#vss_z_plane1_speed,d3
 	MOVEF.W vss_y_restart,d4
-	moveq	#vss_star_x_size,d5 	; Offset für nächsten Stern
-	lea	vss_xy_coords(pc),a0 	; Zeiger auf XY-Koords
+	moveq	#vss_star_x_size,d5	; Offset für nächsten Stern
+	lea	vss_xy_coords(pc),a0	; Zeiger auf XY-Koords
 	move.l	vss_bplam_table(a3),a1	; BOB
 	add.l	#(vss_z_planes_number-1)*vss_star_x_size,a1 ; Zeiger auf letzten Stern
 	move.l	vss_bplam_table_mask(a3),a2 ; Maske
 	add.l	#(vss_z_planes_number-1)*vss_star_x_size,a2 ; Zeiger auf letzte Maske
 	move.l	vss_switch_buffer_construction2(a3),a4 ; Ziel = Puffer
 	move.w	#BC0F_SRCA+BC0F_SRCB+BC0F_SRCC+BC0F_DEST+NANBC+NABC+ABNC+ABC,a3 ; Minterm D=A+B
-	move.w	#(vss_copy_blit_y_size*64)+((vss_copy_blit_x_size+16)/16),a5
-	move.w	#(16*64)+(16/16),a7 	; Additionswert für Blitgröße
+	move.w	#(vss_copy_blit_y_size*64)+((vss_copy_blit_x_size+16)/WORD_BITS),a5
+	move.w	#(16*64)+(16/WORD_BITS),a7	; Additionswert für Blitgröße
 	moveq	#vss_z_planes_number-1,d7
 vert_starscrolling_loop1
 	WAITBLIT
@@ -964,11 +963,11 @@ vert_starscrolling_skip
 	move.w	d0,BLTCON1-DMACONR(a6)
 	add.w	a3,d0			; + Minterm
 	move.w	d0,BLTCON0-DMACONR(a6)
-	move.l	d1,BLTCPT-DMACONR(a6) 	; Playfield lesen
-	move.l	a1,BLTBPT-DMACONR(a6) 	; Stern
-	move.l	a2,BLTAPT-DMACONR(a6) 	; Stern-Maske
-	move.l	d1,BLTDPT-DMACONR(a6) 	; Playfield schreiben
-	move.w	a5,BLTSIZE-DMACONR(a6) 	; Blitter starten
+	move.l	d1,BLTCPT-DMACONR(a6)	; Playfield lesen
+	move.l	a1,BLTBPT-DMACONR(a6)	; Stern
+	move.l	a2,BLTAPT-DMACONR(a6)	; Stern-Maske
+	move.l	d1,BLTDPT-DMACONR(a6)	; Playfield schreiben
+	move.w	a5,BLTSIZE-DMACONR(a6)	; Blitter starten
 	dbf	d6,vert_starscrolling_loop2
 	subq.w	#WORD_SIZE,d2		; Moduli ändern
 	addq.w	#1,d3			; nächste Geschwindigkeit
@@ -990,20 +989,22 @@ vert_starscrolling_init
 	move.l	#$ffff0000,BLTAFWM-DMACONR(a6) ; Maske
 	rts
 
+
 	CNOP 0,4
 vss_clear_switch_buffer
 	move.l	vss_switch_buffer_construction1(a3),a0 ; Zeiger auf Tabelle mit BPLAM-Werten
 	WAITBLIT
 	move.l	#(BC0F_DEST+ANBNC+ANBC+ABNC+ABC)<<16,BLTCON0-DMACONR(a6) ; Minterm D=A
 	moveq	#FALSE,d0
-	move.l	d0,BLTAFWM-DMACONR(a6) 	; Maske aus
+	move.l	d0,BLTAFWM-DMACONR(a6)	; Maske aus
 	add.l	#vss_switch_buffer_x_size*vss_star_y_size3,a0 ; n Zeilen überspringen
 	move.l	a0,BLTDPT-DMACONR(a6)
 	moveq	#vss_switch_buffer_x_size-cl2_display_width,d0
 	move.w	d0,BLTDMOD-DMACONR(a6) ;D-Mod
 	move.w	#(bplcon4_bits&$ff00)+(bplcon4_bits>>8),BLTADAT-DMACONR(a6)
-	move.w	#(vss_clear_blit_y_size*64)+(vss_clear_blit_x_size/16),BLTSIZE-DMACONR(a6) ; Blitter starten
+	move.w	#(vss_clear_blit_y_size*64)+(vss_clear_blit_x_size/WORD_BITS),BLTSIZE-DMACONR(a6) ; Blitter starten
 	rts
+
 
 	CNOP 0,4
 vss_copy_switch_buffer
@@ -1106,9 +1107,9 @@ image_fader_in
 	move.w	ifi_rgb8_fader_angle(a3),d2
 	move.w	d2,d0
 	addq.w	#ifi_rgb8_fader_angle_speed,d0 ; nächster Winkel
-	cmp.w	#sine_table_length/2,d0	; Winkel <= 180 Grad ?
+	cmp.w	#sine_table_length/2,d0	; Winkel <= 180° ?
 	ble.s	image_fader_in_skip
-	MOVEF.W sine_table_length/2,d0	; 180 Grad
+	MOVEF.W sine_table_length/2,d0	; 180°
 image_fader_in_skip
 	move.w	d0,ifi_rgb8_fader_angle(a3) 
 	MOVEF.W if_rgb8_colors_number*3,d6 ; RGB-Zähler
@@ -1134,6 +1135,7 @@ image_fader_in_quit
 	movem.l (a7)+,a4-a6
 	rts
 
+
 	CNOP 0,4
 image_fader_out
 	movem.l a4-a6,-(a7)
@@ -1142,9 +1144,9 @@ image_fader_out
 	move.w	ifo_rgb8_fader_angle(a3),d2
 	move.w	d2,d0
 	addq.w	#ifo_rgb8_fader_angle_speed,d0 ; nächster Winkel
-	cmp.w	#sine_table_length/2,d0 ; Winkel <= 180 Grad ?
+	cmp.w	#sine_table_length/2,d0 ; Winkel <= 180° ?
 	ble.s	image_fader_out_skip
-	MOVEF.W sine_table_length/2,d0	; 180 Grad
+	MOVEF.W sine_table_length/2,d0	; 180°
 image_fader_out_skip
 	move.w	d0,ifo_rgb8_fader_angle(a3) 
 	MOVEF.W if_rgb8_colors_number*3,d6 ; RGB-Zähler
@@ -1170,9 +1172,12 @@ image_fader_out_quit
 	movem.l (a7)+,a4-a6
 	rts
 
+
 	RGB8_COLOR_FADER if
 
+
 	COPY_RGB8_COLORS_TO_COPPERLIST if,pf1,cl1,cl1_COLOR01_high1,cl1_COLOR01_low1
+
 
 	CNOP 0,4
 image_pixel_fader_in
@@ -1183,9 +1188,9 @@ image_pixel_fader_in
 	move.w	ipfi_delay_angle(a3),d2
 	move.w	d2,d0
 	addq.w	#ipfi_delay_angle_speed,d0 ; nächster Winkel
-	cmp.w 	#sine_table_length/2,d0	; Winkel <= 180 Grad ?
+	cmp.w	#sine_table_length/2,d0	; Winkel <= 180° ?
 	ble.s	image_pixel_fader_in_skip1
-	MOVEF.W	sine_table_length/2,d0	; 180 Grad
+	MOVEF.W	sine_table_length/2,d0	; 180°
 image_pixel_fader_in_skip1
 	move.w	d0,ipfi_delay_angle(a3)
 	lea	sine_table,a0
@@ -1223,6 +1228,7 @@ image_pixel_fader_in_in_loop
 image_pixel_fader_in_quit
 	rts
 
+
 	CNOP 0,4
 image_pixel_fader_out
 	tst.w	ipfo_active(a3)
@@ -1232,9 +1238,9 @@ image_pixel_fader_out
 	move.w	ipfo_delay_angle(a3),d2
 	move.w	d2,d0
 	addq.w	#ipfo_delay_angle_speed,d0 ; nächster Winkel
-	cmp.w	#sine_table_length/2,d0	; Winkel <= 180 Grad ?
+	cmp.w	#sine_table_length/2,d0	; Winkel <= 180° ?
 	ble.s	image_pixel_fader_skip1
-	MOVEF.W sine_table_length/2,d0	; 180 Grad
+	MOVEF.W sine_table_length/2,d0	; 180°
 image_pixel_fader_skip1
 	move.w	d0,ipfo_delay_angle(a3)
 	lea	sine_table,a0
@@ -1273,6 +1279,7 @@ image_pixel_fader_out_loop
 image_pixel_fader_quit
 	rts
 
+
 	CNOP 0,4
 ipf_random_pixel_data_copy
 	movem.l a4-a5,-(a7)
@@ -1289,7 +1296,7 @@ ipf_random_pixel_data_copy
 
 	move.l	(a5)+,a0		; Sprite2-Struktur
 	ADDF.W	(spr_pixel_per_datafetch/8)*2,a0 ; Header überspringen
-	lea	lg_image_data+QUADWORD_SIZE,a1 	; Zeiger auf Hintergrundbild (2. Spalte 64 Pixel)
+	lea	lg_image_data+QUADWORD_SIZE,a1	; Zeiger auf Hintergrundbild (2. Spalte 64 Pixel)
 	bsr	init_sprite_bitmap
 	move.l	(a5)+,a0		; Sprite3-Struktur
 	ADDF.W	(spr_pixel_per_datafetch/8)*2,a0 ; Header überspringen
@@ -1315,6 +1322,7 @@ ipf_random_pixel_data_copy
 	bsr.s	init_sprite_bitmap
 	movem.l (a7)+,a4-a5
 	rts
+
 
 	CNOP 0,4
 init_sprite_bitmap
@@ -1414,23 +1422,27 @@ pf1_rgb8_color_table
 		DC.L color00_bits
 	ENDR
 
+
 	CNOP 0,4
 spr_rgb8_color_table
-	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/256x87x16-TheEnd.ct"
+	INCLUDE "RasterMaster:colortables/256x87x16-TheEnd.ct"
+
 
 	CNOP 0,4
 spr_ptrs_display
 	DS.L spr_number
+
 
 ; Vert-Starscrolling
 	CNOP 0,2
 vss_xy_coords
 	DS.W vss_z_planes_number*vss_stars_per_plane_number*2
 
+
 ; Image-Fader
 	CNOP 0,4
 ifi_rgb8_color_table
-	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/0c_vss_Colorgradient.ct"
+	INCLUDE "RasterMaster:colortables/0c_vss_Colorgradient.ct"
 
 	CNOP 0,4
 ifo_rgb8_color_table
@@ -1451,13 +1463,13 @@ ifo_rgb8_color_table
 ; Grafikdaten nachladen
 
 ; Vert-Starscrolling
-vss_image_data SECTION vss_gfx,DATA
-	INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/graphics/64x56x64-3D-Stars.rawblit"
+vss_image_data			SECTION vss_gfx,DATA
+	INCBIN "RasterMaster:graphics/64x56x64-3D-Stars.rawblit"
 vss_image_mask
-	INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/graphics/64x56x64-3D-Stars-Mask.rawblit"
+	INCBIN "RasterMaster:graphics/64x56x64-3D-Stars-Mask.rawblit"
 
 ; Logo
-lg_image_data SECTION lg_gfx,DATA
-	INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/graphics/256x87x16-TheEnd.rawblit"
+lg_image_data			SECTION lg_gfx,DATA
+	INCBIN "RasterMaster:graphics/256x87x16-TheEnd.rawblit"
 
 	END

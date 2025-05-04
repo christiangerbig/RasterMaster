@@ -1,9 +1,3 @@
-; Programm:	0a_Zic-Zac-Plasma
-; Autor:	Christian Gerbig
-; Datum:	21.12.2023
-; Version:	1.3 beta
-
-
 ; Requirements
 ; CPU:		68020+
 ; Chipset:	AGA PAL
@@ -20,7 +14,7 @@
 	XDEF start_0a_zig_zag_plasma
 
 
-	INCDIR "Daten:include3.5/"
+	INCDIR "include3.5:"
 
 	INCLUDE "exec/exec.i"
 	INCLUDE "exec/exec_lib.i"
@@ -40,11 +34,12 @@
 	INCLUDE "hardware/intbits.i"
 
 
-	INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
-
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
+
+
+	INCDIR "custom-includes-aga:"
 
 
 	INCLUDE "macros.i"
@@ -207,7 +202,7 @@ zzp5_bplam_table_size2		EQU cl2_display_y_size+(zzp5_y_radius*2)
 chip_memory_size		EQU zzp5_bplam_table_size2*WORD_SIZE
 
 
-	INCLUDE "except-vectors-offsets.i"
+	INCLUDE "except-vectors.i"
 
 
 	INCLUDE "extra-pf-attributes.i"
@@ -220,7 +215,7 @@ chip_memory_size		EQU zzp5_bplam_table_size2*WORD_SIZE
 
 cl1_begin			RS.B 0
 
-	INCLUDE "copperlist1-offsets.i"
+	INCLUDE "copperlist1.i"
 
 cl1_COPJMP2			RS.L 1
 
@@ -240,7 +235,7 @@ cl2_ext1_BPLCON4_6		RS.L 1
 cl2_ext1_BPLCON4_7		RS.L 1
 cl2_ext1_BPLCON4_8		RS.L 1
 cl2_ext1_BPLCON4_9		RS.L 1
-cl2_ext1_BPLCON4_10 		RS.L 1
+cl2_ext1_BPLCON4_10		RS.L 1
 cl2_ext1_BPLCON4_11		RS.L 1
 cl2_ext1_BPLCON4_12		RS.L 1
 cl2_ext1_BPLCON4_13		RS.L 1
@@ -352,7 +347,7 @@ spr7_y_size2			EQU 0
 
 	RSRESET
 
-	INCLUDE "variables-offsets.i"
+	INCLUDE "main-variables.i"
 
 save_a7				RS.L 1
 
@@ -367,7 +362,7 @@ vsb_y_angle			RS.W 1
 
 ; Vert-Border-Fader
 vbf_fader_angle			RS.W 1
-vbf_display_window_vstart RS.W 1
+vbf_display_window_vstart 	RS.W 1
 vbf_display_window_vstop	RS.W 1
 
 vbfo_active			RS.W 1
@@ -471,11 +466,15 @@ init_first_copperlist
 	COP_MOVEQ 0,COPJMP2
 	bra	cl1_set_plane_ptrs
 
+
 	COP_INIT_PLAYFIELD_REGISTERS cl1
+
 
 	COP_INIT_BITPLANE_POINTERS cl1
 
+
 	COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
+
 
 	CNOP 0,4
 init_second_copperlist
@@ -485,6 +484,7 @@ init_second_copperlist
 	COP_LISTEND
 	bsr	copy_second_copperlist
 	bra	swap_second_copperlist
+
 
 	CNOP 0,4
 cl2_init_bplcon4
@@ -496,7 +496,9 @@ cl2_init_bplcon4_loop
 	dbf	d7,cl2_init_bplcon4_loop
 	rts
 
+
 	COP_INIT_COPINT cl2
+
 
 	COPY_COPPERLIST cl2,2
 
@@ -551,7 +553,7 @@ vert_shade_bars
 	MOVEF.W vsb_y_radius*4,d4
 	MOVEF.W vsb_y_angle_step,d5
 	lea	sine_table_512,a0 
-	move.l	chip_memory(a3),a1 	; Zeiger auf Tabelle mit Farbummern der Linien
+	move.l	chip_memory(a3),a1	; Zeiger auf Tabelle mit Farbummern der Linien
 	move.w	#vsb_y_center,a2
 	moveq	#vsb_bars_number-1,d7
 vert_shade_bars_loop
@@ -585,6 +587,7 @@ vert_shade_bars_loop
 vert_shade_bars_quit
 	rts
 
+
 	CNOP 0,4
 zzp5_get_y_coords
 	movem.l a3-a5,-(a7)
@@ -606,13 +609,13 @@ zzp5_get_y_coords
 	and.w	d6,d0			; Überlauf entfernen
 	move.w	d0,zzp5_y_angle(a3) 
 	;MOVEF.W zzp5_y_radius,d4
-	move.w	#(zzp5_copy_blit_y_size*64)+(zzp5_copy_blit_x_size/16),d4 ; BLTSIZE
+	move.w	#(zzp5_copy_blit_y_size*64)+(zzp5_copy_blit_x_size/WORD_BITS),d4 ; BLTSIZE
 	moveq	#zzp5_y_angle_step,d5
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
 	lea	BLTDPT-DMACONR(a6),a4
 	lea	BLTSIZE-DMACONR(a6),a5
-	move.l	chip_memory(a3),a7 	; Zeiger auf Tabelle mit BPLCON4-Werten
+	move.l	chip_memory(a3),a7	; Zeiger auf Tabelle mit BPLCON4-Werten
 	lea	BLTAPT-DMACONR(a6),a3
 	moveq	#cl2_display_width-1,d7 ; Anzahl der Spalten
 zzp5_get_y_coords_loop
@@ -639,7 +642,7 @@ zzp5_get_y_coords_init
 	WAITBLIT
 	move.l	#(BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC)<<16,BLTCON0-DMACONR(a6) ; Minterm D=A
 	moveq	#FALSE,d0
-	move.l	d0,BLTAFWM-DMACONR(a6) 	; Ausmaskierung
+	move.l	d0,BLTAFWM-DMACONR(a6)	; Ausmaskierung
 	move.l	#cl2_extension1_size-zzp5_copy_blit_width,BLTAMOD-DMACONR(a6) ; A-Mod + D-Mod
 	rts
 
@@ -732,7 +735,7 @@ nmi_int_server
 
 	CNOP 0,4
 pf1_rgb8_color_table
-	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/0b_zzp5_Colorgradient.ct"
+	INCLUDE "RasterMaster:colortables/0b_zzp5_Colorgradient.ct"
 
 
 	INCLUDE "sys-variables.i"

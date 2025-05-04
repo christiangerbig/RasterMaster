@@ -1,13 +1,7 @@
-; Programm:	06_Blind-Colorcycle
-; Autor:	Christian Gerbig
-; Datum:	21.12.2023
-; Version:	1.3 beta
-
-
 ; Requirements
-; CPU:		68020+
-; Chipset:	AGA PAL
-; OS:		3.0+
+; 68020+
+; AGA PAL
+; 3.0+
 
 
 	MC68040
@@ -20,7 +14,7 @@
 	XDEF start_06_blind_colorcycle
 
 
-	INCDIR "Daten:include3.5/"
+	INCDIR "include3.5:"
 
 	INCLUDE "exec/exec.i"
 	INCLUDE "exec/exec_lib.i"
@@ -40,12 +34,12 @@
 	INCLUDE "hardware/intbits.i"
 
 
-	INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
-
-
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
+
+
+	INCDIR "custom-includes-aga:"
 
 
 	INCLUDE "macros.i"
@@ -138,27 +132,21 @@ ciab_tb_continuous_enabled	EQU FALSE
 
 beam_position			EQU $136
 
-	IFNE open_border_enabled 
 pixel_per_line			EQU 32
-	ENDC
 visible_pixels_number		EQU 352
 visible_lines_number		EQU 256
 MINROW				EQU VSTART_256_LINES
 
-	IFNE open_border_enabled 
 pf_pixel_per_datafetch		EQU 32	; 2x
-	ENDC
 
 display_window_hstart		EQU HSTART_44_CHUNKY_PIXEL
 display_window_vstart		EQU MINROW
 display_window_hstop		EQU HSTOP_44_CHUNKY_PIXEL
 display_window_vstop		EQU VSTOP_256_LINES
 
-	IFNE open_border_enabled 
 pf1_plane_width			EQU pf1_x_size3/8
 data_fetch_width		EQU pixel_per_line/8
 pf1_plane_moduli		EQU -(pf1_plane_width-(pf1_plane_width-data_fetch_width))
-	ENDC
 
 	IFEQ open_border_enabled
 diwstrt_bits			EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)|(display_window_hstart&$ff)
@@ -247,7 +235,7 @@ bcc_bplam_table_size		EQU ct_size1*2
 extra_memory_size		EQU bcc_bplam_table_size*BYTE_SIZE
 
 
-	INCLUDE "except-vectors-offsets.i"
+	INCLUDE "except-vectors.i"
 
 
 	INCLUDE "extra-pf-attributes.i"
@@ -260,7 +248,7 @@ extra_memory_size		EQU bcc_bplam_table_size*BYTE_SIZE
 
 cl1_begin			RS.B 0
 
-	INCLUDE "copperlist1-offsets.i"
+	INCLUDE "copperlist1.i"
 
 cl1_COPJMP2			RS.L 1
 
@@ -320,14 +308,14 @@ cl2_ext1_BPLCON4_42		RS.L 1
 cl2_ext1_BPLCON4_43		RS.L 1
 cl2_ext1_BPLCON4_44		RS.L 1
 
-cl2_extension1_size 		RS.B 0
+cl2_extension1_size		RS.B 0
 
 
 	RSRESET
 
 cl2_begin			RS.B 0
 
-cl2_extension1_entry 		RS.B cl2_extension1_size*cl2_display_y_size
+cl2_extension1_entry		RS.B cl2_extension1_size*cl2_display_y_size
 
 cl2_WAIT1			RS.L 1
 cl2_INTREQ			RS.L 1
@@ -383,7 +371,7 @@ spr7_y_size2			EQU 0
 
 	RSRESET
 
-	INCLUDE "variables-offsets.i"
+	INCLUDE "main-variables.i"
 
 save_a7				RS.L 1
 
@@ -464,6 +452,7 @@ init_main
 	bsr	init_first_copperlist
 	bra	init_second_copperlist
 
+
 	CNOP 0,4
 init_colors
 	CPU_SELECT_COLOR_HIGH_BANK 0
@@ -489,6 +478,7 @@ init_colors
 	CPU_INIT_COLOR_LOW COLOR00,1
 	rts
 
+
 ; Blind-Colorcycle
 	INIT_MIRROR_bplam_table.B bcc,1,1,segments_number1,color_values_number1,extra_memory,a3
 
@@ -499,20 +489,22 @@ init_first_copperlist
 	bsr.s	cl1_init_playfield_props
 	IFEQ open_border_enabled
 		COP_MOVEQ 0,COPJMP2
-	rts
+		rts
 	ELSE
-	bsr.s	cl1_init_plane_ptrs
-	COP_MOVEQ 0,COPJMP2
+		bsr.s	cl1_init_plane_ptrs
+		COP_MOVEQ 0,COPJMP2
 		bra	cl1_set_plane_ptrs
 	ENDC
+
 
 	IFEQ open_border_enabled
 		COP_INIT_PLAYFIELD_REGISTERS cl1,NOBITPLANES
 	ELSE
-	COP_INIT_PLAYFIELD_REGISTERS cl1
-	COP_INIT_BITPLANE_POINTERS cl1
-	COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
+		COP_INIT_PLAYFIELD_REGISTERS cl1
+		COP_INIT_BITPLANE_POINTERS cl1
+		COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
 	ENDC
+
 
 	CNOP 0,4
 init_second_copperlist
@@ -523,9 +515,12 @@ init_second_copperlist
 	bsr	copy_second_copperlist
 	bra	swap_second_copperlist
 
+
 	COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,FALSE,FALSE,NOOP<<16
 
+
 	COP_INIT_COPINT cl2,cl2_hstart2,cl2_vstart2
+
 
 	COPY_COPPERLIST cl2,2
 
@@ -590,13 +585,13 @@ blind_colorcycle512
 		and.w	d7,d0		; Überlauf entfernen
 	ENDC
 	move.w	d0,bcc512_bplam_table_start(a3) 
-	move.l	extra_memory(a3),a0 	; Tabelle mit BPLAM-Werten
+	move.l	extra_memory(a3),a0	; Tabelle mit BPLAM-Werten
 	move.l	cl2_construction2(a3),a1 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ; 2. Quadrant
-	lea	LONGWORD_SIZE(a1),a2 	; 1. Quadrant
+	lea	LONGWORD_SIZE(a1),a2	; 1. Quadrant
 	move.w	#(cl2_extension1_size*(bcc512_lamellas_number/2)*bcc512_lamella_height)-LONGWORD_SIZE,a3
-	lea	cl2_extension1_size(a1),a4 	; 3. Quadrant
-	lea	cl2_extension1_size(a2),a5 	; 4. Quadrant
+	lea	cl2_extension1_size(a1),a4	; 3. Quadrant
+	lea	cl2_extension1_size(a2),a5	; 4. Quadrant
 	move.w	#cl2_extension1_size,a6
 	move.w	#(cl2_extension1_size*(bcc512_lamellas_number/2)*bcc512_lamella_height)+4,a7
 	IFEQ bcc512_bplam_table_length_256
@@ -654,6 +649,7 @@ blind_colorcycle512_quit
 	move.l	variables+save_a7(pc),a7
 	movem.l (a7)+,a3-a6
 	rts
+
 
 	CNOP 0,4
 blind_colorcycle514
@@ -804,7 +800,8 @@ blind_fader_in_skip3
 blind_fader_in_quit
 		move.l	(a7)+,a4
 		rts
-	
+
+
 		CNOP 0,4
 blind_fader_out
 		move.l	a4,-(a7)
@@ -928,7 +925,8 @@ nmi_int_server
 
 	CNOP 0,4
 pf1_rgb8_color_table
-	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/07_bcc512_Colorgradient.ct"
+	INCLUDE "RasterMaster:colortables/07_bcc512_Colorgradient.ct"
+
 
 ; Blind-Fader
 	IFEQ open_border_enabled

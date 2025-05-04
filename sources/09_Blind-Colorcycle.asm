@@ -1,13 +1,7 @@
-; Programm:	09_Blind-Colorcycle
-; Autor:	Christian Gerbig
-; Datum:	21.12.2023
-; Version:	1.3 beta
-
-
 ; Requirements
-; CPU:		68020+
-; Chipset:	AGA PAL
-; OS:		3.0+
+; 68020+
+; AGA PAL
+; 3.0+
 
 
 	MC68040
@@ -20,7 +14,7 @@
 	XDEF start_09_blind_colorcycle
 
 
-	INCDIR "Daten:include3.5/"
+	INCDIR "include3.5:"
 
 	INCLUDE "exec/exec.i"
 	INCLUDE "exec/exec_lib.i"
@@ -40,12 +34,12 @@
 	INCLUDE "hardware/intbits.i"
 
 
-	INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
-
-
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
+
+
+	INCDIR "custom-includes-aga:"
 
 
 	INCLUDE "macros.i"
@@ -135,18 +129,14 @@ ciab_tb_continuous_enabled	EQU FALSE
 
 beam_position			EQU $136
 
-	IFNE open_border_enabled 
 pixel_per_line			EQU 32
-	ENDC
 visible_pixels_number		EQU 320
 visible_lines_number		EQU 240
 MINROW				EQU VSTART_240_LINES
 
-	IFNE open_border_enabled 
 pf_pixel_per_datafetch		EQU 16	; 1x
 ddfstrt_bits			EQU DDFSTART_320_PIXEL
 ddfstop_bits			EQU DDFSTOP_STANDARD_MIN
-	ENDC
 
 display_window_hstart		EQU HSTART_40_CHUNKY_PIXEL
 display_window_vstart		EQU MINROW
@@ -155,11 +145,9 @@ display_window_hstop		EQU HSTOP_320_PIXEL
 display_window_vstop		EQU VSTOP_240_lines
 diwstop_bits			EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)+(display_window_hstop&$ff)
 
-	IFNE open_border_enabled 
 pf1_plane_width			EQU pf1_x_size3/8
 data_fetch_width		EQU pixel_per_line/8
 pf1_plane_moduli		EQU -(pf1_plane_width-(pf1_plane_width-data_fetch_width))
-	ENDC
 
 bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|(BPLCON0F_COLOR)|((pf_depth&$07)*BPLCON0F_BPU0)
 bplcon3_bits1			EQU 0
@@ -221,7 +209,7 @@ bcc_5242_bplam_table_size	EQU ct_size1*2
 extra_memory_size		EQU bcc_5242_bplam_table_size*BYTE_SIZE
 
 
-	INCLUDE "except-vectors-offsets.i"
+	INCLUDE "except-vectors.i"
 
 
 	INCLUDE "extra-pf-attributes.i"
@@ -234,7 +222,7 @@ extra_memory_size		EQU bcc_5242_bplam_table_size*BYTE_SIZE
 
 cl1_begin			RS.B 0
 
-	INCLUDE "copperlist1-offsets.i"
+	INCLUDE "copperlist1.i"
 
 cl1_COPJMP2			RS.L 1
 
@@ -353,7 +341,7 @@ spr7_y_size2			EQU 0
 
 	RSRESET
 
-	INCLUDE "variables-offsets.i"
+	INCLUDE "main-variables.i"
 
 ; Blind-Colorcycle
 bcc_5242_bplam_table_start	RS.W 1
@@ -371,7 +359,7 @@ bfo_active			RS.W 1
 ; Effects-Handler
 eh_trigger_number		RS.W 1
 
-; Main*
+; Main
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
@@ -420,6 +408,7 @@ init_main
 	bsr	init_first_copperlist
 	bra	init_second_copperlist
 
+
 	CNOP 0,4
 init_colors
 	CPU_SELECT_COLOR_HIGH_BANK 0
@@ -445,6 +434,7 @@ init_colors
 	CPU_INIT_COLOR_LOW COLOR00,1
 	rts
 
+
 ; Blind-Colorcycle
 	INIT_MIRROR_bplam_table.B bcc5242,1,1,segments_number1,color_values_number1,extra_memory,a3
 
@@ -469,6 +459,7 @@ init_first_copperlist
 		COP_INIT_BITPLANE_POINTERS cl1
 		COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
 	ENDC
+
 
 	CNOP 0,4
 init_second_copperlist
@@ -504,8 +495,8 @@ beam_routines
 	bsr	effects_handler
 	bsr.s	blind_colorcycle5242
 	IFEQ open_border_enabled
-	bsr	blind_fader_in
-	bsr	blind_fader_out
+		bsr	blind_fader_in
+		bsr	blind_fader_out
 	ENDC
 	jsr	mouse_handler
 	tst.l	d0			; Abbruch ?
@@ -531,7 +522,7 @@ blind_colorcycle5242
 	move.w	d4,d0		
 	addq.b	#bcc_5242_speed,d0	; Startwert erhöhen
 	move.w	d0,bcc_5242_bplam_table_start(a3) 
-	move.l	extra_memory(a3),a0 	; Tabelle mit BPLAM-Werten
+	move.l	extra_memory(a3),a0	; Tabelle mit BPLAM-Werten
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
 	move.w	#cl2_extension1_size,a4
@@ -622,7 +613,8 @@ blind_fader_in_skip3
 blind_fader_in_quit
 		move.l	(a7)+,a4
 		rts
-	
+
+
 		CNOP 0,4
 blind_fader_out
 		move.l	a4,-(a7)
@@ -731,7 +723,8 @@ nmi_int_server
 
 	CNOP 0,4
 pf1_rgb8_color_table
-	INCLUDE "Daten:Asm-Sources.AGA/projects/RasterMaster/colortables/0a_bcc5242_Colorgradient.ct"
+	INCLUDE "RasterMaster:colortables/0a_bcc5242_Colorgradient.ct"
+
 
 	IFEQ open_border_enabled
 ; Blind-Fader

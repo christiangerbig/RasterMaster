@@ -1,11 +1,5 @@
-; Programm:	0_Wrapper
-; Autor:	Christian Gerbig
-; Datum:	01.12.2023
-; Version:	1.2 beta
-
-
 ; Requirements
-; CPU:		68020+
+; 68020+
 ; Chipset:	AGA PAL
 ; OS:		3.0+
 
@@ -38,7 +32,7 @@
 	XDEF sc_start
 
 
-	INCDIR "Daten:include3.5/"
+	INCDIR "include3.5:"
 
 	INCLUDE "exec/exec.i"
 	INCLUDE "exec/exec_lib.i"
@@ -58,15 +52,15 @@
 	INCLUDE "hardware/intbits.i"
 
 
-	INCDIR "Daten:Asm-Sources.AGA/custom-includes/"
-
-
 SYS_TAKEN_OVER			SET 1
 WRAPPER				SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
 CUSTOM_MEMORY_USED		SET 1
 PROTRACKER_VERSION_3		SET 1
+
+
+	INCDIR "custom-includes-aga:"
 
 
 	INCLUDE "macros.i"
@@ -78,7 +72,7 @@ requires_030_cpu		EQU FALSE
 requires_040_cpu		EQU FALSE
 requires_060_cpu		EQU FALSE
 requires_fast_memory		EQU FALSE
-requires_multiscan_monitor 	EQU FALSE
+requires_multiscan_monitor	EQU FALSE
 
 workbench_start_enabled		EQU FALSE
 screen_fader_enabled		EQU FALSE
@@ -98,11 +92,9 @@ pt_track_notes_played_enabled	EQU TRUE
 pt_track_volumes_enabled	EQU TRUE
 pt_track_periods_enabled	EQU TRUE
 pt_track_data_enabled		EQU TRUE
-	IFD PROTRACKER_VERSION_3
 pt_metronome_enabled		EQU FALSE
 pt_metrochanbits		EQU pt_metrochan1
 pt_metrospeedbits		EQU pt_metrospeed4th
-	ENDC
 
 
 dma_bits			EQU DMAF_COPPER|DMAF_SETCLR
@@ -182,14 +174,14 @@ ciab_ta_time			EQU 0
 	ENDC
 ciab_tb_time			EQU 362	; = 0.709379 MHz * [511.43 µs = Lowest note period C1 with Tuning=-8 * 2 / PAL clock constant = 907*2/3546895 ticks per second]
 					; = 0.715909 MHz * [506.76 µs = Lowest note period C1 with Tuning=-8 * 2 / NTSC clock constant = 907*2/3579545 ticks per second]
-ciaa_ta_continuous_enabled 	EQU FALSE
-ciaa_tb_continuous_enabled 	EQU FALSE
+ciaa_ta_continuous_enabled	EQU FALSE
+ciaa_tb_continuous_enabled	EQU FALSE
 	IFEQ pt_ciatiming_enabled
-ciab_ta_continuous_enabled 	EQU TRUE
+ciab_ta_continuous_enabled	EQU TRUE
 	ELSE
-ciab_ta_continuous_enabled 	EQU FALSE
+ciab_ta_continuous_enabled	EQU FALSE
 	ENDC
-ciab_tb_continuous_enabled 	EQU FALSE
+ciab_tb_continuous_enabled	EQU FALSE
 
 beam_position			EQU $136
 
@@ -203,11 +195,11 @@ cl1_vstart			EQU beam_position&$ff
 
 ; Custom Memory
 custom_memory_number		EQU 2
-part_00_audio_memory_size1 	EQU 29756 ; Song
-part_00_audio_memory_size2 	EQU 224266 ; Samples
+part_00_audio_memory_size1	EQU 29756 ; Song
+part_00_audio_memory_size2	EQU 224266 ; Samples
 
 
-	INCLUDE "except-vectors-offsets.i"
+	INCLUDE "except-vectors.i"
 
 
 	INCLUDE "extra-pf-attributes.i"
@@ -238,7 +230,7 @@ custom_memory_entry_size	RS.B 0
 
 cl1_begin			RS.B 0
 
-	INCLUDE "copperlist1-offsets.i"
+	INCLUDE "copperlist1.i"
 
 cl1_BPLCON3_2			RS.L 1
 cl1_WAIT1			RS.L 1
@@ -295,17 +287,17 @@ spr7_y_size2			EQU 0
 
 	RSRESET
 
-	INCLUDE "variables-offsets.i"
+	INCLUDE "main-variables.i"
 
 ; PT-Replay
 	IFD PROTRACKER_VERSION_2 
-	INCLUDE "music-tracker/pt2-variables-offsets.i"
+	INCLUDE "music-tracker/pt2-variables.i"
 	ENDC
 	IFD PROTRACKER_VERSION_3
-	INCLUDE "music-tracker/pt3-variables-offsets.i"
+	INCLUDE "music-tracker/pt3-variables.i"
 	ENDC
 
-variables_size 			RS.B 0
+variables_size			RS.B 0
 
 
 	SECTION code,CODE
@@ -331,6 +323,7 @@ init_custom_memory_table
 	move.l	d0,(a0)			; Zeiger auf Speicherbereich = Null
 	rts
 
+
 	CNOP 0,4
 init_main_variables
 
@@ -343,6 +336,7 @@ init_main_variables
 	ENDC
 	rts
 
+
 ; Main
 	CNOP 0,4
 extend_global_references_table
@@ -350,6 +344,7 @@ extend_global_references_table
 	lea	custom_memory_table(pc),a1
 	move.l	a1,gr_custom_memory_table(a0)
 	rts
+
 
 	CNOP 0,4
 init_main
@@ -362,6 +357,7 @@ init_main
 	bsr	init_colors
 	bsr	init_CIA_timers
 	bra	init_first_copperlist
+
 
 ; PT-Replay
 	PT_DETECT_SYS_FREQUENCY
@@ -419,7 +415,9 @@ init_first_copperlist
 	COP_LISTEND
 	rts
 
+
 	COP_INIT_PLAYFIELD_REGISTERS cl1,BLANK
+
 
 	COP_INIT_COPINT cl1,cl1_HSTART,cl1_VSTART,YWRAP
 
@@ -503,6 +501,7 @@ ciab_ta_int_server
 VERTB_int_server
 	ENDC
 
+
 ; PT-Replay
 	IFEQ pt_music_fader_enabled
 		bsr.s	pt_music_fader
@@ -516,7 +515,6 @@ VERTB_int_server
 	IFD PROTRACKER_VERSION_2 
 		PT2_REPLAY pt_SetSoftInterrupt
 	ENDC
-
 	IFD PROTRACKER_VERSION_3
 		PT3_REPLAY pt_SetSoftInterrupt
 	ENDC
@@ -541,13 +539,14 @@ nmi_int_server
 
 	INCLUDE "help-routines.i"
 
+
 ; Stone-Cracker
-	CNOP 0,4
-sc_start
 ; Input
 ; a0.l	Gepackte Daten
 ; a1.l	Entpackte Daten
 ; Result
+	CNOP 0,4
+sc_start
 	addq.w	#QUADWORD_SIZE,a0	; ID string & security length überspringen
 	move.l	a1,a5
 	add.l	(a0)+,a1
@@ -733,7 +732,7 @@ sc_len3b
 	bpl.s	sc_2ins1
 	subq.w	#QUADWORD_SIZE,d7
 	dbf	d3,sc_2ins2
-	rts				; sicherheitshalber ergänzt
+	rts
 
 
 	INCLUDE "sys-structures.i"
@@ -743,10 +742,12 @@ sc_len3b
 pf1_rgb8_color_table
 	DC.L color00_bits
 
+
 ; Stone-Cracher
 sc_newd1
 	DC.B $08,$07,$06,$05,$04,$03,$02,$01
 	DC.B $88,$87,$86,$85,$84,$83,$82,$81
+
 
 ; PT-Replay
 	INCLUDE "music-tracker/pt-invert-table.i"
@@ -756,7 +757,6 @@ sc_newd1
 	IFD PROTRACKER_VERSION_2 
 		INCLUDE "music-tracker/pt2-period-table.i"
 	ENDC
-
 	IFD PROTRACKER_VERSION_3
 		INCLUDE "music-tracker/pt3-period-table.i"
 	ENDC
@@ -766,6 +766,7 @@ sc_newd1
 	INCLUDE "music-tracker/pt-sample-starts-table.i"
 
 	INCLUDE "music-tracker/pt-finetune-starts-table.i"
+
 
 ; Custom Memory
 	CNOP 0,4
@@ -786,13 +787,13 @@ custom_memory_table
 
 ; PT-Replay
 	IFEQ pt_split_module_enabled
-pt_auddata SECTION pt_audio,DATA
-		INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/modules/mod.Gone(re-remix).song.stc"
-pt_audsmps SECTION pt_audio2,DATA_C
-		INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/modules/mod.Gone(re-remix).smps.stc"
+pt_auddata			SECTION pt_audio,DATA
+		INCBIN "RasterMaster:modules/mod.Gone(re-remix).song.stc"
+pt_audsmps			SECTION pt_audio2,DATA_C
+		INCBIN "RasterMaster:modules/mod.Gone(re-remix).smps.stc"
 	ELSE
-pt_auddata SECTION pt_audio,DATA_C
-		INCBIN "Daten:Asm-Sources.AGA/projects/RasterMaster/modules/mod.Gone(re-remix)"
+pt_auddata			SECTION pt_audio,DATA_C
+		INCBIN "RasterMaster:modules/mod.Gone(re-remix)"
 	ENDC
 
 	END

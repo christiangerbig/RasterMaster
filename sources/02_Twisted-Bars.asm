@@ -673,7 +673,7 @@ tb315_set_background_bars_loop1
 	lea	(a2,d0.w*4),a3		; + 2. Y-Offset
 	moveq	#tb315_bars_number-1,d6
 tb315_set_background_bars_loop2
-	move.l	(a0)+,d0		; Bits 0-15: Y, Bits 15-31: Z-Vektor
+	move.l	(a0)+,d0		; low word: Y, Bits 15-31: Z-Vektor
 	bpl.s	tb315_set_background_bars_skip1
 	add.l	d4,a1			; BPLAM-Werte überspringen
 	bra	tb315_set_background_bars_skip2
@@ -705,7 +705,7 @@ tb315_set_foreround_bars_loop1
 	lea	(a2,d0.w*4),a3		; + 2. Y-Offset
 	moveq	#tb315_bars_number-1,d6
 tb315_set_foreround_bars_loop2
-	move.l	(a0)+,d0		; Bits 0-15: Y, Bits 15-31: Z-Vektor
+	move.l	(a0)+,d0		; low word: Y, Bits 15-31: Z-Vektor
 	bmi.s	tb315_set_foreround_bars_skip1
 	add.l	d4,a1			; BPLAM-Werte überspringen
 	bra	tb315_set_foreround_bars_skip2

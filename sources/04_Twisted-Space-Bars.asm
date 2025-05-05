@@ -1018,7 +1018,7 @@ tb_set_background_bars_loop1
 tb_set_background_bars_skip1
 	moveq	#tb_bars_number-1,d6
 tb_set_background_bars_loop2
-	move.l	(a0)+,d0		; Bits 0-15: Y, Bits 16-31: Z-Vektor
+	move.l	(a0)+,d0		; low word: Y, high word: Z-Vektor
 	bmi.s	tb_set_background_bars_skip2
 	move.l	a5,a1			; Zeiger auf Tabelle mit BPLAM-Werten
 	lea	(a2,d0.w*4),a4		; Y-Offset
@@ -1051,7 +1051,7 @@ tb_set_foreround_bars_loop1
 tb_set_foreround_bars_skip1
 	moveq	#tb_bars_number-1,d6
 tb_set_foreround_bars_loop2
-	move.l	(a0)+,d0		; Bits 0-15: Y, Bits 16-31: Z-Vektor
+	move.l	(a0)+,d0		; low word: Y, high word: Z-Vektor
 	bpl.s	tb_set_foreround_bars_skip2
 	move.l	a5,a1			; Zeiger auf Tabelle mit BPLAM-Werten
 	lea	(a2,d0.w*4),a4		; Y-Offset

@@ -781,7 +781,7 @@ vss_init_xy_coords_loop2
 	lsl.w	#8,d0
 	move.b	CIATODLOW(a5),d0	; b
 	add.l	d0,d1			; (f(x)*a)+b
-	and.l	d3,d1			; Nur Bits 0-15
+	and.l	d3,d1			; Nur low word
 	mulu.w	VHPOSR-DMACONR(a6),d2	; f(y)*a
 	divu.w	d4,d1			; [(f(x)*a)+b]/mod
 	move.w	VHPOSR-DMACONR(a6),d0
@@ -791,7 +791,7 @@ vss_init_xy_coords_loop2
 	move.b	CIATODMID(a5),d0	; b
 	add.l	d0,d2			; (f(y)*a)+b
 	swap	d1			; Rest der Division
-	and.l	d3,d2			; Nur Bits 0-15
+	and.l	d3,d2			; Nur low word
 	move.w	d1,d0			; Zufallswert
 	divu.w	d5,d2			; [(f(y)*a)+b]/mod
 	lsl.w	#3,d0			; Zufallswert*8

@@ -1413,7 +1413,7 @@ tb31612_set_background_bars
 	lea	tb31612_yz_coords(pc),a0
 	move.l	cl2_construction2(a3),a2
 	ADDF.W	cl2_extension7_entry+cl2_ext7_BPLCON4_1+WORD_SIZE,a2
-	move.l	extra_memory(a3),a5	; pointer BPLAM table
+	move.l	extra_memory(a3),a5	; BPLAM table
 	lea	tb31612_fader_columns_mask(pc),a6
 	lea	we_y_coords_end(pc),a7
 	moveq	#cl2_display_width-1,d7	; number of columns
@@ -1427,7 +1427,7 @@ tb31612_set_background_bars_loop1
 tb31612_set_background_bars_skip1
 	move.w	-(a7),d0		; 2nd y
 	MULUF.W	cl2_extension7_size/4,d0,d1 ; 2nd y offset in cl
-	move.l	a5,a1			; pointer BPLAM table
+	move.l	a5,a1			; BPLAM table
 	lea	(a2,d0.w*4),a3		; add 2nd y offset
 	moveq	#tb31612_bars_number-1,d6
 tb31612_set_background_bars_loop2
@@ -1458,7 +1458,7 @@ set_wave_center_bar
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension7_entry+cl2_ext7_BPLCON4_1+WORD_SIZE,a2
 	move.l	extra_memory(a3),a5
-	add.l	#em_bplam_table2,a5	; pointer BPLAM table
+	add.l	#em_bplam_table2,a5	; BPLAM table
 	lea	wcb_fader_columns_mask(pc),a6
 	moveq	#cl2_display_width-1,d7	; number of columns
 set_center_bar_loop1
@@ -1467,7 +1467,7 @@ set_center_bar_loop1
 	bne	set_center_bar_skip
 	add.w	d4,d0			; add y center
 	MULUF.W cl2_extension7_size/4,d0,d1 ; y offset in cl
-	move.l	a5,a1			; pointer BPLAM table
+	move.l	a5,a1			; BPLAM table
 	lea	(a2,d0.w*4),a4		; add y offset in cl
 	MOVEF.W (wcb_bar_height/40)-1,d6
 set_center_bar_loop2
@@ -1561,7 +1561,7 @@ tb31612_set_foreground_bars
 	lea	tb31612_yz_coords(pc),a0
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension7_entry+cl2_ext7_BPLCON4_1+WORD_SIZE,a2
-	move.l	extra_memory(a3),a5	; pointer BPLAM table
+	move.l	extra_memory(a3),a5	; BPLAM table
 	lea	tb31612_fader_columns_mask(pc),a6
 	lea	we_y_coords_end(pc),a7
 	moveq	#cl2_display_width-1,d7 ; number of columns
@@ -1575,7 +1575,7 @@ tb31612_set_foreround_bars_loop1
 tb31612_set_foreround_bars_skip1
 	move.w	-(a7),d0		; 2nd y
 	MULUF.W cl2_extension7_size/4,d0,d1 ; 2nd y offset in cl
-	move.l	a5,a1			; pointer BPLAM table
+	move.l	a5,a1			; BPLAM table
 	lea	(a2,d0.w*4),a3		; add 2nd y offset
 	moveq	#tb31612_bars_number-1,d6
 tb31612_set_foreround_bars_loop2
@@ -1637,7 +1637,7 @@ bf_set_bars_loop2
 	cmp.w	d3,d0			; y max ?
 	bge.s	bf_set_bars_skip3
 	move.l	(a5),a1
-	subq.w	#LONGWORD_SIZE,a1	; pointer color table
+	subq.w	#LONGWORD_SIZE,a1	; color table
 	moveq	#0,d2			; z planes counter
 	moveq	#bf_z_planes_number-1,d5
 bf_set_bars_loop3

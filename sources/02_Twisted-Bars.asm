@@ -669,7 +669,7 @@ tb315_set_background_bars
 	moveq	#cl2_display_width-1,d7	; number of columns
 tb315_set_background_bars_loop1
 	move.w	(a6)+,d0		; 2nd y offset
-	move.l	a5,a1			; pointer BPLAM table
+	move.l	a5,a1			; BPLAM table
 	lea	(a2,d0.w*4),a3		; add 2nd y offset
 	moveq	#tb315_bars_number-1,d6
 tb315_set_background_bars_loop2
@@ -701,7 +701,7 @@ tb315_set_foreground_bars
 	moveq	#cl2_display_width-1,d7	; number of columns
 tb315_set_foreround_bars_loop1
 	move.w	(a6)+,d0		; 2nd y offset
-	move.l	a5,a1			; pointer BPLAM table
+	move.l	a5,a1			; BPLAM table
 	lea	(a2,d0.w*4),a3		; add 2nd y offset
 	moveq	#tb315_bars_number-1,d6
 tb315_set_foreround_bars_loop2

@@ -466,7 +466,7 @@ tccb_init_color_table
 	move.w	#color_x_values_number*1*LONGWORD_SIZE,a5
 	moveq	#segments_number-1,d7
 tccb_init_color_table_loop1
-	move.l	a2,a1			; pointer color table
+	move.l	a2,a1			; color table
 	moveq	#color_y_values_number-1,d6
 tccb_init_color_table_loop2
 	move.l	(a0)+,(a1)		; copy RGB8
@@ -613,7 +613,7 @@ colorcycle_skip1
 	move.l	d0,cc_color_table_start(a3)
 	move.w	#RB_NIBBLES_MASK,d4
 	moveq	#1<<3,d5		; color registers counter
-	move.l	extra_memory(a3),a1	; pointer color table
+	move.l	extra_memory(a3),a1	; color table
 	move.l	cl1_construction2(a3),a2 
 	ADDF.W	cl1_COLOR01_high1+WORD_SIZE,a2
 	move.w	#(color_x_values_number*segments_number)*LONGWORD_SIZE,a4
@@ -671,7 +671,7 @@ twisted_colorcycle_bars
 	swap	d7			; high word: overflow
 	move.w	#cl1_display_width-1,d7	; low word: number of columns
 tccb_get_y_coords_loop1
-	move.l	a5,a1			; pointer bBPLAM table
+	move.l	a5,a1			; bBPLAM table
 	swap	d7			; low word: overflow
 	moveq	#tccb_bars_number-1,d6
 tccb_get_y_coords_loop2

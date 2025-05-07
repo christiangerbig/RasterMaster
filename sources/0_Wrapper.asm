@@ -317,11 +317,11 @@ init_custom_memory_table
 	moveq	#CUSTOM_MEMORY_FAST,d2
 	move.l	d2,(a0)+		; type: fast memory
 	moveq	#0,d0
-	move.l	d0,(a0)+		; pointer memory block
+	move.l	d0,(a0)+		; memory block
 	move.l	#part_00_audio_memory_size2,(a0)+ ; memory size
 	moveq	#CUSTOM_MEMORY_CHIP,d2
 	move.l	d2,(a0)+		; Speicherart: chip-memory
-	move.l	d0,(a0)			; pointer memory block
+	move.l	d0,(a0)			; memory block
 	rts
 
 
@@ -435,14 +435,14 @@ alloc_custom_memory_loop
 	CMPF.L	CUSTOM_MEMORY_CHIP,(a2)+ ; type: chip memory ?
 	bne.s	alloc_custom_memory_skip1
 	bsr	do_alloc_chip_memory
-	move.l	d0,(a2)+		; pointer memory block
+	move.l	d0,(a2)+		; memory block
 	bne.s	alloc_custom_memory_skip2
 	bsr.s	alloc_custom_memory_fail
 	bra.s	alloc_custom_memory_quit
 	CNOP 0,4
 alloc_custom_memory_skip1
 	bsr	do_alloc_memory
-	move.l	d0,(a2)+		; pointer memory block
+	move.l	d0,(a2)+		; memory block
 	bne.s	alloc_custom_memory_skip2
 	bsr.s	alloc_custom_memory_fail
 	bra.s	alloc_custom_memory_quit
@@ -483,9 +483,9 @@ free_custom_memory
 free_custom_memory_loop
 	move.l	(a2),d0			; memory size
 	addq.w	#QUADWORD_SIZE,a2	; skip size and type
-	move.l	(a2)+,d1		; pointer memory block
+	move.l	(a2)+,d1		; memory block
 	beq.s	free_custom_memory_skip
-	move.l	d1,a1			; pointer memory block
+	move.l	d1,a1			; memory block
 	CALLEXEC FreeMem
 free_custom_memory_skip
 	dbf	d7,free_custom_memory_loop

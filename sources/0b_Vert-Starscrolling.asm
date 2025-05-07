@@ -930,9 +930,9 @@ vert_starscrolling
 	moveq	#vss_star_x_size,d5	; offset next star
 	lea	vss_xy_coords(pc),a0
 	move.l	vss_bplam_table(a3),a1
-	add.l	#(vss_z_planes_number-1)*vss_star_x_size,a1 ; pointer last star
+	add.l	#(vss_z_planes_number-1)*vss_star_x_size,a1 ; last star
 	move.l	vss_bplam_table_mask(a3),a2 ; Maske
-	add.l	#(vss_z_planes_number-1)*vss_star_x_size,a2 ; pointer mask
+	add.l	#(vss_z_planes_number-1)*vss_star_x_size,a2 ; mask
 	move.l	vss_bplam_buffer_construction2(a3),a4 ; destination: buffer
 	move.w	#BC0F_SRCA+BC0F_SRCB+BC0F_SRCC+BC0F_DEST+NANBC+NABC+ABNC+ABC,a3 ; minterm D=A+B
 	move.w	#(vss_copy_blit_y_size*64)+((vss_copy_blit_x_size+16)/WORD_BITS),a5
@@ -1157,8 +1157,8 @@ image_fader_out_skip
 	MULUF.L ifo_rgb8_fader_radius*2,d0,d1 ; y'=(yr*sin(w))/2^15
 	swap	d0
 	addq.w	#ifo_rgb8_fader_center,d0
-	lea	pf1_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; pointer colors buffer
-	lea	ifo_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ; pointer destination colors
+	lea	pf1_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; colors buffer
+	lea	ifo_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ; destination colors
 	move.w	d0,a5			; increase/decrease blue
 	swap	d0
 	clr.w	d0

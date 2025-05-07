@@ -1022,7 +1022,7 @@ tb_set_background_bars_skip1
 tb_set_background_bars_loop2
 	move.l	(a0)+,d0		; low word: y, high word: z vector
 	bmi.s	tb_set_background_bars_skip2
-	move.l	a5,a1			; pointer BPLAM table
+	move.l	a5,a1			; BPLAM table
 	lea	(a2,d0.w*4),a4		; y offset
 	COPY_TWISTED_BAR.W tb,cl2,extension1,bar_height
 tb_set_background_bars_skip2
@@ -1055,7 +1055,7 @@ tb_set_foreround_bars_skip1
 tb_set_foreround_bars_loop2
 	move.l	(a0)+,d0		; low word: y, high word: z vector
 	bpl.s	tb_set_foreround_bars_skip2
-	move.l	a5,a1			; pointer BPLAM table
+	move.l	a5,a1			; BPLAM table
 	lea	(a2,d0.w*4),a4		; y offset
 	COPY_TWISTED_BAR.W tb,cl2,extension1,bar_height
 tb_set_foreround_bars_skip2
@@ -1185,8 +1185,8 @@ sprite_fader_in_skip
 	MULUF.L sprfi_rgb8_fader_radius*2,d0,d1 ; y'=(yr*sin(w))/2^15
 	swap	d0
 	ADDF.W	sprfi_rgb8_fader_center,d0
-	lea	spr_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; pointer colors buffer
-	lea	sprfi_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ; pointer destination colors
+	lea	spr_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; colors buffer
+	lea	sprfi_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ; destination colors
 	move.w	d0,a5			; increase/decrease blue
 	swap	d0
 	clr.w	d0
@@ -1223,8 +1223,8 @@ sprite_fader_out_skip
 	MULUF.L sprfo_rgb8_fader_radius*2,d0,d1 ; y'=(yr*sin(w))/2^15
 	swap	d0
 	ADDF.W	sprfo_rgb8_fader_center,d0
-	lea	spr_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; pointer colors buffer
-	lea	sprfo_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ; pointer destination colors
+	lea	spr_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; colors buffer
+	lea	sprfo_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ; destination colors
 	move.w	d0,a5			; increase/decrease blue
 	swap	d0
 	clr.w	d0

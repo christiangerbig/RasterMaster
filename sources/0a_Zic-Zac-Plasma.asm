@@ -616,7 +616,7 @@ zzp5_get_y_coords
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
 	lea	BLTDPT-DMACONR(a6),a4
 	lea	BLTSIZE-DMACONR(a6),a5
-	move.l	chip_memory(a3),a7	; pointer BPLAM table
+	move.l	chip_memory(a3),a7	; BPLAM table
 	lea	BLTAPT-DMACONR(a6),a3
 	moveq	#cl2_display_width-1,d7 ; number of columns
 zzp5_get_y_coords_loop

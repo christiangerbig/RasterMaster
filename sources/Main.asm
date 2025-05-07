@@ -7,7 +7,7 @@
 ; History/Changes
 
 ; V.1.0 Beta
-; - first release
+; - 1st release
 
 ; V.1.1 Beta
 ; - Credits part: logo now scrolls in from left

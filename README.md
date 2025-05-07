@@ -7,4 +7,5 @@ You also need these folders in conjunction with the project:
 [custom includes for AGA](https://github.com/christiangerbig/custom-includes-aga)
 
 
-I used the linker "Dlink" which is part of the O.M.A. Assembler on the amiga side to create an executable files based ont the object files.
+
+I used the linker "Dlink" which is part of the O.M.A. Assembler on the amiga side to create an executable file based on the object files.

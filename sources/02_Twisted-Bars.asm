@@ -386,7 +386,7 @@ spr7_y_size2			EQU 0
 save_a7				RS.L 1
 
 ; Twisted-Bars3.1.5
-tb315_y_angle		RS.W 1
+tb315_y_angle			RS.W 1
 tb315_y_angle_speed_angle RS.W 1
 
 ; Wave-Effect
@@ -427,11 +427,11 @@ init_main_variables
 	moveq	#TRUE,d0
 	move.w	d0,tb315_y_angle(a3)
 	moveq	#FALSE,d1
-	move.w	d0,tb315_y_angle_speed_angle(a3)
+	move.w	d0,tb315_y_angle_speed_angle(a3) ; 0°
 
 ; Wave-Effect
-	move.w	d0,we_y_radius_angle(a3)
-	move.w	d0,we_y_angle(a3)
+	move.w	d0,we_y_radius_angle(a3) ; 0 °
+	move.w	d0,we_y_angle(a3)	; 0 °
 
 ; Blind-Fader
 	IFEQ open_border_enabled
@@ -573,7 +573,7 @@ beam_routines
 		bsr	blind_fader_out
 	ENDC
 	bsr	mouse_handler
-	tst.l	d0			; Abbruch ?
+	tst.l	d0			; exit ?
 	bne.s   beam_routines_exit
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
@@ -599,28 +599,28 @@ tb315_get_yz_coords
 	move.l	(a0,d1.w*4),d1		; sin(w)
 	MULUF.L tb315_y_angle_speed*2,d1,d0 ; y'=(yr*sin(w))/2^15
 	swap	d1
-	move.w	tb315_y_angle(a3),d2	; 1. Y-Winkel
+	move.w	tb315_y_angle(a3),d2	; 1st y angle
 	move.w	d2,d0		
-	add.b	d1,d0			; nächster Y-Winkel
+	add.b	d1,d0			; next y angle
 	move.w	d0,tb315_y_angle(a3)	
 	moveq	#tb315_y_distance,d3
-	lea	tb315_yz_coords(pc),a1	; Zeiger auf Y+Z-Koords-Tabelle
+	lea	tb315_yz_coords(pc),a1
 	move.w	#tb315_y_center,a2
-	moveq	#cl2_display_width-1,d7	; Anzahl der Spalten
+	moveq	#cl2_display_width-1,d7
 tb315_get_yz_coords_loop1
 	moveq	#tb315_bars_number-1,d6
 tb315_get_yz_coords_loop2
-	moveq	#-(sine_table_length/4),d1 ; - 90°
 	move.l	(a0,d2.w*4),d0		; sin(w)
-	add.w	d2,d1			; Y-Winkel - 90°
+	moveq	#-(sine_table_length/4),d1 ; - 90°
+	add.w	d2,d1			; y angle - 90°
 	ext.w	d1
-	move.w	d1,(a1)+		; Z-Vektor
+	move.w	d1,(a1)+		; z vector
 	MULUF.L tb315_y_radius*2,d0,d1	; y'=(yr*sin(w))/2^15
 	swap	d0
-	add.w	a2,d0			; y' + Y-Mittelpunkt
-	MULUF.W cl2_extension1_size/4,d0,d1 ; Y-Offset in CL
-	move.w	d0,(a1)+		; Y-Pos.
-	add.b	d3,d2			; Y-Abstand zur nächsten Bar
+	add.w	a2,d0			; y' + y center
+	MULUF.W cl2_extension1_size/4,d0,d1 ; y offset in cl
+	move.w	d0,(a1)+
+	add.b	d3,d2			; y distance to next bar
 	dbf	d6,tb315_get_yz_coords_loop2
 	addq.b	#tb315_y_angle_step,d2
 	dbf	d7,tb315_get_yz_coords_loop1
@@ -630,29 +630,29 @@ tb315_get_yz_coords_loop2
 ; Wave-Effect
 	CNOP 0,4
 we_get_y_coords
-	move.w	we_y_radius_angle(a3),d2 ; 1. Winkel Y-Radius
+	move.w	we_y_radius_angle(a3),d2 ; 1st y radius angle
 	move.w	d2,d0		
-	move.w	we_y_angle(a3),d3	; 1. Y-Winkel
-	addq.b	#we_y_radius_angle_speed,d0 ; nächster Y-Radius-Winkel
+	move.w	we_y_angle(a3),d3	; 1st y angle
+	addq.b	#we_y_radius_angle_speed,d0
 	move.w	d0,we_y_radius_angle(a3) 
 	move.w	d3,d0
-	addq.b	#we_y_angle_speed,d0	; nächster Y-Winkel
+	addq.b	#we_y_angle_speed,d0
 	move.w	d0,we_y_angle(a3)	
 	lea	sine_table(pc),a0 
-	lea	we_y_coords(pc),a1	; Y-Koord.
+	lea	we_y_coords(pc),a1
 	move.w	#we_y_center,a2
-	moveq	#cl2_display_width-1,d7 ; Anzahl der Spalten
+	moveq	#cl2_display_width-1,d7 ; number of columns
 we_get_y_coords_loop
 	move.l	(a0,d2.w*4),d0	;sin(w)
 	MULUF.L we_y_radius*2,d0,d1
 	swap	d0			; yr'=(yr*sin(w))/2^15
 	muls.w	2(a0,d3.w*4),d0		; y'=(yr'*sin(w))/2^15
 	swap	d0
-	add.w	a2,d0			; y' + Y-Mittelpunkt
-	addq.b	#we_y_radius_angle_step,d2 ; nächster Y-Radius-Winkel
-	MULUF.W cl2_extension1_size/4,d0,d1 ; Y-Offset in CL
-	move.w	d0,(a1)+		; Y-Offset
-	addq.b	#we_y_angle_step,d3	; nächster Y-Winkel
+	add.w	a2,d0			; y' + y center
+	addq.b	#we_y_radius_angle_step,d2
+	MULUF.W cl2_extension1_size/4,d0,d1 ; y offset in cl
+	move.w	d0,(a1)+
+	addq.b	#we_y_angle_step,d3
 	dbf	d7,we_get_y_coords_loop
 	rts
 
@@ -664,26 +664,26 @@ tb315_set_background_bars
 	lea	tb315_yz_coords(pc),a0
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
-	move.l	extra_memory(a3),a5	; Zeiger auf Tabelle mit BPLAM-Werten
+	move.l	extra_memory(a3),a5	; BPLAM table
 	lea	we_y_coords(pc),a6
-	moveq	#cl2_display_width-1,d7	; Anzahl der Spalten
+	moveq	#cl2_display_width-1,d7	; number of columns
 tb315_set_background_bars_loop1
-	move.w	(a6)+,d0		; 2. Y-Offset
-	move.l	a5,a1			; Zeiger auf Tabelle mit BPLAM-Werten
-	lea	(a2,d0.w*4),a3		; + 2. Y-Offset
+	move.w	(a6)+,d0		; 2nd y offset
+	move.l	a5,a1			; pointer BPLAM table
+	lea	(a2,d0.w*4),a3		; add 2nd y offset
 	moveq	#tb315_bars_number-1,d6
 tb315_set_background_bars_loop2
-	move.l	(a0)+,d0		; low word: Y, Bits 15-31: Z-Vektor
+	move.l	(a0)+,d0		; low word: y, high word: z vector
 	bpl.s	tb315_set_background_bars_skip1
-	add.l	d4,a1			; BPLAM-Werte überspringen
+	add.l	d4,a1			; skip BPLAM values
 	bra	tb315_set_background_bars_skip2
 	CNOP 0,4
 tb315_set_background_bars_skip1
-	lea	(a3,d0.w*4),a4		; Y-Offset
+	lea	(a3,d0.w*4),a4		; add 1st y offset
 	COPY_TWISTED_BAR.B tb315,cl2,extension1,bar_height
 tb315_set_background_bars_skip2
 	dbf	d6,tb315_set_background_bars_loop2
-	addq.w	#4,a2			; nächste Spalte in CL
+	addq.w	#LONGWORD_SIZE,a2	; next column in cl
 	dbf	d7,tb315_set_background_bars_loop1
 	movem.l (a7)+,a3-a6
 	rts
@@ -696,26 +696,26 @@ tb315_set_foreground_bars
 	lea	tb315_yz_coords(pc),a0
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
-	move.l	extra_memory(a3),a5	; Zeiger auf Tabelle mit BPLAM-Werten
+	move.l	extra_memory(a3),a5	; BPLAM table
 	lea	we_y_coords(pc),a6
-	moveq	#cl2_display_width-1,d7	; Anzahl der Spalten
+	moveq	#cl2_display_width-1,d7	; number of columns
 tb315_set_foreround_bars_loop1
-	move.w	(a6)+,d0		; 2. Y-Offset
-	move.l	a5,a1			; Zeiger auf Tabelle mit BPLAM-Werten
-	lea	(a2,d0.w*4),a3		; + 2. Y-Offset
+	move.w	(a6)+,d0		; 2nd y offset
+	move.l	a5,a1			; pointer BPLAM table
+	lea	(a2,d0.w*4),a3		; add 2nd y offset
 	moveq	#tb315_bars_number-1,d6
 tb315_set_foreround_bars_loop2
-	move.l	(a0)+,d0		; low word: Y, Bits 15-31: Z-Vektor
+	move.l	(a0)+,d0		; low word: y, high word: z vector
 	bmi.s	tb315_set_foreround_bars_skip1
-	add.l	d4,a1			; BPLAM-Werte überspringen
+	add.l	d4,a1			; skip BPLAM values
 	bra	tb315_set_foreround_bars_skip2
 	CNOP 0,4
 tb315_set_foreround_bars_skip1
-	lea	(a3,d0.w*4),a4		; Y-Offset
+	lea	(a3,d0.w*4),a4		; add 1st y offset
 	COPY_TWISTED_BAR.B tb315,cl2,extension1,bar_height
 tb315_set_foreround_bars_skip2
 	dbf	d6,tb315_set_foreround_bars_loop2
-	addq.w	#4,a2			; nächste Spalte in CL
+	addq.w	#4,a2			; next column in cl
 	dbf	d7,tb315_set_foreround_bars_loop1
 	movem.l (a7)+,a3-a6
 	rts
@@ -734,15 +734,15 @@ blind_fader_in
 		bne.s	blind_fader_in_quit
 		move.w	bf_registers_table_start(a3),d2
 		move.w	d2,d0
-		addq.w	#bf_speed,d0	; Startwert der Tabelle erhöhen
-		cmp.w	#bf_registers_table_length/2,d0 ; Ende der Tabelle erreicht ?
+		addq.w	#bf_speed,d0	; increase table start
+		cmp.w	#bf_registers_table_length/2,d0 ; end of table ?
 		ble.s	blind_fader_in_skip1
 		move.w	#FALSE,bfi_active(a3)
 blind_fader_in_skip1
 		move.w	d0,bf_registers_table_start(a3)
 		MOVEF.W bf_registers_table_length,d3
 		MOVEF.W cl2_extension1_size,d4
-		lea	bf_registers_table(pc),a0 ; Tabelle mit Registeradressen
+		lea	bf_registers_table(pc),a0
 		IFNE cl2_size1
 			move.l	cl2_construction1(a3),a1
 			ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a1
@@ -755,30 +755,30 @@ blind_fader_in_skip1
 		ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a4
 		moveq	#bf_lamellas_number-1,d7
 blind_fader_in_loop1
-		move.w	d2,d1		; Startwert
+		move.w	d2,d1		; table start
 		moveq	#bf_lamella_height-1,d6
 blind_fader_in_loop2
-		move.w	(a0,d1.w*2),d0	; Registeradresse
+		move.w	(a0,d1.w*2),d0	; register address
 		IFNE cl2_size1
 			move.w	d0,(a1)
-			add.l	d4,a1	; nächste Zeile in CL
+			add.l	d4,a1	; next line in cl
 		ENDC
 		IFNE cl2_size2
 			move.w	d0,(a2)
-			add.l	d4,a2	; nächste Zeile in CL
+			add.l	d4,a2	; next line in cl
 		ENDC
 		move.w	d0,(a4)
-		addq.w	#bf_step1,d1	; nächster Eintrag in Tabelle
-		add.l	d4,a4		; nächste Zeile in CL
-		cmp.w	d3,d1		; Ende der Tabelle erreicht ?
+		addq.w	#bf_step1,d1	; next entry
+		add.l	d4,a4		; next line in cl
+		cmp.w	d3,d1		; end of table ?
 		blt.s	blind_fader_in_skip2
-		sub.w	d3,d1		; Neustart
+		sub.w	d3,d1		; reset table start
 blind_fader_in_skip2
 		dbf	d6,blind_fader_in_loop2
-		addq.w	#bf_step2,d2	; Startwert erhöhen
-		cmp.w	d3,d2		; Ende der Tabelle erreicht ?
+		addq.w	#bf_step2,d2	; increase table start
+		cmp.w	d3,d2		; end of table ?
 		blt.s	blind_fader_in_skip3
-		sub.w	d3,d2		; Neustart
+		sub.w	d3,d2		; reset table start
 blind_fader_in_skip3
 		dbf	d7,blind_fader_in_loop1
 blind_fader_in_quit
@@ -792,7 +792,7 @@ blind_fader_out
 		bne.s	blind_fader_out_quit
 		move.w	bf_registers_table_start(a3),d2
 		move.w	d2,d0
-		subq.w	#bf_speed,d0	; Startwert der Tabelle verringern
+		subq.w	#bf_speed,d0	; decrease table start
 		bpl.s	blind_fader_out_skip1
 		move.w	#FALSE,bfo_active(a3)
 blind_fader_out_skip1
@@ -800,7 +800,7 @@ blind_fader_out_skip1
 		MOVEF.W bf_registers_table_length,d3
 		MOVEF.W cl2_extension1_size,d4
 		moveq	#bf_step2,d5
-		lea	bf_registers_table(pc),a0 ; Tabelle mit Registeradressen
+		lea	bf_registers_table(pc),a0
 		IFNE cl2_size1
 			move.l	cl2_construction1(a3),a1
 			ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a1
@@ -813,30 +813,30 @@ blind_fader_out_skip1
 		ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a4
 		moveq	#bf_lamellas_number-1,d7
 blind_fader_out_loop1
-		move.w	d2,d1		; Startwert
+		move.w	d2,d1		; table start
 		moveq	#bf_lamella_height-1,d6
 blind_fader_out_loop2
-		move.w	(a0,d1.w*2),d0	; Registeradresse
+		move.w	(a0,d1.w*2),d0	; register address
 		IFNE cl2_size1
 			move.w	d0,(a1)
-			add.l	d4,a1	; nächste Zeile in CL
+			add.l	d4,a1	; next line in cl
 		ENDC
 		IFNE cl2_size2
 			move.w	d0,(a2)
-			add.l	d4,a2	; nächste Zeile in CL
+			add.l	d4,a2	; next line in cl
 		ENDC
 		move.w	d0,(a4)
-		addq.w	#bf_step1,d1	; nächster Eintrag in Tabelle
-		add.l	d4,a4		; nächste Zeile in CL
-		cmp.w	d3,d1		; Ende der Tabelleerreicht ?
+		addq.w	#bf_step1,d1	; next entry
+		add.l	d4,a4		; next line in cl
+		cmp.w	d3,d1		; end of table ?
 		blt.s	blind_fader_out_skip2
-		sub.w	d3,d1		; Neustart
+		sub.w	d3,d1		; reset table start
 blind_fader_out_skip2
 		dbf	d6,blind_fader_out_loop2
-		add.w	d5,d2		; Startwert erhöhen
-		cmp.w	d3,d2		; Ende der Tabelle erreicht ?
+		add.w	d5,d2		; increase table start
+		cmp.w	d3,d2		; end of table ?
 		blt.s	blind_fader_out_skip3
-		sub.w	d3,d2		; Neustart
+		sub.w	d3,d2		; reset table start
 blind_fader_out_skip3
 		dbf	d7,blind_fader_out_loop1
 blind_fader_out_quit

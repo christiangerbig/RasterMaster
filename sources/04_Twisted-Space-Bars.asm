@@ -57,9 +57,10 @@ workbench_start_enabled		EQU FALSE
 screen_fader_enabled		EQU FALSE
 text_output_enabled		EQU FALSE
 
-open_border_enabled		EQU FALSE ; Immer FALSE, da bereits durch die Bitplane-DMA der Border geöffnet wird.
+open_border_enabled		EQU FALSE ; always FALSE because bitplane DMA opens border
 
-tb_quick_clear_enabled		EQU FALSE ; Immer FALSE, da COLOR255 nicht die Hintergrundfarbe ist und die Sprites sonst verdeckt werde sowie die Laufschriftfarben falsch dargestellt werden!!!
+; Twisted-Bars
+tb_quick_clear_enabled		EQU FALSE ; always FALSE, because COLOR255 is not the background color
 tb_restore_cl_cpu_enabled	EQU TRUE
 tb_restore_cl_blitter_enabled	EQU FALSE
 
@@ -382,7 +383,7 @@ cl2_size2			EQU copperlist2_size
 cl2_size3			EQU copperlist2_size
 
 
-; Sprite0-Zusatzstruktur
+; Sprite0 additional structure
 	RSRESET
 
 spr0_extension1	RS.B 0
@@ -392,7 +393,7 @@ spr0_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*bg_image_y_size
 
 spr0_extension1_size		RS.B 0
 
-; Sprite0-Hauptstruktur
+; Sprite0 main structure
 	RSRESET
 
 spr0_begin			RS.B 0
@@ -403,7 +404,7 @@ spr0_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite0_size			RS.B 0
 
-; Sprite1-Zusatzstruktur
+; Sprite1 additional structure
 	RSRESET
 
 spr1_extension1			RS.B 0
@@ -413,7 +414,7 @@ spr1_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*bg_image_y_size
 
 spr1_extension1_size		RS.B 0
 
-; Sprite1-Hauptstruktur
+; Sprite1 main structure
 	RSRESET
 
 spr1_begin			RS.B 0
@@ -424,7 +425,7 @@ spr1_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite1_size			RS.B 0
 
-; Sprite2-Zusatzstruktur
+; Sprite2 additional structure
 	RSRESET
 
 spr2_extension1			RS.B 0
@@ -434,7 +435,7 @@ spr2_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*bg_image_y_size
 
 spr2_extension1_size		RS.B 0
 
-; Sprite2-Hauptstruktur
+; Sprite2 main structure
 	RSRESET
 
 spr2_begin			RS.B 0
@@ -445,7 +446,7 @@ spr2_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite2_size			RS.B 0
 
-; Sprite3-Zusatzstruktur
+; Sprite3 additional structure
 	RSRESET
 
 spr3_extension1			RS.B 0
@@ -455,7 +456,7 @@ spr3_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*bg_image_y_size
 
 spr3_extension1_size		RS.B 0
 
-; Sprite3-Hauptstruktur
+; Sprite3 main structure
 	RSRESET
 
 spr3_begin			RS.B 0
@@ -466,7 +467,7 @@ spr3_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite3_size			RS.B 0
 
-; Sprite4-Zusatzstruktur
+; Sprite4 additional structure
 	RSRESET
 
 spr4_extension1			RS.B 0
@@ -476,7 +477,7 @@ spr4_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*bg_image_y_size
 
 spr4_extension1_size		RS.B 0
 
-; Sprite4-Hauptstruktur
+; Sprite4 main structure
 	RSRESET
 
 spr4_begin			RS.B 0
@@ -487,7 +488,7 @@ spr4_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite4_size			RS.B 0
 
-; Sprite5-Zusatzstruktur
+; Sprite5 additional structure
 	RSRESET
 
 spr5_extension1			RS.B 0
@@ -497,7 +498,7 @@ spr5_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*bg_image_y_size
 
 spr5_extension1_size		RS.B 0
 
-; Sprite5-Hauptstruktur
+; Sprite5 main structure
 	RSRESET
 
 spr5_begin			RS.B 0
@@ -508,7 +509,7 @@ spr5_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite5_size			RS.B 0
 
-; Sprite6-Zusatzstruktur
+; Sprite6 additional structure
 	RSRESET
 
 spr6_extension1			RS.B 0
@@ -518,7 +519,7 @@ spr6_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*bg_image_y_size
 
 spr6_extension1_size		RS.B 0
 
-; Sprite6-Hauptstruktur
+; Sprite6 main structure
 	RSRESET
 
 spr6_begin			RS.B 0
@@ -529,7 +530,7 @@ spr6_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite6_size			RS.B 0
 
-; Sprite7-Zusatzstruktur
+; Sprite7 additional structure
 	RSRESET
 
 spr7_extension1			RS.B 0
@@ -539,7 +540,7 @@ spr7_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*bg_image_y_size
 
 spr7_extension1_size		RS.B 0
 
-; Sprite7-Hauptstruktur
+; Sprite7 main structure
 	RSRESET
 
 spr7_begin			RS.B 0
@@ -596,7 +597,7 @@ hst_image			RS.L 1
 hst_enabled			RS.W 1
 hst_text_table_start		RS.W 1
 hst_text_bltcon0_bits		RS.W 1
-hst_char_toggle_image	RS.W 1
+hst_char_toggle_image		RS.W 1
 
 ; Twisted-Bars3.1.3
 tb313_active			RS.W 1
@@ -664,23 +665,24 @@ init_main_variables
 
 ; Twisted-Bars3.1.3
 	move.w	d1,tb313_active(a3)
-	move.w	d0,tb313_y_angle(a3)
-	move.w	d0,tb313_y_radius_angle(a3)
+	move.w	d0,tb313_y_angle(a3) ; 0°
+	move.w	d0,tb313_y_radius_angle(a3) ; 0°
 
 ; Twisted-Bars3.1.2
 	move.w	d1,tb312_active(a3)
-	move.w	d0,tb312_y_angle(a3)
-	move.w	d0,tb312_y_radius_angle(a3)
+	move.w	d0,tb312_y_angle(a3) ; 0°
+	move.w	d0,tb312_y_radius_angle(a3) ; 0°
 
 ; Sprites-Fader
 	move.w	d0,sprf_rgb8_colors_counter(a3)
 	move.w	d1,sprf_rgb8_copy_colors_active(a3)
 
 	move.w	d1,sprfi_rgb8_active(a3)
-	move.w	#sine_table_length/4,sprfi_rgb8_fader_angle(a3) ; 90 Grad
+	moveq	#sine_table_length/4,d2
+	move.w	d2,sprfi_rgb8_fader_angle(a3) ; 90°
 
 	move.w	d1,sprfo_rgb8_active(a3)
-	move.w	#sine_table_length/4,sprfo_rgb8_fader_angle(a3) ; 90 Grad
+	move.w	d2,sprfo_rgb8_fader_angle(a3) ; 90°
 
 ; Chunky-Columns-Fader
 	move.w	d1,ccfi_active(a3)
@@ -722,11 +724,11 @@ tb_init_color_table
 	lea	tb_color_table(pc),a1
 	moveq	#tb_bar_height-1,d7
 tb_init_color_table_loop1
-	move.l	(a0)+,d0		; RGB8-Farbwert
+	move.l	(a0)+,d0		; RGB8
 	move.l	d1,(a1)+		; COLOR00
-	moveq	#(spr_colors_number-1)-1,d6 ; Anzahl der Farbwerte pro Palettenabschnitt
+	moveq	#(spr_colors_number-1)-1,d6
 tb_init_color_table_loop2
-	move.l	d0,(a1)+		; RGB8-Farbwert
+	move.l	d0,(a1)+		; RGB8
 	dbf	d6,tb_init_color_table_loop2
 	dbf	d7,tb_init_color_table_loop1
 	rts
@@ -884,7 +886,7 @@ beam_routines_skip
 	bsr	sprite_fader_in
 	bsr	sprite_fader_out
 	bsr	mouse_handler
-	tst.l	d0			; Abbruch ?
+	tst.l	d0			; exit ?
 	bne.s   beam_routines_exit
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
@@ -912,7 +914,7 @@ horiz_scrolltext
 	lea	hst_characters_image_ptrs(pc),a1
 	move.l	pf1_construction2(a3),a2
 	move.l	(a2),d3
-	add.l	#(hst_text_x_position/8)+(hst_text_y_position*pf1_plane_width*pf1_depth3),d3 ; Y-Zentrierung + 32 Pixel überspringen
+	add.l	#(hst_text_x_position/8)+(hst_text_y_position*pf1_plane_width*pf1_depth3),d3 ; y centering, skip 32 pixel
 	lea	BLTAPT-DMACONR(a6),a2
 	lea	BLTDPT-DMACONR(a6),a4
 	lea	BLTSIZE-DMACONR(a6),a5
@@ -920,44 +922,44 @@ horiz_scrolltext
 	moveq	#hst_text_characters_number-1,d7
 horiz_scrolltext_loop
 	moveq	#0,d0
-	move.w	(a0),d0			; X-Position
+	move.w	(a0),d0			; x
 	move.w	d0,d2		
-	lsr.w	#3,d0			; X/8
-	add.l	d3,d0			; X-Offset
+	lsr.w	#3,d0			; byte offset
+	add.l	d3,d0			; add playfield address
 	WAITBLIT
-	move.l	(a1)+,(a2)		; Character-Image
-	move.l	d0,(a4)			; Playfield
-	move.w	d4,(a5)			; Blitter starten
-	subq.w	#hst_horiz_scroll_speed,d2 ; X-Position verringern
+	move.l	(a1)+,(a2)		; character
+	move.l	d0,(a4)			; playfield write
+	move.w	d4,(a5)			; start blitter operation
+	subq.w	#hst_horiz_scroll_speed,d2 ; decrease x
 	bpl.s	horiz_scrolltext_skip
 	move.l	a0,-(a7)
 	bsr.s	hst_get_new_char_image
-	move.l	d0,-4(a1)		; Neues Bild für Character
-	add.w	d5,d2			; X-Pos Neustart
+	move.l	d0,-4(a1)		; new character
+	add.w	d5,d2			; reset x
 	move.l	(a7)+,a0
 horiz_scrolltext_skip
 	move.w	d2,(a0)+		
 	dbf	d7,horiz_scrolltext_loop
-	move.w	#DMAF_BLITHOG,DMACON-DMACONR(a6) ;BLTPRI aus
+	move.w	#DMAF_BLITHOG,DMACON-DMACONR(a6)
 	movem.l (a7)+,a4-a5
 	rts
 	CNOP 0,4
 horiz_scrolltext_init
 	move.w	#DMAF_BLITHOG+DMAF_SETCLR,DMACON-DMACONR(a6)
 	WAITBLIT
-	move.l	#(BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC)<<16,BLTCON0-DMACONR(a6) ; Minterm D=A
-	moveq	#FALSE,d0
-	move.l	d0,BLTAFWM-DMACONR(a6)	; keine Ausmaskierung
-	move.l	#((hst_image_plane_width-hst_text_char_width)<<16)+(pf1_plane_width-hst_text_char_width),BLTAMOD-DMACONR(a6) ; A-Mod + D-Mod
+	move.l	#(BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC)<<16,BLTCON0-DMACONR(a6) ; minterm D=A
+	moveq	#-1,d0
+	move.l	d0,BLTAFWM-DMACONR(a6)
+	move.l	#((hst_image_plane_width-hst_text_char_width)<<16)+(pf1_plane_width-hst_text_char_width),BLTAMOD-DMACONR(a6) ; A&D moduli
 	rts
 
 
 	CNOP 0,4
 hst_get_text_softscroll
 	moveq	#hst_text_char_x_size-1,d0
-	and.w	(a0),d0			; X-Pos&$f
-	ror.w	#4,d0			; Bits in richtige Position bringen
-	or.w	#BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,d0 ; Minterm D=A
+	and.w	(a0),d0			; x&$f
+	ror.w	#4,d0			; adjust bits
+	or.w	#BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,d0 ; minterm D=A
 	move.w	d0,hst_text_bltcon0_bits(a3) 
 	rts
 
@@ -968,7 +970,7 @@ hst_get_text_softscroll
 ; Input
 ; d0.b	ASCII-Code
 ; Result
-; d0.l	Rückgabewert: Return-Code
+; d0.l	Return-Code
 	CNOP 0,4
 hst_check_control_codes
 	cmp.b	#ASCII_CTRL_S,d0
@@ -985,14 +987,14 @@ hst_stop_horiz_scrolltext
 hst_horiz_scroll
 	move.l	pf1_construction2(a3),a0
 	move.l	(a0),a0
-	add.l	#(hst_text_x_position/8)+(hst_text_y_position*pf1_plane_width*pf1_depth3),a0 ; Y-Zentrierung + 32 Pixel überspringen
+	add.l	#(hst_text_x_position/8)+(hst_text_y_position*pf1_plane_width*pf1_depth3),a0 ; y centering, skip 32 pixel
 	WAITBLIT
 	move.w	hst_text_bltcon0_bits(a3),BLTCON0-DMACONR(a6)
-	move.l	a0,BLTAPT-DMACONR(a6)	; Quelle
-	addq.w	#WORD_SIZE,a0		; 16 Pixel überspringen
-	move.l	a0,BLTDPT-DMACONR(a6)	; Ziel
-	move.l	#((pf1_plane_width-hst_horiz_scroll_window_width)<<16)+(pf1_plane_width-hst_horiz_scroll_window_width),BLTAMOD-DMACONR(a6) ; A-Mod + D-Mod
-	move.w	#(hst_horiz_scroll_blit_y_size*64)+(hst_horiz_scroll_blit_x_size/WORD_BITS),BLTSIZE-DMACONR(a6) ; Blitter starten
+	move.l	a0,BLTAPT-DMACONR(a6)	; source
+	addq.w	#WORD_SIZE,a0		; skip 16 pixel
+	move.l	a0,BLTDPT-DMACONR(a6)	; destination
+	move.l	#((pf1_plane_width-hst_horiz_scroll_window_width)<<16)+(pf1_plane_width-hst_horiz_scroll_window_width),BLTAMOD-DMACONR(a6) ; A&D moduli
+	move.w	#(hst_horiz_scroll_blit_y_size*64)+(hst_horiz_scroll_blit_x_size/WORD_BITS),BLTSIZE-DMACONR(a6)
 	rts
 
 
@@ -1006,27 +1008,27 @@ tb_set_background_bars
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
 	move.w	#tb_bars_number*LONGWORD_SIZE,a3
-	lea	tb_bplcon4_table_background(pc),a5 ; Zeiger auf Tabelle mit BPLAM-Werten
+	lea	tb_sprm_table_background(pc),a5
 	lea	ccf_columns_mask(pc),a6
-	moveq	#cl2_display_width-1,d7	; Anzahl der Spalten
+	moveq	#cl2_display_width-1,d7	; number of columns
 tb_set_background_bars_loop1
-	tst.b	(a6)+			; Spalte darstellen ?
+	tst.b	(a6)+			; display column ?
 	beq.s	tb_set_background_bars_skip1
-	add.l	a3,a0			; Z-Vektor + Y überspringen
+	add.l	a3,a0			; skip z vector and y
 	bra.s	tb_set_background_bars_skip3
 	CNOP 0,4
 tb_set_background_bars_skip1
 	moveq	#tb_bars_number-1,d6
 tb_set_background_bars_loop2
-	move.l	(a0)+,d0		; low word: Y, high word: Z-Vektor
+	move.l	(a0)+,d0		; low word: y, high word: z vector
 	bmi.s	tb_set_background_bars_skip2
-	move.l	a5,a1			; Zeiger auf Tabelle mit BPLAM-Werten
-	lea	(a2,d0.w*4),a4		; Y-Offset
+	move.l	a5,a1			; pointer BPLAM table
+	lea	(a2,d0.w*4),a4		; y offset
 	COPY_TWISTED_BAR.W tb,cl2,extension1,bar_height
 tb_set_background_bars_skip2
 	dbf	d6,tb_set_background_bars_loop2
 tb_set_background_bars_skip3
-	addq.w	#LONGWORD_SIZE,a2	; nächste Spalte in CL
+	addq.w	#LONGWORD_SIZE,a2	; next column in cl
 	dbf	d7,tb_set_background_bars_loop1
 	movem.l (a7)+,a3-a6
 	rts
@@ -1039,27 +1041,27 @@ tb_set_foreground_bars
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
 	move.w	#tb_bars_number*LONGWORD_SIZE,a3
-	lea	tb_bplcon4_table_foreground(pc),a5 ; Zeiger auf Tabelle mit BPLAM-Werten
+	lea	tb_sprm_table_foreground(pc),a5
 	lea	ccf_columns_mask(pc),a6
-	moveq	#cl2_display_width-1,d7 ; Anzahl der Spalten
+	moveq	#cl2_display_width-1,d7 ; number of columns
 tb_set_foreround_bars_loop1
-	tst.b	(a6)+			; Spalte darstellen ?
+	tst.b	(a6)+			; display column ?
 	beq.s	tb_set_foreround_bars_skip1
-	add.l	a3,a0			; Z + Y überspringen
+	add.l	a3,a0			; skip z vector and y
 	bra.s	tb_set_foreround_bars_skip3
 	CNOP 0,4
 tb_set_foreround_bars_skip1
 	moveq	#tb_bars_number-1,d6
 tb_set_foreround_bars_loop2
-	move.l	(a0)+,d0		; low word: Y, high word: Z-Vektor
+	move.l	(a0)+,d0		; low word: y, high word: z vector
 	bpl.s	tb_set_foreround_bars_skip2
-	move.l	a5,a1			; Zeiger auf Tabelle mit BPLAM-Werten
-	lea	(a2,d0.w*4),a4		; Y-Offset
+	move.l	a5,a1			; pointer BPLAM table
+	lea	(a2,d0.w*4),a4		; y offset
 	COPY_TWISTED_BAR.W tb,cl2,extension1,bar_height
 tb_set_foreround_bars_skip2
 	dbf	d6,tb_set_foreround_bars_loop2
 tb_set_foreround_bars_skip3
-	addq.w	#LONGWORD_SIZE,a2	; nächste Spalte in CL
+	addq.w	#LONGWORD_SIZE,a2	; next line in cl
 	dbf	d7,tb_set_foreround_bars_loop1
 	movem.l (a7)+,a3-a6
 	rts
@@ -1071,9 +1073,9 @@ tb313_get_yz_coords
 	tst.w	tb313_active(a3)
 	bne.s	tb313_get_yz_coords_quit
 	moveq	#tb313_y_distance,d3
-	move.w	tb313_y_angle(a3),d4	; 1. Y-Winkel
+	move.w	tb313_y_angle(a3),d4	; 1st y angle
 	move.w	d4,d0		
-	move.w	tb313_y_radius_angle(a3),d5 ; 1. Y-Radius-Winkel
+	move.w	tb313_y_radius_angle(a3),d5 ; 1st y radius angle
 	addq.b	#tb313_y_angle_speed,d0
 	move.w	d0,tb313_y_angle(a3) 
 	move.w	d5,d0
@@ -1083,28 +1085,28 @@ tb313_get_yz_coords
 	lea	tb_yz_coords(pc),a1
 	move.w	#tb313_y_center,a2
 	move.w	#tb313_y_radius_center,a4
-	moveq	#cl2_display_width-1,d7 ; Anzahl der Spalten
+	moveq	#cl2_display_width-1,d7 ; number of columns
 tb313_get_yz_coords_loop1
-	move.w	d4,d2			; Y-Winkel
+	move.w	d4,d2			; y angle
 	moveq	#tb_bars_number-1,d6
 tb313_get_yz_coords_loop2
-	moveq	#-(sine_table_length/4),d1 ; - 90 Grad
 	move.l	(a0,d5.w*4),d0		; sin(w)
-	add.w	d2,d1			; Y-Winkel - 90 Grad
+	moveq	#-(sine_table_length/4),d1 ; - 90°
+	add.w	d2,d1			; y angle - 90°
 	ext.w	d1
-	move.w	d1,(a1)+		; Z-Vektor
+	move.w	d1,(a1)+		; z vector
 	MULUF.L tb313_y_radius*2,d0,d1	; yr'=(yr*sin(w))/2^15
 	swap	d0
-	add.w	a4,d0			; y' + Y-Radius-Mittelpunkt
+	add.w	a4,d0			; y' + y radius center
 	muls.w	2(a0,d2.w*4),d0		; y'=(yr*sin(w))/2^15
 	swap	d0
-	add.w	a2,d0			; y' + Y-Mittelpunkt
-	MULUF.W cl2_extension1_size/4,d0,d1 ; Y-Offset in CL
-	move.w	d0,(a1)+		; Y-Pos.
-	add.b	d3,d2			; Y-Abstand zur nächsten Bar
-	addq.b	#tb313_y_radius_step,d5 ; nächster Y-Radius-Winkel
+	add.w	a2,d0			; y' + y center
+	MULUF.W cl2_extension1_size/4,d0,d1 ; y offset in cl
+	move.w	d0,(a1)+
+	add.b	d3,d2			; y distance to next bar
+	addq.b	#tb313_y_radius_step,d5
 	dbf	d6,tb313_get_yz_coords_loop2
-	addq.b	#tb313_y_angle_step,d4 ; nächster Y-Winkel
+	addq.b	#tb313_y_angle_step,d4
 	dbf	d7,tb313_get_yz_coords_loop1
 tb313_get_yz_coords_quit
 	movem.l (a7)+,a4-a5
@@ -1117,9 +1119,9 @@ tb312_get_yz_coords
 	tst.w	tb312_active(a3)
 	bne.s	tb312_get_yz_coords_quit
 	moveq	#tb312_y_distance,d3
-	move.w	tb312_y_angle(a3),d4	; 1. Y-Winkel
+	move.w	tb312_y_angle(a3),d4	; 1st y angle
 	move.w	d4,d0		
-	move.w	tb312_y_radius_angle(a3),d5 ; 1. Y-Radius-Winkel
+	move.w	tb312_y_radius_angle(a3),d5 ; 1st radius y angle
 	addq.b	#tb312_y_angle_speed,d0
 	move.w	d0,tb312_y_angle(a3) 
 	move.w	d5,d0
@@ -1129,40 +1131,41 @@ tb312_get_yz_coords
 	lea	tb_yz_coords(pc),a1
 	move.w	#tb312_y_center,a2
 	move.w	#tb312_y_radius_center,a4
-	moveq	#cl2_display_width-1,d7	; Anzahl der Spalten
+	moveq	#cl2_display_width-1,d7	; number of columns
 tb312_get_yz_coords_loop1
 	move.l	(a0,d5.w*4),d0		; sin(w)
 	MULUF.L tb312_y_radius*2,d0,d1
-	move.w	d4,d2			; Y-Winkel
+	move.w	d4,d2			; y angle
 	swap	d0
-	add.w	a4,d0			; y' + Y-Radius-Mittelpunkt
+	add.w	a4,d0			; y' + y radius center
 	moveq	#tb_bars_number-1,d6
 tb312_get_yz_coords_loop2
-	moveq	#-(sine_table_length/4),d1 ; - 90 Grad
-	add.w	d2,d1			; Y-Winkel - 90 Grad
+	moveq	#-(sine_table_length/4),d1 ; - 90°
+	add.w	d2,d1			; y center - 90°
 	ext.w	d1
-	move.w	d1,(a1)+		; Z-Vektor
+	move.w	d1,(a1)+		; z vector
 	move.w	2(a0,d2.w*4),d1		; sin(w)
 	muls.w	d0,d1			; y'=(yr*sin(w))/2^15
 	swap	d1
-	add.w	a2,d1			; y' + Y-Mittelpunkt
-	MULUF.W cl2_extension1_size/4,d1,a5 ; Y-Offset in CL
-	move.w	d1,(a1)+		; Y-Pos.
-	add.b	d3,d2			; Y-Abstand zur nächsten Bar
+	add.w	a2,d1			; y' + y center
+	MULUF.W cl2_extension1_size/4,d1,a5 ; y offset in cl
+	move.w	d1,(a1)+
+	add.b	d3,d2			; y distance to next bar
 	dbf	d6,tb312_get_yz_coords_loop2
-	addq.b	#tb312_y_angle_step,d4	; nächster Y-Winkel
-	addq.b	#tb312_y_radius_step,d5	; nächster Y-Radius-Winkel
+	addq.b	#tb312_y_angle_step,d4
+	addq.b	#tb312_y_radius_step,d5
 	dbf	d7,tb312_get_yz_coords_loop1
 tb312_get_yz_coords_quit
 	movem.l (a7)+,a4-a5
 	rts
+
 
 	IFNE tb_quick_clear_enabled
 		RESTORE_BLCON4_CHUNKY_SCREEN tb,cl2,construction2,extension1,32
 	ENDC
 
 
-; Hintergrundbild einblenden
+; Fade in background image
 	CNOP 0,4
 sprite_fader_in
 	movem.l a4-a6,-(a7)
@@ -1170,29 +1173,29 @@ sprite_fader_in
 	bne.s	sprite_fader_in_quit
 	move.w	sprfi_rgb8_fader_angle(a3),d2
 	move.w	d2,d0
-	ADDF.W	sprfi_rgb8_fader_angle_speed,d0 ; nächster Winkel
-	cmp.w	#sine_table_length/2,d0	; Winkel <= 180 Grad ?
+	ADDF.W	sprfi_rgb8_fader_angle_speed,d0
+	cmp.w	#sine_table_length/2,d0	; 180° ?
 	ble.s	sprite_fader_in_skip
-	MOVEF.W sine_table_length/2,d0	; 180 Grad
+	MOVEF.W sine_table_length/2,d0
 sprite_fader_in_skip
 	move.w	d0,sprfi_rgb8_fader_angle(a3) 
-	MOVEF.W sprf_rgb8_colors_number*3,d6 ; RGB-Zähler
+	MOVEF.W sprf_rgb8_colors_number*3,d6 ; RGB counter
 	lea	sine_table(pc),a0	
 	move.l	(a0,d2.w*4),d0		; sin(w)
 	MULUF.L sprfi_rgb8_fader_radius*2,d0,d1 ; y'=(yr*sin(w))/2^15
 	swap	d0
 	ADDF.W	sprfi_rgb8_fader_center,d0
-	lea	spr_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; Puffer für Farbwerte
-	lea	sprfi_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ; Sollwerte
-	move.w	d0,a5			; Additions-/Subtraktionswert für Blau
+	lea	spr_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; pointer colors buffer
+	lea	sprfi_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ; pointer destination colors
+	move.w	d0,a5			; increase/decrease blue
 	swap	d0
 	clr.w	d0
-	move.l	d0,a2			; Additions-/Subtraktionswert für Rot
+	move.l	d0,a2			; increase/decrease red
 	lsr.l	#8,d0
-	move.l	d0,a4			; Additions-/Subtraktionswert für Grün
+	move.l	d0,a4			; increase/decrease green
 	MOVEF.W sprf_rgb8_colors_number-1,d7
 	bsr	sprf_rgb8_fader_loop
-	move.w	d6,sprf_rgb8_colors_counter(a3) ; Fading beendet ?
+	move.w	d6,sprf_rgb8_colors_counter(a3) ; fading in finished ?
 	bne.s	sprite_fader_in_quit
 	move.w	#FALSE,sprfi_rgb8_active(a3)
 sprite_fader_in_quit
@@ -1208,29 +1211,29 @@ sprite_fader_out
 	bne.s	sprite_fader_out_quit
 	move.w	sprfo_rgb8_fader_angle(a3),d2
 	move.w	d2,d0
-	ADDF.W	sprfo_rgb8_fader_angle_speed,d0 ; nächster Winkel
-	cmp.w	#sine_table_length/2,d0 ; Winkel <= 180 Grad ?
+	ADDF.W	sprfo_rgb8_fader_angle_speed,d0
+	cmp.w	#sine_table_length/2,d0 ; 180° ?
 	ble.s	sprite_fader_out_skip
-	MOVEF.W sine_table_length/2,d0	; 180 Grad
+	MOVEF.W sine_table_length/2,d0
 sprite_fader_out_skip
 	move.w	d0,sprfo_rgb8_fader_angle(a3) 
-	MOVEF.W sprf_rgb8_colors_number*3,d6 ; RGB-Zähler
+	MOVEF.W sprf_rgb8_colors_number*3,d6 ; RGB counter
 	lea	sine_table(pc),a0	
 	move.l	(a0,d2.w*4),d0		; sin(w)
 	MULUF.L sprfo_rgb8_fader_radius*2,d0,d1 ; y'=(yr*sin(w))/2^15
 	swap	d0
 	ADDF.W	sprfo_rgb8_fader_center,d0
-	lea	spr_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; Puffer für Farbwerte
-	lea	sprfo_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ; Sollwerte
-	move.w	d0,a5			; Additions-/Subtraktionswert für Blau
+	lea	spr_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; pointer colors buffer
+	lea	sprfo_rgb8_color_table+(sprf_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ; pointer destination colors
+	move.w	d0,a5			; increase/decrease blue
 	swap	d0
 	clr.w	d0
-	move.l	d0,a2			; Additions-/Subtraktionswert für Rot
+	move.l	d0,a2			; increase/decrease red
 	lsr.l	#8,d0
-	move.l	d0,a4			; Additions-/Subtraktionswert für Grün
+	move.l	d0,a4			; increase/decrease green
 	MOVEF.W sprf_rgb8_colors_number-1,d7
 	bsr.s	sprf_rgb8_fader_loop
-	move.w	d6,sprf_rgb8_colors_counter(a3) ; Fading beendet ?
+	move.w	d6,sprf_rgb8_colors_counter(a3) ; fading-out finished ?
 	bne.s	sprite_fader_out_quit
 	move.w	#FALSE,sprfo_rgb8_active(a3)
 sprite_fader_out_quit
@@ -1248,64 +1251,64 @@ sprite_fader_out_quit
 chunky_columns_fader_in
 	tst.w	ccfi_active(a3)
 	bne.s	chunky_columns_fader_in_quit
-	subq.w	#ccfi_delay_speed,ccfi_delay_counter(a3) ; Verzögerungszähler herunterzählen
+	subq.w	#ccfi_delay_speed,ccfi_delay_counter(a3)
 	bne.s	chunky_columns_fader_in_quit
-	move.w	#ccfi_delay,ccfi_delay_counter(a3) ; Verzögerungszähler zurücksetzen
+	move.w	#ccfi_delay,ccfi_delay_counter(a3)
 	move.w	ccfi_start(a3),d1
-	moveq	#cl2_display_width-1,d2 ; Anzahl der Spalten
+	moveq	#cl2_display_width-1,d2 ; number of colors
 	lea	ccf_columns_mask(pc),a0
 	move.w	ccfi_current_mode(a3),d0
 	beq.s	ccfi_fader_mode_1
-	subq.w	#1,d0			; Fader-In-Modus2 ?
+	subq.w	#1,d0			; Fader-In-Mode2 ?
 	beq.s	ccfi_fader_mode_2
-	subq.w	#1,d0			; Fader-In-Modus3 ?
+	subq.w	#1,d0			; Fader-In-Mode3 ?
 	beq.s	ccfi_fader_mode_3
-	subq.w	#1,d0			; Fader-In-Modus4 ?
+	subq.w	#1,d0			; Fader-In-Mode4 ?
 	beq.s	ccfi_fader_mode_4
 chunky_columns_fader_in_quit
 	rts
-; Spalten von links nach rechts einblenden
+; Fade out columns from left to right
 	CNOP 0,4
 ccfi_fader_mode_1
-	clr.b	(a0,d1.w)		; Spaltenstatus: einblenden
-	addq.w	#BYTE_SIZE,d1		; nächste Spalte
-	cmp.w	d2,d1			; Alle Spalten eingeblendet ?
+	clr.b	(a0,d1.w)		; state: fade in
+	addq.w	#BYTE_SIZE,d1		; next column
+	cmp.w	d2,d1			; finished ?
 	bgt.s	ccfi_fader_mode_skip
 	move.w	d1,ccfi_start(a3)
 	rts
-; Spalten von rechts nach links einblenden
+; Fade out columns from right to left
 	CNOP 0,4
 ccfi_fader_mode_2
-	move.w	d1,d0			; Startwert
+	move.w	d1,d0			; start
 	neg.w	d0
-	addq.w	#BYTE_SIZE,d1		; nächste Spalte
-	clr.b	cl2_display_width-1(a0,d0.w) ; Spaltenstatus: einblenden
-	cmp.w	d2,d1			; Alle Spalten eingeblendet ?
+	addq.w	#BYTE_SIZE,d1		; next column
+	clr.b	cl2_display_width-1(a0,d0.w) ; state: fade in
+	cmp.w	d2,d1			; finished ?
 	bgt.s	ccfi_fader_mode_skip
 	move.w	d1,ccfi_start(a3)
 	rts
-; Spalten gleichzeitig von links und rechts zur Mitte hin einblenden
+; Fade in columns from left and right to the center
 	CNOP 0,4
 ccfi_fader_mode_3
-	clr.b	(a0,d1.w)		; Spaltenstatus: einblenden
-	move.w	d1,d0			; Startwert
+	clr.b	(a0,d1.w)		; state: fade in
+	move.w	d1,d0			; start
 	neg.w	d0
-	addq.w	#BYTE_SIZE,d1		; nächste Spalte
-	lsr.w	#1,d2			; Hälfte der Spalten = Mittelpunkt
-	clr.b	cl2_display_width-1(a0,d0.w) ; Spaltenstatus: einblenden
-	cmp.w	d2,d1			; Alle Spalten eingeblendet ?
+	addq.w	#BYTE_SIZE,d1		; next column
+	lsr.w	#1,d2			; center in table
+	clr.b	cl2_display_width-1(a0,d0.w) ; state: fade in
+	cmp.w	d2,d1			; finished ?
 	bgt.s	ccfi_fader_mode_skip
 	move.w	d1,ccfi_start(a3)
 	rts
-; Jede 2. Spalte gleichzeitig von links und rechts einblenden
+; Fade in every 2nd column from left and right
 	CNOP 0,4
 ccfi_fader_mode_4
-	clr.b	(a0,d1.w)		; Spaltenstatus: einblenden
-	move.w	d1,d0			; Startwert
+	clr.b	(a0,d1.w)		; state: fade in
+	move.w	d1,d0			; start
 	neg.w	d0
-	addq.w	#WORD_SIZE,d1		; übernächste Spalte
-	clr.b	cl2_display_width-1(a0,d0.w) ; Spaltenstatus: einblenden
-	cmp.w	d2,d1			; Alle Spalten eingeblendet ?
+	addq.w	#WORD_SIZE,d1		; column after next
+	clr.b	cl2_display_width-1(a0,d0.w) ; state: fade in
+	cmp.w	d2,d1			; finished ?
 	bgt.s	ccfi_fader_mode_skip
 	move.w	d1,ccfi_start(a3)
 	rts
@@ -1319,64 +1322,64 @@ ccfi_fader_mode_skip
 chunky_columns_fader_out
 	tst.w	ccfo_active(a3)
 	bne.s	chunky_columns_fader_out_quit
-	subq.w	#ccfo_delay_speed,ccfo_delay_counter(a3) ; Verzögerungszähler herunterzählen
+	subq.w	#ccfo_delay_speed,ccfo_delay_counter(a3)
 	bne.s	chunky_columns_fader_out_quit
-	move.w	#ccfo_delay,ccfo_delay_counter(a3) ; Verzögerungszähler zurücksetzen
+	move.w	#ccfo_delay,ccfo_delay_counter(a3)
 	move.w	ccfo_start(a3),d1
-	moveq	#cl2_display_width-1,d2 ; Anzahl der Spalten
+	moveq	#cl2_display_width-1,d2 ; number of columns
 	lea	ccf_columns_mask(pc),a0
 	move.w	ccfo_current_mode(a3),d0
 	beq.s	ccfo_fader_mode_1
-	subq.w	#1,d0			; Fader-Out-Modus2 ?
+	subq.w	#1,d0			; Fader-Out-Mode2 ?
 	beq.s	ccfo_fader_mode_2
-	subq.w	#1,d0			; Fader-Out-Modus3 ?
+	subq.w	#1,d0			; Fader-Out-Mode3 ?
 	beq.s	ccfo_fader_mode_3
-	subq.w	#1,d0			; Fader-Out-Modus4 ?
+	subq.w	#1,d0			; Fader-Out-Mode4 ?
 	beq.s	ccfo_fader_mode_4
 chunky_columns_fader_out_quit
 	rts
-; Spalten von links nach rechts ausblenden
+; Fade out columns from left to right
 	CNOP 0,4
 ccfo_fader_mode_1
-	move.b	#FALSE,(a0,d1.w)	; Spaltenstatus: ausblenden
-	addq.w	#BYTE_SIZE,d1		; nächste Spalte
-	cmp.w	d2,d1			; Alle Spalten ausgeblendet ?
+	move.b	#FALSE,(a0,d1.w)	; state: fade out
+	addq.w	#BYTE_SIZE,d1		; next column
+	cmp.w	d2,d1			; finished ?
 	bgt.s	ccfo_fader_mode_skip
 	move.w	d1,ccfo_start(a3)
 	rts
-; Spalten von rechts nach links ausblenden
+; Fade out columns from right to left
 	CNOP 0,4
 ccfo_fader_mode_2
-	move.w	d1,d0			; Startwert
+	move.w	d1,d0			; start
 	neg.w	d0
-	addq.w	#BYTE_SIZE,d1		; nächste Spalte
-	move.b	#FALSE,cl2_display_width-1(a0,d0.w) ; Spaltenstatus: ausblenden
-	cmp.w	d2,d1			; Alle Spalten ausgeblendet ?
+	addq.w	#BYTE_SIZE,d1		; next column
+	move.b	#FALSE,cl2_display_width-1(a0,d0.w) ; state: fade out
+	cmp.w	d2,d1			; finished ?
 	bgt.s	ccfo_fader_mode_skip
 	move.w	d1,ccfo_start(a3)
 	rts
-; Spalten gleichzeitig von links und rechts zur Mitte hin ausblenden
+; Fade out columns from left and right to center
 	CNOP 0,4
 ccfo_fader_mode_3
-	move.b	#FALSE,(a0,d1.w)	; Spaltenstatus: ausblenden
-	move.w	d1,d0			; Startwert
+	move.b	#FALSE,(a0,d1.w)	; state: fade out
+	move.w	d1,d0			; start
 	neg.w	d0
-	addq.w	#BYTE_SIZE,d1		; nächste Spalte
-	lsr.w	#1,d2			; Hälfte der Spalten = Mittelpunkt
-	move.b	#FALSE,cl2_display_width-1(a0,d0.w) ; Spaltenstatus: ausblenden
-	cmp.w	d2,d1			; Alle Spalten ausgeblendet ?
+	addq.w	#BYTE_SIZE,d1		; next column
+	lsr.w	#1,d2			; center in table
+	move.b	#FALSE,cl2_display_width-1(a0,d0.w) ; state: fade out
+	cmp.w	d2,d1			; finished ?
 	bgt.s	ccfo_fader_mode_skip
 	move.w	d1,ccfo_start(a3)
 	rts
-; Jede 2. Spalte gleichzeitig von links und rechts ausblenden
+; Fade out every 2nd column from left and right
 	CNOP 0,4
 ccfo_fader_mode_4
-	move.b	#FALSE,(a0,d1.w)	; Spaltenstatus: ausblenden
-	move.w	d1,d0			; Startwert
+	move.b	#FALSE,(a0,d1.w)	; state: fade out
+	move.w	d1,d0			; start
 	neg.w	d0
-	addq.w	#WORD_SIZE,d1		; übernächste Spalte
-	move.b	#FALSE,cl2_display_width-1(a0,d0.w) ; Spaltenstatus: ausblenden
-	cmp.w	d2,d1			; Alle Spalten ausgeblendet ?
+	addq.w	#WORD_SIZE,d1		; column after next
+	move.b	#FALSE,cl2_display_width-1(a0,d0.w) ; state: fade out
+	cmp.w	d2,d1			; finished ?
 	bgt.s	ccfo_fader_mode_skip
 	move.w	d1,ccfo_start(a3)
 	rts
@@ -1425,7 +1428,7 @@ eh_start_sprite_fader_in
 eh_start_twisted_bars313
 	clr.w	tb313_active(a3)
 	clr.w	ccfi_active(a3)
-	move.w	#1,ccfi_delay_counter(a3) ; Verzögerungszähler aktivieren
+	move.w	#1,ccfi_delay_counter(a3) ; activate counter
 	rts
 	CNOP 0,4
 eh_start_horiz_scrolltext
@@ -1434,7 +1437,7 @@ eh_start_horiz_scrolltext
 	CNOP 0,4
 eh_stop_twisted_bars313
 	clr.w	ccfo_active(a3)
-	move.w	#1,ccfo_delay_counter(a3) ; Verzögerungszähler aktivieren
+	move.w	#1,ccfo_delay_counter(a3) ; activate counter
 	rts
 	CNOP 0,4
 eh_start_twisted_bars312
@@ -1442,13 +1445,13 @@ eh_start_twisted_bars312
 	clr.w	tb312_active(a3)
 	clr.w	ccfi_start(a3)
 	clr.w	ccfi_active(a3)
-	move.w	#1,ccfi_delay_counter(a3) ; Verzögerungszähler aktivieren
+	move.w	#1,ccfi_delay_counter(a3) ; activate counter
 	rts
 	CNOP 0,4
 eh_stop_twisted_bars312
 	clr.w	ccfo_start(a3)
 	clr.w	ccfo_active(a3)
-	move.w	#1,ccfo_delay_counter(a3) ; Verzögerungszähler aktivieren
+	move.w	#1,ccfo_delay_counter(a3) ; activate counter
 	rts
 	CNOP 0,4
 eh_start_sprite_fader_out
@@ -1504,12 +1507,12 @@ tb_color_table
 
 
 	CNOP 0,4
-tb_bplcon4_table_background
+tb_sprm_table_background
 	DC.W $0022,$0033,$0044,$0055,$0066,$0077,$0088,$0099,$00aa,$00bb,$00cc,$00dd,$00ee,$00ff
 
 
 	CNOP 0,4
-tb_bplcon4_table_foreground
+tb_sprm_table_foreground
 	DC.W $2022,$3033,$4044,$5055,$6066,$7077,$8088,$9099,$a0aa,$b0bb,$c0cc,$d0dd,$e0ee,$f0ff
 
 
@@ -1583,14 +1586,14 @@ hst_stop_text
 	EVEN
 
 
-; Grafikdaten nachladen
+; Gfx data
 
 ; Background-Image
-bg_image_data SECTION bg_gfx,DATA
+bg_image_data			SECTION bg_gfx,DATA
 	INCBIN "RasterMaster:graphics/256x256x16-Nebula.rawblit"
 
 ; Horiz-Scrolltext
-hst_image_data SECTION hst_gfx,DATA_C
+hst_image_data			SECTION hst_gfx,DATA_C
 	INCBIN "RasterMaster:fonts/32x32x16-Font.rawblit"
 
 	END

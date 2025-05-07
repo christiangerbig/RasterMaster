@@ -7,80 +7,77 @@
 ; History/Changes
 
 ; V.1.0 Beta
-; - Erstes Release
+; - first release
 
 ; V.1.1 Beta
-; - Credits-Part: Logo scrollt jetzt von der linken Seite ein.
-;   Text geändert.
+; - Credits part: logo now scrolls in from left
+;   text changed
 
 ; V1.2 Beta
-; - Main: Hintergrundfarbe ist nun global
-; - Credits-Part: Text geändert
-; - Title-Part: Grass´wip-Logo eingefügt
+; - Main: background color now global
+; - Credits-Part: text changed
+; - Title-Part: Grass´wip logo included
 
 ; V.1.3 Beta
-; - Title-Part: Grass' Logo und Title-Screen eingefügt.
-;   Image-Fader nur mit 127 Farben.
-; - Teil 3-Twisted-Bars überarbeitet und den neuen Teil 04-twisted-colorcycle-bars
-;   eingefügt.
-; - Credits-Part: Text geändert und Grass' Logo eingefügt.
-;   Image-Fader nur mit 127 Farben.
-; - Alle FX-Paletten an Title-Screen angepasst.
+; - Title-Part: Grass' logo and title screen included
+;   Image fader only with 127 colors
+; - Part 3-Twisted-Bars revised and the new part 04-twisted-colorcycle-bars
+;   included
+; - All FX palettes now match the title screen palette
 
 ; V.1.4 Beta
-; - Intro-Part: Overscan DIW-Werte korrigiert.
-; - Credits-Part: Grass' Font eingefügt.
-;                 Text geändert.
-;                 Overscan DIW-Werte korrigiert. Sprites werden jetzt am linken
-;                 Rand korrekt dargestellt
-; - Erneut alle FX-Paletten an Title-Screen angepasst.
+; - Intro-Part: Overscan DIW values corrected
+; - Credits-Part: Grass' font included
+;                 text changed
+;                 Overscan DIW values corrected. Sprites now displayed properly
+;                 at left border
+; - Again all FX palettes now match the title screen palette
 
 ; V.1.5 Beta
-; - Twisted-Colorcycle-Bars: Vertikale Farbverläufe werden nun nicht mehr berechnet,
-;                            sondern es wird eine Tabelle eingelesen
-; - Twisted-Space-Bars: Grass' Hintergrund hinzugefügt
+; - Twisted-Colorcycle-Bars: vertical color gradient now from a loaded table
+; - Twisted-Space-Bars: Grass' background image included
 
 ; V.1.6 Beta
-; - Twisted-Space-Bars: Grass' Font hinzugefügt und sie Farben der Bars angepasst.
+; - Twisted-Space-Bars: Grass' font included and bar colors adapted
 
 ; V.1.7 Beta
-; - Twisted-Space-Bars: Columns-Fader verbessert.
-; - Credits: Grass´Font hinzugefügt. Columns-Fader verbessert.
+; - Twisted-Space-Bars: Colums fader improved
+; - Credits: Grass´ font included and columns fader improved
 
 ; V.1.8 Beta
 ; - Vert-Starscrolling: Grass' Logo hinzugefügt.
 
 ; V.1.9 Beta
-; - WB-Icon hinzugefügt und WB-Start+WB-Fader aktiviert
+; - WB icon included and WB start and WB fader ativated
 
 ; V.1.0
-; - Bootable-Disk
+; - Bootable disk created
 
 ; V.1.1
-; - Bei allen Image-Fadern entfällt der Color-Cache
+; - All image faders now without color cache
 
 ; V.1.2
-; - Twisted-Bars: Bugfix, die Höhe des Clear-Blts war zu gering.
+; - Twisted-Bars: Bugfix, height of clear blit was not correct
 
 ; V.1.3
-; - Code komplett umgestellt und normiert
-; - Mouse-Handler für Fast-Exit ausgelagert
+; - code revised
+; - mouse handler exported for fast exit
 
 ; V.1.4 (finale Version)
-; - Code optimiert
-; - Disk-Icon mit NO_POSITION versehen
-; - Demo-Icon mit NO_POSITION versehen und Credits ergänzt
+; - Code optimized
+; - Disk icon with NO_POSITION
+; - Demo icon with NO_POSITION and credits included
 
 ; V.1.5
-; - Image-Fader optimiert
+; - image fader optimized
 
-; V.1.6 (auf A1200/060 mit Indivision wird Logo unregelmäßig mit falschen Farben dargestellt)
-; - Überarbeitete includes eingebunden
-; - Space-Bars: Chunky-Columns-Fader wird anstatt Pattern-Position 50 schon ab Pattern-
-;               Position 48 getriggert, da sonst keine 50 FPS mit parallel
-;               laufendem Sprite-Fader
-;               Beam-Position $133 anstatt $136
-; - Die Nop-Copperliste2 wird einmal im Main-Teil generiert und exportiert.
+; V.1.6 (A1200/060 with Indivision: Logo sometimes displayed with wrong colors)
+; - compiled with new includes
+; - Space-Bars: Chunky columns fader now triggered not at patternjposition 50
+;               alreday at pattern position 48, because otherwise 50 FPS are not
+;               guaranteed
+;               Beamp osition $133 changed to $136
+; - Nop copperliste2 is initialized only once in the main part and exported
 
 
 	MC68040
@@ -344,7 +341,9 @@ init_first_copperlist
 	COP_LISTEND
 	rts
 
+
 	COP_INIT_PLAYFIELD_REGISTERS cl1,BLANK
+
 
 	COP_INIT_COPINT cl1,cl1_HSTART,cl1_VSTART,YWRAP
 
@@ -361,7 +360,7 @@ init_second_copperlist
 	CNOP 0,4
 main
 	bsr	start_0_pt_replay
-	tst.l	d0			; Ist ein Fehler aufgetreten ?
+	tst.l	d0			; any error ?
 	bne.s	main_quit
 	jmp	start_1_pt_replay
 	CNOP 0,4

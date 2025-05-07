@@ -420,13 +420,12 @@ init_main_variables
 	move.w	d1,bcc512_active(a3)
 	moveq	#0,d0
 	move.w	d0,bcc512_bplam_table_start(a3)
-	moveq	#sine_table_length/4,d2
-	move.w	d2,bcc512_step3_angle(a3)
+	move.w	#sine_table_length/4,bcc512_step3_angle(a3) ; 90°
 
 ; Blind-Colorcycle5.1.4
 	move.w	d1,bcc514_active(a3)
 	move.w	d0,bcc514_bplam_table_start(a3)
-	move.w	d0,bcc514_step2_angle(a3)
+	move.w	d0,bcc514_step2_angle(a3) ; 0 °
 
 ; Blind-Fader
 	IFEQ open_border_enabled
@@ -548,7 +547,7 @@ beam_routines
 		bsr	blind_fader_out
 	ENDC
 	jsr	mouse_handler
-	tst.l	d0			; Abbruch ?
+	tst.l	d0			; exit ?
 	bne.s	beam_routines_exit
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
@@ -568,7 +567,7 @@ blind_colorcycle512
 	bne	blind_colorcycle512_quit
 	move.w	bcc512_step3_angle(a3),d1
 	move.w	d1,d0		
-	addq.b	#bcc512_step3_angle_speed,d0 ; nächster Winkel
+	addq.b	#bcc512_step3_angle_speed,d0
 	move.w	d0,bcc512_step3_angle(a3)
 	lea	sine_table,a0	
 	move.l	(a0,d1.w*4),d4		; cos(w)
@@ -580,70 +579,70 @@ blind_colorcycle512
 	IFEQ bcc512_bplam_table_length_256
 		addq.b	#bcc512_speed,d0
 	ELSE
-		MOVEF.W bcc512_bplam_table_size-1,d7
-		addq.w	#bcc512_speed,d0 ; Startwert erhöhen
-		and.w	d7,d0		; Überlauf entfernen
+		MOVEF.W bcc512_bplam_table_size-1,d7 ; overflow
+		addq.w	#bcc512_speed,d0 ; increase table start
+		and.w	d7,d0		; remove overflow
 	ENDC
 	move.w	d0,bcc512_bplam_table_start(a3) 
-	move.l	extra_memory(a3),a0	; Tabelle mit BPLAM-Werten
+	move.l	extra_memory(a3),a0	; BPLAM table
 	move.l	cl2_construction2(a3),a1 
-	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ; 2. Quadrant
-	lea	LONGWORD_SIZE(a1),a2	; 1. Quadrant
+	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ; 2nd quadrant
+	lea	LONGWORD_SIZE(a1),a2	; 1st quadrant
 	move.w	#(cl2_extension1_size*(bcc512_lamellas_number/2)*bcc512_lamella_height)-LONGWORD_SIZE,a3
-	lea	cl2_extension1_size(a1),a4	; 3. Quadrant
-	lea	cl2_extension1_size(a2),a5	; 4. Quadrant
+	lea	cl2_extension1_size(a1),a4 ; 3rd quadrant
+	lea	cl2_extension1_size(a2),a5 ; 4th quadrant
 	move.w	#cl2_extension1_size,a6
 	move.w	#(cl2_extension1_size*(bcc512_lamellas_number/2)*bcc512_lamella_height)+4,a7
 	IFEQ bcc512_bplam_table_length_256
-		moveq	#(cl2_display_width/2)-1,d7 ; Anzahl der Spalten
+		moveq	#(cl2_display_width/2)-1,d7 ; number of columns
 	ELSE
-		swap	d7
-		move.w	#(cl2_display_width/2)-1,d7 ; Anzahl der Spalten
+		swap	d7		; high longword: overflow
+		move.w	#(cl2_display_width/2)-1,d7 ; low longword: number of columns
 	ENDC
 blind_colorcycle512_loop1
-	move.w	d3,d2			; Startwert
+	move.w	d3,d2			; table start
 	IFNE bcc512_bplam_table_length_256
 		swap	d7
 	ENDC
-	moveq	#(bcc512_lamellas_number/2)-1,d6 ; Anzahl der Lamellen
+	moveq	#(bcc512_lamellas_number/2)-1,d6
 blind_colorcycle512_loop2
-	move.w	d2,d1			; Startwert
-	moveq	#bcc512_lamella_height-1,d5 ; Höhe einer Lamelle
+	move.w	d2,d1			; table start
+	moveq	#bcc512_lamella_height-1,d5
 blind_colorcycle512_loop3
-	move.b	(a0,d1.w),d0		; BPLAM-Wert aus Tabelle
+	move.b	(a0,d1.w),d0		; BPLAM
 	move.b	d0,(a1)			; BPLCON4 high
-	sub.l	a6,a1			; 2. Quadrant vorletzte Zeile in CL
+	sub.l	a6,a1			; 2nd quadrant penultimate line in cl
 	move.b	d0,(a2)			; BPLCON4 high
-	sub.l	a6,a2			; 1. Quadrant vorletzte Zeile in CL
+	sub.l	a6,a2			; 1st quadrant penultimate line in cl
 	move.b	d0,(a4)			; BPLCON4 high
-	add.l	a6,a4			; 3. Quadrant nächste Zeile in CL
+	add.l	a6,a4			; 3rd quadrant next line in cl
 	move.b	d0,(a5)			; BPLCON4 high
 	IFEQ bcc512_bplam_table_length_256
-		subq.b	#bcc512_step1,d1 ; nächster Wert aus Tabelle
+		subq.b	#bcc512_step1,d1 ; next entry
 	ELSE
-		subq.w	#bcc512_step1,d1 ; nächster Wert aus Tabelle
-		and.w	d7,d1		; Überlauf entfernen
+		subq.w	#bcc512_step1,d1 ; next entry
+		and.w	d7,d1		; remove overflow
 	ENDC
-	add.l	a6,a5			; 4. Quadrant nächste Zeile in CL
+	add.l	a6,a5			; 4th quadrant next line in cl
 	dbf	d5,blind_colorcycle512_loop3
 	IFEQ bcc512_bplam_table_length_256
-		subq.b	#bcc512_step2,d2 ; nächster Wert aus Tabelle
+		subq.b	#bcc512_step2,d2 ; next entry
 	ELSE
-		subq.w	#bcc512_step2,d2 ; nächster Wert aus Tabelle
-		and.w	d7,d2		; Überlauf entfernen
+		subq.w	#bcc512_step2,d2 ; next entry
+		and.w	d7,d2		; remove overflow
 	ENDC
 	dbf	d6,blind_colorcycle512_loop2
 	IFEQ bcc512_bplam_table_length_256
-		sub.b	d4,d3		; nächster Wert aus Tabelle
+		sub.b	d4,d3		; next entry
 	ELSE
-		sub.w	d4,d3		; nächster Wert aus Tabelle
-		and.w	d7,d3		; Überlauf entfernen
+		sub.w	d4,d3		; next entry
+		and.w	d7,d3		; remove overflow
 		swap	d7
 	ENDC
-	add.l	a3,a1			; 2. Quadrant vorletzte Spalte
-	add.l	a7,a2			; 1. Quadrant nächste Spalte
-	sub.l	a7,a4			; 3. Quadrant vorletzte Spalte
-	sub.l	a3,a5			; 4. Quadrant nächste Spalte
+	add.l	a3,a1			; 2nd quadrant penultimate column
+	add.l	a7,a2			; 1st quadrant next column
+	sub.l	a7,a4			; 3rd quadrant penultimate column
+	sub.l	a3,a5			; 4th quadrant next column
 	dbf	d7,blind_colorcycle512_loop1
 blind_colorcycle512_quit
 	move.l	variables+save_a7(pc),a7
@@ -666,57 +665,57 @@ blind_colorcycle514
 	IFEQ bcc514_bplam_table_length_256
 		addq.b	#bcc514_speed,d0
 	ELSE
-		MOVEF.W bcc514_bplam_table_size-1,d7
-		addq.w	#bcc514_speed,d0 ; Startwert erhöhen
-		and.w	d7,d0		; Überlauf entfernen
+		MOVEF.W bcc514_bplam_table_size-1,d7 ; overflow
+		addq.w	#bcc514_speed,d0 ; increase table start
+		and.w	d7,d0		; remove overflow
 	ENDC
 	move.w	d0,bcc514_bplam_table_start(a3) 
-	move.l	extra_memory(a3),a0	; Tabelle mit BPLAM-Werten
+	move.l	extra_memory(a3),a0	; BPLAM table
 	move.l	cl2_construction2(a3),a1 
-	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ; 2. Quadrant
-	lea	LONGWORD_SIZE(a1),a2	; 1. Quadrant
+	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ; 2nd quadrant
+	lea	LONGWORD_SIZE(a1),a2	; 1st quadrant
 	lea	sine_table,a3
-	lea	cl2_extension1_size(a1),a4 ; 3. Quadrant
-	lea	cl2_extension1_size(a2),a5 ; 4. Quadrant
+	lea	cl2_extension1_size(a1),a4 ; 3rd quadrant
+	lea	cl2_extension1_size(a2),a5 ; 4th quadrant
 	move.w	#cl2_extension1_size,a6
 	move.w	#(cl2_extension1_size*(bcc514_lamellas_number/2)*bcc514_lamella_height)+4,a7
 	IFEQ bcc514_bplam_table_length_256
-		moveq	#(cl2_display_width/2)-1,d7 ; Anzahl der Spalten
+		moveq	#(cl2_display_width/2)-1,d7 ; number of columns
 	ELSE
 		swap	d7
-		move.w	#(cl2_display_width/2)-1,d7 ; Anzahl der Spalten
+		move.w	#(cl2_display_width/2)-1,d7 ; number of columns
 	ENDC
 blind_colorcycle514_loop1
-	move.w	d3,d2			; Startwert
+	move.w	d3,d2			; table start
 	IFNE bcc514_bplam_table_length_256
 		swap d7
 	ENDC
-	moveq	#(bcc514_lamellas_number/2)-1,d6 ; Anzahl der Lamellen
+	moveq	#(bcc514_lamellas_number/2)-1,d6
 blind_colorcycle514_loop2
-	move.w	d2,d1			; Startwert
+	move.w	d2,d1			; table start
 	moveq	#bcc514_lamella_height-1,d5
 blind_colorcycle514_loop3
 	move.b	(a0,d1.w),d0		; BPLAM-Wert
 	move.b	d0,(a1)			; BPLCON4 high
-	sub.l	a6,a1			; 2. Quadrant vorletzte Zeile in CL
+	sub.l	a6,a1			; 2nd quadrant penultimate line in CL
 	move.b	d0,(a2)			; BPLCON4 high
-	sub.l	a6,a2			; 1. Quadrant vorletzte Zeile in CL
+	sub.l	a6,a2			; 1st quadrant penultimate line in CL
 	move.b	d0,(a4)			; BPLCON4 high
-	add.l	a6,a4			; 3. Quadrant nächste Zeile in CL
+	add.l	a6,a4			; 3rd quadrant next line in cl
 	move.b	d0,(a5)			; BPLCON4 high
 	IFEQ bcc514_bplam_table_length_256
-		subq.b	#bcc514_step1,d1 ; nächster Wert aus Tabelle
+		subq.b	#bcc514_step1,d1 ; next entry
 	ELSE
-		subq.w	#bcc514_step1,d1 ; nächster Wert aus Tabelle
-		and.w	d7,d1		; Überlauf entfernen
+		subq.w	#bcc514_step1,d1 ; next entry
+		and.w	d7,d1		; remove overflow
 	ENDC
-	add.l	a6,a5			; 4. Quadrant nächste Zeile in CL
+	add.l	a6,a5			; 4th quadrant next line in cl
 	dbf	d5,blind_colorcycle514_loop3
 	IFEQ bcc514_bplam_table_length_256
-		subq.b	#bcc514_step1,d2 ; nächster Wert aus Tabelle
+		subq.b	#bcc514_step1,d2 ; next entry
 	ELSE
-		subq.w	#bcc514_step1,d2 ; nächster Wert aus Tabelle
-		and.w	d7,d2		; Überlauf entfernen
+		subq.w	#bcc514_step1,d2 ; next entry
+		and.w	d7,d2		; remove overflow
 	ENDC
 	dbf	d6,blind_colorcycle514_loop2
 	move.l	(a3,d4.w*4),d0
@@ -725,16 +724,16 @@ blind_colorcycle514_loop3
 	addq.b	#bcc514_step2_angle_step,d4
 	add.w	#bcc514_step2_center,d0
 	IFEQ bcc514_bplam_table_length_256
-		sub.b	d0,d3		; nächster Wert aus Tabelle
+		sub.b	d0,d3		; next entry
 	ELSE
-		sub.w	d0,d3		; nächster Wert aus Tabelle
-		and.w	d7,d3		; Überlauf entfernen
+		sub.w	d0,d3		; next entry
+		and.w	d7,d3		; remove overflow
 		swap	d7
 	ENDC
-	ADDF.W	(cl2_extension1_size*(bcc514_lamellas_number/2)*bcc514_lamella_height)-LONGWORD_SIZE,a1 ;2. Quadrant vorletzte Spalte
-	add.l	a7,a2		;1. Quadrant nächste Spalte
-	sub.l	a7,a4		;3. Quadrant vorletzte Spalte
-	SUBF.W	(cl2_extension1_size*(bcc514_lamellas_number/2)*bcc514_lamella_height)-LONGWORD_SIZE,a5 ;4. Quadrant nächste Spalte
+	ADDF.W	(cl2_extension1_size*(bcc514_lamellas_number/2)*bcc514_lamella_height)-LONGWORD_SIZE,a1 ; 2nd quadrant penultimate column
+	add.l	a7,a2		; 1st quadrant next column
+	sub.l	a7,a4		; 3rd quadrant penultimate column
+	SUBF.W	(cl2_extension1_size*(bcc514_lamellas_number/2)*bcc514_lamella_height)-LONGWORD_SIZE,a5 ; 4th quadrant next column
 	dbf	d7,blind_colorcycle514_loop1
 blind_colorcycle514_quit
 	move.l	variables+save_a7(pc),a7
@@ -750,15 +749,15 @@ blind_fader_in
 		bne.s	blind_fader_in_quit
 		move.w	bf_registers_table_start(a3),d2
 		move.w	d2,d0
-		addq.w	#bf_speed,d0	; Startwert der Tabelle erhöhen
-		cmp.w	#bf_registers_table_length/2,d0 ; Ende der Tabelle erreicht ?
+		addq.w	#bf_speed,d0	; increase table start
+		cmp.w	#bf_registers_table_length/2,d0 ; end of table ?
 		ble.s	blind_fader_in_skip1
 		move.w	#FALSE,bfi_active(a3)
 blind_fader_in_skip1
 		move.w	d0,bf_registers_table_start(a3)
 		MOVEF.W bf_registers_table_length,d3
 		MOVEF.W cl2_extension1_size,d4
-		lea	bf_registers_table(pc),a0 ; Tabelle mit Registeradressen
+		lea	bf_registers_table(pc),a0
 		IFNE cl2_size1
 			move.l	cl2_construction1(a3),a1
 			ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a1
@@ -771,30 +770,30 @@ blind_fader_in_skip1
 		ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a4
 		moveq	#bf_lamellas_number-1,d7
 blind_fader_in_loop1
-		move.w	d2,d1		; Startwert
+		move.w	d2,d1		; table start
 		moveq	#bf_lamella_height-1,d6
 blind_fader_in_loop2
-		move.w	(a0,d1.w*2),d0	; Registeradresse
+		move.w	(a0,d1.w*2),d0	; register address
 		IFNE cl2_size1
 			move.w	d0,(a1)
-			add.l	d4,a1	; nächste Zeile in CL
+			add.l	d4,a1	; next line in cl
 		ENDC
 		IFNE cl2_size2
 			move.w	d0,(a2)
-			add.l	d4,a2	; nächste Zeile in CL
+			add.l	d4,a2	; next line in cl
 		ENDC
 		move.w	d0,(a4)
-		addq.w	#bf_step1,d1	; nächster Eintrag in Tabelle
-		add.l	d4,a4		; nächste Zeile in CL
-		cmp.w	d3,d1		; Ende der Tabelle erreicht ?
+		addq.w	#bf_step1,d1	; next entry
+		add.l	d4,a4		; next line in cl
+		cmp.w	d3,d1		; end of table ?
 		blt.s	blind_fader_in_skip2
-		sub.w	d3,d1		; Neustart
+		sub.w	d3,d1		; reset table start
 blind_fader_in_skip2
 		dbf	d6,blind_fader_in_loop2
-		addq.w	#bf_step2,d2	; Startwert erhöhen
-		cmp.w	d3,d2		; Ende der Tabelle erreicht ?
+		addq.w	#bf_step2,d2	; increase table start
+		cmp.w	d3,d2		; end of table ?
 		blt.s	blind_fader_in_skip3
-		sub.w	d3,d2		; Neustart
+		sub.w	d3,d2		; reset table start
 blind_fader_in_skip3
 		dbf	d7,blind_fader_in_loop1
 blind_fader_in_quit
@@ -809,7 +808,7 @@ blind_fader_out
 		bne.s	blind_fader_out_quit
 		move.w	bf_registers_table_start(a3),d2
 		move.w	d2,d0
-		subq.w	#bf_speed,d0	; Startwert der Tabelle verringern
+		subq.w	#bf_speed,d0	; decrease table start
 		bpl.s	blind_fader_out_skip1
 		move.w	#FALSE,bfo_active(a3)
 blind_fader_out_skip1
@@ -817,7 +816,7 @@ blind_fader_out_skip1
 		MOVEF.W bf_registers_table_length,d3
 		MOVEF.W cl2_extension1_size,d4
 		moveq	#bf_step2,d5
-		lea	bf_registers_table(pc),a0 ; Tabelle mit Registeradressen
+		lea	bf_registers_table(pc),a0
 		IFNE cl2_size1
 			move.l	cl2_construction1(a3),a1
 			ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a1
@@ -830,30 +829,30 @@ blind_fader_out_skip1
 		ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a4
 		moveq	#bf_lamellas_number-1,d7
 blind_fader_out_loop1
-		move.w	d2,d1		; Startwert
+		move.w	d2,d1		; table start
 		moveq	#bf_lamella_height-1,d6
 blind_fader_out_loop2
-		move.w	(a0,d1.w*2),d0	; Registeradresse
+		move.w	(a0,d1.w*2),d0	; register address
 		IFNE cl2_size1
 			move.w	d0,(a1)
-			add.l	d4,a1	; nächste Zeile in CL
+			add.l	d4,a1	; next line in cl
 		ENDC
 		IFNE cl2_size2
 			move.w	d0,(a2)
-			add.l	d4,a2	; nächste Zeile in CL
+			add.l	d4,a2	; next line in cl
 		ENDC
 		move.w	d0,(a4)
-		addq.w	#bf_step1,d1	; nächster Eintrag in Tabelle
-		add.l	d4,a4		; nächste Zeile in CL
-		cmp.w	d3,d1		; Ende der Tabelleerreicht ?
+		addq.w	#bf_step1,d1	; next entry
+		add.l	d4,a4		; next line in cl
+		cmp.w	d3,d1		; end of table ?
 		blt.s	blind_fader_out_skip2
-		sub.w	d3,d1		; Neustart
+		sub.w	d3,d1		; reset table start
 blind_fader_out_skip2
 		dbf	d6,blind_fader_out_loop2
-		add.w	d5,d2		; Startwert erhöhen
-		cmp.w	d3,d2		; Ende der Tabelle erreicht ?
+		add.w	d5,d2		; increase table start
+		cmp.w	d3,d2		; end of table ?
 		blt.s	blind_fader_out_skip3
-		sub.w	d3,d2		; Neustart
+		sub.w	d3,d2		; reset table start
 blind_fader_out_skip3
 		dbf	d7,blind_fader_out_loop1
 blind_fader_out_quit

@@ -390,13 +390,13 @@ init_main_variables
 
 ; Zig-Zag-Plasma5
 	moveq	#TRUE,d0
-	move.w	d0,zzp5_y_radius_angle(a3)
-	move.w	d0,zzp5_y_angle(a3)
+	move.w	d0,zzp5_y_radius_angle(a3) ; 0°
+	move.w	d0,zzp5_y_angle(a3)	; 0°
 
 ; Vert-Shade-Bars
 	move.w	d0,vsb_active(a3)
-	move.w	#sine_table_length/4,vsb_y_radius_angle(a3)
-	move.w	d0,vsb_y_angle(a3)
+	move.w	#sine_table_length/4,vsb_y_radius_angle(a3) ; 90°
+	move.w	d0,vsb_y_angle(a3)	; 0°
 
 ; Vert-Border-Fader
 	move.w	#sine_table_length/4,vbf_fader_angle(a3)
@@ -419,6 +419,7 @@ init_main
 	bsr.s	init_colors
 	bsr	init_first_copperlist
 	bra	init_second_copperlist
+
 
 	CNOP 0,4
 init_colors
@@ -490,7 +491,7 @@ init_second_copperlist
 cl2_init_bplcon4
 	move.l	#(BPLCON4<<16)+bplcon4_bits,d0
 	COP_WAIT cl2_hstart1,cl2_vstart1
-	move.w	#(cl2_display_width*cl2_display_y_size)-1,d7 ; Anzahl der Spalten
+	move.w	#(cl2_display_width*cl2_display_y_size)-1,d7 ; number of columns
 cl2_init_bplcon4_loop
 	move.l	d0,(a0)+		; BPLCON4
 	dbf	d7,cl2_init_bplcon4_loop
@@ -523,7 +524,7 @@ beam_routines
 	bsr	vert_shade_bars
 	bsr	zzp5_get_y_coords
 	jsr	mouse_handler
-	tst.l	d0			; Abbruch ?
+	tst.l	d0			; exit ?
 	bne.s	beam_routines_exit
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
@@ -541,19 +542,19 @@ vert_shade_bars
 	bne	vert_shade_bars_quit
 	move.w	vsb_y_radius_angle(a3),d2
 	move.w	d2,d0		
-	MOVEF.W sine_table_length-1,d6	; Überlauf
-	addq.w	#vsb_y_radius_angle_speed,d0 ; nächster Y-Radius-Winkel
+	MOVEF.W sine_table_length-1,d6	; overflow 360°
+	addq.w	#vsb_y_radius_angle_speed,d0
 	move.w	vsb_y_angle(a3),d3
-	and.w	d6,d0			; Überlauf entfernen
+	and.w	d6,d0			; remove overflow
 	move.w	d0,vsb_y_radius_angle(a3)
 	move.w	d3,d0		
-	addq.w	#vsb_y_angle_speed,d0	; nächster Y-Winkel
-	and.w	d6,d0			; Überlauf entfernen
+	addq.w	#vsb_y_angle_speed,d0
+	and.w	d6,d0			; remove overflow
 	move.w	d0,vsb_y_angle(a3) 
 	MOVEF.W vsb_y_radius*4,d4
 	MOVEF.W vsb_y_angle_step,d5
 	lea	sine_table_512,a0 
-	move.l	chip_memory(a3),a1	; Zeiger auf Tabelle mit Farbummern der Linien
+	move.l	chip_memory(a3),a1	; lines colors table
 	move.w	#vsb_y_center,a2
 	moveq	#vsb_bars_number-1,d7
 vert_shade_bars_loop
@@ -562,27 +563,27 @@ vert_shade_bars_loop
 	swap	d0
 	muls.w	2(a0,d3.w*4),d0		; y'=(yr'*sin(w))/2*^15
 	swap	d0
-	add.w	a2,d0			; y' + Y-Mittelpunkt
-	addq.b	#1,(a1,d0.w*2)		; Farbnummer hochzählen
-	addq.b	#2,2(a1,d0.w*2)		; Farbnummer hochzählen
-	addq.b	#3,4(a1,d0.w*2)		; Farbnummer hochzählen
-	addq.b	#4,6(a1,d0.w*2)		; Farbnummer hochzählen
-	addq.b	#5,8(a1,d0.w*2)		; Farbnummer hochzählen
-	addq.b	#6,10(a1,d0.w*2)	; Farbnummer hochzählen
-	addq.b	#7,12(a1,d0.w*2)	; Farbnummer hochzählen
-	addq.b	#8,14(a1,d0.w*2)	; Farbnummer hochzählen
-	addq.b	#8,16(a1,d0.w*2)	; Farbnummer hochzählen
-	addq.b	#7,18(a1,d0.w*2)	; Farbnummer hochzählen
-	addq.b	#6,20(a1,d0.w*2)	; Farbnummer hochzählen
-	addq.b	#5,22(a1,d0.w*2)	; Farbnummer hochzählen
-	addq.w	#vsb_y_radius_angle_step,d2 ;n ächster Y-Radius-Winkel
-	addq.b	#4,24(a1,d0.w*2)	; Farbnummer hochzählen
-	and.w	d6,d2			; Überlauf entfernen
-	addq.b	#3,26(a1,d0.w*2)	; Farbnummer hochzählen
-	add.w	d5,d3			; nächster Y-Winkel
-	addq.b	#2,28(a1,d0.w*2)	; Farbnummer hochzählen
-	and.w	d6,d3			; Überlauf entfernen
-	addq.b	#1,30(a1,d0.w*2)	; Farbnummer hochzählen
+	add.w	a2,d0			; y' + y center
+	addq.b	#1,(a1,d0.w*2)		; increase color number
+	addq.b	#2,2(a1,d0.w*2)
+	addq.b	#3,4(a1,d0.w*2)
+	addq.b	#4,6(a1,d0.w*2)
+	addq.b	#5,8(a1,d0.w*2)
+	addq.b	#6,10(a1,d0.w*2)
+	addq.b	#7,12(a1,d0.w*2)
+	addq.b	#8,14(a1,d0.w*2)
+	addq.b	#8,16(a1,d0.w*2)
+	addq.b	#7,18(a1,d0.w*2)
+	addq.b	#6,20(a1,d0.w*2)
+	addq.b	#5,22(a1,d0.w*2)
+	addq.w	#vsb_y_radius_angle_step,d2
+	addq.b	#4,24(a1,d0.w*2)
+	and.w	d6,d2			; remove overflow
+	addq.b	#3,26(a1,d0.w*2)
+	add.w	d5,d3			; next y angle
+	addq.b	#2,28(a1,d0.w*2)
+	and.w	d6,d3			; remove overflow
+	addq.b	#1,30(a1,d0.w*2)
 	dbf	d7,vert_shade_bars_loop
 vert_shade_bars_quit
 	rts
@@ -594,19 +595,19 @@ zzp5_get_y_coords
 	move.l	a7,save_a7(a3)	
 	bsr	zzp5_get_y_coords_init
 	MOVEF.W zzp5_y_center,d1
-	move.w	zzp5_y_radius_angle(a3),d2 ; 1. Winkel Y-Radius
+	move.w	zzp5_y_radius_angle(a3),d2 ; 1st radius y angle
 	move.w	d2,d0		
 	lea	sine_table_512,a0	
 	move.w	2(a0,d2.w*4),d2		; sin(w)
 	asr.w	#8,d2			; yr'=(yr*sin(w))/2^15
-	addq.w	#zzp5_y_radius_angle_speed,d0 ; nächster Y-Radius-Winkel
-	MOVEF.W sine_table_length-1,d6	; Überlauf
-	move.w	zzp5_y_angle(a3),d3	; 1. Y-Winkel
-	and.w	d6,d0			; Überlauf entfernen
+	addq.w	#zzp5_y_radius_angle_speed,d0
+	MOVEF.W sine_table_length-1,d6	; overflow 360°
+	move.w	zzp5_y_angle(a3),d3	; 1st y angle
+	and.w	d6,d0			; remove overflow
 	move.w	d0,zzp5_y_radius_angle(a3) 
 	move.w	d3,d0		
-	addq.w	#zzp5_y_angle_speed,d0	; nächster Y-Winkel
-	and.w	d6,d0			; Überlauf entfernen
+	addq.w	#zzp5_y_angle_speed,d0
+	and.w	d6,d0			; remove overflow
 	move.w	d0,zzp5_y_angle(a3) 
 	;MOVEF.W zzp5_y_radius,d4
 	move.w	#(zzp5_copy_blit_y_size*64)+(zzp5_copy_blit_x_size/WORD_BITS),d4 ; BLTSIZE
@@ -615,22 +616,22 @@ zzp5_get_y_coords
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
 	lea	BLTDPT-DMACONR(a6),a4
 	lea	BLTSIZE-DMACONR(a6),a5
-	move.l	chip_memory(a3),a7	; Zeiger auf Tabelle mit BPLCON4-Werten
+	move.l	chip_memory(a3),a7	; pointer BPLAM table
 	lea	BLTAPT-DMACONR(a6),a3
-	moveq	#cl2_display_width-1,d7 ; Anzahl der Spalten
+	moveq	#cl2_display_width-1,d7 ; number of columns
 zzp5_get_y_coords_loop
 	move.w	d2,d0
 	muls.w	2(a0,d3.w*4),d0		; y'=(yr'*sin(w))/2^15
 	swap	d0
-	add.w	d1,d0			; y' + Y-Mittelpunkt
+	add.w	d1,d0			; y' + y center
 	WAITBLIT
-	move.l	a2,(a4)			; Ziel = CL
-	lea	(a7,d0.w*2),a1		; Y-Offset in BPLCON4-Tabelle
-	move.l	a1,(a3)			; Quelle = BPLCON4-Tabelle
-	move.w	d4,(a5)			; Blitter starten
-	add.w	d5,d3			; nächster Y-Winkel
-	addq.w	#LONGWORD_SIZE,a2	; nächste Spalte in CL
-	and.w	d6,d3			; Überlauf entfernen
+	move.l	a2,(a4)			; destination: cl
+	lea	(a7,d0.w*2),a1		; offset in BPLAM table
+	move.l	a1,(a3)			; source: BPLAM table
+	move.w	d4,(a5)			; start blit operation
+	add.w	d5,d3			; next y angle
+	addq.w	#LONGWORD_SIZE,a2	; next column in cl
+	and.w	d6,d3			; remove overflow
 	dbf	d7,zzp5_get_y_coords_loop
 	move.w	#DMAF_BLITHOG,DMACON-DMACONR(a6)
 	move.l	variables+save_a7(pc),a7
@@ -640,10 +641,10 @@ zzp5_get_y_coords_loop
 zzp5_get_y_coords_init
 	move.w	#DMAF_BLITHOG+DMAF_SETCLR,DMACON-DMACONR(a6)
 	WAITBLIT
-	move.l	#(BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC)<<16,BLTCON0-DMACONR(a6) ; Minterm D=A
-	moveq	#FALSE,d0
-	move.l	d0,BLTAFWM-DMACONR(a6)	; Ausmaskierung
-	move.l	#cl2_extension1_size-zzp5_copy_blit_width,BLTAMOD-DMACONR(a6) ; A-Mod + D-Mod
+	move.l	#(BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC)<<16,BLTCON0-DMACONR(a6) ; minterm D=A
+	moveq	#-1,d0
+	move.l	d0,BLTAFWM-DMACONR(a6)
+	move.l	#cl2_extension1_size-zzp5_copy_blit_width,BLTAMOD-DMACONR(a6) ; A&D moduli
 	rts
 
 
@@ -653,36 +654,36 @@ vert_border_fader_out
 	bne.s	vert_border_fader_out_quit
 	move.w	vbf_fader_angle(a3),d1
 	move.w	d1,d0		
-	subq.w	#vbfo_fader_angle_speed,d0 ; nächster Winkel
+	subq.w	#vbfo_fader_angle_speed,d0
 	move.w	d0,vbf_fader_angle(a3) 
 	lea	sine_table_512,a0	
 	move.l	(a0,d1.w*4),d0		; sin(w)
 	MULUF.L vbfo_fader_radius*2,d0,d1 ; y'=(yr*sin(w))/2^15
 	swap	d0
 	add.w	#vbfo_fader_center,d0
-	move.w	vbf_display_window_vstart(a3),d2 ; Aktuelle VSTART-Position
-	add.w	d0,d2			; neue VSTART-Position
-	cmp.w	#vbf_y_position_center,d2 ; Zielwert erreicht ?
+	move.w	vbf_display_window_vstart(a3),d2
+	add.w	d0,d2			; new VSTART
+	cmp.w	#vbf_y_position_center,d2 ; destination reached ?
 	ble.s	vert_border_fader_out_skip1
-	MOVEF.W vbf_y_position_center,d2 ; Zielwert
+	MOVEF.W vbf_y_position_center,d2 ; destination
 vert_border_fader_out_skip1
 	move.w	vbf_display_window_vstop(a3),d1
-	sub.w	d0,d1			; neue VSTOP-Position
+	sub.w	d0,d1			; new VSTOP
 	move.w	d2,vbf_display_window_vstart(a3) 
-	cmp.w	#vbf_y_position_center,d1 ; Zielwert erreicht ?
+	cmp.w	#vbf_y_position_center,d1 ; destination reached ?
 	bge.s	vert_border_fader_out_skip2
 	move.w	#FALSE,vbfo_active(a3)
-	MOVEF.W vbf_y_position_center,d1 ; Zielwert
+	MOVEF.W vbf_y_position_center,d1 ; destination
 vert_border_fader_out_skip2
 	move.w	d1,vbf_display_window_vstop(a3)
 	move.l	cl1_display(a3),a0 
-	move.w	#diwhigh_bits&(~(DIWHIGHF_VSTART8+DIWHIGHF_VSTART9+DIWHIGHF_vstart10+DIWHIGHF_VSTOP8+DIWHIGHF_VSTOP9+DIWHIGHF_VSTOP10)),d0 ; DIWHIGH-Bits
+	move.w	#diwhigh_bits&(~(DIWHIGHF_VSTART8+DIWHIGHF_VSTART9+DIWHIGHF_vstart10+DIWHIGHF_VSTOP8+DIWHIGHF_VSTOP9+DIWHIGHF_VSTOP10)),d0 ; DIWHIGH
 	move.b	d2,cl1_DIWSTRT+WORD_SIZE(a0) ; VSTART0-VSTART7
-	lsr.w	#8,d2			; VSTART8-VSTART10 in richtige Position bringen
+	lsr.w	#8,d2			; adjust bits
 	move.b	d1,cl1_DIWSTOP+WORD_SIZE(a0) ; VSTOP0-VSTOP7
-	move.b	d2,d1			; VSTART8-VSTART10 einfügen
-	or.w	d1,d0			; HSTART/HSTOP-Bits einfügen
-	move.w	d0,cl1_DIWHIGH+WORD_SIZE(a0) ; VSTART/VSTOP-Bits
+	move.b	d2,d1			; merge with VSTART8-VSTART10
+	or.w	d1,d0			; merge with HSTART/HSTOP
+	move.w	d0,cl1_DIWHIGH+WORD_SIZE(a0) ; VSTART/VSTOP
 vert_border_fader_out_quit
 	rts
 

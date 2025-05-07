@@ -182,7 +182,7 @@ vcs4_bars_number		EQU 4
 vcs4_step1			EQU 1
 vcs4_step2			EQU 1
 vcs4_speed			EQU 2
-vcs4_figures_number		EQU 1	; 1,2,3 = Anzahl der Figuren
+vcs4_figures_number		EQU 1	; 1..3
 
 ; Vert-Colorscroll5
 vcs5_bar_height			EQU 128
@@ -395,13 +395,13 @@ start_07_vert_colorscroll
 	CNOP 0,4
 init_main_variables
 
-; Vert-Colorscroll4*
+; Vert-Colorscroll4
 	moveq	#FALSE,d1
 	move.w	d1,vcs4_active(a3)
 	moveq	#TRUE,d0
 	move.w	d0,vcs4_bplam_table_start(a3)
 
-; Vert-Colorscroll5*
+; Vert-Colorscroll5
 	move.w	d1,vcs5_active(a3)
 	move.w	d0,vcs5_bplam_table_start1(a3)
 	move.w	d0,vcs5_bplam_table_start2(a3)
@@ -469,6 +469,7 @@ init_colors
 	CPU_SELECT_COLOR_LOW_BANK 7
 	CPU_INIT_COLOR_LOW COLOR00,32
 	rts
+
 
 	INIT_bplam_table.B vcs,0,1,color_values_number1*segments_number1,extra_memory,a3
 
@@ -538,7 +539,7 @@ no_vert_colorscroll5
 		bsr	blind_fader_out
 	ENDC
 	jsr	mouse_handler
-	tst.l	d0			; Abbruch ?
+	tst.l	d0			; exit ?
 	bne.s   beam_routines_exit
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
@@ -557,31 +558,31 @@ vert_colorscroll4
 	bne.s	vert_colorscroll4_quit
 	move.w	vcs4_bplam_table_start(a3),d1
 	move.w	d1,d0		
-	addq.b	#vcs4_speed,d0		; Startwert der Tabelle erhöhen
+	addq.b	#vcs4_speed,d0		; increase table start
 	move.w	d0,vcs4_bplam_table_start(a3)
 	moveq	#vcs4_step1,d2
 	MOVEF.L cl2_extension1_size,d3
-	move.l	extra_memory(a3),a0	; Tabelle mit BPLAM-Werten
+	move.l	extra_memory(a3),a0	; BPLAM table
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
-	lea	(cl2_display_width-1)*4(a2),a5 ; Ende einer Copperzeile
-	moveq	#(cl2_display_width/2)-1,d7 ; Anzahl der Spalten
+	lea	(cl2_display_width-1)*4(a2),a5 ; end of line in cl
+	moveq	#(cl2_display_width/2)-1,d7 ; number of columns
 vert_colorscroll_loop1
 	move.l	a2,a1			; CL
-	move.l	a5,a4			; Ende der Copperzeile
+	move.l	a5,a4			; end of line in cl
 	MOVEF.W cl2_display_y_size-1,d6
 vert_colorscroll_loop2
-	move.b	(a0,d1.w),d0		; BPLAM-Wert
+	move.b	(a0,d1.w),d0		; BPLAM
 	move.b	d0,(a1)			; BPLCON4 high
-	add.l	d3,a1			; nächste Zeile in CL
+	add.l	d3,a1			; next line in cl
 	move.b	d0,(a4)			; BPLCON4 high
-	add.b	d2,d1			; nächster Wert aus Tabelle
-	add.l	d3,a4			; nächste Zeile in CL
+	add.b	d2,d1			; next entry
+	add.l	d3,a4			; next line in cl
 	dbf	d6,vert_colorscroll_loop2
-	addq.b	#vcs4_step2,d1		; Startwert für nächste Spalte erhöhen
+	addq.b	#vcs4_step2,d1		; increase table start
 	addq.b	#vcs4_figures_number,d2 
-	addq.w	#LONGWORD_SIZE,a2	; nächste Spalte in CL
-	subq.w	#LONGWORD_SIZE,a5	; vorhergehende Spalte in CL
+	addq.w	#LONGWORD_SIZE,a2	; next column in cl
+	subq.w	#LONGWORD_SIZE,a5	; penultimate comumn in cl
 	dbf	d7,vert_colorscroll_loop1
 vert_colorscroll4_quit
 	movem.l (a7)+,a4-a5
@@ -592,33 +593,33 @@ vert_colorscroll4_quit
 vert_colorscroll5_even
 	move.w	vcs5_bplam_table_start1(a3),d2
 	move.w	d2,d0		
-	addq.b	#vcs5_twist_speed,d0	; nächster Startwert
+	addq.b	#vcs5_twist_speed,d0	; next table start
 	move.w	d0,vcs5_bplam_table_start1(a3) 
-	move.l	extra_memory(a3),a0	; Zeiger auf Switchtabelle
+	move.l	extra_memory(a3),a0	; BPLAM table
 	move.l	cl2_construction2(a3),a1
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a1
 	moveq	#vcs5_twist_lines_number-1,d7
 vert_colorscroll5_even_loop1
-	move.w	d2,d1			; Startwert
-	addq.b	#vcs5_shift_value,d2	; Additionswert
-	moveq	#cl2_display_width-1,d6 ; Anzahl der Spalten
+	move.w	d2,d1			; table start
+	addq.b	#vcs5_shift_value,d2
+	moveq	#cl2_display_width-1,d6 ; number of columns
 vert_colorscroll5_even_loop2
-	move.b	(a0,d1.w),d0		; BPLAM-Wert
+	move.b	(a0,d1.w),d0		; BPLAM
 	move.b	d0,(a1)			; BPLCON4 high
 	move.b	d0,cl2_extension1_size*vcs5_twist_lines_number*1*2(a1)
 	move.b	d0,cl2_extension1_size*vcs5_twist_lines_number*2*2(a1)
 	move.b	d0,cl2_extension1_size*vcs5_twist_lines_number*3*2(a1)
 	move.b	d0,cl2_extension1_size*vcs5_twist_lines_number*4*2(a1)
 	move.b	d0,cl2_extension1_size*vcs5_twist_lines_number*5*2(a1)
-	addq.b	#vcs5_bplam_table_step,d1 ; nächster Wert
+	addq.b	#vcs5_bplam_table_step,d1
 	move.b	d0,(cl2_extension1_size*vcs5_twist_lines_number*6*2,a1)
-	addq.w	#LONGWORD_SIZE,a1	; nächste Spalte in CL
+	addq.w	#LONGWORD_SIZE,a1	; next column in cl
 	move.b	d0,((cl2_extension1_size*vcs5_twist_lines_number*7*2)-LONGWORD_SIZE,a1)
 	dbf	d6,vert_colorscroll5_even_loop2
 	IFEQ open_border_enabled
-		addq.w	#QUADWORD_SIZE,a1 ; CWAIT+CMOVE in CL überspringen
+		addq.w	#QUADWORD_SIZE,a1 ; skip CWAIT+CMOVE in cl
 	ELSE
-		addq.w	#LONGWORD_SIZE,a1 ; CWAIT in CL überspringen
+		addq.w	#LONGWORD_SIZE,a1 ; skip CWAIT in cl
 	ENDC
 	dbf	d7,vert_colorscroll5_even_loop1
 	rts
@@ -628,33 +629,33 @@ vert_colorscroll5_even_loop2
 vert_colorscroll5_odd
 	move.w	vcs5_bplam_table_start2(a3),d2
 	move.w	d2,d0		
-	subq.b	#vcs5_twist_speed,d0	; nächster Startwert
+	subq.b	#vcs5_twist_speed,d0
 	move.w	d0,vcs5_bplam_table_start2(a3) 
-	move.l	extra_memory(a3),a0	; Zeiger auf Switchtabelle
+	move.l	extra_memory(a3),a0	; BPLAM table
 	move.l	cl2_construction2(a3),a1
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE+(cl2_extension1_size*vcs5_twist_lines_number*1),a1
 	moveq	#vcs5_twist_lines_number-1,d7
 vert_colorscroll5_odd_loop1
-	move.w	d2,d1			; Startwert
-	addq.b	#vcs5_shift_value,d2	; Additionswert
-	moveq	#cl2_display_width-1,d6 ; Anzahl der Spalten
+	move.w	d2,d1			; table start
+	addq.b	#vcs5_shift_value,d2
+	moveq	#cl2_display_width-1,d6 ; number of columns
 vert_colorscroll5_odd_loop2
-	move.b	(a0,d1.w),d0		; BPLAM-Wert
+	move.b	(a0,d1.w),d0		; BPLAM
 	move.b	d0,(a1)			; BPLCON4 high
 	move.b	d0,cl2_extension1_size*vcs5_twist_lines_number*1*2(a1)
 	move.b	d0,cl2_extension1_size*vcs5_twist_lines_number*2*2(a1)
 	move.b	d0,cl2_extension1_size*vcs5_twist_lines_number*3*2(a1)
 	move.b	d0,cl2_extension1_size*vcs5_twist_lines_number*4*2(a1)
 	move.b	d0,cl2_extension1_size*vcs5_twist_lines_number*5*2(a1)
-	addq.b	#vcs5_bplam_table_step,d1 ; nächster Wert aus Tabelle
+	addq.b	#vcs5_bplam_table_step,d1 ; next entry
 	move.b	d0,(cl2_extension1_size*vcs5_twist_lines_number*6*2,a1)
-	addq.w	#LONGWORD_SIZE,a1	; nächste Spalte in CL
+	addq.w	#LONGWORD_SIZE,a1	; next column in cl
 	move.b	d0,((cl2_extension1_size*vcs5_twist_lines_number*7*2)-LONGWORD_SIZE,a1)
 	dbf	d6,vert_colorscroll5_odd_loop2
 	IFEQ open_border_enabled
-		addq.w	#QUADWORD_SIZE,a1 ; CWAIT+CMOVE in CL überspringen
+		addq.w	#QUADWORD_SIZE,a1 ; skip CWAIT+CMOVE in cl
 	ELSE
-		addq.w	#LONGWORD_SIZE,a1 ; CWAIT in CL überspringen
+		addq.w	#LONGWORD_SIZE,a1 ; skip CWAIT in cl
 	ENDC
 	dbf	d7,vert_colorscroll5_odd_loop1
 	rts
@@ -668,15 +669,15 @@ blind_fader_in
 		bne.s	blind_fader_in_quit
 		move.w	bf_registers_table_start(a3),d2
 		move.w	d2,d0
-		addq.w	#bf_speed,d0	; Startwert der Tabelle erhöhen
-		cmp.w	#bf_registers_table_length/2,d0 ; Ende der Tabelle erreicht ?
+		addq.w	#bf_speed,d0	; increase table start
+		cmp.w	#bf_registers_table_length/2,d0 ; end of table ?
 		ble.s	blind_fader_in_skip1
 		move.w	#FALSE,bfi_active(a3)
 blind_fader_in_skip1
 		move.w	d0,bf_registers_table_start(a3)
 		MOVEF.W bf_registers_table_length,d3
 		MOVEF.W cl2_extension1_size,d4
-		lea	bf_registers_table(pc),a0 ; Tabelle mit Registeradressen
+		lea	bf_registers_table(pc),a0
 		IFNE cl2_size1
 			move.l	cl2_construction1(a3),a1
 			ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a1
@@ -689,30 +690,30 @@ blind_fader_in_skip1
 		ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a4
 		moveq	#bf_lamellas_number-1,d7
 blind_fader_in_loop1
-		move.w	d2,d1		; Startwert
+		move.w	d2,d1		; table start
 		moveq	#bf_lamella_height-1,d6
 blind_fader_in_loop2
-		move.w	(a0,d1.w*2),d0	; Registeradresse
+		move.w	(a0,d1.w*2),d0	; register address
 		IFNE cl2_size1
 			move.w	d0,(a1)
-			add.l	d4,a1	; nächste Zeile in CL
+			add.l	d4,a1	; next line in cl
 		ENDC
 		IFNE cl2_size2
 			move.w	d0,(a2)
-			add.l	d4,a2	; nächste Zeile in CL
+			add.l	d4,a2	; next line in cl
 		ENDC
 		move.w	d0,(a4)
-		addq.w	#bf_step1,d1	; nächster Eintrag in Tabelle
-		add.l	d4,a4		; nächste Zeile in CL
-		cmp.w	d3,d1		; Ende der Tabelle erreicht ?
+		addq.w	#bf_step1,d1	; next entry
+		add.l	d4,a4		; next line in cl
+		cmp.w	d3,d1		; end of table ?
 		blt.s	blind_fader_in_skip2
-		sub.w	d3,d1		; Neustart
+		sub.w	d3,d1		; reset table start
 blind_fader_in_skip2
 		dbf	d6,blind_fader_in_loop2
-		addq.w	#bf_step2,d2	; Startwert erhöhen
-		cmp.w	d3,d2		; Ende der Tabelle erreicht ?
+		addq.w	#bf_step2,d2	; increase table start
+		cmp.w	d3,d2		; end of table ?
 		blt.s	blind_fader_in_skip3
-		sub.w	d3,d2		; Neustart
+		sub.w	d3,d2		; reset table start
 blind_fader_in_skip3
 		dbf	d7,blind_fader_in_loop1
 blind_fader_in_quit
@@ -726,7 +727,7 @@ blind_fader_out
 		bne.s	blind_fader_out_quit
 		move.w	bf_registers_table_start(a3),d2
 		move.w	d2,d0
-		subq.w	#bf_speed,d0	; Startwert der Tabelle verringern
+		subq.w	#bf_speed,d0	; decrease table start
 		bpl.s	blind_fader_out_skip1
 		move.w	#FALSE,bfo_active(a3)
 blind_fader_out_skip1
@@ -734,7 +735,7 @@ blind_fader_out_skip1
 		MOVEF.W bf_registers_table_length,d3
 		MOVEF.W cl2_extension1_size,d4
 		moveq	#bf_step2,d5
-		lea	bf_registers_table(pc),a0 ; Tabelle mit Registeradressen
+		lea	bf_registers_table(pc),a0
 		IFNE cl2_size1
 			move.l	cl2_construction1(a3),a1
 			ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a1
@@ -747,30 +748,30 @@ blind_fader_out_skip1
 		ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a4
 		moveq	#bf_lamellas_number-1,d7
 blind_fader_out_loop1
-		move.w	d2,d1		; Startwert
+		move.w	d2,d1		; table start
 		moveq	#bf_lamella_height-1,d6
 blind_fader_out_loop2
-		move.w	(a0,d1.w*2),d0	; Registeradresse
+		move.w	(a0,d1.w*2),d0	; register addresss
 		IFNE cl2_size1
 			move.w	d0,(a1)
-			add.l	d4,a1	; nächste Zeile in CL
+			add.l	d4,a1	; next line in cl
 		ENDC
 		IFNE cl2_size2
 			move.w	d0,(a2)
-			add.l	d4,a2	; nächste Zeile in CL
+			add.l	d4,a2	; next line in cl
 		ENDC
 		move.w	d0,(a4)
-		addq.w	#bf_step1,d1	; nächster Eintrag in Tabelle
-		add.l	d4,a4		; nächste Zeile in CL
-		cmp.w	d3,d1		; Ende der Tabelleerreicht ?
+		addq.w	#bf_step1,d1	; next entry
+		add.l	d4,a4		; next line in cl
+		cmp.w	d3,d1		; end of table ?
 		blt.s	blind_fader_out_skip2
-		sub.w	d3,d1		; Neustart
+		sub.w	d3,d1		; reset table start
 blind_fader_out_skip2
 		dbf	d6,blind_fader_out_loop2
-		add.w	d5,d2		; Startwert erhöhen
-		cmp.w	d3,d2		; Ende der Tabelle erreicht ?
+		add.w	d5,d2		; increase table start
+		cmp.w	d3,d2		; end of table ?
 		blt.s	blind_fader_out_skip3
-		sub.w	d3,d2		; Neustart
+		sub.w	d3,d2		; reset table start
 blind_fader_out_skip3
 		dbf	d7,blind_fader_out_loop1
 blind_fader_out_quit

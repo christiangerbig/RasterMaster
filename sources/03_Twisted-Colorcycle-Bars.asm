@@ -423,8 +423,8 @@ init_main_variables
 	moveq	#FALSE,d1
 
 ; Twisted-Colorcycle-Bars
-	move.w	d0,tccb_y_angle(a3)
-	move.w	d0,tccb_y_radius_angle(a3)
+	move.w	d0,tccb_y_angle(a3)	; 0°
+	move.w	d0,tccb_y_radius_angle(a3) ; 0°
 
 ; Blind-Fader
 	IFEQ open_border_enabled
@@ -461,18 +461,18 @@ tccb_init_color_table
 	movem.l a4-a6,-(a7)
 ; vertikale Farbverläufe
 	lea	tccb_color_gradient(pc),a0
-	move.l	extra_memory(a3),a2	; Ziel: Farbtabelle
+	move.l	extra_memory(a3),a2	; Destination: Color table
 	move.w	#color_x_values_number*segments_number*LONGWORD_SIZE,a4
 	move.w	#color_x_values_number*1*LONGWORD_SIZE,a5
 	moveq	#segments_number-1,d7
 tccb_init_color_table_loop1
-	move.l	a2,a1			; Zeiger auf Farbtabelle
+	move.l	a2,a1			; pointer color table
 	moveq	#color_y_values_number-1,d6
 tccb_init_color_table_loop2
-	move.l	(a0)+,(a1)		; RGB8-Wert kopieren
-	add.l	a4,a1			; nächste Zeile in Farbtabelle
+	move.l	(a0)+,(a1)		; copy RGB8
+	add.l	a4,a1			; next line in color table
 	dbf	d6,tccb_init_color_table_loop2
-	add.l	a5,a2			; nächstes Segment
+	add.l	a5,a2			; next segment
 	dbf	d7,tccb_init_color_table_loop1
 	INIT_COLOR_GRADIENTS_RGB8 color_x_values_number,tccb_bar_height/2,segments_number,color_x_step,extra_memory,a3,0,1
 	movem.l (a7)+,a4-a6
@@ -548,9 +548,12 @@ cl1_init_colors
 	COP_INIT_COLOR_LOW COLOR00,1
 	rts
 
+
 	COP_INIT_BPLCON4_CHUNKY_SCREEN cl1,cl1_hstart1,cl1_vstart1,cl1_display_x_size,cl1_display_y_size,open_border_enabled,tccb_quick_clear_enabled,FALSE,NOOP<<16
 
+
 	COP_INIT_COPINT cl1,cl1_hstart2,cl1_vstart2
+
 
 	COPY_COPPERLIST cl1,3
 
@@ -582,7 +585,7 @@ beam_routines
 		bsr	blind_fader_out
 	ENDC
 	bsr	mouse_handler
-	tst.l	d0			; Abbruch ?
+	tst.l	d0			; exit ?
 	bne.s	beam_routines_exit
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
@@ -602,41 +605,41 @@ colorcycle
 	movem.l a4-a6,-(a7)
 	move.l	cc_color_table_start(a3),d3
 	move.l	d3,d0		
-	addq.l	#cc_speed,d0		; nächster Farbwert
+	addq.l	#cc_speed,d0		; next entry
 	cmp.l	#color_x_values_number*segments_number,d0
 	blt.s	colorcycle_skip1
-	sub.l	#color_x_values_number*segments_number,d0 ;Neustart
+	sub.l	#color_x_values_number*segments_number,d0 ; reset table start
 colorcycle_skip1
 	move.l	d0,cc_color_table_start(a3)
 	move.w	#RB_NIBBLES_MASK,d4
-	moveq	#1<<3,d5		; Farbregister-Zähler
-	move.l	extra_memory(a3),a1	; Zeiger auf Farbtabelle
+	moveq	#1<<3,d5		; color registers counter
+	move.l	extra_memory(a3),a1	; pointer color table
 	move.l	cl1_construction2(a3),a2 
 	ADDF.W	cl1_COLOR01_high1+WORD_SIZE,a2
 	move.w	#(color_x_values_number*segments_number)*LONGWORD_SIZE,a4
 	move.w	#cc_step,a5
-	move.w	#color_x_values_number*segments_number,a6 ; Neustart
+	move.w	#color_x_values_number*segments_number,a6 ; reset
 	moveq	#tccb_bars_number-1,d7
 colorcycle_loop1
-	lea	(a1,d3.l*4),a0		; Offset in Farbtabelle
+	lea	(a1,d3.l*4),a0		; color table offset
 	moveq	#(tccb_bar_height/2)-1,d6
 colorcycle_loop2
 	move.l	(a0),d0			; RGB8
 	move.l	d0,d2		
 	RGB8_TO_RGB4_HIGH d0,d1,d4
-	move.w	d0,(a2)			; COLORxx High-Bits
+	move.w	d0,(a2)			; color high
 	RGB8_TO_RGB4_LOW d2,d1,d4
-	move.w	d2,cl1_COLOR01_low1-cl1_COLOR01_high1(a2) ; COLORxx Low-Bits
-	add.l	a4,a0			; nächste Zeile in Farbtabelle
-	addq.w	#LONGWORD_SIZE,a2	; nächstes Farbregister
-	addq.b	#1<<3,d5		; Farbregisterzähler erhöhen
+	move.w	d2,cl1_COLOR01_low1-cl1_COLOR01_high1(a2) ; color low
+	add.l	a4,a0			; next line in coor table
+	addq.w	#LONGWORD_SIZE,a2	; next color register
+	addq.b	#1<<3,d5		; increment color register counter
 	bne.s	colorcycle_skip2
-	addq.w	#LONGWORD_SIZE,a2	; CMOVE überspringen
+	addq.w	#LONGWORD_SIZE,a2	; skip CMOVE
 colorcycle_skip2
 	dbf	d6,colorcycle_loop2
-	sub.l	a5,d3			; nächster Wert aus Tabelle
+	sub.l	a5,d3			; next entry
 	bge.s	colorcycle_skip3
-	add.l	a6,d3			; Neustart
+	add.l	a6,d3			; reset table start
 colorcycle_skip3
 	dbf	d7,colorcycle_loop1
 	movem.l (a7)+,a4-a6
@@ -648,28 +651,28 @@ twisted_colorcycle_bars
 	move.l	a7,save_a7(a3)	
 	move.w	tccb_y_radius_angle(a3),d4
 	move.w	d4,d0		
-	MOVEF.W sine_table_length-1,d7	; Überlauf
-	addq.w	#tccb_y_radius_angle_speed,d0 ; nächster Y-Radius-Winkel
+	MOVEF.W sine_table_length-1,d7	; overflow 360°
+	addq.w	#tccb_y_radius_angle_speed,d0
 	move.w	tccb_y_angle(a3),d5
-	and.w	d7,d0			; Überlauf entfernen
+	and.w	d7,d0			; remove oeverflow
 	move.w	d0,tccb_y_radius_angle(a3) 
 	move.w	d5,d0		
-	addq.w	#tccb_y_angle_speed,d0	; nächster Y-Winkel
-	and.w	d7,d0			; Überlauf entfernen
+	addq.w	#tccb_y_angle_speed,d0
+	and.w	d7,d0			; remove overflow
 	move.w	d0,tccb_y_angle(a3) 
 	lea	sine_table_512(pc),a0 
 	move.l	cl1_construction2(a3),a2 
 	ADDF.W cl1_extension1_entry+cl1_ext1_BPLCON4_1+WORD_SIZE,a2
 	move.l	extra_memory(a3),a5
 	move.w	#tccb_y_distance,a3
-	add.l	#em_bplam_table,a5	; Zeiger auf Tabelle mit BPLAM-Werten
+	add.l	#em_bplam_table,a5	; BPLAM table
 	move.w	#tccb_y_center,a6
 	move.w	d5,a7		
-	swap	d7			; Überlauf retten
-	move.w	#cl1_display_width-1,d7	; Anzahl der Spalten
+	swap	d7			; high word: overflow
+	move.w	#cl1_display_width-1,d7	; low word: number of columns
 tccb_get_y_coords_loop1
-	move.l	a5,a1			; Zeiger auf Tabelle mit BPLAM-Werten
-	swap	d7			; Überlauf
+	move.l	a5,a1			; pointer bBPLAM table
+	swap	d7			; low word: overflow
 	moveq	#tccb_bars_number-1,d6
 tccb_get_y_coords_loop2
 	move.l	(a0,d4.w*4),d0		; sin(w)
@@ -677,10 +680,10 @@ tccb_get_y_coords_loop2
 	swap	d0
 	muls.w	2(a0,d5.w*4),d0		; y'=(yr'*sin(w))/2^15
 	swap	d0
-	add.w	a6,d0			; y' + Y-Mittelpunkt
-	MULUF.W cl1_extension1_size/4,d0,d1 ; Y-Offset in CL
-	lea	(a2,d0.w*4),a4		; Y-Offset
-	movem.l (a1)+,d0-d3		; 16 Werte lesen
+	add.w	a6,d0			; y' + y center
+	MULUF.W cl1_extension1_size/4,d0,d1 ; y offset in cl
+	lea	(a2,d0.w*4),a4
+	movem.l (a1)+,d0-d3		; fetch 16x BPLAM
 	move.b	d0,cl1_extension1_size*3(a4) ; BPLCON4 high
 	swap	d0
 	move.b	d0,cl1_extension1_size*1(a4)
@@ -702,7 +705,7 @@ tccb_get_y_coords_loop2
 	move.b	d2,cl1_extension1_size*8(a4)
 	swap	d2
 	move.b	d2,cl1_extension1_size*10(a4)
-	addq.w	#tccb_y_radius_angle_step,d4 ; Y-Radius-Abstand zur nächsten Bar
+	addq.w	#tccb_y_radius_angle_step,d4
 	move.b	d3,cl1_extension1_size*15(a4)
 	swap	d3
 	move.b	d3,cl1_extension1_size*13(a4)
@@ -710,7 +713,7 @@ tccb_get_y_coords_loop2
 	move.b	d3,cl1_extension1_size*12(a4)
 	swap	d3
 	move.b	d3,cl1_extension1_size*14(a4)
-	movem.l (a1)+,d0-d3		; 16 Werte lesen
+	movem.l (a1)+,d0-d3		; fetch 16x BPLAM
 	move.b	d0,cl1_extension1_size*19(a4)
 	swap	d0
 	move.b	d0,cl1_extension1_size*17(a4)
@@ -718,7 +721,7 @@ tccb_get_y_coords_loop2
 	move.b	d0,cl1_extension1_size*16(a4)
 	swap	d0
 	move.b	d0,cl1_extension1_size*18(a4)
-	and.w	d7,d4			; Überlauf entfernen
+	and.w	d7,d4			; remove overflow
 	move.b	d1,cl1_extension1_size*23(a4)
 	swap	d1
 	move.b	d1,cl1_extension1_size*21(a4)
@@ -726,7 +729,7 @@ tccb_get_y_coords_loop2
 	move.b	d1,cl1_extension1_size*20(a4)
 	swap	d1
 	move.b	d1,cl1_extension1_size*22(a4)
-	add.w	a3,d5			; Y-Abstand zu nächster Bar
+	add.w	a3,d5			; y distance to next bar
 	move.b	d2,cl1_extension1_size*27(a4)
 	swap	d2
 	move.b	d2,cl1_extension1_size*25(a4)
@@ -734,7 +737,7 @@ tccb_get_y_coords_loop2
 	move.b	d2,cl1_extension1_size*24(a4)
 	swap	d2
 	move.b	d2,cl1_extension1_size*26(a4)
-	and.w	d7,d5			; Überlauf entfernen
+	and.w	d7,d5			; remove overflow
 	move.b	d3,cl1_extension1_size*31(a4)
 	swap	d3
 	move.b	d3,cl1_extension1_size*29(a4)
@@ -743,16 +746,17 @@ tccb_get_y_coords_loop2
 	swap	d3
 	move.b	d3,cl1_extension1_size*30(a4)
 	dbf	d6,tccb_get_y_coords_loop2
-	move.w	a7,d5			; Y-Winkel
-	addq.w	#tccb_y_angle_step,d5	; nächste Spalte
-	and.w	d7,d5			; Überlauf entfernen
+	move.w	a7,d5			; y angle
+	addq.w	#tccb_y_angle_step,d5	; next column
+	and.w	d7,d5			; remove overflow
 	move.w	d5,a7		
-	swap	d7			; Schleifenzähler
-	addq.w	#LONGWORD_SIZE,a2	; nächste Spalte in CL
+	swap	d7			; low word: loop counter
+	addq.w	#LONGWORD_SIZE,a2	; next column in cl
 	dbf	d7,tccb_get_y_coords_loop1
 	move.l	variables+save_a7(pc),a7
 	movem.l (a7)+,a3-a6
 	rts
+
 
 	IFNE tccb_quick_clear_enabled
 		RESTORE_BLCON4_CHUNKY_SCREEN tccb,cl1,construction2,extension1,32
@@ -767,15 +771,15 @@ blind_fader_in
 		bne.s	blind_fader_in_quit
 		move.w	bf_registers_table_start(a3),d2
 		move.w	d2,d0
-		addq.w	#bf_speed,d0	; Startwert der Tabelle erhöhen
-		cmp.w	#bf_registers_table_length/2,d0 ; Ende der Tabelle erreicht ?
+		addq.w	#bf_speed,d0	; increase table start
+		cmp.w	#bf_registers_table_length/WORD_SIZE,d0 ; end of table ?
 		ble.s	blind_fader_in_skip1
 		move.w	#FALSE,bfi_active(a3)
 blind_fader_in_skip1
 		move.w	d0,bf_registers_table_start(a3)
 		MOVEF.W bf_registers_table_length,d3
 		MOVEF.W cl1_extension1_size,d4
-		lea	bf_registers_table(pc),a0 ; Tabelle mit Registeradressen
+		lea	bf_registers_table(pc),a0
 		IFNE cl1_size1
 			move.l	cl1_construction1(a3),a1
 			ADDF.W	cl1_extension1_entry+cl1_ext1_BPL1DAT,a1
@@ -788,30 +792,30 @@ blind_fader_in_skip1
 		ADDF.W	cl1_extension1_entry+cl1_ext1_BPL1DAT,a4
 		moveq	#bf_lamellas_number-1,d7
 blind_fader_in_loop1
-		move.w	d2,d1		; Startwert
+		move.w	d2,d1		; table start
 		moveq	#bf_lamella_height-1,d6
 blind_fader_in_loop2
-		move.w	(a0,d1.w*2),d0	; Registeradresse
+		move.w	(a0,d1.w*2),d0	; register address
 		IFNE cl1_size1
 			move.w	d0,(a1)
-			add.l	d4,a1	; nächste Zeile in CL
+			add.l	d4,a1	; next line in cl
 		ENDC
 		IFNE cl1_size2
 			move.w	d0,(a2)
-			add.l	d4,a2	; nächste Zeile in CL
+			add.l	d4,a2	; next line in cl
 		ENDC
 		move.w	d0,(a4)
-		addq.w	#bf_step1,d1	; nächster Eintrag in Tabelle
-		add.l	d4,a4		; nächste Zeile in CL
-		cmp.w	d3,d1		; Ende der Tabelle erreicht ?
+		addq.w	#bf_step1,d1	; next entry
+		add.l	d4,a4		; next line in cl
+		cmp.w	d3,d1		; end of table ?
 		blt.s	blind_fader_in_skip2
-		sub.w	d3,d1		; Neustart
+		sub.w	d3,d1		; reset table start
 blind_fader_in_skip2
 		dbf	d6,blind_fader_in_loop2
-		addq.w	#bf_step2,d2	; Startwert erhöhen
-		cmp.w	d3,d2		; Ende der Tabelle erreicht ?
+		addq.w	#bf_step2,d2	; increase table start
+		cmp.w	d3,d2		; end of table ?
 		blt.s	blind_fader_in_skip3
-		sub.w	d3,d2		; Neustart
+		sub.w	d3,d2		; reset table start
 blind_fader_in_skip3
 		dbf	d7,blind_fader_in_loop1
 blind_fader_in_quit
@@ -826,7 +830,7 @@ blind_fader_out
 		bne.s	blind_fader_out_quit
 		move.w	bf_registers_table_start(a3),d2
 		move.w	d2,d0
-		subq.w	#bf_speed,d0	; Startwert der Tabelle verringern
+		subq.w	#bf_speed,d0	; decrease table start
 		bpl.s	blind_fader_out_skip1
 		move.w	#FALSE,bfo_active(a3)
 blind_fader_out_skip1
@@ -834,7 +838,7 @@ blind_fader_out_skip1
 		MOVEF.W bf_registers_table_length,d3
 		MOVEF.W cl1_extension1_size,d4
 		moveq	#bf_step2,d5
-		lea	bf_registers_table(pc),a0 ; Tabelle mit Registeradressen
+		lea	bf_registers_table(pc),a0
 		IFNE cl1_size1
 			move.l	cl1_construction1(a3),a1
 			ADDF.W	cl1_extension1_entry+cl1_ext1_BPL1DAT,a1
@@ -847,30 +851,30 @@ blind_fader_out_skip1
 		ADDF.W	cl1_extension1_entry+cl1_ext1_BPL1DAT,a4
 		moveq	#bf_lamellas_number-1,d7
 blind_fader_out_loop1
-		move.w	d2,d1		; Startwert
+		move.w	d2,d1		; table start
 		moveq	#bf_lamella_height-1,d6
 blind_fader_out_loop2
-		move.w	(a0,d1.w*2),d0	; Registeradresse
+		move.w	(a0,d1.w*2),d0	; register address
 		IFNE cl1_size1
 			move.w	d0,(a1)
-			add.l	d4,a1	; nächste Zeile in CL
+			add.l	d4,a1	; next line in cl
 		ENDC
 		IFNE cl1_size2
 			move.w	d0,(a2)
-			add.l	d4,a2	; nächste Zeile in CL
+			add.l	d4,a2	; next line in cl
 		ENDC
 		move.w	d0,(a4)
-		addq.w	#bf_step1,d1	; nächster Eintrag in Tabelle
-		add.l	d4,a4		; nächste Zeile in CL
-		cmp.w	d3,d1		; Ende der Tabelleerreicht ?
+		addq.w	#bf_step1,d1	; next entry
+		add.l	d4,a4		; next line in cl
+		cmp.w	d3,d1		; end of table ?
 		blt.s	blind_fader_out_skip2
-		sub.w	d3,d1		; Neustart
+		sub.w	d3,d1		; reset table start
 blind_fader_out_skip2
 		dbf	d6,blind_fader_out_loop2
-		add.w	d5,d2		; Startwert erhöhen
-		cmp.w	d3,d2		; Ende der Tabelle erreicht ?
+		add.w	d5,d2		; increase table start
+		cmp.w	d3,d2		; end of table ?
 		blt.s	blind_fader_out_skip3
-		sub.w	d3,d2		; Neustart
+		sub.w	d3,d2		; reset table start
 blind_fader_out_skip3
 		dbf	d7,blind_fader_out_loop1
 blind_fader_out_quit

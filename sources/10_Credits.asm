@@ -302,7 +302,7 @@ cl2_size2			EQU 0
 cl2_size3			EQU 0
 
 
-; Sprite0-Zusatzstruktur
+; Sprite0 additional structure
 	RSRESET
 
 spr0_extension1	RS.B 0
@@ -312,7 +312,7 @@ spr0_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size
 
 spr0_extension1_size		RS.B 0
 
-; Sprite0-Hauptstruktur
+; Sprite0 main structure
 	RSRESET
 
 spr0_begin			RS.B 0
@@ -323,7 +323,7 @@ spr0_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite0_size			RS.B 0
 
-; Sprite1-Zusatzstruktur
+; Sprite1 additional structure
 	RSRESET
 
 spr1_extension1	RS.B 0
@@ -333,7 +333,7 @@ spr1_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size
 
 spr1_extension1_size		RS.B 0
 
-; Sprite1-Hauptstruktur
+; Sprite1 main structure
 	RSRESET
 
 spr1_begin			RS.B 0
@@ -344,7 +344,7 @@ spr1_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite1_size			RS.B 0
 
-; Sprite2-Zusatzstruktur
+; Sprite2 additional structure
 	RSRESET
 
 spr2_extension1	RS.B 0
@@ -354,7 +354,7 @@ spr2_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size
 
 spr2_extension1_size		RS.B 0
 
-; Sprite2-Hauptstruktur
+; Sprite2 main structure
 	RSRESET
 
 spr2_begin			RS.B 0
@@ -365,7 +365,7 @@ spr2_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite2_size			RS.B 0
 
-; Sprite3-Hauptstruktur
+; Sprite3 main structure
 	RSRESET
 
 spr3_begin			RS.B 0
@@ -374,7 +374,7 @@ spr3_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite3_size			RS.B 0
 
-; Sprite4-Zusatzstruktur
+; Sprite4 additional structure
 	RSRESET
 
 spr4_extension1	RS.B 0
@@ -384,7 +384,7 @@ spr4_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size
 
 spr4_extension1_size		RS.B 0
 
-; Sprite4-Hauptstruktur
+; Sprite4 main structure
 	RSRESET
 
 spr4_begin			RS.B 0
@@ -395,7 +395,7 @@ spr4_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite4_size			RS.B 0
 
-; Sprite5-Hauptstruktur
+; Sprite5 main structure
 	RSRESET
 
 spr5_begin			RS.B 0
@@ -404,7 +404,7 @@ spr5_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite5_size			RS.B 0
 
-; Sprite6-Zusatzstruktur
+; Sprite6 additional structure
 	RSRESET
 
 spr6_extension1			RS.B 0
@@ -414,7 +414,7 @@ spr6_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size
 
 spr6_extension1_size		RS.B 0
 
-; Sprite6-Hauptstruktur
+; Sprite6 main structure
 	RSRESET
 
 spr6_begin			RS.B 0
@@ -425,7 +425,7 @@ spr6_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
 sprite6_size			RS.B 0
 
-; Sprite7-Hauptstruktur
+; Sprite7 main structure
 	RSRESET
 
 spr7_begin			RS.B 0
@@ -534,19 +534,20 @@ init_main_variables
 
 ; Image-Fader-In
 	move.w	d1,ifi_rgb8_active(a3)
-	move.w	#sine_table_length/4,ifi_rgb8_fader_angle(a3) ; 90 Grad
+	moveq	#sine_table_length/4,d2
+	move.w	d2,ifi_rgb8_fader_angle(a3) ; 90°
 
 ; Image-Fader-Out
 	move.w	d1,ifo_rgb8_active(a3)
-	move.w	#sine_table_length/4,ifo_rgb8_fader_angle(a3) ; 90 Grad
+	move.w	d2,ifo_rgb8_fader_angle(a3) ; 90°
 
 ; Scroll-Logo-Left-In
 	move.w	d1,slli_active(a3)
-	move.w	d0,slli_x_angle(a3)	; 0 Grad
+	move.w	d0,slli_x_angle(a3)	; 0°
 
 ; Scroll-Logo-Left-Out
 	move.w	d1,sllo_active(a3)
-	move.w	#sine_table_length/4,sllo_x_angle(a3) ; 90 Grad
+	move.w	d2,sllo_x_angle(a3)	; 90°
 
 ; Effects-Handler
 	move.w	d0,eh_trigger_number(a3)
@@ -594,21 +595,21 @@ init_sprites
 	CNOP 0,4
 lg_init_sprites
 	lea	spr_ptrs_construction(pc),a2
-	move.l	(a2)+,a0		; 1. Sprite-Struktur
-	ADDF.W	(spr_pixel_per_datafetch/4),a0 ; Sprite-Header überspringen
-	move.l	(a2),a1			; 2. Sprite-Struktur
-	ADDF.W	(spr_pixel_per_datafetch/4),a1 ; Sprite-Header überspringen
-	lea	lg_image_data,a2	; Zeiger auf Grafikdaten
+	move.l	(a2)+,a0		; 1st sprite structure
+	ADDF.W	(spr_pixel_per_datafetch/4),a0 ; skip header
+	move.l	(a2),a1			; 2nd sprite structure
+	ADDF.W	(spr_pixel_per_datafetch/4),a1 ; skip header
+	lea	lg_image_data,a2
 	MOVEF.W lg_image_y_size-1,d7
 lg_init_sprites_loop
-	move.l	(a2)+,(a0)+		; Plane1 64 Pixel
-	move.l	(a2)+,(a0)+		; Plane1
-	move.l	(a2)+,(a0)+		; Plane2 64 Pixel
-	move.l	(a2)+,(a0)+		; Plane2
-	move.l	(a2)+,(a1)+		; Plane3 64 Pixel
-	move.l	(a2)+,(a1)+		; Plane3
-	move.l	(a2)+,(a1)+		; Plane4 64 Pixel
-	move.l	(a2)+,(a1)+		; Plane4
+	move.l	(a2)+,(a0)+		; bitplane 1
+	move.l	(a2)+,(a0)+		; bitplane 1
+	move.l	(a2)+,(a0)+		; bitplane 2
+	move.l	(a2)+,(a0)+		; bitplane 2
+	move.l	(a2)+,(a1)+		; bitplane 3
+	move.l	(a2)+,(a1)+		; bitplane 3
+	move.l	(a2)+,(a1)+		; bitplane 4
+	move.l	(a2)+,(a1)+		; bitplane 4
 	dbf	d7,lg_init_sprites_loop
 	rts
 
@@ -619,9 +620,9 @@ vts_init_sprites
 	MOVEF.W vts_buffer_x_position*SHIRES_PIXEL_FACTOR,d3 ; X
 	moveq	#vts_buffer_y_position,d4 ; Y
 	lea	spr_ptrs_construction(pc),a2
-	move.l	QUADWORD_SIZE*1(a2),a0	; 1. Sprite-Struktur
-	move.l	QUADWORD_SIZE*2(a2),a1	; 2. Sprite-Struktur
-	move.l	QUADWORD_SIZE*3(a2),a2	; 3. Sprite-Struktur
+	move.l	QUADWORD_SIZE*1(a2),a0	; 1st sprite structure
+	move.l	QUADWORD_SIZE*2(a2),a1	; 2nd sprite structure
+	move.l	QUADWORD_SIZE*3(a2),a2	; 3rd sprite structure
 	move.w	d3,d0
 	move.w	d4,d1			; VSTART
 	MOVEF.W vts_buffer_y_size,d2
@@ -655,34 +656,34 @@ vts_init_sprites
 	CNOP 0,4
 bg_copy_image_to_plane
 	movem.l a3-a6,-(a7)
-	move.l	#bg_image_data+(pf1_plane_x_offset/8),a1 ; Offset Bitplane1
-	move.l	pf1_display(a3),a3	; Ziel
+	move.l	#bg_image_data+(pf1_plane_x_offset/8),a1 ; offset bitplane 1
+	move.l	pf1_display(a3),a3	; destination
 	bsr.s	bg_copy_image_data
-	add.l	#bg_image_plane_width,a1 ; Offset Bitplane2
+	add.l	#bg_image_plane_width,a1 ; offset bitplane 2
 	bsr.s	bg_copy_image_data
-	add.l	#bg_image_plane_width,a1 ; Offset Bitplane3
+	add.l	#bg_image_plane_width,a1 ; offset bitplane 3
 	bsr.s	bg_copy_image_data
-	add.l	#bg_image_plane_width,a1 ; Offset Bitplane4
+	add.l	#bg_image_plane_width,a1 ; offset bitplane 4
 	bsr.s	bg_copy_image_data
-	add.l	#bg_image_plane_width,a1 ; Offset Bitplane5
+	add.l	#bg_image_plane_width,a1 ; offset bitplane 5
 	bsr.s	bg_copy_image_data
-	add.l	#bg_image_plane_width,a1 ; Offset Bitplane6
+	add.l	#bg_image_plane_width,a1 ; offset bitplane 6
 	bsr.s	bg_copy_image_data
-	add.l	#bg_image_plane_width,a1 ; Offset Bitplane7
+	add.l	#bg_image_plane_width,a1 ; offset bitplane 7
 	bsr.s	bg_copy_image_data
 	movem.l (a7)+,a3-a6
 	rts
 	CNOP 0,4
 bg_copy_image_data
-	move.l	a1,a0			; Quelle
-	move.l	(a3)+,a2		; Ziel
+	move.l	a1,a0			; source
+	move.l	(a3)+,a2		; destination
 	MOVEF.W bg_image_y_size-1,d7
 bg_copy_image_data_loop
 	REPT pixel_per_line/16
-		move.w	(a0)+,(a2)+	; 42 Bytes kopieren
+		move.w	(a0)+,(a2)+	; copy 42 bytes
 	ENDR
-	ADDF.W	(bg_image_plane_width*(bg_image_depth-1))+2,a0 ; nächste Zeile in Quelle
-	ADDF.W	(pf1_plane_width*(pf1_depth3-1))+6,a2 ; nächste Zeile in Ziel
+	ADDF.W	(bg_image_plane_width*(bg_image_depth-1))+2,a0 ; next line in source
+	ADDF.W	(pf1_plane_width*(pf1_depth3-1))+6,a2 ; next line in destination
 	dbf	d7,bg_copy_image_data_loop
 	rts
 
@@ -744,41 +745,41 @@ cl1_init_colors
 	CNOP 0,4
 cl1_init_bpldat
 	movem.l a4-a5,-(a7)
-	move.l	#bg_image_data+(pf1_BPL1DAT_x_offset/8),a1 ; Bitplane1
+	move.l	#bg_image_data+(pf1_BPL1DAT_x_offset/8),a1 ; bitplane 1
 	move.w	#BPL5DAT,a2
 	move.w	#BPL6DAT,a4
 	move.w	#BPL7DAT,a5
-	move.l	#(((cl1_vstart1<<24)|(((cl1_hstart1/4)*2)<<16))|$10000)|$fffe,d0 ; WAIT-Befehl
+	move.l	#(((cl1_vstart1<<24)|(((cl1_hstart1/4)*2)<<16))|$10000)|$fffe,d0 ; CWAIT
 	move.w	#BPL1DAT,d1
 	move.w	#BPL2DAT,d2
 	move.w	#BPL3DAT,d3
 	move.w	#BPL4DAT,d4
-	move.l	#(((CL_Y_WRAP<<24)|(((cl1_hstart1/4)*2)<<16))|$10000)|$fffe,d5 ; WAIT-Befehl
+	move.l	#(((CL_Y_WRAP<<24)|(((cl1_hstart1/4)*2)<<16))|$10000)|$fffe,d5 ; CWAIT
 	moveq	#1,d6
-	ror.l	#8,d6			; $01000000 = Additionswert
+	ror.l	#8,d6			; $01000000
 	MOVEF.W cl1_display_y_size-1,d7
 cl1_init_bpldat_loop
 	move.l	d0,(a0)+		; CWAIT x,y
 	move.w	a5,(a0)+		; BPL7DAT
-	move.w	bg_image_plane_width*6(a1),(a0)+ ; Erste 16 Pixel Bitplane 7
+	move.w	bg_image_plane_width*6(a1),(a0)+ ; 1st word bitplane 7
 	move.w	a4,(a0)+		; BPL6DAT
-	move.w	bg_image_plane_width*5(a1),(a0)+ ; Erste 16 Pixel Bitplane 6
+	move.w	bg_image_plane_width*5(a1),(a0)+ ; 1st word bitplane 6
 	move.w	a2,(a0)+		; BPL5DAT
-	move.w	bg_image_plane_width*4(a1),(a0)+ ; Erste 16 Pixel Bitplane 5
+	move.w	bg_image_plane_width*4(a1),(a0)+ ; 1st word bitplane 5
 	move.w	d4,(a0)+		; BPL4DAT
-	move.w	bg_image_plane_width*3(a1),(a0)+ ; Erste 16 Pixel Bitplane 4
+	move.w	bg_image_plane_width*3(a1),(a0)+ ; 1st word bitplane 4
 	move.w	d3,(a0)+		; BPL3DAT
-	move.w	bg_image_plane_width*2(a1),(a0)+ ; Erste 16 Pixel Bitplane 3
+	move.w	bg_image_plane_width*2(a1),(a0)+ ; 1st word bitplane 3
 	move.w	d2,(a0)+		; BPL2DAT
-	move.w	bg_image_plane_width*1(a1),(a0)+ ; Erste 16 Pixel Bitplane 2
+	move.w	bg_image_plane_width*1(a1),(a0)+ ; 1st word bitplane 2
 	move.w	d1,(a0)+		; BPL1DAT
-	move.w	(a1),(a0)+		; Erste 16 Pixel Bitplane 1
-	ADDF.W	bg_image_plane_width*bg_image_depth,a1 ; nächste Zeile in Playfield
-	cmp.l	d5,d0			; Rasterzeile 255 erreicht ?
+	move.w	(a1),(a0)+		; 1st word bitplane 1
+	ADDF.W	bg_image_plane_width*bg_image_depth,a1 ; next line in playfield
+	cmp.l	d5,d0			; rasterline $ff ?
 	bne.s   cl1_init_bpldat_skip
-	COP_WAIT CL_X_WRAP_7_BITPLANES_1X,CL_Y_WRAP ; Copperliste patchen
+	COP_WAIT CL_X_WRAP_7_BITPLANES_1X,CL_Y_WRAP ; patch cl
 cl1_init_bpldat_skip
-	add.l	d6,d0			; nächste Zeile
+	add.l	d6,d0			; next line in cl
 	dbf	d7,cl1_init_bpldat_loop
 	movem.l (a7)+,a4-a5
 	rts
@@ -819,7 +820,7 @@ beam_routines
 	bsr	image_fader_out
 	bsr	if_rgb8_copy_color_table
 	jsr	mouse_handler
-	tst.l	d0			; Abbruch ?
+	tst.l	d0			; exit ?
 	bne.s	beam_routines_exit
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
@@ -856,33 +857,33 @@ vert_text_scroll
 	moveq	#vts_text_characters_per_column-1,d7
 vert_text_scroll_loop1
 	moveq	#0,d1
-	move.w	(a1),d1			; Y
+	move.w	(a1),d1			; y
 	move.w	d1,d2
-	MULUF.L extra_pf1_plane_width*extra_pf1_depth,d1,d0 ; Y-Offset in Playfield
+	MULUF.L extra_pf1_plane_width*extra_pf1_depth,d1,d0 ; y offset in playfield
 	lea	vts_characters_x_positions(pc),a0
 	moveq	#vts_text_characters_per_line-1,d6
 vert_text_scroll_loop2
 	moveq	#0,d0
-	move.w	(a0)+,d0		; X
-	lsr.w	#3,d0			; X/8
-	add.l	d1,d0			; X+Y-Offset
-	add.l	a4,d0			; Playfieldadresse addieren
+	move.w	(a0)+,d0		; x
+	lsr.w	#3,d0			; byte offset
+	add.l	d1,d0			; x offset+y offset
+	add.l	a4,d0			; add playfield address
 	WAITBLIT
-	move.l	(a2)+,BLTAPT-DMACONR(a6) ; Character-Image
-	move.l	d0,BLTDPT-DMACONR(a6)	; Playfield
-	move.w	d3,BLTSIZE-DMACONR(a6)	; Blitter starten
+	move.l	(a2)+,BLTAPT-DMACONR(a6) ; character
+	move.l	d0,BLTDPT-DMACONR(a6)	; playfield write
+	move.w	d3,BLTSIZE-DMACONR(a6)
 	dbf	d6,vert_text_scroll_loop2
-	sub.w	vts_vert_scroll_speed(a3),d2 ; Y-Position verringern
+	sub.w	vts_vert_scroll_speed(a3),d2 ; decrease y position
 	bpl.s	vert_text_scroll_skip
-	sub.l	a5,a2			; Zeiger auf Anfang setzen
+	sub.l	a5,a2			; reset pointer
 	moveq	#vts_text_characters_per_line-1,d5
 vert_text_scroll_loop3
 	bsr.s	vts_get_new_char_image
-	move.l	d0,(a2)+		; Neues Bild für Characteracter
+	move.l	d0,(a2)+		; new character
 	dbf	d5,vert_text_scroll_loop3
-	add.w	d4,d2			; Y-Neustart
+	add.w	d4,d2			; reset y
 vert_text_scroll_skip
-	move.w	d2,(a1)+		; Y-Pos.
+	move.w	d2,(a1)+
 	dbf	d7,vert_text_scroll_loop1
 	move.w	#DMAF_BLITHOG,DMACON-DMACONR(a6)
 	movem.l (a7)+,a4-a5
@@ -891,40 +892,39 @@ vert_text_scroll_skip
 vert_text_scroll_init
 	move.w	#DMAF_BLITHOG+DMAF_SETCLR,DMACON-DMACONR(a6)
 	WAITBLIT
-	move.l	#(BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC)<<16,BLTCON0-DMACONR(a6) ; D=A
+	move.l	#(BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC)<<16,BLTCON0-DMACONR(a6) ; minterm D=A
 	moveq	#-1,d0
 	move.l	d0,BLTAFWM-DMACONR(a6)
-	move.l	#((vts_image_plane_width-vts_text_char_width)<<16)+(vts_buffer_width-vts_text_char_width),BLTAMOD-DMACONR(a6) ; A-Mod + D-Mod
+	move.l	#((vts_image_plane_width-vts_text_char_width)<<16)+(vts_buffer_width-vts_text_char_width),BLTAMOD-DMACONR(a6) ; A&D moduli
 	rts
 
 
 	GET_NEW_char_IMAGE.W vts
 
 
-; Puffer in Sprite-Strukturen kopieren
 	CNOP 0,4
 vts_copy_buffer
 	move.l	a4,-(a7)
 	lea	spr_ptrs_construction(pc),a2
-	move.l	QUADWORD_SIZE(a2),a0	; 1. Sprite-Struktur
-	ADDF.W	(spr_pixel_per_datafetch/4),a0 ; Sprite-Header überspringen
-	move.l	4*LONGWORD_SIZE(a2),a1	; 2. Sprite-Struktur
-	ADDF.W	(spr_pixel_per_datafetch/4),a1 ; Sprite-Header überspringen
-	move.l	6*LONGWORD_SIZE(a2),a2	; 3. Sprite-Struktur
-	ADDF.W	(spr_pixel_per_datafetch/4),a2 ; Sprite-Header überspringen
+	move.l	QUADWORD_SIZE(a2),a0	; 1st sprite structure
+	ADDF.W	(spr_pixel_per_datafetch/4),a0 ; skip header
+	move.l	4*LONGWORD_SIZE(a2),a1	; 2nd sprite structure
+	ADDF.W	(spr_pixel_per_datafetch/4),a1 ; skip header
+	move.l	6*LONGWORD_SIZE(a2),a2	; 3rd sprite structure
+	ADDF.W	(spr_pixel_per_datafetch/4),a2 ; skip header
 	move.l	extra_pf2(a3),a4
 	move.l	(a4),a4
-	ADDF.W	vts_text_char_y_size*extra_pf1_plane_width*extra_pf1_depth,a4 ; n Zeilen überspringen
+	ADDF.W	vts_text_char_y_size*extra_pf1_plane_width*extra_pf1_depth,a4 ; skip n lines
 	MOVEF.W vts_buffer_y_size-1,d7
 vts_copy_buffer_loop
-	move.l	(a4)+,(a0)+		; Plane1 64 Pixel
-	move.l	(a4)+,(a0)+		; Plane1
+	move.l	(a4)+,(a0)+		; bitplane 1
+	move.l	(a4)+,(a0)+		; bitplane 1
 	addq.w	#QUADWORD_SIZE,a0
-	move.l	(a4)+,(a1)+		; Plane1 64 Pixel
-	move.l	(a4)+,(a1)+		; Plane1
+	move.l	(a4)+,(a1)+		; bitplane 1
+	move.l	(a4)+,(a1)+		; bitplane 1
 	addq.w	#QUADWORD_SIZE,a1
-	move.l	(a4)+,(a2)+		; Plane1 64 Pixel
-	move.l	(a4)+,(a2)+		; Plane1
+	move.l	(a4)+,(a2)+		; bitplane 1
+	move.l	(a4)+,(a2)+		; bitplane 1
 	addq.w	#QUADWORD_SIZE,a2
 	dbf	d7,vts_copy_buffer_loop
 	move.l	(a7)+,a4
@@ -938,29 +938,29 @@ image_fader_in
 	bne.s	image_fader_in_quit
 	move.w	ifi_rgb8_fader_angle(a3),d2
 	move.w	d2,d0
-	ADDF.W	ifi_rgb8_fader_angle_speed,d0 ; nächster Winkel
-	cmp.w	#sine_table_length/2,d0 ; Winkel <= 180 Grad ?
+	ADDF.W	ifi_rgb8_fader_angle_speed,d0
+	cmp.w	#sine_table_length/2,d0 ; 180° ?
 	ble.s	image_fader_in_skip
-	MOVEF.W sine_table_length/2,d0	; 180 Grad
+	MOVEF.W sine_table_length/2,d0
 image_fader_in_skip
 	move.w	d0,ifi_rgb8_fader_angle(a3) 
-	MOVEF.W if_rgb8_colors_number*3,d6 ; RGB-Zähler
+	MOVEF.W if_rgb8_colors_number*3,d6 ; RGB counter
 	lea	sine_table,a0	
 	move.l	(a0,d2.w*4),d0		; sin(w)
 	MULUF.L ifi_rgb8_fader_radius*2,d0,d1 ; y'=(yr*sin(w))/2^15
 	swap	d0
 	ADDF.W	ifi_rgb8_fader_center,d0
-	lea	pf1_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; Puffer für Farbwerte
-	lea	ifi_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ; Sollwerte
-	move.w	d0,a5			; Additions-/Subtraktionswert für Blau
+	lea	pf1_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; pointer colors buffer
+	lea	ifi_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ; pointer destination colors
+	move.w	d0,a5			; increase/decrease blue
 	swap	d0
 	clr.w	d0
-	move.l	d0,a2			; Additions-/Subtraktionswert für Rot
+	move.l	d0,a2			; increase/decrease red
 	lsr.l	#8,d0
-	move.l	d0,a4			; Additions-/Subtraktionswert für Grün
+	move.l	d0,a4			; increase/decrease green
 	MOVEF.W if_rgb8_colors_number-1,d7
 	bsr	if_rgb8_fader_loop
-	move.w	d6,if_rgb8_colors_counter(a3) ; Fading beendet ?
+	move.w	d6,if_rgb8_colors_counter(a3) ; fading-in finished ?
 	bne.s	image_fader_in_quit
 	move.w	#FALSE,ifi_rgb8_active(a3)
 image_fader_in_quit
@@ -975,29 +975,29 @@ image_fader_out
 	bne.s	image_fader_out_quit
 	move.w	ifo_rgb8_fader_angle(a3),d2
 	move.w	d2,d0
-	ADDF.W	ifo_rgb8_fader_angle_speed,d0 ; nächster Winkel
-	cmp.w	#sine_table_length/2,d0 ; Winkel <= 180 Grad ?
+	ADDF.W	ifo_rgb8_fader_angle_speed,d0
+	cmp.w	#sine_table_length/2,d0 ; 180° ?
 	ble.s	image_fader_out_skip
-	MOVEF.W sine_table_length/2,d0	; 180 Grad
+	MOVEF.W sine_table_length/2,d0
 image_fader_out_skip
 	move.w	d0,ifo_rgb8_fader_angle(a3) 
-	MOVEF.W if_rgb8_colors_number*3,d6 ; RGB-Zähler
+	MOVEF.W if_rgb8_colors_number*3,d6 ; RGB counter
 	lea	sine_table,a0	
 	move.l	(a0,d2.w*4),d0		; sin(w)
 	MULUF.L ifo_rgb8_fader_radius*2,d0,d1 ; y'=(yr*sin(w))/2^15
 	swap	d0
 	ADDF.W	ifo_rgb8_fader_center,d0
-	lea	pf1_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; Puffer für Farbwerte
-	lea	ifo_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ; Sollwerte
-	move.w	d0,a5			; Additions-/Subtraktionswert für Blau
+	lea	pf1_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; pointer colors buffer
+	lea	ifo_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a1 ; pointer destination colors
+	move.w	d0,a5			; increase/decrease blue
 	swap	d0
 	clr.w	d0
-	move.l	d0,a2			; Additions-/Subtraktionswert für Rot
+	move.l	d0,a2			; increase/decrease red
 	lsr.l	#8,d0
-	move.l	d0,a4			; Additions-/Subtraktionswert für Grün
+	move.l	d0,a4			; increase/decrease green
 	MOVEF.W if_rgb8_colors_number-1,d7
 	bsr.s	if_rgb8_fader_loop
-	move.w	d6,if_rgb8_colors_counter(a3) ; Fading beendet ?
+	move.w	d6,if_rgb8_colors_counter(a3) ; fading-out finished ?
 	bne.s	image_fader_out_quit
 	move.w	#FALSE,ifo_rgb8_active(a3)
 image_fader_out_quit
@@ -1017,7 +1017,7 @@ scroll_logo_left_in
 	tst.w	slli_active(a3)
 	bne	scroll_logo_left_in_quit
 	move.w	slli_x_angle(a3),d2 ;X-Winkel
-	cmp.w	#sine_table_length/4,d2	; 90 Grad erreicht ?
+	cmp.w	#sine_table_length/4,d2	; 90° ?
 	bgt.s	scroll_logo_left_in_quit
 	lea	sine_table,a0	
 	move.l	(a0,d2.w*4),d1		; sin(w)
@@ -1025,18 +1025,18 @@ scroll_logo_left_in
 	swap	d1
 	add.w	#sll_x_center*4,d1
 	MOVEF.W lg_image_x_position*SHIRES_PIXEL_FACTOR,d0
-	sub.w	d1,d0			; X-Zentrierung
-	addq.w	#slli_x_angle_speed,d2	; nächsterX-Winkel
+	sub.w	d1,d0			; x centering
+	addq.w	#slli_x_angle_speed,d2
 	move.w	d2,slli_x_angle(a3)
-	moveq	#lg_image_y_position,d1 ; Y
+	moveq	#lg_image_y_position,d1 ; y
 	MOVEF.W lg_image_y_size,d2
 	add.w	d1,d2			; VSTOP
 	lea	spr_ptrs_construction(pc),a2
-	move.l	(a2)+,a0		; 1. Sprite-Struktur
-	move.l	(a2),a1			; 2. Sprite-Struktur
+	move.l	(a2)+,a0		; 1st sprite structure
+	move.l	(a2),a1			; 2nd sprite structure
 	lea	spr_ptrs_display(pc),a2
-	move.l	(a2)+,a4		; 1. Sprite-Struktur
-	move.l	(a2),a5			; 2. Sprite-Struktur
+	move.l	(a2)+,a4		; 1st sprite structure
+	move.l	(a2),a5			; 2nd sprite structure
 	SET_SPRITE_POSITION d0,d1,d2
 	move.w	d1,(a0)			; SPR0POS
 	move.w	d1,(a4)
@@ -1057,8 +1057,8 @@ scroll_logo_left_out
 	movem.l a4-a5,-(a7)
 	tst.w	sllo_active(a3)
 	bne	scroll_logo_left_out_quit
-	move.w	sllo_x_angle(a3),d2	; X-Winkel
-	cmp.w	#sine_table_length/2,d2 ; 180 Grad erreicht ?
+	move.w	sllo_x_angle(a3),d2
+	cmp.w	#sine_table_length/2,d2 ; 180° ?
 	bgt.s	scroll_logo_left_out_quit
 	lea	sine_table,a0	
 	move.l	(a0,d2.w*4),d1		; cos(w)
@@ -1066,18 +1066,18 @@ scroll_logo_left_out
 	swap	d1
 	add.w	#sll_x_center*4,d1
 	MOVEF.W lg_image_x_position*SHIRES_PIXEL_FACTOR,d0
-	sub.w	d1,d0			; X-Zentrierung
-	addq.w	#sllo_x_angle_speed,d2	; nächster X-Winkel
+	sub.w	d1,d0			; x centering
+	addq.w	#sllo_x_angle_speed,d2
 	move.w	d2,sllo_x_angle(a3) 
 	moveq	#lg_image_y_position,d1 ; Y
 	MOVEF.W lg_image_y_size,d2
 	add.w	d1,d2			; VSTOP
 	lea	spr_ptrs_construction(pc),a2
-	move.l	(a2)+,a0		; 1. Sprite-Struktur
-	move.l	(a2),a1			; 2. Sprite-Struktur
+	move.l	(a2)+,a0		; 1st sprite structure
+	move.l	(a2),a1			; 2nd sprite structure
 	lea	spr_ptrs_display(pc),a2
-	move.l	(a2)+,a4		; 1. Sprite-Struktur
-	move.l	(a2),a5			; 2. Sprite-Struktur
+	move.l	(a2)+,a4		; 1st sprite structure
+	move.l	(a2),a5			; 2nd sprite structure
 	SET_SPRITE_POSITION d0,d1,d2
 	move.w	d1,(a0)			; SPR0POS
 	move.w	d1,(a4)
@@ -1142,7 +1142,7 @@ eh_start_vert_text_scroll
 	rts
 	CNOP 0,4
 eh_stop_vert_text_scroll
-	clr.w	vts_vert_scroll_speed(a3) ; Geschwindigkeit = Null
+	clr.w	vts_vert_scroll_speed(a3)
 	rts
 	CNOP 0,4
 eh_start_image_fader_out
@@ -1500,7 +1500,7 @@ vts_text
 	EVEN
 
 
-; Grafikdaten nachladen
+; gfx data
 
 ; Logo
 lg_image_data			SECTION lg_gfx,DATA
@@ -1509,6 +1509,6 @@ lg_image_data			SECTION lg_gfx,DATA
 ; Vert-Text-Scroll
 vts_image_data			SECTION vts_gfx,DATA_C
 	INCBIN "RasterMaster:fonts/16x15x2-Font.rawblit"
-	DS.B vts_image_plane_width*vts_image_depth ; Leerzeile
+	DS.B vts_image_plane_width*vts_image_depth ; empty line
 
 	END

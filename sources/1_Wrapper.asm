@@ -63,6 +63,7 @@ text_output_enabled		EQU FALSE
 CUSTOM_MEMORY_CHIP		EQU $00000000
 CUSTOM_MEMORY_FAST		EQU $00000001
 
+; PT-Replay
 pt_ciatiming_enabled		EQU TRUE
 pt_usedfx			EQU %1001010100000000
 pt_usedefx			EQU %0000000000000000
@@ -294,15 +295,15 @@ start_1_pt_replay
 	CNOP 0,4
 init_custom_memory_table
 	lea	custom_memory_table(pc),a0
-	move.l	#part_1_audio_memory_size1,(a0)+ ; Speichergröße
+	move.l	#part_1_audio_memory_size1,(a0)+ ; memory size
 	moveq	#CUSTOM_MEMORY_FAST,d2
-	move.l	d2,(a0)+		; Speicherart: vorrangig fast-memory
+	move.l	d2,(a0)+		; ype: fast memory
 	moveq	#0,d0
-	move.l	d0,(a0)+		; Zeiger auf Speicherbereich = Null
-	move.l	#part_1_audio_memory_size2,(a0)+ ; Speichergröße
+	move.l	d0,(a0)+		; pointer memory block
+	move.l	#part_1_audio_memory_size2,(a0)+ ; memory suize
 	moveq	#CUSTOM_MEMORY_CHIP,d2
-	move.l	d2,(a0)+		; Speicherart: chip-memory
-	move.l	d0,(a0)			; Zeiger auf Speicherbereich = Null
+	move.l	d2,(a0)+		; type chip memory
+	move.l	d0,(a0)			; pointer memory block
 	rts
 
 
@@ -346,14 +347,14 @@ init_main
 
 	CNOP 0,4
 pt_decrunch_audio_data
-	lea	pt_auddata,a0		; Quelle: gepackte Daten
+	lea	pt_auddata,a0		; source: crunched data
 	lea	custom_memory_table(pc),a2
-	move.l	cme_memory_pointer(a2),a1 ; Ziel: entpackte Daten
+	move.l	cme_memory_pointer(a2),a1 ; destination: decrunched data
 	move.l	a1,pt_SongDataPointer(a3)
 	movem.l a2-a6,-(a7)
 	jsr	sc_start
 	movem.l (a7)+,a2-a6
-	ADDF.W	custom_memory_entry_size,a2 ; nächster Custom-Memory-Block
+	ADDF.W	custom_memory_entry_size,a2 ; next custom memory block
 	lea	pt_audsmps,a0
 	move.l	cme_memory_pointer(a2),a1
 	move.l	a1,pt_SamplesDataPointer(a3)
@@ -405,21 +406,21 @@ init_first_copperlist
 	CNOP 0,4
 alloc_custom_memory
 	move.l	global_references_table(a3),a2
-	move.l	gr_custom_memory_table(a2),a2 ; Zeiger auf ersten Listeneintrag
+	move.l	gr_custom_memory_table(a2),a2
 	moveq	#custom_memory_number-1,d7
 alloc_custom_memory_loop
-	move.l	(a2)+,d0		; Größe der Speicherbereiches
-	CMPF.L	CUSTOM_MEMORY_CHIP,(a2)+ ; Speicherart: Chip-Memory reservieren ?
+	move.l	(a2)+,d0		; memory size
+	CMPF.L	CUSTOM_MEMORY_CHIP,(a2)+ ; type chip memory ?
 	bne.s	alloc_custom_memory_skip1
 	bsr	do_alloc_chip_memory
-	move.l	d0,(a2)+		; Zeiger auf Speicherbereich
+	move.l	d0,(a2)+		; pointer memory block
 	bne.s	alloc_custom_memory_skip2
 	bsr.s	alloc_custom_memory_fail
 	bra.s	alloc_custom_memory_quit
 	CNOP 0,4
 alloc_custom_memory_skip1
 	bsr	do_alloc_memory
-	move.l	d0,(a2)+		; Zeiger auf Speicherbereich
+	move.l	d0,(a2)+		; pointer memory block
 	bne.s	alloc_custom_memory_skip2
 	bsr.s	alloc_custom_memory_fail
 	bra.s	alloc_custom_memory_quit
@@ -444,14 +445,14 @@ main
 	CNOP 0,4
 free_custom_memory
 	move.l	global_references_table(a3),a2
-	move.l	gr_custom_memory_table(a2),a2 ; Zeiger auf ersten Listeneintrag
+	move.l	gr_custom_memory_table(a2),a2
 	moveq	#custom_memory_number-1,d7
 free_custom_memory_loop
-	move.l	(a2),d0			; Größe der Speicherbereiches
-	addq.w	#QUADWORD_SIZE,a2	; Größe + Speicherart überspringen
-	move.l	(a2)+,d1		; Zeiger auf Speicher-Block
+	move.l	(a2),d0			; memory size
+	addq.w	#QUADWORD_SIZE,a2	; skip size and type
+	move.l	(a2)+,d1		; pointer memory block
 	beq.s	free_custom_memory_skip
-	move.l	d1,a1			; Zeiger auf Speicher-Block
+	move.l	d1,a1			; pointer memory block
 	CALLEXEC FreeMem
 free_custom_memory_skip
 	dbf	d7,free_custom_memory_loop
@@ -470,6 +471,8 @@ ciab_ta_int_server
 VERTB_int_server
 	ENDC
 
+
+; PT-Replay
 	IFEQ pt_music_fader_enabled
 		bsr.s	pt_music_fader
 		bra.s	pt_PlayMusic
@@ -479,8 +482,6 @@ VERTB_int_server
 		CNOP 0,4
 	ENDC
 
-
-; PT-Replay
 	IFD PROTRACKER_VERSION_2 
 		PT2_REPLAY pt_SetSoftInterrupt
 	ENDC
@@ -551,7 +552,7 @@ custom_memory_table
 	INCLUDE "error-texts.i"
 
 
-; Audiodaten nachladen
+; Audio data
 
 ; PT-Replay
 	IFEQ pt_split_module_enabled

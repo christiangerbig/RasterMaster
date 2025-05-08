@@ -602,14 +602,14 @@ lg_init_sprites
 	lea	lg_image_data,a2
 	MOVEF.W lg_image_y_size-1,d7
 lg_init_sprites_loop
-	move.l	(a2)+,(a0)+		; bitplane 1
-	move.l	(a2)+,(a0)+		; bitplane 1
-	move.l	(a2)+,(a0)+		; bitplane 2
-	move.l	(a2)+,(a0)+		; bitplane 2
-	move.l	(a2)+,(a1)+		; bitplane 3
-	move.l	(a2)+,(a1)+		; bitplane 3
-	move.l	(a2)+,(a1)+		; bitplane 4
-	move.l	(a2)+,(a1)+		; bitplane 4
+	move.l	(a2)+,(a0)+		; high longword: bitplane 1
+	move.l	(a2)+,(a0)+		; low longword: bitplane 1
+	move.l	(a2)+,(a0)+		; high longword: bitplane 2
+	move.l	(a2)+,(a0)+		; low longword: bitplane 2
+	move.l	(a2)+,(a1)+		; high longword: bitplane 3
+	move.l	(a2)+,(a1)+		; low longword: bitplane 3
+	move.l	(a2)+,(a1)+		; high longword: bitplane 4
+	move.l	(a2)+,(a1)+		; low longword: bitplane 4
 	dbf	d7,lg_init_sprites_loop
 	rts
 
@@ -917,14 +917,14 @@ vts_copy_buffer
 	ADDF.W	vts_text_char_y_size*extra_pf1_plane_width*extra_pf1_depth,a4 ; skip n lines
 	MOVEF.W vts_buffer_y_size-1,d7
 vts_copy_buffer_loop
-	move.l	(a4)+,(a0)+		; bitplane 1
-	move.l	(a4)+,(a0)+		; bitplane 1
+	move.l	(a4)+,(a0)+		; high longword: bitplane 1
+	move.l	(a4)+,(a0)+		; low longword: bitplane 1
 	addq.w	#QUADWORD_SIZE,a0
-	move.l	(a4)+,(a1)+		; bitplane 1
-	move.l	(a4)+,(a1)+		; bitplane 1
+	move.l	(a4)+,(a1)+		; high longword: bitplane 1
+	move.l	(a4)+,(a1)+		; low longword: bitplane 1
 	addq.w	#QUADWORD_SIZE,a1
-	move.l	(a4)+,(a2)+		; bitplane 1
-	move.l	(a4)+,(a2)+		; bitplane 1
+	move.l	(a4)+,(a2)+		; high longword: bitplane 1
+	move.l	(a4)+,(a2)+		; low longword: bitplane 1
 	addq.w	#QUADWORD_SIZE,a2
 	dbf	d7,vts_copy_buffer_loop
 	move.l	(a7)+,a4
@@ -942,6 +942,7 @@ image_fader_in
 	cmp.w	#sine_table_length/2,d0 ; 180° ?
 	ble.s	image_fader_in_skip
 	MOVEF.W sine_table_length/2,d0
+
 image_fader_in_skip
 	move.w	d0,ifi_rgb8_fader_angle(a3) 
 	MOVEF.W if_rgb8_colors_number*3,d6 ; RGB counter

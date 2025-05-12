@@ -1331,7 +1331,7 @@ ss_horiz_scrolltext
 	cmp.w	#ss_text_char_x_shift_max,d2
 	blt.s	ss_horiz_scrolltext_skip
 	bsr.s	ss_get_new_char_image
-	move.w	d0,cl1_extension2_entry+cl1_ext2_BLTAPTL+WORD_SIZE(a2) ; character
+	move.w	d0,cl1_extension2_entry+cl1_ext2_BLTAPTL+WORD_SIZE(a2) ; character image
 	swap	d0
 	moveq	#0,d2			; reset x shift
 	move.w	d0,cl1_extension2_entry+cl1_ext2_BLTAPTH+WORD_SIZE(a2)

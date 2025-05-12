@@ -869,7 +869,7 @@ vert_text_scroll_loop2
 	add.l	d1,d0			; x offset+y offset
 	add.l	a4,d0			; add playfield address
 	WAITBLIT
-	move.l	(a2)+,BLTAPT-DMACONR(a6) ; character
+	move.l	(a2)+,BLTAPT-DMACONR(a6) ; character image
 	move.l	d0,BLTDPT-DMACONR(a6)	; playfield write
 	move.w	d3,BLTSIZE-DMACONR(a6)
 	dbf	d6,vert_text_scroll_loop2

@@ -144,8 +144,8 @@ workbench_start_enabled		EQU TRUE
 screen_fader_enabled		EQU TRUE
 text_output_enabled		EQU FALSE
 
-dma_bits			EQU DMAF_COPPER+DMAF_MASTER+DMAF_SETCLR
-intena_bits			EQU INTF_INTEN+INTF_SETCLR
+dma_bits			EQU DMAF_COPPER|DMAF_MASTER|DMAF_SETCLR
+intena_bits			EQU INTF_INTEN|INTF_SETCLR
 
 ciaa_icr_bits			EQU CIAICRF_SETCLR
 ciab_icr_bits			EQU CIAICRF_SETCLR
@@ -207,7 +207,7 @@ beam_position			EQU $136
 
 bplcon0_bits			EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) 
 bplcon3_bits1			EQU 0
-bplcon3_bits2			EQU bplcon3_bits1+BPLCON3F_LOCT
+bplcon3_bits2			EQU bplcon3_bits1|BPLCON3F_LOCT
 bplcon4_bits			EQU 0
 color00_bits			EQU $001122
 color00_high_bits		EQU $012

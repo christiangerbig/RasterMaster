@@ -66,9 +66,9 @@ tccb_restore_cl_cpu_enabled	EQU TRUE
 tccb_restore_cl_blitter_enabled EQU FALSE
 
 	IFEQ open_border_enabled
-dma_bits			EQU DMAF_BLITTER+DMAF_COPPER+DMAF_SETCLR
+dma_bits			EQU DMAF_BLITTER|DMAF_COPPER|DMAF_SETCLR
 	ELSE
-dma_bits			EQU DMAF_BLITTER+DMAF_COPPER+DMAF_RASTER+MAF_SETCLR
+dma_bits			EQU DMAF_BLITTER|DMAF_COPPER|DMAF_RASTER+MAF_SETCLR
 	ENDC
 
 intena_bits			EQU INTF_SETCLR
@@ -668,11 +668,11 @@ twisted_colorcycle_bars
 	add.l	#em_bplam_table,a5	; BPLAM table
 	move.w	#tccb_y_center,a6
 	move.w	d5,a7		
-	swap	d7			; high word: overflow
-	move.w	#cl1_display_width-1,d7	; low word: number of columns
+	swap	d7 			; high word: overflow
+	move.w	#cl1_display_width-1,d7	; low word: loop counter
 tccb_get_y_coords_loop1
-	move.l	a5,a1			; bBPLAM table
-	swap	d7			; low word: overflow
+	move.l	a5,a1			; BBPLAM table
+	swap	d7		 	; low word: overflow
 	moveq	#tccb_bars_number-1,d6
 tccb_get_y_coords_loop2
 	move.l	(a0,d4.w*4),d0		; sin(w)
@@ -750,7 +750,7 @@ tccb_get_y_coords_loop2
 	addq.w	#tccb_y_angle_step,d5	; next column
 	and.w	d7,d5			; remove overflow
 	move.w	d5,a7		
-	swap	d7			; low word: loop counter
+	swap	d7		 	; low word: loop counter
 	addq.w	#LONGWORD_SIZE,a2	; next column in cl
 	dbf	d7,tccb_get_y_coords_loop1
 	move.l	variables+save_a7(pc),a7

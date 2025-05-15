@@ -311,7 +311,7 @@ cl1_begin			RS.B 0
 
 cl1_COPJMP2			RS.L 1
 
-copperlist1_size 		RS.B 0
+copperlist1_size		RS.B 0
 
 
 	RSRESET
@@ -512,7 +512,7 @@ spr5_extension1_size		RS.B 0
 
 spr5_begin			RS.B 0
 
-spr5_extension1_entry 		RS.B spr5_extension1_size
+spr5_extension1_entry		RS.B spr5_extension1_size
 
 spr5_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
@@ -934,7 +934,7 @@ vert_starscrolling
 	move.l	vss_bplam_table_mask(a3),a2 ; Maske
 	add.l	#(vss_z_planes_number-1)*vss_star_x_size,a2 ; mask
 	move.l	vss_bplam_buffer_construction2(a3),a4 ; destination: buffer
-	move.w	#BC0F_SRCA+BC0F_SRCB+BC0F_SRCC+BC0F_DEST+NANBC+NABC+ABNC+ABC,a3 ; minterm D=A+B
+	move.w	#BC0F_SRCA|BC0F_SRCB|BC0F_SRCC|BC0F_DEST+NANBC|NABC|ABNC|ABC,a3 ; minterm D=A+B
 	move.w	#(vss_copy_blit_y_size*64)+((vss_copy_blit_x_size+16)/WORD_BITS),a5
 	move.w	#(16*64)+(16/WORD_BITS),a7	; addition value blit size
 	moveq	#vss_z_planes_number-1,d7
@@ -986,7 +986,7 @@ vert_starscrolling_skip
 	rts
 	CNOP 0,4
 vert_starscrolling_init
-	move.w	#DMAF_BLITHOG+DMAF_SETCLR,DMACON-DMACONR(a6)
+	move.w	#DMAF_BLITHOG|DMAF_SETCLR,DMACON-DMACONR(a6)
 	WAITBLIT
 	move.l	#$ffff0000,BLTAFWM-DMACONR(a6) ; Maske
 	rts
@@ -996,7 +996,7 @@ vert_starscrolling_init
 vss_clear_bplam_buffer
 	move.l	vss_bplam_buffer_construction1(a3),a0
 	WAITBLIT
-	move.l	#(BC0F_DEST+ANBNC+ANBC+ABNC+ABC)<<16,BLTCON0-DMACONR(a6) ; minterm D=A
+	move.l	#(BC0F_DEST|ANBNC|ANBC|ABNC|ABC)<<16,BLTCON0-DMACONR(a6) ; minterm D=A
 	moveq	#-1,d0
 	move.l	d0,BLTAFWM-DMACONR(a6)
 	add.l	#vss_bplam_buffer_x_size*vss_star_y_size3,a0 ; skip n lines
@@ -1212,8 +1212,8 @@ image_pixel_fader_in_skip1
 	CNOP 0,4
 image_pixel_fader_in_skip2
 	moveq	#0,d1
-	move.l	d3,d2			; low longword: source size
-	moveq	#0,d7			; high longword: source size
+	move.l	d3,d2		 	; low longword: source size
+	moveq	#0,d7 			; high longword: source size
 	moveq	#0,d5			; mask
 	divu.l	d4,d7:d2		; F=source width/destination width
 	move.w	d4,d7			; destination width
@@ -1263,8 +1263,8 @@ image_pixel_fader_skip1
 	CNOP 0,4
 image_pixel_fader_skip2
 	moveq	#0,d1
-	move.l	d3,d2			; low longword: source size
-	moveq	#0,d7			; high longword: source size
+	move.l	d3,d2		 	; low longword: source size
+	moveq	#0,d7 			; high longword: source size
 	moveq	#0,d5			; mask
 	divu.l	d4,d7:d2		; F=source width/destination width
 	move.w	d4,d7			; destination width

@@ -141,7 +141,7 @@ bplcon0_bits			EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR
 bplcon1_bits			EQU 0
 bplcon2_bits			EQU 0
 bplcon3_bits1			EQU 0
-bplcon3_bits2			EQU bplcon3_bits1+BPLCON3F_LOCT
+bplcon3_bits2			EQU bplcon3_bits1|BPLCON3F_LOCT
 bplcon4_bits			EQU 0
 diwhigh_bits			EQU (((display_window_hstop&$100)>>8)*DIWHIGHF_HSTOP8)+(((display_window_vstop&$700)>>8)*DIWHIGHF_VSTOP8)+(((display_window_hstart&$100)>>8)*DIWHIGHF_HSTART8)+((display_window_vstart&$700)>>8)
 fmode_bits			EQU 0
@@ -362,7 +362,7 @@ vsb_y_angle			RS.W 1
 
 ; Vert-Border-Fader
 vbf_fader_angle			RS.W 1
-vbf_display_window_vstart 	RS.W 1
+vbf_display_window_vstart	RS.W 1
 vbf_display_window_vstop	RS.W 1
 
 vbfo_active			RS.W 1
@@ -639,9 +639,9 @@ zzp5_get_y_coords_loop
 	rts
 	CNOP 0,4
 zzp5_get_y_coords_init
-	move.w	#DMAF_BLITHOG+DMAF_SETCLR,DMACON-DMACONR(a6)
+	move.w	#DMAF_BLITHOG|DMAF_SETCLR,DMACON-DMACONR(a6)
 	WAITBLIT
-	move.l	#(BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC)<<16,BLTCON0-DMACONR(a6) ; minterm D=A
+	move.l	#(BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC)<<16,BLTCON0-DMACONR(a6) ; minterm D=A
 	moveq	#-1,d0
 	move.l	d0,BLTAFWM-DMACONR(a6)
 	move.l	#cl2_extension1_size-zzp5_copy_blit_width,BLTAMOD-DMACONR(a6) ; A&D moduli

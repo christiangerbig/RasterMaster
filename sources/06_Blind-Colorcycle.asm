@@ -596,8 +596,8 @@ blind_colorcycle512
 	IFEQ bcc512_bplam_table_length_256
 		moveq	#(cl2_display_width/2)-1,d7 ; number of columns
 	ELSE
-		swap	d7		; high longword: overflow
-		move.w	#(cl2_display_width/2)-1,d7 ; low longword: number of columns
+		swap	d7 		; high word: overflow
+		move.w	#(cl2_display_width/2)-1,d7 ; low word: loop counter
 	ENDC
 blind_colorcycle512_loop1
 	move.w	d3,d2			; table start

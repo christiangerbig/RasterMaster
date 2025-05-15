@@ -673,7 +673,7 @@ tb315_set_background_bars_loop1
 	lea	(a2,d0.w*4),a3		; add 2nd y offset
 	moveq	#tb315_bars_number-1,d6
 tb315_set_background_bars_loop2
-	move.l	(a0)+,d0		; low word: y, high word: z vector
+	move.l	(a0)+,d0	 	; low word: y, high word: z vector
 	bpl.s	tb315_set_background_bars_skip1
 	add.l	d4,a1			; skip BPLAM values
 	bra	tb315_set_background_bars_skip2
@@ -705,7 +705,7 @@ tb315_set_foreround_bars_loop1
 	lea	(a2,d0.w*4),a3		; add 2nd y offset
 	moveq	#tb315_bars_number-1,d6
 tb315_set_foreround_bars_loop2
-	move.l	(a0)+,d0		; low word: y, high word: z vector
+	move.l	(a0)+,d0	 	; low word: y, high word: z vector
 	bmi.s	tb315_set_foreround_bars_skip1
 	add.l	d4,a1			; skip BPLAM values
 	bra	tb315_set_foreround_bars_skip2

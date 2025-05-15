@@ -239,7 +239,7 @@ hst_horiz_scroll_window_depth	EQU hst_image_depth
 hst_horiz_scroll_speed		EQU 3
 
 hst_text_char_x_restart		EQU hst_horiz_scroll_window_x_size
-hst_text_characters_number	EQU hst_horiz_scroll_window_x_size/hst_text_char_x_size
+hst_text_chars_number	EQU hst_horiz_scroll_window_x_size/hst_text_char_x_size
 
 hst_text_x_position		EQU 32
 hst_text_y_position		EQU (visible_lines_number-hst_text_char_y_size)/2
@@ -398,7 +398,7 @@ spr0_extension1_size		RS.B 0
 
 spr0_begin			RS.B 0
 
-spr0_extension1_entry 		RS.B spr0_extension1_size
+spr0_extension1_entry		RS.B spr0_extension1_size
 
 spr0_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
@@ -440,7 +440,7 @@ spr2_extension1_size		RS.B 0
 
 spr2_begin			RS.B 0
 
-spr2_extension1_entry 		RS.B spr2_extension1_size
+spr2_extension1_entry		RS.B spr2_extension1_size
 
 spr2_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
@@ -461,7 +461,7 @@ spr3_extension1_size		RS.B 0
 
 spr3_begin			RS.B 0
 
-spr3_extension1_entry 		RS.B spr3_extension1_size
+spr3_extension1_entry		RS.B spr3_extension1_size
 
 spr3_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
@@ -482,7 +482,7 @@ spr4_extension1_size		RS.B 0
 
 spr4_begin			RS.B 0
 
-spr4_extension1_entry 		RS.B spr4_extension1_size
+spr4_extension1_entry		RS.B spr4_extension1_size
 
 spr4_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
@@ -545,7 +545,7 @@ spr7_extension1_size		RS.B 0
 
 spr7_begin			RS.B 0
 
-spr7_extension1_entry 		RS.B spr7_extension1_size
+spr7_extension1_entry		RS.B spr7_extension1_size
 
 spr7_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
@@ -710,9 +710,9 @@ init_main
 	bsr.s	tb_init_color_table
 	bsr.s	init_colors
 	bsr	init_sprites
-	bsr	hst_init_characters_offsets
-	bsr	hst_init_characters_x_positions
-	bsr	hst_init_characters_images
+	bsr	hst_init_chars_offsets
+	bsr	hst_init_chars_x_positions
+	bsr	hst_init_chars_images
 	bsr	init_first_copperlist
 	bra	init_second_copperlist
 
@@ -783,11 +783,11 @@ init_sprites
 
 
 ; Horiz-Scrolltext
-	INIT_CHARACTERS_OFFSETS.W hst
+	INIT_CHARS_OFFSETS.W hst
 
-	INIT_CHARACTERS_X_POSITIONS hst,LORES
+	INIT_CHARS_X_POSITIONS hst,LORES
 
-	INIT_CHARACTERS_IMAGES hst
+	INIT_CHARS_IMAGES hst
 
 
 	CNOP 0,4
@@ -910,8 +910,8 @@ horiz_scrolltext
 	bsr.s	horiz_scrolltext_init
 	move.w	#(hst_copy_blit_y_size*64)+(hst_copy_blit_x_size/WORD_BITS),d4 ; BLTSIZE
 	move.w	#hst_text_char_x_restart,d5
-	lea	hst_characters_x_positions(pc),a0
-	lea	hst_characters_image_ptrs(pc),a1
+	lea	hst_chars_x_positions(pc),a0
+	lea	hst_chars_image_ptrs(pc),a1
 	move.l	pf1_construction2(a3),a2
 	move.l	(a2),d3
 	add.l	#(hst_text_x_position/8)+(hst_text_y_position*pf1_plane_width*pf1_depth3),d3 ; y centering, skip 32 pixel
@@ -919,7 +919,7 @@ horiz_scrolltext
 	lea	BLTDPT-DMACONR(a6),a4
 	lea	BLTSIZE-DMACONR(a6),a5
 	bsr.s	hst_get_text_softscroll
-	moveq	#hst_text_characters_number-1,d7
+	moveq	#hst_text_chars_number-1,d7
 horiz_scrolltext_loop
 	moveq	#0,d0
 	move.w	(a0),d0			; x
@@ -945,9 +945,9 @@ horiz_scrolltext_skip
 	rts
 	CNOP 0,4
 horiz_scrolltext_init
-	move.w	#DMAF_BLITHOG+DMAF_SETCLR,DMACON-DMACONR(a6)
+	move.w	#DMAF_BLITHOG|DMAF_SETCLR,DMACON-DMACONR(a6)
 	WAITBLIT
-	move.l	#(BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC)<<16,BLTCON0-DMACONR(a6) ; minterm D=A
+	move.l	#(BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC)<<16,BLTCON0-DMACONR(a6) ; minterm D=A
 	moveq	#-1,d0
 	move.l	d0,BLTAFWM-DMACONR(a6)
 	move.l	#((hst_image_plane_width-hst_text_char_width)<<16)+(pf1_plane_width-hst_text_char_width),BLTAMOD-DMACONR(a6) ; A&D moduli
@@ -959,7 +959,7 @@ hst_get_text_softscroll
 	moveq	#hst_text_char_x_size-1,d0
 	and.w	(a0),d0			; x&$f
 	ror.w	#4,d0			; adjust bits
-	or.w	#BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,d0 ; minterm D=A
+	or.w	#BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC,d0 ; minterm D=A
 	move.w	d0,hst_text_bltcon0_bits(a3) 
 	rts
 
@@ -1020,7 +1020,7 @@ tb_set_background_bars_loop1
 tb_set_background_bars_skip1
 	moveq	#tb_bars_number-1,d6
 tb_set_background_bars_loop2
-	move.l	(a0)+,d0		; low word: y, high word: z vector
+	move.l	(a0)+,d0	 	; low word: y, high word: z vector
 	bmi.s	tb_set_background_bars_skip2
 	move.l	a5,a1			; BPLAM table
 	lea	(a2,d0.w*4),a4		; y offset
@@ -1053,7 +1053,7 @@ tb_set_foreround_bars_loop1
 tb_set_foreround_bars_skip1
 	moveq	#tb_bars_number-1,d6
 tb_set_foreround_bars_loop2
-	move.l	(a0)+,d0		; low word: y, high word: z vector
+	move.l	(a0)+,d0	 	; low word: y, high word: z vector
 	bpl.s	tb_set_foreround_bars_skip2
 	move.l	a5,a1			; BPLAM table
 	lea	(a2,d0.w*4),a4		; y offset
@@ -1529,18 +1529,18 @@ hst_ascii_end
 
 
 	CNOP 0,2
-hst_characters_offsets
+hst_chars_offsets
 	DS.W hst_ascii_end-hst_ascii
 
 
 	CNOP 0,2
-hst_characters_x_positions
-	DS.W hst_text_characters_number
+hst_chars_x_positions
+	DS.W hst_text_chars_number
 
 
 	CNOP 0,4
-hst_characters_image_ptrs
-	DS.L hst_text_characters_number
+hst_chars_image_ptrs
+	DS.L hst_text_chars_number
 
 
 ; Chunky-Columns-Fader
@@ -1574,12 +1574,12 @@ sprfo_rgb8_color_table
 
 ; Horiz-Scrolltext
 hst_text
-	REPT hst_text_characters_number/(hst_origin_char_x_size/hst_text_char_x_size)
+	REPT hst_text_chars_number/(hst_origin_char_x_size/hst_text_char_x_size)
 		DC.B " "
 	ENDR
 	DC.B "TWISTED BARS IN OUTER SPACE!  REAL AGA POWER..."
 hst_stop_text
-	REPT hst_text_characters_number/(hst_origin_char_x_size/hst_text_char_x_size)
+	REPT hst_text_chars_number/(hst_origin_char_x_size/hst_text_char_x_size)
 		DC.B " "
 	ENDR
 	DC.B ASCII_CTRL_S," "

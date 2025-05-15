@@ -239,7 +239,7 @@ ss_horiz_scroll_speed		EQU 4
 ss_text_char_x_restart		EQU ss_horiz_scroll_window_x_size-ss_text_char_x_size
 ss_text_char_y_restart		EQU ss_text_char_y_size/2
 ss_text_char_x_shift_max	EQU ss_text_char_x_size
-ss_text_characters_number	EQU ss_horiz_scroll_window_x_size/ss_text_char_x_size
+ss_text_chars_number		EQU ss_horiz_scroll_window_x_size/ss_text_char_x_size
 
 ss_text_x_position		EQU 32
 ss_text_y_position		EQU ss_text_char_y_size/2
@@ -348,6 +348,7 @@ cl1_ext1_COPJMP1		RS.L 1
 cl1_extension1_size		RS.B 0
 
 
+; Character
 	RSRESET
 
 cl1_extension2			RS.B 0
@@ -368,6 +369,7 @@ cl1_ext2_BLTSIZE		RS.L 1
 cl1_extension2_size		RS.B 0
 
 
+; Horiz scroll
 	RSRESET
 
 cl1_extension3			RS.B 0
@@ -773,7 +775,7 @@ init_main
 	bsr	tb31612_init_mirror_bplam_table
 	bsr	tb31612_get_yz_coords
 	bsr	wcb_init_bplam_table
-	bsr	ss_init_characters_offsets
+	bsr	ss_init_chars_offsets
 	bsr	bf_init_color_table
 	bsr	bf_init_color_table_ptrs
 	bsr	bf_scale_bar_size
@@ -868,7 +870,7 @@ init_colors
 
 
 ; Sine-Scrolltext
-	INIT_CHARACTERS_OFFSETS.W ss
+	INIT_CHARS_OFFSETS.W ss
 
 
 ; Barfield
@@ -944,13 +946,13 @@ bf_scale_bar_size
 	movem.l a4-a6,-(a7)
 	move.w	#(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*4,a5
 	lea	bf_color_table_ptrs(pc),a6
-	moveq	#bf_bars_planes_number-1,d7 ; low word: 1st loop counter
+	moveq	#bf_bars_planes_number-1,d7 ; 1st loop counter
 bf_scale_bar_size_loop1
 	move.l	(a6),a4
 	addq.w	#LONGWORD_SIZE,a4	; destination: color table
 	MOVEF.L bf_source_bar_y_size-2,d5
-	swap	d7			; high word: 1st loop counter
-	move.w	#((bf_source_bar_y_size-bf_destination_bar_y_size)/2)-1,d7 ;low word: 2nd loop counter
+	swap	d7 			; high word: 1st loop counter
+	move.w	#((bf_source_bar_y_size-bf_destination_bar_y_size)/2)-1,d7 ; low word: 2nd loop counter
 bf_scale_bar_size_loop2
 	bsr.s	bf_refresh_bitmap_table
 	bsr.s	bf_init_bitmap_lines_table
@@ -965,7 +967,7 @@ bf_scale_bar_size_loop2
 	addq.w	#LONGWORD_SIZE,a4	; skip 1line in color table
 	dbf	d7,bf_scale_bar_size_loop2
 	addq.w	#LONGWORD_SIZE,a6	; next color table
-	swap	d7			; low word: 1st loop counter
+	swap	d7		 	; low word: 1st loop counter
 	dbf	d7,bf_scale_bar_size_loop1
 	movem.l (a7)+,a4-a6
 	rts
@@ -989,8 +991,8 @@ bf_init_bitmap_lines_table
 	moveq	#0,d4
 	swap	d3			; *2^16
 	move.w	d5,d4			; destination height in pixel
-	move.l	d3,d2			; low longword: source height
-	moveq	#0,d6			; high word: source height
+	move.l	d3,d2		 	; low longword: source height
+	moveq	#0,d6 			; high longword: source height
 	divu.l	d4,d6:d2		; F=source height/destination height
 	moveq	#0,d1
 	move.w	d4,d6			; destination height
@@ -1042,9 +1044,9 @@ cl1_init_copperlist_branch
 	COP_WAIT cl1_HSTART,cl1_VSTART
 	move.l	cl1_display(a3),d0 
 	add.l	#cl1_extension3_entry,d0 ; skip character blit
-	swap	d0			; high
+	swap	d0
 	COP_MOVE d0,COP1LCH
-	swap	d0			; low
+	swap	d0		
 	COP_MOVE d0,COP1LCL
 	COP_MOVEQ 0,COPJMP1
 	rts
@@ -1053,7 +1055,7 @@ cl1_init_copperlist_branch
 	CNOP 0,4
 cl1_init_copy_blit
 	COP_WAITBLIT
-	COP_MOVEQ BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ; minterm D=A
+	COP_MOVEQ BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC,BLTCON0 ; minterm D=A
 	COP_MOVEQ 0,BLTCON1
 	COP_MOVEQ -1,BLTAFWM
 	COP_MOVEQ -1,BLTALWM
@@ -1062,9 +1064,9 @@ cl1_init_copy_blit
 	move.l	extra_pf1(a3),a1
 	move.l	#(ss_text_char_x_restart/8)+(ss_text_char_y_restart*extra_pf1_plane_width*extra_pf1_depth),d0
 	add.l	(a1),d0
-	swap	d0			; high
+	swap	d0
 	COP_MOVE d0,BLTDPTH
-	swap	d0			; low
+	swap	d0		
 	COP_MOVE d0,BLTDPTL
 	COP_MOVEQ ss_image_plane_width-ss_text_char_width,BLTAMOD
 	COP_MOVEQ extra_pf1_plane_width-ss_text_char_width,BLTDMOD
@@ -1075,8 +1077,8 @@ cl1_init_copy_blit
 	CNOP 0,4
 cl1_init_horiz_scroll_blit
 	COP_WAITBLIT
-	COP_MOVEQ DMAF_BLITHOG+DMAF_SETCLR,DMACON
-	COP_MOVEQ ((-ss_horiz_scroll_speed<<12)+BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC),BLTCON0 ; minterm D=A
+	COP_MOVEQ DMAF_BLITHOG|DMAF_SETCLR,DMACON
+	COP_MOVEQ ((-ss_horiz_scroll_speed<<12)|BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC),BLTCON0 ; minterm D=A
 	COP_MOVEQ 0,BLTCON1
 	move.l	extra_pf1(a3),a1
 	move.l	(a1),d0			; source
@@ -1085,13 +1087,13 @@ cl1_init_horiz_scroll_blit
 	COP_MOVEQ -1,BLTAFWM
 	addq.l	#WORD_SIZE,d0		; 1st line, skip 16 pixel
 	COP_MOVEQ -1,BLTALWM
-	swap	d0			; high
+	swap	d0
 	COP_MOVE d0,BLTAPTH
-	swap	d0			; low
+	swap	d0		
 	COP_MOVE d0,BLTAPTL
 	swap	d1			; High
 	COP_MOVE d1,BLTDPTH
-	swap	d1			; low
+	swap	d1		
 	COP_MOVE d1,BLTDPTL
 	COP_MOVEQ extra_pf1_plane_width-ss_horiz_scroll_window_width,BLTAMOD
 	COP_MOVEQ extra_pf1_plane_width-ss_horiz_scroll_window_width,BLTDMOD
@@ -1105,8 +1107,8 @@ cl1_init_horiz_scroll_blit
 	CNOP 0,4
 init_second_copperlist
 	move.l	cl2_construction1(a3),a0 
-	bsr.s	cl2_init_blit_steady
-	bsr.s	cl2_init_sine_scroll_blits
+	bsr.s	cl2_init_sine_scroll_blits_const
+	bsr	cl2_init_sine_scroll_blits
 	bsr	cl2_init_copperlist_branch
 	bsr	cl2_init_clear_blit
 	bsr	cl2_init_bplcon4
@@ -1119,6 +1121,7 @@ init_second_copperlist
 	COP_LISTEND
 	bsr	copy_second_copperlist
 	bsr	swap_playfield1
+	bsr	set_playfield1
 	clr.w	ss_enabled(a3)
 	bsr	ss_horiz_scrolltext
 	move.w	#FALSE,ss_enabled(a3)
@@ -1129,29 +1132,31 @@ init_second_copperlist
 			bsr	tb31612_restore_second_copperlist
 		ENDC
 	ENDC
-	bsr	sine_scroll
+	bsr	ss_sine_scroll
 	bsr	swap_second_copperlist
 	bsr	swap_playfield1
+	bsr	set_playfield1
 	bsr	tb31612_clear_second_copperlist
 	IFNE tb31612_quick_clear_enabled
 		IFNE tb31612_restore_cl_cpu_enabled
 			bsr	tb31612_restore_second_copperlist
 		ENDC
 	ENDC
-	bsr	sine_scroll
+	bsr	ss_sine_scroll
 	bsr	swap_second_copperlist
 	bsr	swap_playfield1
+	bsr	set_playfield1
 	bsr	tb31612_clear_second_copperlist
 	IFNE tb31612_restore_cl_cpu_enabled
 		IFNE tb31612_quick_clear_enabled
 			bsr	tb31612_restore_second_copperlist
 		ENDC
 	ENDC
-	bra	sine_scroll
+	bra	ss_sine_scroll
 
 
 	CNOP 0,4
-cl2_init_blit_steady
+cl2_init_sine_scroll_blits_const
 	COP_WAITBLIT
 	COP_MOVEQ pf1_plane_width-ss_text_char_width,BLTBMOD
 	COP_MOVEQ extra_pf1_plane_width-ss_text_char_width,BLTAMOD
@@ -1168,7 +1173,7 @@ cl2_init_sine_scroll_blits
 	add.l	#ss_text_y_position*extra_pf1_plane_width*extra_pf1_depth,d3 ; source2
 	moveq	#(visible_pixels_number/WORD_BITS)-1,d7
 cl2_init_sine_scroll_blits_loop1
-	COP_MOVEQ BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ; minterm D=A
+	COP_MOVEQ BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC,BLTCON0 ; minterm D=A
 	MOVEF.W $ff>>(8-ss_text_columns_x_size),d1 ; mask
 	COP_MOVE d1,BLTALWM
 	swap	d2
@@ -1179,11 +1184,7 @@ cl2_init_sine_scroll_blits_loop1
 	COP_MOVEQ 0,BLTDPTL
 	COP_MOVEQ (ss_copy_column_blit_y_size1*64)+(ss_copy_column_blit_x_size1/WORD_BITS),BLTSIZE
 	COP_WAITBLIT
-
-
-	COP_MOVEQ BC0F_SRCA+BC0F_SRCB+BC0F_DEST+NABNC+NABC+ANBNC+ANBC+ABNC+ABC,BLTCON0 ; minterm D=A+B
-
-
+	COP_MOVEQ BC0F_SRCA|BC0F_SRCB|BC0F_DEST|NABNC|NABC|ANBNC|ANBC|ABNC|ABC,BLTCON0 ; minterm D=A+B
 	subq.l	#ss_sine_char_width,d2 ; next character in source1
 	moveq	#(ss_text_columns_per_word-1)-1,d6
 cl2_init_sine_scroll_blits_loop2
@@ -1216,14 +1217,14 @@ cl2_init_sine_scroll_blits_loop2
 	CNOP 0,4
 cl2_init_copperlist_branch
 	COP_MOVE cl1_display(a3),COP1LCH
-	COP_MOVE cl1_display+2(a3),COP1LCL
+	COP_MOVE cl1_display+WORD_SIZE(a3),COP1LCL
 	rts
 
 
 	CNOP 0,4
 cl2_init_clear_blit
 	COP_MOVEQ DMAF_BLITHOG,DMACON
-	COP_MOVEQ BC0F_DEST+ANBNC+ANBC+ABNC+ABC,BLTCON0 ; minterm D=A
+	COP_MOVEQ BC0F_DEST|ANBNC|ANBC|ABNC|ABC,BLTCON0 ; minterm D=A
 	COP_MOVEQ -1,BLTALWM
 	COP_MOVEQ 0,BLTDPTH
 	COP_MOVEQ 0,BLTDPTL
@@ -1282,7 +1283,7 @@ beam_routines
 	bsr	effects_handler
 	bsr	ss_horiz_scrolltext
 	bsr	tb31612_clear_second_copperlist
-	bsr	sine_scroll
+	bsr	ss_sine_scroll
 	bsr	chunky_columns_fader_in
 	bsr	chunky_columns_fader_out
 	bsr	tb31612_set_background_bars
@@ -1339,9 +1340,9 @@ ss_horiz_scrolltext
 ss_horiz_scrolltext_skip
 	move.w	d2,ss_text_char_x_shift(a3) 
 	add.l	a2,d3
-	move.w	d3,cl1_extension1_entry+cl1_ext1_COP1LCL+2(a2)
-	swap	d3			; high
-	move.w	d3,cl1_extension1_entry+cl1_ext1_COP1LCH+2(a2)
+	move.w	d3,cl1_extension1_entry+cl1_ext1_COP1LCL+WORD_SIZE(a2)
+	swap	d3
+	move.w	d3,cl1_extension1_entry+cl1_ext1_COP1LCH+WORD_SIZE(a2)
 ss_no_horiz_scrolltext
 	rts
 
@@ -1351,17 +1352,17 @@ ss_no_horiz_scrolltext
 
 tb31612_clear_second_copperlist
 	move.l	cl2_construction1(a3),a0
-	ADDF.W	cl2_extension6_entry+2,a0
+	ADDF.W	cl2_extension6_entry+WORD_SIZE,a0
 	move.l	cl2_construction2(a3),d0
 	add.l	#cl2_extension7_entry+cl2_ext7_WAIT+WORD_SIZE,d0
 	move.w	d0,cl2_ext6_BLTDPTL(a0)
-	swap	d0			; high
+	swap	d0
 	move.w	d0,cl2_ext6_BLTDPTH(a0)
 	rts
 
 
 	CNOP 0,4
-sine_scroll
+ss_sine_scroll
 	move.l	a4,-(a7)
 	MOVEF.W ss_text_y_center,d2
 	MOVEF.L cl2_extension2_size+cl2_extension3_size,d3
@@ -1372,9 +1373,9 @@ sine_scroll
 	add.l	#((visible_pixels_number+ss_text_x_position)-ss_text_char_x_size)/8,a1 ; end of line in destination1
 	lea	ss_text_y_position*pf1_plane_width*pf1_depth3(a1),a2 ; destination2
 	move.l	cl2_construction2(a3),a4
-	ADDF.W	cl2_extension2_entry+2,a4
+	ADDF.W	cl2_extension2_entry+WORD_SIZE,a4
 	moveq	#(visible_pixels_number/WORD_BITS)-1,d7
-sine_scroll_loop1
+ss_sine_scroll_loop1
 	moveq	#0,d0
 	move.w	(a0)+,d0		; y
 	add.w	d2,d0			; add y center
@@ -1382,11 +1383,11 @@ sine_scroll_loop1
 	add.l	a1,d0			; add destination1 address
 	subq.w	#ss_sine_char_width,a1	; next character in destination1
 	move.w	d0,cl2_ext2_BLTDPTL(a4) ; playfield write
-	swap	d0			; high
+	swap	d0
 	add.l	d3,a4			; next blitter operation in cl
 	move.w	d0,cl2_ext2_BLTDPTH-(cl2_extension2_size+cl2_extension3_size)(a4) ; playfield write
-	;moveq	#tb31612_columns_per_word-2,d6 !omitted!
-;sine_scroll_loop2			!omitted!
+; !	moveq	#(tb31612_columns_per_word-1)-1,d6
+; !ss_sine_scroll_loop2
 	moveq	#0,d0
 	move.w	(a0)+,d0		; y
 	add.w	d2,d0			; add y center
@@ -1395,12 +1396,12 @@ sine_scroll_loop1
 	move.w	d0,cl2_ext4_BLTBPTL(a4) ; playfield read
 	subq.w	#ss_sine_char_width,a2	; next chatacter in destination2
 	move.w	d0,cl2_ext4_BLTDPTL(a4) ; playfield write
-	swap	d0			; high
+	swap	d0
 	move.w	d0,cl2_ext4_BLTBPTH(a4) ; playfield read
 	add.l	d4,a4			; next blitter operation in cl
 	move.w	d0,cl2_ext4_BLTDPTH-cl2_extension4_size(a4) ; playfield write
-	;dbf	d6,sine_scroll_loop2	!omitted!
-	dbf	d7,sine_scroll_loop1
+; !	dbf	d6,ss_sine_scroll_loop2
+	dbf	d7,ss_sine_scroll_loop1
 	move.l	(a7)+,a4
 	rts
 
@@ -1431,7 +1432,7 @@ tb31612_set_background_bars_skip1
 	lea	(a2,d0.w*4),a3		; add 2nd y offset
 	moveq	#tb31612_bars_number-1,d6
 tb31612_set_background_bars_loop2
-	move.l	(a0)+,d0		; low word: y, high word: z vector
+	move.l	(a0)+,d0	 	; low word: y, high word: z vector
 	bpl.s	tb31612_set_background_bars_skip2
 	add.l   d4,a1			; skip BPLAM values
 	bra	tb31612_set_background_bars_skip3
@@ -1579,7 +1580,7 @@ tb31612_set_foreround_bars_skip1
 	lea	(a2,d0.w*4),a3		; add 2nd y offset
 	moveq	#tb31612_bars_number-1,d6
 tb31612_set_foreround_bars_loop2
-	move.l	(a0)+,d0		; low word: y, high word: z vector
+	move.l	(a0)+,d0	 	; low word: y, high word: z vector
 	bmi.s	tb31612_set_foreground_bars_skip2
 	add.l   d4,a1			; skip BPLAM values
 	bra	tb31612_set_foreground_bars_skip3
@@ -1755,7 +1756,7 @@ tb31612_restore_blit
 			move.l	cl2_construction2(a3),d0
 			add.l	#cl2_extension7_entry+cl2_ext7_WAIT+WORD_SIZE,d0
 			move.w	d0,cl2_ext8_BLTDPTL-cl2_ext8_BLTDPTH(a0)
-			swap	d0	; high
+			swap	d0
 			move.w	d0,(a0)	; BLTDPTH
 			rts
 		ENDC
@@ -2050,7 +2051,7 @@ ss_ascii_end
 	EVEN
 
 	CNOP 0,2
-ss_characters_offsets
+ss_chars_offsets
 	DS.W ss_ascii_end-ss_ascii
 
 

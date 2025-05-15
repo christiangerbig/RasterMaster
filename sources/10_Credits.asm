@@ -212,9 +212,9 @@ vts_vert_scroll_speed1		EQU 0
 vts_vert_scroll_speed2		EQU 1
 
 vts_text_char_y_restart		EQU visible_lines_number+vts_text_char_y_size
-vts_text_characters_per_line	EQU vts_buffer_x_size/vts_text_char_x_size
-vts_text_characters_per_column	EQU (visible_lines_number+vts_text_char_y_size)/vts_text_char_y_size
-vts_text_characters_number	EQU vts_text_characters_per_line*vts_text_characters_per_column
+vts_text_chars_per_line	EQU vts_buffer_x_size/vts_text_char_x_size
+vts_text_chars_per_column	EQU (visible_lines_number+vts_text_char_y_size)/vts_text_char_y_size
+vts_text_chars_number	EQU vts_text_chars_per_line*vts_text_chars_per_column
 
 vts_copy_char_blit_x_size	EQU vts_text_char_x_size
 vts_copy_char_blit_y_size	EQU vts_text_char_y_size*vts_text_char_depth
@@ -562,10 +562,10 @@ init_main
 	bsr.s	init_colors
 	bsr	init_sprites
 	bsr	bg_copy_image_to_plane
-	bsr	vts_init_characters_offsets
-	bsr	vts_init_characters_x_positions
-	bsr	vts_init_characters_y_positions
-	bsr	vts_init_characters_images
+	bsr	vts_init_chars_offsets
+	bsr	vts_init_chars_x_positions
+	bsr	vts_init_chars_y_positions
+	bsr	vts_init_chars_images
 	bra	init_first_copperlist
 
 
@@ -602,14 +602,14 @@ lg_init_sprites
 	lea	lg_image_data,a2
 	MOVEF.W lg_image_y_size-1,d7
 lg_init_sprites_loop
-	move.l	(a2)+,(a0)+		; high longword: bitplane 1
-	move.l	(a2)+,(a0)+		; low longword: bitplane 1
-	move.l	(a2)+,(a0)+		; high longword: bitplane 2
-	move.l	(a2)+,(a0)+		; low longword: bitplane 2
-	move.l	(a2)+,(a1)+		; high longword: bitplane 3
-	move.l	(a2)+,(a1)+		; low longword: bitplane 3
-	move.l	(a2)+,(a1)+		; high longword: bitplane 4
-	move.l	(a2)+,(a1)+		; low longword: bitplane 4
+	move.l	(a2)+,(a0)+ 		; high longword: bitplane 1
+	move.l	(a2)+,(a0)+	 	; low longword: bitplane 1
+	move.l	(a2)+,(a0)+ 		; high longword: bitplane 2
+	move.l	(a2)+,(a0)+	 	; low longword: bitplane 2
+	move.l	(a2)+,(a1)+ 		; high longword: bitplane 3
+	move.l	(a2)+,(a1)+	 	; low longword: bitplane 3
+	move.l	(a2)+,(a1)+ 		; high longword: bitplane 4
+	move.l	(a2)+,(a1)+	 	; low longword: bitplane 4
 	dbf	d7,lg_init_sprites_loop
 	rts
 
@@ -682,20 +682,20 @@ bg_copy_image_data_loop
 	REPT pixel_per_line/16
 		move.w	(a0)+,(a2)+	; copy 42 bytes
 	ENDR
-	ADDF.W	(bg_image_plane_width*(bg_image_depth-1))+2,a0 ; next line in source
+	ADDF.W	(bg_image_plane_width*(bg_image_depth-1))+WORD_SIZE,a0 ; next line in source
 	ADDF.W	(pf1_plane_width*(pf1_depth3-1))+6,a2 ; next line in destination
 	dbf	d7,bg_copy_image_data_loop
 	rts
 
 
 ; Vert-Text-Scroll
-	INIT_CHARACTERS_OFFSETS.W vts
+	INIT_CHARS_OFFSETS.W vts
 
-	INIT_CHARACTERS_X_POSITIONS vts,LORES,,text_characters_per_line
+	INIT_CHARS_X_POSITIONS vts,LORES,,text_chars_per_line
 
-	INIT_CHARACTERS_Y_POSITIONS vts,text_characters_per_column
+	INIT_CHARS_Y_POSITIONS vts,text_chars_per_column
 
-	INIT_CHARACTERS_IMAGES vts
+	INIT_CHARS_IMAGES vts
 
 
 	CNOP 0,4
@@ -849,19 +849,19 @@ vert_text_scroll
 	bsr.s	vert_text_scroll_init
 	MOVEF.W (vts_copy_char_blit_y_size*64)+(vts_copy_char_blit_x_size/WORD_BITS),d3 ; BLTSIZE
 	MOVEF.W vts_text_char_y_restart,d4
-	lea	vts_characters_y_positions(pc),a1
-	lea	vts_characters_image_ptrs(pc),a2
+	lea	vts_chars_y_positions(pc),a1
+	lea	vts_chars_image_ptrs(pc),a2
 	move.l	extra_pf1(a3),a4
 	move.l	(a4),a4
-	move.w	#vts_text_characters_per_line*4,a5
-	moveq	#vts_text_characters_per_column-1,d7
+	move.w	#vts_text_chars_per_line*4,a5
+	moveq	#vts_text_chars_per_column-1,d7
 vert_text_scroll_loop1
 	moveq	#0,d1
 	move.w	(a1),d1			; y
 	move.w	d1,d2
 	MULUF.L extra_pf1_plane_width*extra_pf1_depth,d1,d0 ; y offset in playfield
-	lea	vts_characters_x_positions(pc),a0
-	moveq	#vts_text_characters_per_line-1,d6
+	lea	vts_chars_x_positions(pc),a0
+	moveq	#vts_text_chars_per_line-1,d6
 vert_text_scroll_loop2
 	moveq	#0,d0
 	move.w	(a0)+,d0		; x
@@ -876,7 +876,7 @@ vert_text_scroll_loop2
 	sub.w	vts_vert_scroll_speed(a3),d2 ; decrease y position
 	bpl.s	vert_text_scroll_skip
 	sub.l	a5,a2			; reset pointer
-	moveq	#vts_text_characters_per_line-1,d5
+	moveq	#vts_text_chars_per_line-1,d5
 vert_text_scroll_loop3
 	bsr.s	vts_get_new_char_image
 	move.l	d0,(a2)+		; new character
@@ -890,9 +890,9 @@ vert_text_scroll_skip
 	rts
 	CNOP 0,4
 vert_text_scroll_init
-	move.w	#DMAF_BLITHOG+DMAF_SETCLR,DMACON-DMACONR(a6)
+	move.w	#DMAF_BLITHOG|DMAF_SETCLR,DMACON-DMACONR(a6)
 	WAITBLIT
-	move.l	#(BC0F_SRCA+BC0F_DEST+ANBNC+ANBC+ABNC+ABC)<<16,BLTCON0-DMACONR(a6) ; minterm D=A
+	move.l	#(BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC)<<16,BLTCON0-DMACONR(a6) ; minterm D=A
 	moveq	#-1,d0
 	move.l	d0,BLTAFWM-DMACONR(a6)
 	move.l	#((vts_image_plane_width-vts_text_char_width)<<16)+(vts_buffer_width-vts_text_char_width),BLTAMOD-DMACONR(a6) ; A&D moduli
@@ -917,7 +917,7 @@ vts_copy_buffer
 	ADDF.W	vts_text_char_y_size*extra_pf1_plane_width*extra_pf1_depth,a4 ; skip n lines
 	MOVEF.W vts_buffer_y_size-1,d7
 vts_copy_buffer_loop
-	move.l	(a4)+,(a0)+		; high longword: bitplane 1
+	move.l	(a4)+,(a0)+ 		; high longword: bitplane 1
 	move.l	(a4)+,(a0)+		; low longword: bitplane 1
 	addq.w	#QUADWORD_SIZE,a0
 	move.l	(a4)+,(a1)+		; high longword: bitplane 1
@@ -1227,20 +1227,20 @@ vts_ascii_end
 	EVEN
 
 	CNOP 0,2
-vts_characters_offsets
+vts_chars_offsets
 	DS.W vts_ascii_end-vts_ascii
 
 	CNOP 0,2
-vts_characters_x_positions
-	DS.W vts_text_characters_per_line
+vts_chars_x_positions
+	DS.W vts_text_chars_per_line
 
 	CNOP 0,2
-vts_characters_y_positions
-	DS.W vts_text_characters_per_column
+vts_chars_y_positions
+	DS.W vts_text_chars_per_column
 
 	CNOP 0,4
-vts_characters_image_ptrs
-	DS.L vts_text_characters_number
+vts_chars_image_ptrs
+	DS.L vts_text_chars_number
 
 
 ; Image-Fader
@@ -1266,7 +1266,7 @@ ifo_rgb8_color_table
 
 ; Vert-Textscroll
 vts_text
-	REPT vts_text_characters_per_column*vts_text_characters_per_line
+	REPT vts_text_chars_per_column*vts_text_chars_per_line
 		DC.B " "
 	ENDR
 	DC.B  "RASTER      "

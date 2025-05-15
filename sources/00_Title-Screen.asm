@@ -648,8 +648,8 @@ bg_copy_image_to_playfield
 	rts
 
 ;Input
-; a1.l	Pointer	 source: image
-; a4.l	Pointer	 destination: bitplane
+; a1.l	Pointer	source: image
+; a4.l	Pointer	destination: bitplane
 ; Result
 	CNOP 0,4
 bg_copy_image_data
@@ -1048,8 +1048,8 @@ image_pixel_fader_in_skip1
 	CNOP 0,4
 image_pixel_fader_in_skip2
 	moveq	#0,d1
-	move.l	d3,d2			; low longword: size of source
-	moveq	#0,d7			; high longword: size of source
+	move.l	d3,d2		 	; low longword: size of source
+	moveq	#0,d7 			; high longword: size of source
 	moveq	#0,d5			; mask
 	divu.l	d4,d7:d2		; F=source width/destination width
 	move.w	d4,d7			; destination width
@@ -1099,8 +1099,8 @@ image_pixel_fader_out_skip1
 	CNOP 0,4
 image_pixel_fader_out_skip2
 	moveq	#0,d1
-	move.l	d3,d2			; low longword: size of source
-	moveq	#0,d7			; high longword: size of source
+	move.l	d3,d2		 	; low longword: size of source
+	moveq	#0,d7 			; high longword: size of source
 	moveq	#0,d5			; mask
 	divu.l	d4,d7:d2		; F = source width / destination width
 	move.w	d4,d7			; destination width
@@ -1172,17 +1172,17 @@ init_sprite_bitmap
 	move.w	#(lg_image_plane_width*3)-8,a4
 	MOVEF.W lg_image_y_size-1,d7
 init_sprite_bitmap_loop
-	move.l	(a1)+,d0		; high longword: bitplane 1
+	move.l	(a1)+,d0 		; high longword: bitplane 1
 	and.l	d1,d0			; link with mask
 	move.l	d0,(a0)+
-	move.l	(a1)+,d0		; low longword bitplane 1
+	move.l	(a1)+,d0	 	; low longword bitplane 1
 	and.l	d1,d0			; link with mask
 	move.l	d0,(a0)+
 	add.l	a2,a1			; skip remaining lines in source
-	move.l	(a1)+,d0		; high longword: bitplane 2
+	move.l	(a1)+,d0 		; high longword: bitplane 2
 	and.l	d1,d0			; link with mask
 	move.l	d0,(a0)+
-	move.l	(a1)+,d0		; low longword: bitplane 2
+	move.l	(a1)+,d0	 	; low longword: bitplane 2
 	and.l	d1,d0			; link with mask
 	move.l	d0,(a0)+
 	add.l	a4,a1			; skip remaining line and two bitplanes in source

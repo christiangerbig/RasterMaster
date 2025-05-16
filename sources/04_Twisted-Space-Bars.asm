@@ -239,7 +239,7 @@ hst_horiz_scroll_window_depth	EQU hst_image_depth
 hst_horiz_scroll_speed		EQU 3
 
 hst_text_char_x_restart		EQU hst_horiz_scroll_window_x_size
-hst_text_chars_number	EQU hst_horiz_scroll_window_x_size/hst_text_char_x_size
+hst_text_chars_number		EQU hst_horiz_scroll_window_x_size/hst_text_char_x_size
 
 hst_text_x_position		EQU 32
 hst_text_y_position		EQU (visible_lines_number-hst_text_char_y_size)/2

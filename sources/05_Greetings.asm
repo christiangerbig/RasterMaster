@@ -1324,7 +1324,7 @@ beam_routines_exit
 	CNOP 0,4
 ss_horiz_scrolltext
 	tst.w	ss_enabled(a3)
-	bne.s	ss_no_horiz_scrolltext
+	bne.s	ss_horiz_scrolltext_quit
 	move.w	ss_text_char_x_shift(a3),d2
 	MOVEF.L cl1_extension3_entry,d3	; jump in vertical scroll blit
 	move.l	cl1_display(a3),a2 
@@ -1343,7 +1343,7 @@ ss_horiz_scrolltext_skip
 	move.w	d3,cl1_extension1_entry+cl1_ext1_COP1LCL+WORD_SIZE(a2)
 	swap	d3
 	move.w	d3,cl1_extension1_entry+cl1_ext1_COP1LCH+WORD_SIZE(a2)
-ss_no_horiz_scrolltext
+ss_horiz_scrolltext_quit
 	rts
 
 

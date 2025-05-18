@@ -908,7 +908,7 @@ beam_routines_exit
 horiz_scrolltext
 	movem.l a4-a5,-(a7)
 	bsr.s	horiz_scrolltext_init
-	move.w	#(hst_copy_blit_y_size*64)+(hst_copy_blit_x_size/WORD_BITS),d4 ; BLTSIZE
+	move.w	#(hst_copy_blit_y_size<<6)+(hst_copy_blit_x_size/WORD_BITS),d4 ; BLTSIZE
 	move.w	#hst_text_char_x_restart,d5
 	lea	hst_chars_x_positions(pc),a0
 	lea	hst_chars_image_ptrs(pc),a1
@@ -994,7 +994,7 @@ hst_horiz_scroll
 	addq.w	#WORD_SIZE,a0		; skip 16 pixel
 	move.l	a0,BLTDPT-DMACONR(a6)	; destination
 	move.l	#((pf1_plane_width-hst_horiz_scroll_window_width)<<16)+(pf1_plane_width-hst_horiz_scroll_window_width),BLTAMOD-DMACONR(a6) ; A&D moduli
-	move.w	#(hst_horiz_scroll_blit_y_size*64)+(hst_horiz_scroll_blit_x_size/WORD_BITS),BLTSIZE-DMACONR(a6)
+	move.w	#(hst_horiz_scroll_blit_y_size<<6)+(hst_horiz_scroll_blit_x_size/WORD_BITS),BLTSIZE-DMACONR(a6)
 	rts
 
 

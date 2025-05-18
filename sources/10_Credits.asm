@@ -602,14 +602,14 @@ lg_init_sprites
 	lea	lg_image_data,a2
 	MOVEF.W lg_image_y_size-1,d7
 lg_init_sprites_loop
-	move.l	(a2)+,(a0)+ 		; high longword: bitplane 1
-	move.l	(a2)+,(a0)+	 	; low longword: bitplane 1
-	move.l	(a2)+,(a0)+ 		; high longword: bitplane 2
-	move.l	(a2)+,(a0)+	 	; low longword: bitplane 2
-	move.l	(a2)+,(a1)+ 		; high longword: bitplane 3
-	move.l	(a2)+,(a1)+	 	; low longword: bitplane 3
-	move.l	(a2)+,(a1)+ 		; high longword: bitplane 4
-	move.l	(a2)+,(a1)+	 	; low longword: bitplane 4
+	move.l	(a2)+,(a0)+ 		; quadword bitplane 1
+	move.l	(a2)+,(a0)+
+	move.l	(a2)+,(a0)+ 		; quadword bitplane 2
+	move.l	(a2)+,(a0)+
+	move.l	(a2)+,(a1)+ 		; quadword bitplane 3
+	move.l	(a2)+,(a1)+
+	move.l	(a2)+,(a1)+ 		; quadword bitplane 4
+	move.l	(a2)+,(a1)+
 	dbf	d7,lg_init_sprites_loop
 	rts
 
@@ -847,7 +847,7 @@ swap_extra_playfield
 vert_text_scroll
 	movem.l a4-a5,-(a7)
 	bsr.s	vert_text_scroll_init
-	MOVEF.W (vts_copy_char_blit_y_size*64)+(vts_copy_char_blit_x_size/WORD_BITS),d3 ; BLTSIZE
+	MOVEF.W (vts_copy_char_blit_y_size<<6)+(vts_copy_char_blit_x_size/WORD_BITS),d3 ; BLTSIZE
 	MOVEF.W vts_text_char_y_restart,d4
 	lea	vts_chars_y_positions(pc),a1
 	lea	vts_chars_image_ptrs(pc),a2
@@ -917,14 +917,14 @@ vts_copy_buffer
 	ADDF.W	vts_text_char_y_size*extra_pf1_plane_width*extra_pf1_depth,a4 ; skip n lines
 	MOVEF.W vts_buffer_y_size-1,d7
 vts_copy_buffer_loop
-	move.l	(a4)+,(a0)+ 		; high longword: bitplane 1
-	move.l	(a4)+,(a0)+		; low longword: bitplane 1
+	move.l	(a4)+,(a0)+ 		; quadword bitplane 1
+	move.l	(a4)+,(a0)+
 	addq.w	#QUADWORD_SIZE,a0
-	move.l	(a4)+,(a1)+		; high longword: bitplane 1
-	move.l	(a4)+,(a1)+		; low longword: bitplane 1
+	move.l	(a4)+,(a1)+		; quadword bitplane 1
+	move.l	(a4)+,(a1)+
 	addq.w	#QUADWORD_SIZE,a1
-	move.l	(a4)+,(a2)+		; high longword: bitplane 1
-	move.l	(a4)+,(a2)+		; low longword: bitplane 1
+	move.l	(a4)+,(a2)+		; quadword bitplane 1
+	move.l	(a4)+,(a2)+
 	addq.w	#QUADWORD_SIZE,a2
 	dbf	d7,vts_copy_buffer_loop
 	move.l	(a7)+,a4
@@ -1501,7 +1501,7 @@ vts_text
 	EVEN
 
 
-; gfx data
+; Gfx data
 
 ; Logo
 lg_image_data			SECTION lg_gfx,DATA

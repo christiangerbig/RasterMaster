@@ -155,8 +155,8 @@ diwhigh_bits			EQU (((display_window_hstop&$100)>>8)*DIWHIGHF_HSTOP8)|(((display
 	ELSE
 diwstrt_bits			EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)|(display_window_hstart&$ff)
 diwstop_bits			EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)|(display_window_hstop&$ff)
-DDFSTRT_bits			EQU DDFSTART_OVERSCAN_32_PIXEL
-DDFSTOP_bits			EQU DDFSTOP_OVERSCAN_32_PIXEL_MIN
+ddfstrt_bits			EQU DDFSTART_OVERSCAN_32_PIXEL
+ddfstop_bits			EQU DDFSTOP_OVERSCAN_32_PIXEL_MIN
 bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|(BPLCON0F_COLOR)|((pf_depth&$07)*BPLCON0F_BPU0)
 bplcon3_bits1			EQU 0
 bplcon3_bits2			EQU bplcon3_bits1|BPLCON3F_LOCT

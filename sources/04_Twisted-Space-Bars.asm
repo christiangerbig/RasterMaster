@@ -61,8 +61,8 @@ open_border_enabled		EQU FALSE ; always FALSE because bitplane DMA opens border
 
 ; Twisted-Bars
 tb_quick_clear_enabled		EQU FALSE ; always FALSE, because COLOR255 is not the background color
-tb_restore_cl_cpu_enabled	EQU TRUE
-tb_restore_cl_blitter_enabled	EQU FALSE
+tb_cpu_restore_cl_enabled	EQU TRUE
+tb_blitter_restore_cl_enabled	EQU FALSE
 
 dma_bits			EQU DMAF_BLITTER|DMAF_SPRITE|DMAF_COPPER|DMAF_RASTER|DMAF_SETCLR
 

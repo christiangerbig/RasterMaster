@@ -145,6 +145,7 @@ screen_fader_enabled		EQU TRUE
 text_output_enabled		EQU FALSE
 
 dma_bits			EQU DMAF_COPPER|DMAF_MASTER|DMAF_SETCLR
+
 intena_bits			EQU INTF_INTEN|INTF_SETCLR
 
 ciaa_icr_bits			EQU CIAICRF_SETCLR

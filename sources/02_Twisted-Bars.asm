@@ -61,9 +61,8 @@ text_output_enabled		EQU FALSE
 
 open_border_enabled		EQU TRUE
 
+; Twisted-Bars
 tb_quick_clear_enabled		EQU TRUE
-tb_restore_cl_cpu_enabled	EQU TRUE
-tb_restore_cl_blitter_enabled	EQU FALSE
 
 	IFEQ open_border_enabled
 dma_bits			EQU DMAF_BLITTER|DMAF_COPPER|DMAF_SETCLR

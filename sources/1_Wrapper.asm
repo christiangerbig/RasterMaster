@@ -69,15 +69,17 @@ pt_usedfx			EQU %1001010100000000
 pt_usedefx			EQU %0000000000000000
 pt_mute_enabled			EQU FALSE
 pt_music_fader_enabled		EQU FALSE
-pt_fade_out_delay		EQU 2	; Ticks
+pt_fade_out_delay		EQU 2	; ticks
 pt_track_notes_played_enabled	EQU FALSE
 pt_track_volumes_enabled	EQU FALSE
 pt_track_periods_enabled	EQU FALSE
 pt_track_data_enabled		EQU FALSE
 pt_split_module_enabled		EQU TRUE
+	IFD PROTRACKER_VERSION_3
 pt_metronome_enabled		EQU FALSE
 pt_metrochanbits		EQU pt_metrochan1
 pt_metrospeedbits		EQU pt_metrospeed4th
+	ENDC
 
 dma_bits			EQU DMAF_COPPER|DMAF_SETCLR
 
@@ -178,8 +180,8 @@ cl1_vstart			EQU beam_position&$ff
 
 ; Custom Memory
 custom_memory_number		EQU 2
-part_1_audio_memory_size1	EQU 11324 ; Song
-part_1_audio_memory_size2	EQU 62362 ; Samples
+part_1_audio_memory_size1	EQU 11324 ; song
+part_1_audio_memory_size2	EQU 62362 ; samples
 
 
 	INCLUDE "except-vectors.i"

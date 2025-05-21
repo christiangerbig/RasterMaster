@@ -385,11 +385,11 @@ init_main_variables
 
 ; Blind-Fader
 	IFEQ open_border_enabled
-	move.w	d0,bf_registers_table_start(a3)
+		move.w	d0,bf_registers_table_start(a3)
 
-	move.w	d1,bfi_active(a3)
+		move.w	d1,bfi_active(a3)
 
-	move.w	d1,bfo_active(a3)
+		move.w	d1,bfo_active(a3)
 	ENDC
 
 ; Effects-Handler
@@ -444,7 +444,7 @@ init_first_copperlist
 	bsr.s	cl1_init_playfield_props
 	IFEQ open_border_enabled
 		COP_MOVEQ 0,COPJMP2
-	rts
+		rts
 	ELSE
 		bsr.s	cl1_init_plane_ptrs
 		COP_MOVEQ 0,COPJMP2

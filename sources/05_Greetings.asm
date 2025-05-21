@@ -65,7 +65,7 @@ open_border_enabled		EQU FALSE ; always FALSE because of overscan playfield
 
 ; Twisted-Bars
 tb31612_quick_clear_enabled	EQU TRUE ; always TRUE because of enabled background effect
-tb31612_restore_cl_cpu_enabled	EQU FALSE
+tb31612_cpu_restore_cl_enabled	EQU FALSE
 
 dma_bits			EQU DMAF_BLITTER|DMAF_COPPER|DMAF_RASTER|DMAF_SETCLR
 
@@ -554,7 +554,7 @@ cl2_ext7_BPLCON4_44		RS.L 1
 cl2_extension7_size		RS.B 0
 
 	IFNE tb31612_quick_clear_enabled
-		IFNE tb31612_restore_cl_cpu_enabled
+		IFNE tb31612_cpu_restore_cl_enabled
 			RSRESET
 
 cl2_extension8			RS.B 0
@@ -582,7 +582,7 @@ cl2_extension5_entry		RS.B cl2_extension5_size
 cl2_extension6_entry		RS.B cl2_extension6_size
 cl2_extension7_entry		RS.B cl2_extension7_size*cl2_display_y_size
 	IFNE tb31612_quick_clear_enabled
-		IFNE tb31612_restore_cl_cpu_enabled
+		IFNE tb31612_cpu_restore_cl_enabled
 cl2_extension8_entry		RS.B cl2_extension8_size
 		ENDC
 	ENDC
@@ -661,8 +661,9 @@ extra_memory_size		RS.B 0
 save_a7				RS.L 1
 
 ; Sine-Scrolltext
+ss_active			RS.W 1
+	RS_ALIGN_LONGWORD
 ss_image			RS.L 1
-ss_enabled RS.W 1
 ss_text_table_start		RS.W 1
 ss_text_char_x_shift		RS.W 1
 ss_char_toggle_image		RS.W 1
@@ -716,10 +717,10 @@ start_05_greetings
 init_main_variables
 
 ; Sine-Scrolltext
+	moveq	#FALSE,d1
+	move.w	d1,ss_active(a3)
 	lea	ss_image_data,a0
 	move.l	a0,ss_image(a3)
-	moveq	#FALSE,d1
-	move.w	d1,ss_enabled(a3)
 	moveq	#0,d0
 	move.w	d0,ss_text_table_start(a3)
 	move.w	d0,ss_text_char_x_shift(a3)
@@ -1112,7 +1113,7 @@ init_second_copperlist
 	bsr	cl2_init_copperlist_branch
 	bsr	cl2_init_clear_blit
 	bsr	cl2_init_bplcon4
-	IFNE tb31612_restore_cl_cpu_enabled
+	IFNE tb31612_cpu_restore_cl_enabled
 		IFNE tb31612_quick_clear_enabled
 			bsr	cl2_init_restore_blit
 		ENDC
@@ -1122,13 +1123,13 @@ init_second_copperlist
 	bsr	copy_second_copperlist
 	bsr	swap_playfield1
 	bsr	set_playfield1
-	clr.w	ss_enabled(a3)
+	clr.w	ss_active(a3)
 	bsr	ss_horiz_scrolltext
-	move.w	#FALSE,ss_enabled(a3)
+	move.w	#FALSE,ss_active(a3)
 	bsr	tb31612_clear_second_copperlist
 	bsr	bf_clear_buffer
 	IFNE tb31612_quick_clear_enabled
-		IFNE tb31612_restore_cl_cpu_enabled
+		IFNE tb31612_cpu_restore_cl_enabled
 			bsr	tb31612_restore_second_copperlist
 		ENDC
 	ENDC
@@ -1138,7 +1139,7 @@ init_second_copperlist
 	bsr	set_playfield1
 	bsr	tb31612_clear_second_copperlist
 	IFNE tb31612_quick_clear_enabled
-		IFNE tb31612_restore_cl_cpu_enabled
+		IFNE tb31612_cpu_restore_cl_enabled
 			bsr	tb31612_restore_second_copperlist
 		ENDC
 	ENDC
@@ -1147,7 +1148,7 @@ init_second_copperlist
 	bsr	swap_playfield1
 	bsr	set_playfield1
 	bsr	tb31612_clear_second_copperlist
-	IFNE tb31612_restore_cl_cpu_enabled
+	IFNE tb31612_cpu_restore_cl_enabled
 		IFNE tb31612_quick_clear_enabled
 			bsr	tb31612_restore_second_copperlist
 		ENDC
@@ -1242,7 +1243,7 @@ cl2_init_clear_blit
 	COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,tb31612_quick_clear_enabled,TRUE
 
 
-	IFNE tb31612_restore_cl_cpu_enabled
+	IFNE tb31612_cpu_restore_cl_enabled
 		IFNE tb31612_quick_clear_enabled
 			CNOP 0,4
 cl2_init_restore_blit
@@ -1323,7 +1324,7 @@ beam_routines_exit
 
 	CNOP 0,4
 ss_horiz_scrolltext
-	tst.w	ss_enabled(a3)
+	tst.w	ss_active(a3)
 	bne.s	ss_horiz_scrolltext_quit
 	move.w	ss_text_char_x_shift(a3),d2
 	MOVEF.L cl1_extension3_entry,d3	; jump in vertical scroll blit
@@ -1749,7 +1750,7 @@ we_get_y_coords_loop
 
 	IFNE tb31612_quick_clear_enabled
 		RESTORE_BLCON4_CHUNKY_SCREEN tb,cl2,construction2,extension7,32,,tb31612_restore_blit
-		IFNE tb31612_restore_cl_cpu_enabled
+		IFNE tb31612_cpu_restore_cl_enabled
 tb31612_restore_blit
 			move.l	cl2_construction1(a3),a0
 			add.l	#cl2_extension8_entry+cl2_ext8_BLTDPTH+WORD_SIZE,a0
@@ -1956,11 +1957,11 @@ eh_start_twisted_bars31612
 	rts
 	CNOP 0,4
 eh_start_horiz_scrolltext
-	clr.w	ss_enabled(a3)
+	clr.w	ss_active(a3)
 	rts
 	CNOP 0,4
 eh_stop_horiz_scrolltext
-	move.w	#FALSE,ss_enabled(a3)
+	move.w	#FALSE,ss_active(a3)
 	rts
 	CNOP 0,4
 eh_stop_wave_center_bar

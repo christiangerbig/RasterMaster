@@ -87,16 +87,17 @@ pt_usedfx			EQU %1011010100001001
 pt_usedefx			EQU %0000000000000000
 pt_mute_enabled			EQU FALSE
 pt_music_fader_enabled		EQU FALSE
-pt_fade_out_delay		EQU 2	; Ticks
+pt_fade_out_delay		EQU 2	; ticks
 pt_split_module_enabled		EQU TRUE
 pt_track_notes_played_enabled	EQU TRUE
 pt_track_volumes_enabled	EQU TRUE
 pt_track_periods_enabled	EQU TRUE
 pt_track_data_enabled		EQU TRUE
+	IFD PROTRACKER_VERSION_3
 pt_metronome_enabled		EQU FALSE
 pt_metrochanbits		EQU pt_metrochan1
 pt_metrospeedbits		EQU pt_metrospeed4th
-
+	ENDC
 
 dma_bits			EQU DMAF_COPPER|DMAF_SETCLR
 
@@ -161,6 +162,7 @@ disk_memory_size		EQU 0
 extra_memory_size		EQU 0
 
 chip_memory_size		EQU 0
+
 	IFEQ pt_ciatiming_enabled
 ciab_cra_bits			EQU CIACRBF_LOAD
 	ENDC
@@ -169,7 +171,7 @@ ciaa_ta_time			EQU 0
 ciaa_tb_time			EQU 0
 	IFEQ pt_ciatiming_enabled
 ciab_ta_time			EQU 14187 ; = 0.709379 MHz * [20000 µs = 50 Hz duration for one frame on a PAL machine]
-;ciab_ta_time			EQU 14318 ; = 0.715909 MHz * [20000 µs = 50 Hz duration for one frame on a NTSC machine]
+; ciab_ta_time			EQU 14318 ; = 0.715909 MHz * [20000 µs = 50 Hz duration for one frame on a NTSC machine]
 	ELSE
 ciab_ta_time			EQU 0
 	ENDC
@@ -196,8 +198,8 @@ cl1_vstart			EQU beam_position&$ff
 
 ; Custom Memory
 custom_memory_number		EQU 2
-part_00_audio_memory_size1	EQU 29756 ; Song
-part_00_audio_memory_size2	EQU 224266 ; Samples
+part_00_audio_memory_size1	EQU 29756 ; song
+part_00_audio_memory_size2	EQU 224266 ; samples
 
 
 	INCLUDE "except-vectors.i"

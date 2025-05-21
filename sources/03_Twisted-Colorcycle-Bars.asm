@@ -62,8 +62,6 @@ open_border_enabled		EQU TRUE
 
 ; Twisted-Colorcycle-Bars
 tccb_quick_clear_enabled	EQU TRUE
-tccb_restore_cl_cpu_enabled	EQU TRUE
-tccb_restore_cl_blitter_enabled EQU FALSE
 
 	IFEQ open_border_enabled
 dma_bits			EQU DMAF_BLITTER|DMAF_COPPER|DMAF_SETCLR

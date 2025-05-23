@@ -11,7 +11,6 @@
 	XREF color00_high_bits
 	XREF color00_low_bits
 	XREF color255_bits
-	XREF nop_second_copperlist
 	XREF mouse_handler
 	XREF sine_table
 
@@ -651,6 +650,7 @@ em_color_table4			RS.L bf_source_bar_y_size*2*(((bf_source_bar_y_size-bf_destina
 em_color_table5			RS.L bf_source_bar_y_size*2*(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)
 em_color_table6			RS.L bf_source_bar_y_size*2*(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)
 em_color_buffer			RS.L cl2_display_y_size+(bf_bar_height*2)
+
 extra_memory_size		RS.B 0
 
 
@@ -699,6 +699,8 @@ ccfo_columns_delay_reset	RS.W 1
 eh_trigger_number		RS.W 1
 
 ; Main
+	RS_ALIGN_LONGWORD
+cl_end				RS.L 1
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
@@ -1119,7 +1121,7 @@ init_second_copperlist
 		ENDC
 	ENDC
 	bsr	cl2_init_copper_interrupt
-	COP_LISTEND
+	COP_LISTEND SAVETAIL
 	bsr	copy_second_copperlist
 	bsr	swap_playfield1
 	bsr	set_playfield1
@@ -1307,7 +1309,7 @@ beam_routines_skip
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
 beam_routines_exit
-	move.l	nop_second_copperlist,COP2LC-DMACONR(a6)
+	move.l	cl_end(a3),COP2LC-DMACONR(a6)
 	move.w	d0,COPJMP2-DMACONR(a6)
 	move.w	custom_error_code(a3),d1
 	rts

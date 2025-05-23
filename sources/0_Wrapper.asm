@@ -1,7 +1,7 @@
 ; Requirements
 ; 68020+
-; Chipset:	AGA PAL
-; OS:		3.0+
+; AGA PAL
+; 3.0+
 
 
 	MC68040

@@ -305,7 +305,7 @@ cl2_size3			EQU 0
 ; Sprite0 additional structure
 	RSRESET
 
-spr0_extension1	RS.B 0
+spr0_extension1			RS.B 0
 
 spr0_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 spr0_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size
@@ -326,7 +326,7 @@ sprite0_size			RS.B 0
 ; Sprite1 additional structure
 	RSRESET
 
-spr1_extension1	RS.B 0
+spr1_extension1			RS.B 0
 
 spr1_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 spr1_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size
@@ -347,7 +347,7 @@ sprite1_size			RS.B 0
 ; Sprite2 additional structure
 	RSRESET
 
-spr2_extension1	RS.B 0
+spr2_extension1			RS.B 0
 
 spr2_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 spr2_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size
@@ -377,7 +377,7 @@ sprite3_size			RS.B 0
 ; Sprite4 additional structure
 	RSRESET
 
-spr4_extension1	RS.B 0
+spr4_extension1			RS.B 0
 
 spr4_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 spr4_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size

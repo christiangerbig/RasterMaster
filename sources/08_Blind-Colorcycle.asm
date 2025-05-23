@@ -244,20 +244,20 @@ extra_memory_size		EQU bcc_bplam_table_size*BYTE_SIZE
 
 	RSRESET
 
-cl1_begin		RS.B 0
+cl1_begin			RS.B 0
 
 	INCLUDE "copperlist1.i"
 
-cl1_COPJMP2	RS.L 1
+cl1_COPJMP2			RS.L 1
 
-copperlist1_size RS.B 0
+copperlist1_size 		RS.B 0
 
 
 	RSRESET
 
-cl2_extension1	RS.B 0
+cl2_extension1			RS.B 0
 
-cl2_ext1_WAIT	RS.L 1
+cl2_ext1_WAIT			RS.L 1
 	IFEQ open_border_enabled 
 cl2_ext1_BPL1DAT		RS.L 1
 	ENDC

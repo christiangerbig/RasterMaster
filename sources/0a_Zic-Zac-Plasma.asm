@@ -1,7 +1,7 @@
 ; Requirements
-; CPU:		68020+
-; Chipset:	AGA PAL
-; OS:		3.0+
+; 68020+
+; AGA PAL
+; 3.0+
 
 
 	MC68040

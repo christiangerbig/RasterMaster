@@ -364,7 +364,7 @@ cl2_extension1_size		RS.B 0
 
 cl2_begin			RS.B 0
 
-cl2_extension1_entry RS.B cl2_extension1_size*cl2_display_y_size
+cl2_extension1_entry		RS.B cl2_extension1_size*cl2_display_y_size
 
 cl2_WAIT			RS.L 1
 cl2_INTREQ			RS.L 1
@@ -386,7 +386,7 @@ cl2_size3			EQU copperlist2_size
 ; Sprite0 additional structure
 	RSRESET
 
-spr0_extension1	RS.B 0
+spr0_extension1			RS.B 0
 
 spr0_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 spr0_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*bg_image_y_size

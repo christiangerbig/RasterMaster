@@ -277,7 +277,7 @@ cl1_begin			RS.B 0
 
 cl1_COPJMP2			RS.L 1
 
-copperlist1_size RS.B 0
+copperlist1_size		RS.B 0
 
 
 	RSRESET

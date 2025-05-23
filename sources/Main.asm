@@ -87,7 +87,6 @@
 	XDEF color00_high_bits
 	XDEF color00_low_bits
 	XDEF color255_bits
-	XDEF nop_second_copperlist
 
 	XREF start_0_pt_replay
 	XREF start_1_pt_replay
@@ -250,7 +249,7 @@ cl2_begin			RS.B 0
 
 cl2_end				RS.L 1
 
-copperlist2_size RS.B 0
+copperlist2_size		RS.B 0
 
 
 cl1_size1			EQU 0
@@ -353,8 +352,6 @@ init_first_copperlist
 init_second_copperlist
 	move.l	cl2_display(a3),a0
 	COP_LISTEND
-	lea	nop_second_copperlist(pc),a1
-	move.l	a0,(a1)
 	rts
 
 
@@ -388,9 +385,6 @@ pf1_rgb8_color_table
 
 
 	INCLUDE "sys-variables.i"
-
-
-nop_second_copperlist		DC.L 0
 
 
 	INCLUDE "sys-names.i"

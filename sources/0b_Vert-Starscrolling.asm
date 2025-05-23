@@ -1,7 +1,7 @@
 ; Requirements
-; CPU:		68020+
-; Chipset:	AGA PAL
-; OS:		3.0+
+; 68020+
+; AGA PAL
+; 3.0+
 
 
 	MC68040
@@ -373,7 +373,7 @@ cl2_extension1_size		RS.B 0
 
 cl2_begin			RS.B 0
 
-cl2_extension1_entry RS.B cl2_extension1_size*cl2_display_y_size
+cl2_extension1_entry		RS.B cl2_extension1_size*cl2_display_y_size
 
 cl2_WAIT1			RS.L 1
 cl2_INTREQ			RS.L 1
@@ -470,7 +470,7 @@ spr3_extension1_size		RS.B 0
 
 spr3_begin			RS.B 0
 
-spr3_extension1_entry RS.B spr3_extension1_size
+spr3_extension1_entry		RS.B spr3_extension1_size
 
 spr3_end			RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 
@@ -521,7 +521,7 @@ sprite5_size			RS.B 0
 ; Sprite6 additional structure
 	RSRESET
 
-spr6_extension1	RS.B 0
+spr6_extension1			RS.B 0
 
 spr6_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 spr6_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size
@@ -542,7 +542,7 @@ sprite6_size			RS.B 0
 ; Sprite7 additional structure
 	RSRESET
 
-spr7_extension1	RS.B 0
+spr7_extension1			RS.B 0
 
 spr7_ext1_header		RS.L 1*(spr_pixel_per_datafetch/WORD_BITS)
 spr7_ext1_planedata		RS.L (spr_pixel_per_datafetch/WORD_BITS)*lg_image_y_size

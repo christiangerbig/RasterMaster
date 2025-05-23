@@ -231,9 +231,9 @@ copperlist1_size		RS.B 0
 
 	RSRESET
 
-cl2_extension1	RS.B 0
+cl2_extension1			RS.B 0
 
-cl2_ext1_WAIT	RS.L 1
+cl2_ext1_WAIT			RS.L 1
 	IFEQ open_border_enabled 
 cl2_ext1_BPL1DAT		RS.L 1
 	ENDC

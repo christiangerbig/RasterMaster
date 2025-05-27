@@ -1073,7 +1073,7 @@ cl1_init_copy_blit
 	COP_MOVE d0,BLTDPTL
 	COP_MOVEQ ss_image_plane_width-ss_text_char_width,BLTAMOD
 	COP_MOVEQ extra_pf1_plane_width-ss_text_char_width,BLTDMOD
-	COP_MOVEQ (ss_copy_char_blit_y_size<<6)+(ss_copy_char_blit_x_size/WORD_BITS),BLTSIZE
+	COP_MOVEQ ((ss_copy_char_blit_y_size)<<6)+(ss_copy_char_blit_x_size/WORD_BITS),BLTSIZE
 	rts
 
 
@@ -1100,7 +1100,7 @@ cl1_init_horiz_scroll_blit
 	COP_MOVE d1,BLTDPTL
 	COP_MOVEQ extra_pf1_plane_width-ss_horiz_scroll_window_width,BLTAMOD
 	COP_MOVEQ extra_pf1_plane_width-ss_horiz_scroll_window_width,BLTDMOD
-	COP_MOVEQ (ss_horiz_scroll_blit_y_size<<6)+(ss_horiz_scroll_blit_x_size/WORD_BITS),BLTSIZE
+	COP_MOVEQ ((ss_horiz_scroll_blit_y_size)<<6)+(ss_horiz_scroll_blit_x_size/WORD_BITS),BLTSIZE
 	rts
 
 
@@ -1185,7 +1185,7 @@ cl2_init_sine_scroll_blits_loop1
 	COP_MOVE d2,BLTAPTL
 	COP_MOVEQ 0,BLTDPTH
 	COP_MOVEQ 0,BLTDPTL
-	COP_MOVEQ (ss_copy_column_blit_y_size1<<6)+(ss_copy_column_blit_x_size1/WORD_BITS),BLTSIZE
+	COP_MOVEQ ((ss_copy_column_blit_y_size1)<<6)+(ss_copy_column_blit_x_size1/WORD_BITS),BLTSIZE
 	COP_WAITBLIT
 	COP_MOVEQ BC0F_SRCA|BC0F_SRCB|BC0F_DEST|NABNC|NABC|ANBNC|ANBC|ABNC|ABC,BLTCON0 ; minterm D=A+B
 	subq.l	#ss_sine_char_width,d2 ; next character in source1
@@ -1209,7 +1209,7 @@ cl2_init_sine_scroll_blits_loop2
 	COP_MOVE d3,BLTAPTL
 	COP_MOVEQ 0,BLTDPTH
 	COP_MOVEQ 0,BLTDPTL
-	COP_MOVEQ (ss_copy_column_blit_y_size2<<6)+(ss_copy_column_blit_x_size2/WORD_BITS),BLTSIZE
+	COP_MOVEQ ((ss_copy_column_blit_y_size2)<<6)+(ss_copy_column_blit_x_size2/WORD_BITS),BLTSIZE
 	COP_WAITBLIT
 	dbf	d6,cl2_init_sine_scroll_blits_loop2
 	subq.l	#ss_sine_char_width,d3 ; next character in source2
@@ -1254,7 +1254,7 @@ cl2_init_restore_blit
 			COP_MOVEQ 0,BLTDPTL
 			COP_MOVEQ cl2_extension7_size-tb31612_restore_blit_width,BLTDMOD
 			COP_MOVEQ -2,BLTADAT ; source: 2nd word of CWAIT
-			COP_MOVEQ (tb31612_restore_blit_y_size<<6)+(tb31612_restore_blit_x_size/WORD_BITS),BLTSIZE
+			COP_MOVEQ (tb31612_restore_blit_y_size)<<6)+(tb31612_restore_blit_x_size/WORD_BITS),BLTSIZE
 			rts
 		ENDC
 	ENDC
@@ -1350,7 +1350,7 @@ ss_horiz_scrolltext_quit
 	rts
 
 
-	GET_NEW_char_IMAGE.W ss
+	GET_NEW_CHAR_IMAGE.W ss
 
 
 tb31612_clear_second_copperlist

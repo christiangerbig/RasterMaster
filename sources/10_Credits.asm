@@ -847,7 +847,7 @@ swap_extra_playfield
 vert_text_scroll
 	movem.l a4-a5,-(a7)
 	bsr.s	vert_text_scroll_init
-	MOVEF.W (vts_copy_char_blit_y_size<<6)+(vts_copy_char_blit_x_size/WORD_BITS),d3 ; BLTSIZE
+	MOVEF.W ((vts_copy_char_blit_y_size)<<6)+(vts_copy_char_blit_x_size/WORD_BITS),d3 ; BLTSIZE
 	MOVEF.W vts_text_char_y_restart,d4
 	lea	vts_chars_y_positions(pc),a1
 	lea	vts_chars_image_ptrs(pc),a2
@@ -899,7 +899,7 @@ vert_text_scroll_init
 	rts
 
 
-	GET_NEW_char_IMAGE.W vts
+	GET_NEW_CHAR_IMAGE.W vts
 
 
 	CNOP 0,4

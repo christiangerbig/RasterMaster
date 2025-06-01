@@ -183,7 +183,7 @@ cl1_hstart1			EQU display_window_hstart-(1*CMOVE_SLOT_PERIOD)-4
 cl1_hstart1			EQU display_window_hstart-4
 	ENDC
 cl1_vstart1			EQU MINROW
-cl1_hstart2			EQU $00
+cl1_hstart2			EQU 0
 cl1_vstart2			EQU beam_position&$ff
 
 sine_table_length		EQU 512
@@ -501,11 +501,11 @@ init_first_copperlist
 		bsr	cl1_init_copper_interrupt
 		COP_LISTEND
 	ELSE
-		bsr	cl1_init_plane_ptrs
+		bsr	cl1_init_bitplane_pointers
 		bsr	cl1_init_bplcon4
 		bsr	cl1_init_copper_interrupt
 		COP_LISTEND
-		bsr	cl1_set_plane_ptrs
+		bsr	cl1_set_bitplane_pointers
 	ENDC
 	bra	copy_first_copperlist
 	

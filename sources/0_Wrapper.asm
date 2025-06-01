@@ -193,7 +193,7 @@ bplcon3_bits1			EQU 0
 bplcon3_bits2			EQU bplcon3_bits1|BPLCON3F_LOCT
 bplcon4_bits			EQU 0
 
-cl1_hstart			EQU $00
+cl1_hstart			EQU 0
 cl1_vstart			EQU beam_position&$ff
 
 ; Custom Memory

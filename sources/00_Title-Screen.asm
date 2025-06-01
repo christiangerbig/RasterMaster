@@ -166,7 +166,7 @@ cl2_display_y_size		EQU visible_lines_number
 cl2_hstart1			EQU (ddfstrt_bits*2)-((pf1_depth3*CMOVE_SLOT_PERIOD)+(1*CMOVE_SLOT_PERIOD))
 
 cl2_vstart1			EQU MINROW
-cl2_hstart2			EQU $00
+cl2_hstart2			EQU 0
 cl2_vstart2			EQU beam_position&$ff
 
 sine_table_length		EQU 256
@@ -615,7 +615,7 @@ init_colors
 
 	CNOP 0,4
 init_sprites
-	bsr.s	spr_init_ptrs_table
+	bsr.s	spr_init_pointers_table
 	bra.s	lg_init_attached_sprites_cluster
 
 
@@ -623,7 +623,7 @@ init_sprites
 
 
 ; Logo
-	INIT_ATTACHED_SPRITES_CLUSTER lg,spr_ptrs_display,lg_image_x_position,lg_image_y_position,spr_x_size2,lg_image_y_size,,BLANK
+	INIT_ATTACHED_SPRITES_CLUSTER lg,spr_pointers_display,lg_image_x_position,lg_image_y_position,spr_x_size2,lg_image_y_size,,BLANK
 
 ; Background-Image
 	CNOP 0,4
@@ -670,12 +670,12 @@ bg_copy_image_data_loop
 init_first_copperlist
 	move.l	cl1_display(a3),a0 
 	bsr.s	cl1_init_playfield_props
-	bsr.s	cl1_init_sprite_ptrs
+	bsr.s	cl1_init_sprite_pointers
 	bsr	cl1_init_colors
-	bsr	cl1_init_plane_ptrs
+	bsr	cl1_init_bitplane_pointers
 	COP_MOVEQ 0,COPJMP2
-	bsr	cl1_set_sprite_ptrs
-	bra	cl1_set_plane_ptrs
+	bsr	cl1_set_sprite_pointers
+	bra	cl1_set_bitplane_pointers
 
 
 	COP_INIT_PLAYFIELD_REGISTERS cl1
@@ -736,9 +736,8 @@ cl2_init_bpldat
 	move.w	#BPL2DAT,d2
 	move.w	#BPL3DAT,d3
 	move.w	#BPL4DAT,d4
-	move.l	#(((CL_Y_WRAP<<24)|(((cl2_hstart1/4)*2)<<16))|$10000)|$fffe,d5 ; CWAIT
-	moveq	#1,d6
-	ror.l	#8,d6			; $01000000
+	move.l	#(((CL_Y_WRAPPING<<24)|(((cl2_hstart1/4)*2)<<16))|$10000)|$fffe,d5 ; CWAIT
+	move.l	#$01000000,d6
 	MOVEF.W cl2_display_y_size-1,d7
 cl2_init_bpldat_loop
 	move.l	d0,(a0)+		; CWAIT x,y
@@ -760,7 +759,7 @@ cl2_init_bpldat_loop
 	ADDF.W	bg_image_plane_width*bg_image_depth,a1 ; next line in source
 	cmp.l	d5,d0			; rasterline $ff ?
 	bne.s   cl2_init_bpldat_skip
-	COP_WAIT CL_X_WRAP_7_BITPLANES_1X,CL_Y_WRAP ; patch cl
+	COP_WAIT CL_X_WRAPPING_7_BITPLANES_1X,CL_Y_WRAPPING ; patch cl
 cl2_init_bpldat_skip
 	add.l	d6,d0			; next line in cl
 	dbf	d7,cl2_init_bpldat_loop
@@ -912,7 +911,7 @@ wobble_display
 	MOVEF.W $ff,d3			; scrolling mask H0-H7
 	moveq	#cl2_extension1_size,d4
 	IFGE visible_lines_number-212
-		move.w	#(cl2_display_y_size-(CL_Y_WRAP-cl2_vstart1))-1,d5
+		move.w	#(cl2_display_y_size-(CL_Y_WRAPPING-cl2_vstart1))-1,d5
 	ENDC
 	MOVEF.W wd_table_length-1,d6	; overflow 360°
 	lea	cs_audio_channel_data(pc),a0
@@ -1122,7 +1121,7 @@ image_pixel_fader_out_quit
 ipf_random_pixel_data_copy
 	movem.l a4-a5,-(a7)
 	move.l	ipf_mask(a3),d1
-	lea	spr_ptrs_display(pc),a5
+	lea	spr_pointers_display(pc),a5
 	move.l	(a5)+,a0		; Sprite0 structure
 	ADDF.W	(spr_pixel_per_datafetch/8)*2,a0 ; skip header
 	lea	lg_image_data,a1	; 1st quadword bitplane 1
@@ -1294,7 +1293,7 @@ spr_rgb8_color_table
 
 
 	CNOP 0,4
-spr_ptrs_display
+spr_pointers_display
 	DS.L spr_number
 
 

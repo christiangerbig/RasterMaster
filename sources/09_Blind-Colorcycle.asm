@@ -140,10 +140,10 @@ ddfstop_bits			EQU DDFSTOP_STANDARD_MIN
 
 display_window_hstart		EQU HSTART_40_CHUNKY_PIXEL
 display_window_vstart		EQU MINROW
-diwstrt_bits			EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)+(display_window_hstart&$ff)
+diwstrt_bits			EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)|(display_window_hstart&$ff)
 display_window_hstop		EQU HSTOP_320_PIXEL
 display_window_vstop		EQU VSTOP_240_lines
-diwstop_bits			EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)+(display_window_hstop&$ff)
+diwstop_bits			EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)|(display_window_hstop&$ff)
 
 pf1_plane_width			EQU pf1_x_size3/8
 data_fetch_width		EQU pixel_per_line/8
@@ -165,7 +165,7 @@ cl2_hstart1			EQU display_window_hstart-4
 	ENDC
 
 cl2_vstart1			EQU MINROW
-cl2_hstart2			EQU $00
+cl2_hstart2			EQU 0
 cl2_vstart2			EQU beam_position&$ff
 
 sine_table_length		EQU 256
@@ -446,9 +446,9 @@ init_first_copperlist
 		COP_MOVEQ 0,COPJMP2
 		rts
 	ELSE
-		bsr.s	cl1_init_plane_ptrs
+		bsr.s	cl1_init_bitplane_pointers
 		COP_MOVEQ 0,COPJMP2
-		bra	cl1_set_plane_ptrs
+		bra	cl1_set_bitplane_pointers
 	ENDC
 
 

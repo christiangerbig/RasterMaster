@@ -161,7 +161,7 @@ bplcon4_bits			EQU 0
 diwhigh_bits			EQU (((display_window_hstop&$100)>>8)*DIWHIGHF_HSTOP8)|(((display_window_vstop&$700)>>8)*DIWHIGHF_VSTOP8)|(((display_window_hstart&$100)>>8)*DIWHIGHF_HSTART8)|((display_window_vstart&$700)>>8)
 fmode_bits			EQU FMODEF_BPL32|FMODEF_BPAGEM
 
-cl1_hstart			EQU $00
+cl1_hstart			EQU 0
 cl1_vstart			EQU $03	; Damit die CPU die Zeiger COP1LC in der CL für den Einsprung des Char-Blits vor dem Ausführen der CMOVE-Befehlen ändert
 
 cl2_display_x_size		EQU 352
@@ -173,7 +173,7 @@ cl2_hstart1			EQU display_window_hstart-(5*CMOVE_SLOT_PERIOD)-4
 cl2_hstart1			EQU display_window_hstart-(4*CMOVE_SLOT_PERIOD)-4
 	ENDC
 cl2_vstart1			EQU MINROW
-cl2_hstart2			EQU $00
+cl2_hstart2			EQU 0
 cl2_vstart2			EQU beam_position&$ff
 
 sine_table_length		EQU 256
@@ -780,7 +780,7 @@ init_main
 	bsr	wcb_init_bplam_table
 	bsr	ss_init_chars_offsets
 	bsr	bf_init_color_table
-	bsr	bf_init_color_table_ptrs
+	bsr	bf_init_color_table_pointers
 	bsr	bf_scale_bar_size
 	bsr	init_first_copperlist
 	bra	init_second_copperlist
@@ -926,9 +926,9 @@ bf_init_color_table_loop6
 
 
 	CNOP 0,4
-bf_init_color_table_ptrs
+bf_init_color_table_pointers
 	move.l	extra_memory(a3),a0
-	lea	bf_color_table_ptrs(pc),a1
+	lea	bf_color_table_pointers(pc),a1
 	lea	em_color_table1(a0),a2
 	move.l	a2,(a1)+
 	lea	em_color_table2(a0),a2
@@ -948,7 +948,7 @@ bf_init_color_table_ptrs
 bf_scale_bar_size
 	movem.l a4-a6,-(a7)
 	move.w	#(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*4,a5
-	lea	bf_color_table_ptrs(pc),a6
+	lea	bf_color_table_pointers(pc),a6
 	moveq	#bf_bars_planes_number-1,d7 ; 1st loop counter
 bf_scale_bar_size_loop1
 	move.l	(a6),a4
@@ -1028,12 +1028,12 @@ bf_do_scale_bar_y_size_skip
 init_first_copperlist
 	move.l	cl1_display(a3),a0 
 	bsr.s	cl1_init_playfield_props
-	bsr.s	cl1_init_plane_ptrs
+	bsr.s	cl1_init_bitplane_pointers
 	bsr	cl1_init_copperlist_branch
 	bsr	cl1_init_copy_blit
 	bsr	cl1_init_horiz_scroll_blit
 	COP_MOVEQ 0,COPJMP2
-	bra	cl1_set_plane_ptrs
+	bra	cl1_set_bitplane_pointers
 
 
 	COP_INIT_PLAYFIELD_REGISTERS cl1
@@ -1622,7 +1622,7 @@ bf_set_bars
 	lea	bf_yz_coords(pc),a0
 	move.l	extra_memory(a3),a2
 	add.l	#em_color_buffer,a2
-	lea	bf_color_table_ptrs(pc),a5
+	lea	bf_color_table_pointers(pc),a5
 	move.w	#bf_y_center,a6
 	move.w	#bf_z_plane1,a7
 	moveq	#bf_bars_planes_number-1,d7
@@ -2064,7 +2064,7 @@ bf_color_table
 	INCLUDE "RasterMaster:colortables/06_bf_Colorgradient.ct"
 
 	CNOP 0,4
-bf_color_table_ptrs
+bf_color_table_pointers
 	DS.L bf_bars_planes_number
 
 bf_bitmap_lines_table

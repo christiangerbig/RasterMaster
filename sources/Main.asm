@@ -205,7 +205,7 @@ ciab_tb_continuous_enabled	EQU FALSE
 
 beam_position			EQU $136
 
-bplcon0_bits			EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0) 
+bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|(BPLCON0F_COLOR)|((pf_depth&$07)*BPLCON0F_BPU0) 
 bplcon3_bits1			EQU 0
 bplcon3_bits2			EQU bplcon3_bits1|BPLCON3F_LOCT
 bplcon4_bits			EQU 0
@@ -214,7 +214,7 @@ color00_high_bits		EQU $012
 color00_low_bits		EQU $012
 color255_bits			EQU color00_bits
 
-cl1_hstart			EQU $00
+cl1_hstart			EQU 0
 cl1_vstart			EQU beam_position&$ff
 
 

@@ -166,7 +166,7 @@ cl1_display_width		EQU cl1_display_x_size/8
 cl1_display_y_size		EQU visible_lines_number
 cl1_hstart1			EQU (ddfstrt_bits*2)-(pf1_depth3*CMOVE_SLOT_PERIOD)
 cl1_vstart1			EQU MINROW
-cl1_hstart2			EQU $00
+cl1_hstart2			EQU 0
 cl1_vstart2			EQU beam_position&$ff
 
 sine_table_length		EQU 256
@@ -583,7 +583,7 @@ init_colors
 
 	CNOP 0,4
 init_sprites
-	bsr.s	spr_init_ptrs_table
+	bsr.s	spr_init_pointers_table
 	bsr.s	lg_init_sprites
 	bsr	vts_init_sprites
 	bra	spr_copy_structures
@@ -594,7 +594,7 @@ init_sprites
 ; Logo
 	CNOP 0,4
 lg_init_sprites
-	lea	spr_ptrs_construction(pc),a2
+	lea	spr_pointers_construction(pc),a2
 	move.l	(a2)+,a0		; 1st sprite structure
 	ADDF.W	(spr_pixel_per_datafetch/4),a0 ; skip header
 	move.l	(a2),a1			; 2nd sprite structure
@@ -619,7 +619,7 @@ lg_init_sprites_loop
 vts_init_sprites
 	MOVEF.W vts_buffer_x_position*SHIRES_PIXEL_FACTOR,d3 ; X
 	moveq	#vts_buffer_y_position,d4 ; Y
-	lea	spr_ptrs_construction(pc),a2
+	lea	spr_pointers_construction(pc),a2
 	move.l	QUADWORD_SIZE*1(a2),a0	; 1st sprite structure
 	move.l	QUADWORD_SIZE*2(a2),a1	; 2nd sprite structure
 	move.l	QUADWORD_SIZE*3(a2),a2	; 3rd sprite structure
@@ -702,14 +702,14 @@ bg_copy_image_data_loop
 init_first_copperlist
 	move.l	cl1_display(a3),a0 
 	bsr.s	cl1_init_playfield_props
-	bsr.s	cl1_init_sprite_ptrs
+	bsr.s	cl1_init_sprite_pointers
 	bsr.s	cl1_init_colors
-	bsr	cl1_init_plane_ptrs
+	bsr	cl1_init_bitplane_pointers
 	bsr	cl1_init_bpldat
 	bsr	cl1_init_copper_interrupt
 	COP_LISTEND
-	bsr	cl1_set_sprite_ptrs
-	bra	cl1_set_plane_ptrs
+	bsr	cl1_set_sprite_pointers
+	bra	cl1_set_bitplane_pointers
 
 
 	COP_INIT_PLAYFIELD_REGISTERS cl1
@@ -754,9 +754,8 @@ cl1_init_bpldat
 	move.w	#BPL2DAT,d2
 	move.w	#BPL3DAT,d3
 	move.w	#BPL4DAT,d4
-	move.l	#(((CL_Y_WRAP<<24)|(((cl1_hstart1/4)*2)<<16))|$10000)|$fffe,d5 ; CWAIT
-	moveq	#1,d6
-	ror.l	#8,d6			; $01000000
+	move.l	#(((CL_Y_WRAPPING<<24)|(((cl1_hstart1/4)*2)<<16))|$10000)|$fffe,d5 ; CWAIT
+	move.l	#$01000000,d6
 	MOVEF.W cl1_display_y_size-1,d7
 cl1_init_bpldat_loop
 	move.l	d0,(a0)+		; CWAIT x,y
@@ -777,7 +776,7 @@ cl1_init_bpldat_loop
 	ADDF.W	bg_image_plane_width*bg_image_depth,a1 ; next line in playfield
 	cmp.l	d5,d0			; rasterline $ff ?
 	bne.s   cl1_init_bpldat_skip
-	COP_WAIT CL_X_WRAP_7_BITPLANES_1X,CL_Y_WRAP ; patch cl
+	COP_WAIT CL_X_WRAPPING_7_BITPLANES_1X,CL_Y_WRAPPING ; patch cl
 cl1_init_bpldat_skip
 	add.l	d6,d0			; next line in cl
 	dbf	d7,cl1_init_bpldat_loop
@@ -808,8 +807,8 @@ no_sync_routines
 	CNOP 0,4
 beam_routines
 	bsr	wait_copint
-	bsr.s	spr_swap_structures
-	bsr.s	spr_set_sprite_ptrs
+	bsr.s	swap_sprite_structures
+	bsr.s	set_sprite_pointers
 	bsr.s	swap_extra_playfield
 	bsr	effects_handler
 	bsr	scroll_logo_left_in
@@ -829,10 +828,10 @@ beam_routines_exit
 	rts
 
 
-	SWAP_SPRITES spr,spr_swap_number
+	SWAP_SPRITES spr_swap_number
 
 
-	SET_SPRITES spr,spr_swap_number
+	SET_SPRITES spr_swap_number
 
 
 	CNOP 0,4
@@ -850,7 +849,7 @@ vert_text_scroll
 	MOVEF.W ((vts_copy_char_blit_y_size)<<6)+(vts_copy_char_blit_x_size/WORD_BITS),d3 ; BLTSIZE
 	MOVEF.W vts_text_char_y_restart,d4
 	lea	vts_chars_y_positions(pc),a1
-	lea	vts_chars_image_ptrs(pc),a2
+	lea	vts_chars_image_pointers(pc),a2
 	move.l	extra_pf1(a3),a4
 	move.l	(a4),a4
 	move.w	#vts_text_chars_per_line*4,a5
@@ -905,7 +904,7 @@ vert_text_scroll_init
 	CNOP 0,4
 vts_copy_buffer
 	move.l	a4,-(a7)
-	lea	spr_ptrs_construction(pc),a2
+	lea	spr_pointers_construction(pc),a2
 	move.l	QUADWORD_SIZE(a2),a0	; 1st sprite structure
 	ADDF.W	(spr_pixel_per_datafetch/4),a0 ; skip header
 	move.l	4*LONGWORD_SIZE(a2),a1	; 2nd sprite structure
@@ -1032,10 +1031,10 @@ scroll_logo_left_in
 	moveq	#lg_image_y_position,d1 ; y
 	MOVEF.W lg_image_y_size,d2
 	add.w	d1,d2			; VSTOP
-	lea	spr_ptrs_construction(pc),a2
+	lea	spr_pointers_construction(pc),a2
 	move.l	(a2)+,a0		; 1st sprite structure
 	move.l	(a2),a1			; 2nd sprite structure
-	lea	spr_ptrs_display(pc),a2
+	lea	spr_pointers_display(pc),a2
 	move.l	(a2)+,a4		; 1st sprite structure
 	move.l	(a2),a5			; 2nd sprite structure
 	SET_SPRITE_POSITION d0,d1,d2
@@ -1073,10 +1072,10 @@ scroll_logo_left_out
 	moveq	#lg_image_y_position,d1 ; Y
 	MOVEF.W lg_image_y_size,d2
 	add.w	d1,d2			; VSTOP
-	lea	spr_ptrs_construction(pc),a2
+	lea	spr_pointers_construction(pc),a2
 	move.l	(a2)+,a0		; 1st sprite structure
 	move.l	(a2),a1			; 2nd sprite structure
-	lea	spr_ptrs_display(pc),a2
+	lea	spr_pointers_display(pc),a2
 	move.l	(a2)+,a4		; 1st sprite structure
 	move.l	(a2),a5			; 2nd sprite structure
 	SET_SPRITE_POSITION d0,d1,d2
@@ -1211,12 +1210,12 @@ spr_rgb8_color_table_vert_text_scroll
 
 
 	CNOP 0,4
-spr_ptrs_construction
+spr_pointers_construction
 	DS.L spr_number
 
 
 	CNOP 0,4
-spr_ptrs_display
+spr_pointers_display
 	DS.L spr_number
 
 
@@ -1239,7 +1238,7 @@ vts_chars_y_positions
 	DS.W vts_text_chars_per_column
 
 	CNOP 0,4
-vts_chars_image_ptrs
+vts_chars_image_pointers
 	DS.L vts_text_chars_number
 
 

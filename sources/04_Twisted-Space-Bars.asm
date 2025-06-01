@@ -166,8 +166,8 @@ cl2_hstart1			EQU display_window_hstart-(1*CMOVE_SLOT_PERIOD)-4
 cl2_hstart1			EQU display_window_hstart-4
 	ENDC
 cl2_vstart1			EQU MINROW
-cl2_hstart2			EQU $00
-cl2_vstart2			EQU beam_position&CL_Y_WRAP
+cl2_hstart2			EQU 0
+cl2_vstart2			EQU beam_position&CL_Y_WRAPPING
 
 sine_table_length		EQU 256
 
@@ -774,12 +774,12 @@ init_colors
 
 	CNOP 0,4
 init_sprites
-	bsr.s	spr_init_ptrs_table
+	bsr.s	spr_init_pointers_table
 	bra.s	bg_init_attached_sprites_cluster
 
 	INIT_SPRITE_POINTERS_TABLE
 
-	INIT_ATTACHED_SPRITES_CLUSTER bg,spr_ptrs_display,bg_image_x_position,bg_image_y_position,spr_x_size2,bg_image_y_size,,,REPEAT
+	INIT_ATTACHED_SPRITES_CLUSTER bg,spr_pointers_display,bg_image_x_position,bg_image_y_position,spr_x_size2,bg_image_y_size,,,REPEAT
 
 
 ; Horiz-Scrolltext
@@ -794,12 +794,12 @@ init_sprites
 init_first_copperlist
 	move.l	cl1_display(a3),a0 
 	bsr.s	cl1_init_playfield_props
-	bsr.s	cl1_init_sprite_ptrs
+	bsr.s	cl1_init_sprite_pointers
 	bsr	cl1_init_colors
-	bsr	cl1_init_plane_ptrs
+	bsr	cl1_init_bitplane_pointers
 	COP_MOVEQ 0,COPJMP2
-	bsr	cl1_set_sprite_ptrs
-	bsr	cl1_set_plane_ptrs
+	bsr	cl1_set_sprite_pointers
+	bsr	cl1_set_bitplane_pointers
 	clr.w	tb313_active(a3)
 	bsr	tb313_get_yz_coords
 	move.w	#FALSE,tb313_active(a3)
@@ -911,7 +911,7 @@ horiz_scrolltext
 	move.w	#((hst_copy_blit_y_size)<<6)+(hst_copy_blit_x_size/WORD_BITS),d4 ; BLTSIZE
 	move.w	#hst_text_char_x_restart,d5
 	lea	hst_chars_x_positions(pc),a0
-	lea	hst_chars_image_ptrs(pc),a1
+	lea	hst_chars_image_pointers(pc),a1
 	move.l	pf1_construction2(a3),a2
 	move.l	(a2),d3
 	add.l	#(hst_text_x_position/8)+(hst_text_y_position*pf1_plane_width*pf1_depth3),d3 ; y centering, skip 32 pixel
@@ -1491,7 +1491,7 @@ spr_rgb8_color_table
 
 
 	CNOP 0,4
-spr_ptrs_display
+spr_pointers_display
 	DS.L spr_number
 
 
@@ -1539,7 +1539,7 @@ hst_chars_x_positions
 
 
 	CNOP 0,4
-hst_chars_image_ptrs
+hst_chars_image_pointers
 	DS.L hst_text_chars_number
 
 

@@ -133,11 +133,11 @@ pf1_plane_width			EQU pf1_x_size3/8
 data_fetch_width		EQU pixel_per_line/8
 pf1_plane_moduli		EQU -pf1_plane_width+(pf1_plane_width-data_fetch_width)
 
-diwstrt_bits			EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)+(display_window_hstart&$ff)
-diwstop_bits			EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)+(display_window_hstop&$ff)
+diwstrt_bits			EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)|(display_window_hstart&$ff)
+diwstop_bits			EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)|(display_window_hstop&$ff)
 ddfstrt_bits			EQU DDFSTART_OVERSCAN_32_PIXEL
 ddfstop_bits			EQU DDFSTOP_OVERSCAN_32_PIXEL_MIN
-bplcon0_bits			EQU BPLCON0F_ECSENA+((pf_depth>>3)*BPLCON0F_BPU3)+(BPLCON0F_COLOR)+((pf_depth&$07)*BPLCON0F_BPU0)
+bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|(BPLCON0F_COLOR)|((pf_depth&$07)*BPLCON0F_BPU0)
 bplcon1_bits			EQU 0
 bplcon2_bits			EQU 0
 bplcon3_bits1			EQU 0
@@ -149,9 +149,9 @@ fmode_bits			EQU 0
 cl2_display_x_size		EQU 456
 cl2_display_width		EQU cl2_display_x_size/8
 cl2_display_y_size		EQU visible_lines_number-2
-cl2_hstart1			EQU $00
+cl2_hstart1			EQU 0
 cl2_vstart1			EQU MINROW
-cl2_hstart2			EQU $00
+cl2_hstart2			EQU 0
 cl2_vstart2			EQU beam_position&$ff
 
 sine_table_length		EQU 512
@@ -463,9 +463,9 @@ init_colors
 init_first_copperlist
 	move.l	cl1_display(a3),a0 
 	bsr.s	cl1_init_playfield_props
-	bsr	cl1_init_plane_ptrs
+	bsr	cl1_init_bitplane_pointers
 	COP_MOVEQ 0,COPJMP2
-	bra	cl1_set_plane_ptrs
+	bra	cl1_set_bitplane_pointers
 
 
 	COP_INIT_PLAYFIELD_REGISTERS cl1

@@ -184,7 +184,7 @@ cl2_hstart1			EQU display_window_hstart-(1*CMOVE_SLOT_PERIOD)-4
 cl2_hstart1			EQU display_window_hstart-4
 	ENDC
 cl2_vstart1			EQU MINROW
-cl2_hstart2			EQU $00
+cl2_hstart2			EQU 0
 cl2_vstart2			EQU beam_position&$ff
 
 sine_table_length		EQU 256
@@ -510,9 +510,9 @@ init_first_copperlist
 		COP_MOVEQ 0,COPJMP2
 		rts
 	ELSE
-		bsr.s	cl1_init_plane_ptrs
+		bsr.s	cl1_init_bitplane_pointers
 		COP_MOVEQ 0,COPJMP2
-		bra	cl1_set_plane_ptrs
+		bra	cl1_set_bitplane_pointers
 	ENDC
 
 	IFEQ open_border_enabled

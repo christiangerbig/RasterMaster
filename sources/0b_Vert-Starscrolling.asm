@@ -185,7 +185,7 @@ cl2_hstart1			EQU display_window_hstart-(1*CMOVE_SLOT_PERIOD)-4
 cl2_hstart1			EQU display_window_hstart-4
 	ENDC
 cl2_vstart1			EQU MINROW
-cl2_hstart2			EQU $00
+cl2_hstart2			EQU 0
 cl2_vstart2			EQU beam_position&$ff
 
 sine_table_length		EQU 256
@@ -731,12 +731,12 @@ init_colors
 ; Logo
 	CNOP 0,4
 init_sprites
-	bsr.s	spr_init_ptrs_table
+	bsr.s	spr_init_pointers_table
 	bra.s	lg_init_attached_sprites_cluster
 
 	INIT_SPRITE_POINTERS_TABLE
 
-	INIT_ATTACHED_SPRITES_CLUSTER lg,spr_ptrs_display,lg_image_x_position,lg_image_y_position,spr_x_size2,lg_image_y_size,,BLANK
+	INIT_ATTACHED_SPRITES_CLUSTER lg,spr_pointers_display,lg_image_x_position,lg_image_y_position,spr_x_size2,lg_image_y_size,,BLANK
 
 	CONVERT_IMAGE_TO_BPLCON4_CHUNKY.B vss,vss_bplam_table,a3
 
@@ -809,17 +809,17 @@ vss_init_xy_coords_loop2
 init_first_copperlist
 	move.l	cl1_display(a3),a0 
 	bsr.s	cl1_init_playfield_props
-	bsr.s	cl1_init_sprite_ptrs
+	bsr.s	cl1_init_sprite_pointers
 	bsr.s	cl1_init_colors
 	IFEQ open_border_enabled
 		COP_MOVEQ 0,COPJMP2
-		bsr	cl1_set_sprite_ptrs
+		bsr	cl1_set_sprite_pointers
 		rts
 	ELSE
-		bsr	cl1_init_plane_ptrs
+		bsr	cl1_init_bitplane_pointers
 		COP_MOVEQ 0,COPJMP2
-		bsr	cl1_set_sprite_ptrs
-		bra	cl1_set_plane_ptrs
+		bsr	cl1_set_sprite_pointers
+		bra	cl1_set_bitplane_pointers
 	ENDC
 
 
@@ -1286,7 +1286,7 @@ image_pixel_fader_quit
 ipf_random_pixel_data_copy
 	movem.l a4-a5,-(a7)
 	move.l	ipf_mask(a3),d1
-	lea	spr_ptrs_display(pc),a5
+	lea	spr_pointers_display(pc),a5
 	move.l	(a5)+,a0		; Sprite0 structure
 	ADDF.W	(spr_pixel_per_datafetch/8)*2,a0 ; skip header
 	lea	lg_image_data,a1	; 1st quadword
@@ -1432,7 +1432,7 @@ spr_rgb8_color_table
 
 
 	CNOP 0,4
-spr_ptrs_display
+spr_pointers_display
 	DS.L spr_number
 
 

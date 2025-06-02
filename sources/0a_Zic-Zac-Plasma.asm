@@ -489,7 +489,7 @@ init_second_copperlist
 
 	CNOP 0,4
 cl2_init_bplcon4
-	move.l	#(BPLCON4<<16)+bplcon4_bits,d0
+	move.l	#(BPLCON4<<16)|bplcon4_bits,d0
 	COP_WAIT cl2_hstart1,cl2_vstart1
 	move.w	#(cl2_display_width*cl2_display_y_size)-1,d7 ; number of columns
 cl2_init_bplcon4_loop

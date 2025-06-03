@@ -167,7 +167,7 @@ cl2_hstart1			EQU (ddfstrt_bits*2)-((pf1_depth3*CMOVE_SLOT_PERIOD)+(1*CMOVE_SLOT
 
 cl2_vstart1			EQU MINROW
 cl2_hstart2			EQU 0
-cl2_vstart2			EQU beam_position&$ff
+cl2_vstart2			EQU beam_position&CL_Y_WRAPPING
 
 sine_table_length		EQU 256
 
@@ -721,7 +721,8 @@ init_second_copperlist
 	bsr	cl2_init_copper_interrupt
 	COP_LISTEND
 	bsr	copy_second_copperlist
-	bra	swap_second_copperlist
+	bsr	swap_second_copperlist
+	bra	set_second_copperlist
 
 
 	CNOP 0,4
@@ -788,6 +789,7 @@ no_sync_routines
 beam_routines
 	bsr	wait_copint
 	bsr.s	swap_second_copperlist
+	bsr.s	set_second_copperlist
 	bsr	effects_handler
 	bsr	ipf_random_pixel_data_copy
 	bsr	fetch_channels_data
@@ -808,6 +810,9 @@ beam_routines_exit
 
 
 	SWAP_COPPERLIST cl2,2
+
+
+	SET_COPPERLIST cl2
 
 
 	CNOP 0,4

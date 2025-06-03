@@ -176,7 +176,7 @@ bplcon3_bits2			EQU bplcon3_bits1|BPLCON3F_LOCT
 bplcon4_bits			EQU 0
 
 cl1_hstart			EQU 0
-cl1_vstart			EQU beam_position&$ff
+cl1_vstart			EQU beam_position&CL_Y_WRAPPING
 
 ; Custom Memory
 custom_memory_number		EQU 2
@@ -402,7 +402,7 @@ init_first_copperlist
 	COP_INIT_PLAYFIELD_REGISTERS cl1,BLANK
 
 
-	COP_INIT_COPINT cl1,cl1_HSTART,cl1_VSTART,YWRAP
+	COP_INIT_COPINT cl1,cl1_hstart,cl1_vstart,YWRAP
 
 
 	CNOP 0,4

@@ -185,7 +185,7 @@ cl2_hstart1			EQU display_window_hstart-4
 	ENDC
 cl2_vstart1			EQU MINROW
 cl2_hstart2			EQU 0
-cl2_vstart2			EQU beam_position&$ff
+cl2_vstart2			EQU beam_position&CL_Y_WRAPPING
 
 sine_table_length		EQU 256
 
@@ -531,7 +531,8 @@ init_second_copperlist
 	bsr.s	cl2_init_copper_interrupt
 	COP_LISTEND
 	bsr	copy_second_copperlist
-	bra	swap_second_copperlist
+	bsr	swap_second_copperlist
+	bra	set_second_copperlist
 
 
 	COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,tb_quick_clear_enabled,FALSE,NOOP<<16
@@ -558,6 +559,7 @@ no_sync_routines
 beam_routines
 	bsr	wait_copint
 	bsr.s	swap_second_copperlist
+	bsr.s	set_second_copperlist
 	bsr	effects_handler
 	bsr	tb_clear_second_copperlist
 	bsr	tb315_get_yz_coords
@@ -582,6 +584,9 @@ beam_routines_exit
 
 
 	SWAP_COPPERLIST cl2,3
+
+
+	SET_COPPERLIST cl2
 
 
 	CLEAR_BPLCON4_CHUNKY_SCREEN tb,cl2,construction1,extension1,quick_clear_enabled

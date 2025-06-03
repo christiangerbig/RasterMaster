@@ -184,7 +184,7 @@ cl1_hstart1			EQU display_window_hstart-4
 	ENDC
 cl1_vstart1			EQU MINROW
 cl1_hstart2			EQU 0
-cl1_vstart2			EQU beam_position&$ff
+cl1_vstart2			EQU beam_position&CL_Y_WRAPPING
 
 sine_table_length		EQU 512
 

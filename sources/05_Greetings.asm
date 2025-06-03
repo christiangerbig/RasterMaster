@@ -174,7 +174,7 @@ cl2_hstart1			EQU display_window_hstart-(4*CMOVE_SLOT_PERIOD)-4
 	ENDC
 cl2_vstart1			EQU MINROW
 cl2_hstart2			EQU 0
-cl2_vstart2			EQU beam_position&$ff
+cl2_vstart2			EQU beam_position&CL_Y_WRAPPING
 
 sine_table_length		EQU 256
 
@@ -1044,7 +1044,7 @@ init_first_copperlist
 
 	CNOP 0,4
 cl1_init_copperlist_branch
-	COP_WAIT cl1_HSTART,cl1_VSTART
+	COP_WAIT cl1_hstart,cl1_vstart
 	move.l	cl1_display(a3),d0 
 	add.l	#cl1_extension3_entry,d0 ; skip character blit
 	swap	d0
@@ -1137,6 +1137,7 @@ init_second_copperlist
 	ENDC
 	bsr	ss_sine_scroll
 	bsr	swap_second_copperlist
+	bsr	set_second_copperlist
 	bsr	swap_playfield1
 	bsr	set_playfield1
 	bsr	tb31612_clear_second_copperlist
@@ -1147,6 +1148,7 @@ init_second_copperlist
 	ENDC
 	bsr	ss_sine_scroll
 	bsr	swap_second_copperlist
+	bsr	set_second_copperlist
 	bsr	swap_playfield1
 	bsr	set_playfield1
 	bsr	tb31612_clear_second_copperlist
@@ -1281,6 +1283,7 @@ no_sync_routines
 beam_routines
 	bsr	wait_copint
 	bsr.s	swap_second_copperlist
+	bsr.s	set_second_copperlist
 	bsr	swap_playfield1
 	bsr	set_playfield1
 	bsr	effects_handler
@@ -1316,6 +1319,9 @@ beam_routines_exit
 
 
 	SWAP_COPPERLIST cl2,3
+
+
+	SET_COPPERLIST cl2
 
 
 	SWAP_PLAYFIELD pf1,2

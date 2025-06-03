@@ -837,7 +837,8 @@ init_second_copperlist
 	bsr.s	cl2_init_copper_interrupt
 	COP_LISTEND
 	bsr	copy_second_copperlist
-	bra	swap_second_copperlist
+	bsr	swap_second_copperlist
+	bra	set_second_copperlist
 
 
 	COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,tb_quick_clear_enabled,FALSE
@@ -864,8 +865,9 @@ no_sync_routines
 beam_routines
 	bsr	wait_copint
 	bsr.s	swap_second_copperlist
+	bsr.s	set_second_copperlist
 	bsr.s	swap_playfield1
-	bsr.s	set_playfield1
+	bsr	set_playfield1
 	bsr	effects_handler
 	bsr	sprf_rgb8_copy_color_table
 	tst.w	hst_enabled(a3)
@@ -896,6 +898,9 @@ beam_routines_exit
 
 
 	SWAP_COPPERLIST cl2,3
+
+
+	SET_COPPERLIST cl2
 
 
 	SWAP_PLAYFIELD pf1,2

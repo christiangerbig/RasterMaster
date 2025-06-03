@@ -167,7 +167,7 @@ cl1_display_y_size		EQU visible_lines_number
 cl1_hstart1			EQU (ddfstrt_bits*2)-(pf1_depth3*CMOVE_SLOT_PERIOD)
 cl1_vstart1			EQU MINROW
 cl1_hstart2			EQU 0
-cl1_vstart2			EQU beam_position&$ff
+cl1_vstart2			EQU beam_position&CL_Y_WRAPPING
 
 sine_table_length		EQU 256
 

@@ -571,6 +571,7 @@ no_sync_routines
 beam_routines
 	bsr	wait_copint
 	bsr.s	swap_first_copperlist
+	bsr.s	set_first_copperlist
 	bsr	effects_handler
 	bsr	tccb_clear_first_copperlist
 	bsr	colorcycle
@@ -593,6 +594,9 @@ beam_routines_exit
 
 
 	SWAP_COPPERLIST cl1,3
+
+
+	SET_COPPERLIST cl1
 
 
 	CLEAR_BPLCON4_CHUNKY tccb,cl1,construction1,extension1,quick_clear_enabled

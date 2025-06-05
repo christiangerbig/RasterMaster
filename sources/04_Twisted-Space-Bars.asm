@@ -833,7 +833,7 @@ cl1_init_colors
 	CNOP 0,4
 init_second_copperlist
 	move.l	cl2_construction1(a3),a0 
-	bsr.s	cl2_init_bplcon4
+	bsr.s	cl2_init_bplcon4_chunky
 	bsr.s	cl2_init_copper_interrupt
 	COP_LISTEND
 	bsr	copy_second_copperlist
@@ -841,7 +841,7 @@ init_second_copperlist
 	bra	set_second_copperlist
 
 
-	COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,tb_quick_clear_enabled,FALSE
+	COP_INIT_BPLCON4_CHUNKY cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,tb_quick_clear_enabled,FALSE
 
 
 	COP_INIT_COPINT cl2,cl2_hstart2,cl2_vstart2
@@ -1003,7 +1003,7 @@ hst_horiz_scroll
 	rts
 
 
-	CLEAR_BPLCON4_CHUNKY_SCREEN tb,cl2,construction1,extension1,quick_clear_enabled
+	CLEAR_BPLCON4_CHUNKY tb,cl2,construction1,extension1,quick_clear_enabled
 
 
 	CNOP 0,4
@@ -1166,7 +1166,7 @@ tb312_get_yz_coords_quit
 
 
 	IFNE tb_quick_clear_enabled
-		RESTORE_BLCON4_CHUNKY_SCREEN tb,cl2,construction2,extension1,32
+		RESTORE_BPLCON4_CHUNKY tb,cl2,construction2,extension1,32
 	ENDC
 
 

@@ -563,14 +563,14 @@ init_first_copperlist
 	CNOP 0,4
 init_second_copperlist
 	move.l	cl2_construction2(a3),a0 
-	bsr.s	cl2_init_bplcon4
+	bsr.s	cl2_init_bplcon4_chunky
 	bsr.s	cl2_init_copper_interrupt
 	COP_LISTEND
 	bsr	copy_second_copperlist
 	bsr	swap_second_copperlist
 	bra	set_second_copperlist
 
-	COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,FALSE,FALSE,NOOP<<16
+	COP_INIT_BPLCON4_CHUNKY cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,FALSE,FALSE,NOOP<<16
 
 	COP_INIT_COPINT cl2,cl2_hstart2,cl2_vstart2
 

@@ -480,7 +480,7 @@ init_first_copperlist
 	CNOP 0,4
 init_second_copperlist
 	move.l	cl2_construction2(a3),a0 
-	bsr.s	cl2_init_bplcon4
+	bsr.s	cl2_init_bplcon4_chunky
 	bsr.s	cl2_init_copper_interrupt
 	COP_LISTEND
 	bsr	copy_second_copperlist
@@ -489,13 +489,13 @@ init_second_copperlist
 
 
 	CNOP 0,4
-cl2_init_bplcon4
+cl2_init_bplcon4_chunky
 	move.l	#(BPLCON4<<16)|bplcon4_bits,d0
 	COP_WAIT cl2_hstart1,cl2_vstart1
 	move.w	#(cl2_display_width*cl2_display_y_size)-1,d7 ; number of columns
-cl2_init_bplcon4_loop
+cl2_init_bplcon4_chunky_loop
 	move.l	d0,(a0)+		; BPLCON4
-	dbf	d7,cl2_init_bplcon4_loop
+	dbf	d7,cl2_init_bplcon4_chunky_loop
 	rts
 
 

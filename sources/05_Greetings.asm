@@ -865,7 +865,7 @@ init_colors
 
 
 ; Twisted-Bars3.16.1.2
-	INIT_MIRROR_bplam_table.B tb31612,0,2,segments_number1,color_values_number1,extra_memory,a3
+	INIT_MIRROR_BPLAM_TABLE.B tb31612,0,2,segments_number1,color_values_number1,extra_memory,a3
 
 
 ; Wave-Center-Bar/Sine-Scrolltext
@@ -1114,7 +1114,7 @@ init_second_copperlist
 	bsr	cl2_init_sine_scroll_blits
 	bsr	cl2_init_copperlist_branch
 	bsr	cl2_init_clear_blit
-	bsr	cl2_init_bplcon4
+	bsr	cl2_init_bplcon4_chunky
 	IFNE tb31612_cpu_restore_cl_enabled
 		IFNE tb31612_quick_clear_enabled
 			bsr	cl2_init_restore_blit
@@ -1244,7 +1244,7 @@ cl2_init_clear_blit
 	rts
 
 
-	COP_INIT_BPLCON4_CHUNKY_SCREEN cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,tb31612_quick_clear_enabled,TRUE
+	COP_INIT_BPLCON4_CHUNKY cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,tb31612_quick_clear_enabled,TRUE
 
 
 	IFNE tb31612_cpu_restore_cl_enabled
@@ -1757,7 +1757,7 @@ we_get_y_coords_loop
 
 
 	IFNE tb31612_quick_clear_enabled
-		RESTORE_BLCON4_CHUNKY_SCREEN tb,cl2,construction2,extension7,32,,tb31612_restore_blit
+		RESTORE_BPLCON4_CHUNKY tb,cl2,construction2,extension7,32,,tb31612_restore_blit
 		IFNE tb31612_cpu_restore_cl_enabled
 tb31612_restore_blit
 			move.l	cl2_construction1(a3),a0

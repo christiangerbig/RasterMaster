@@ -488,7 +488,7 @@ init_colors
 		ENDC
 	ENDC
 
-	INIT_MIRROR_bplam_table.B tccb,1,1,tccb_bars_number,color_y_values_number,extra_memory,a3,em_bplam_table
+	INIT_MIRROR_BPLAM_TABLE.B tccb,1,1,tccb_bars_number,color_y_values_number,extra_memory,a3,em_bplam_table
 
 
 	CNOP 0,4
@@ -497,12 +497,12 @@ init_first_copperlist
 	bsr.s	cl1_init_playfield_props
 	bsr	cl1_init_colors
 	IFEQ open_border_enabled
-		bsr	cl1_init_bplcon4
+		bsr	cl1_init_bplcon4_chunky
 		bsr	cl1_init_copper_interrupt
 		COP_LISTEND
 	ELSE
 		bsr	cl1_init_bitplane_pointers
-		bsr	cl1_init_bplcon4
+		bsr	cl1_init_bplcon4_chunky
 		bsr	cl1_init_copper_interrupt
 		COP_LISTEND
 		bsr	cl1_set_bitplane_pointers
@@ -547,7 +547,7 @@ cl1_init_colors
 	rts
 
 
-	COP_INIT_BPLCON4_CHUNKY_SCREEN cl1,cl1_hstart1,cl1_vstart1,cl1_display_x_size,cl1_display_y_size,open_border_enabled,tccb_quick_clear_enabled,FALSE,NOOP<<16
+	COP_INIT_BPLCON4_CHUNKY cl1,cl1_hstart1,cl1_vstart1,cl1_display_x_size,cl1_display_y_size,open_border_enabled,tccb_quick_clear_enabled,FALSE,NOOP<<16
 
 
 	COP_INIT_COPINT cl1,cl1_hstart2,cl1_vstart2
@@ -595,7 +595,7 @@ beam_routines_exit
 	SWAP_COPPERLIST cl1,3
 
 
-	CLEAR_BPLCON4_CHUNKY_SCREEN tccb,cl1,construction1,extension1,quick_clear_enabled
+	CLEAR_BPLCON4_CHUNKY tccb,cl1,construction1,extension1,quick_clear_enabled
 
 
 	CNOP 0,4
@@ -757,7 +757,7 @@ tccb_get_y_coords_loop2
 
 
 	IFNE tccb_quick_clear_enabled
-		RESTORE_BLCON4_CHUNKY_SCREEN tccb,cl1,construction2,extension1,32
+		RESTORE_BPLCON4_CHUNKY tccb,cl1,construction2,extension1,32
 	ENDC
 
 

@@ -524,7 +524,7 @@ beam_routines
 	bsr	effects_handler
 	bsr	vert_border_fader_out
 	bsr	vert_shade_bars
-	bsr	zzp5_get_y_coords
+	bsr	zzp5_get_y_coordinates
 	jsr	mouse_handler
 	tst.l	d0			; exit ?
 	bne.s	beam_routines_exit
@@ -595,10 +595,10 @@ vert_shade_bars_quit
 
 
 	CNOP 0,4
-zzp5_get_y_coords
+zzp5_get_y_coordinates
 	movem.l a3-a5,-(a7)
 	move.l	a7,save_a7(a3)	
-	bsr	zzp5_get_y_coords_init
+	bsr	zzp5_get_y_coordinates_init
 	MOVEF.W zzp5_y_center,d1
 	move.w	zzp5_y_radius_angle(a3),d2 ; 1st radius y angle
 	move.w	d2,d0		
@@ -624,7 +624,7 @@ zzp5_get_y_coords
 	move.l	chip_memory(a3),a7	; BPLAM table
 	lea	BLTAPT-DMACONR(a6),a3
 	moveq	#cl2_display_width-1,d7 ; number of columns
-zzp5_get_y_coords_loop
+zzp5_get_y_coordinates_loop
 	move.w	d2,d0
 	muls.w	2(a0,d3.w*4),d0		; y'=(yr'*sin(w))/2^15
 	swap	d0
@@ -637,13 +637,13 @@ zzp5_get_y_coords_loop
 	add.w	d5,d3			; next y angle
 	addq.w	#LONGWORD_SIZE,a2	; next column in cl
 	and.w	d6,d3			; remove overflow
-	dbf	d7,zzp5_get_y_coords_loop
+	dbf	d7,zzp5_get_y_coordinates_loop
 	move.w	#DMAF_BLITHOG,DMACON-DMACONR(a6)
 	move.l	variables+save_a7(pc),a7
 	movem.l (a7)+,a3-a5
 	rts
 	CNOP 0,4
-zzp5_get_y_coords_init
+zzp5_get_y_coordinates_init
 	move.w	#DMAF_BLITHOG|DMAF_SETCLR,DMACON-DMACONR(a6)
 	WAITBLIT
 	move.l	#(BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC)<<16,BLTCON0-DMACONR(a6) ; minterm D=A

@@ -562,8 +562,8 @@ beam_routines
 	bsr.s	set_second_copperlist
 	bsr	effects_handler
 	bsr	tb_clear_second_copperlist
-	bsr	tb315_get_yz_coords
-	bsr	we_get_y_coords
+	bsr	tb315_get_yz_coordinates
+	bsr	we_get_y_coordinates
 	bsr	tb315_set_background_bars
 	bsr	tb315_set_foreground_bars
 	IFNE tb_quick_clear_enabled
@@ -594,7 +594,7 @@ beam_routines_exit
 
 ; Twisted-Bars3.1.5
 	CNOP 0,4
-tb315_get_yz_coords
+tb315_get_yz_coordinates
 	move.w	tb315_y_angle_speed_angle(a3),d1
 	move.w	d1,d0
 	addq.b	#tb315_y_angle_speed2,d0
@@ -608,12 +608,12 @@ tb315_get_yz_coords
 	add.b	d1,d0			; next y angle
 	move.w	d0,tb315_y_angle(a3)	
 	moveq	#tb315_y_distance,d3
-	lea	tb315_yz_coords(pc),a1
+	lea	tb315_yz_coordinates(pc),a1
 	move.w	#tb315_y_center,a2
 	moveq	#cl2_display_width-1,d7
-tb315_get_yz_coords_loop1
+tb315_get_yz_coordinates_loop1
 	moveq	#tb315_bars_number-1,d6
-tb315_get_yz_coords_loop2
+tb315_get_yz_coordinates_loop2
 	move.l	(a0,d2.w*4),d0		; sin(w)
 	moveq	#-(sine_table_length/4),d1 ; - 90°
 	add.w	d2,d1			; y angle - 90°
@@ -625,15 +625,15 @@ tb315_get_yz_coords_loop2
 	MULUF.W cl2_extension1_size/4,d0,d1 ; y offset in cl
 	move.w	d0,(a1)+
 	add.b	d3,d2			; y distance to next bar
-	dbf	d6,tb315_get_yz_coords_loop2
+	dbf	d6,tb315_get_yz_coordinates_loop2
 	addq.b	#tb315_y_angle_step,d2
-	dbf	d7,tb315_get_yz_coords_loop1
+	dbf	d7,tb315_get_yz_coordinates_loop1
 	rts
 
 
 ; Wave-Effect
 	CNOP 0,4
-we_get_y_coords
+we_get_y_coordinates
 	move.w	we_y_radius_angle(a3),d2 ; 1st y radius angle
 	move.w	d2,d0		
 	move.w	we_y_angle(a3),d3	; 1st y angle
@@ -643,10 +643,10 @@ we_get_y_coords
 	addq.b	#we_y_angle_speed,d0
 	move.w	d0,we_y_angle(a3)	
 	lea	sine_table(pc),a0 
-	lea	we_y_coords(pc),a1
+	lea	we_y_coordinates(pc),a1
 	move.w	#we_y_center,a2
 	moveq	#cl2_display_width-1,d7 ; number of columns
-we_get_y_coords_loop
+we_get_y_coordinates_loop
 	move.l	(a0,d2.w*4),d0	;sin(w)
 	MULUF.L we_y_radius*2,d0,d1
 	swap	d0			; yr'=(yr*sin(w))/2^15
@@ -657,7 +657,7 @@ we_get_y_coords_loop
 	MULUF.W cl2_extension1_size/4,d0,d1 ; y offset in cl
 	move.w	d0,(a1)+
 	addq.b	#we_y_angle_step,d3
-	dbf	d7,we_get_y_coords_loop
+	dbf	d7,we_get_y_coordinates_loop
 	rts
 
 
@@ -665,11 +665,11 @@ we_get_y_coords_loop
 tb315_set_background_bars
 	movem.l a3-a6,-(a7)
 	moveq	#tb315_bar_height,d4
-	lea	tb315_yz_coords(pc),a0
+	lea	tb315_yz_coordinates(pc),a0
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
 	move.l	extra_memory(a3),a5	; BPLAM table
-	lea	we_y_coords(pc),a6
+	lea	we_y_coordinates(pc),a6
 	moveq	#cl2_display_width-1,d7	; number of columns
 tb315_set_background_bars_loop1
 	move.w	(a6)+,d0		; 2nd y offset
@@ -697,11 +697,11 @@ tb315_set_background_bars_skip2
 tb315_set_foreground_bars
 	movem.l a3-a6,-(a7)
 	moveq	#tb315_bar_height,d4
-	lea	tb315_yz_coords(pc),a0
+	lea	tb315_yz_coordinates(pc),a0
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
 	move.l	extra_memory(a3),a5	; BPLAM table
-	lea	we_y_coords(pc),a6
+	lea	we_y_coordinates(pc),a6
 	moveq	#cl2_display_width-1,d7	; number of columns
 tb315_set_foreround_bars_loop1
 	move.w	(a6)+,d0		; 2nd y offset
@@ -902,13 +902,13 @@ pf1_rgb8_color_table
 
 ; Twisted-Bars3.1.5
 	CNOP 0,4
-tb315_yz_coords
+tb315_yz_coordinates
 	DS.W tb315_bars_number*cl2_display_width*2
 
 
 ; Wave-Effect
 	CNOP 0,2
-we_y_coords
+we_y_coordinates
 	DS.W cl2_display_width
 
 

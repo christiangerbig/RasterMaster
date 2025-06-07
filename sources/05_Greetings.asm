@@ -776,7 +776,7 @@ init_main
 	bsr	ss_init_color_table
 	bsr	init_colors
 	bsr	tb31612_init_mirror_bplam_table
-	bsr	tb31612_get_yz_coords
+	bsr	tb31612_get_yz_coordinates
 	bsr	wcb_init_bplam_table
 	bsr	ss_init_chars_offsets
 	bsr	bf_init_color_table
@@ -1301,8 +1301,8 @@ beam_routines
 	bsr	bf_set_bars
 beam_routines_skip
 	bsr	bf_copy_buffer
-	bsr	tb31612_get_yz_coords
-	bsr	we_get_y_coords
+	bsr	tb31612_get_yz_coordinates
+	bsr	we_get_y_coordinates
 	IFNE tb31612_quick_clear_enabled
 		bsr	restore_second_copperlist
 	ENDC
@@ -1376,7 +1376,7 @@ ss_sine_scroll
 	MOVEF.W ss_text_y_center,d2
 	MOVEF.L cl2_extension2_size+cl2_extension3_size,d3
 	MOVEF.L cl2_extension4_size,d4
-	lea	we_y_coords(pc),a0
+	lea	we_y_coordinates(pc),a0
 	move.l	pf1_construction2(a3),a1
 	move.l	(a1),a1			; destination1
 	add.l	#((visible_pixels_number+ss_text_x_position)-ss_text_char_x_size)/8,a1 ; end of line in destination1
@@ -1420,12 +1420,12 @@ tb31612_set_background_bars
 	movem.l	a3-a6,-(a7)
 	move.l	a7,save_a7(a3)
 	moveq	#tb31612_bar_height,d4
-	lea	tb31612_yz_coords(pc),a0
+	lea	tb31612_yz_coordinates(pc),a0
 	move.l	cl2_construction2(a3),a2
 	ADDF.W	cl2_extension7_entry+cl2_ext7_BPLCON4_1+WORD_SIZE,a2
 	move.l	extra_memory(a3),a5	; BPLAM table
 	lea	tb31612_fader_columns_mask(pc),a6
-	lea	we_y_coords_end(pc),a7
+	lea	we_y_coordinates_end(pc),a7
 	moveq	#cl2_display_width-1,d7	; number of columns
 tb31612_set_background_bars_loop1
 	tst.b   (a6)+			; display column ?
@@ -1464,7 +1464,7 @@ set_wave_center_bar
 	movem.l a4-a6,-(a7)
 	moveq	#wcb_y_center,d4
 	MOVEF.L cl2_extension7_size*40,d5
-	lea	we_y_coords_end(pc),a0
+	lea	we_y_coordinates_end(pc),a0
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension7_entry+cl2_ext7_BPLCON4_1+WORD_SIZE,a2
 	move.l	extra_memory(a3),a5
@@ -1568,12 +1568,12 @@ tb31612_set_foreground_bars
 	movem.l a3-a6,-(a7)
 	move.l	a7,save_a7(a3)
 	moveq	#tb31612_bar_height,d4
-	lea	tb31612_yz_coords(pc),a0
+	lea	tb31612_yz_coordinates(pc),a0
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension7_entry+cl2_ext7_BPLCON4_1+WORD_SIZE,a2
 	move.l	extra_memory(a3),a5	; BPLAM table
 	lea	tb31612_fader_columns_mask(pc),a6
-	lea	we_y_coords_end(pc),a7
+	lea	we_y_coordinates_end(pc),a7
 	moveq	#cl2_display_width-1,d7 ; number of columns
 tb31612_set_foreround_bars_loop1
 	tst.b	(a6)+			; display column ?
@@ -1625,7 +1625,7 @@ bf_set_bars
 	move.l	a7,save_a7(a3)
 	MOVEF.W bf_y_max,d3
 	MOVEF.L (((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORD_SIZE,d4
-	lea	bf_yz_coords(pc),a0
+	lea	bf_yz_coordinates(pc),a0
 	move.l	extra_memory(a3),a2
 	add.l	#em_color_buffer,a2
 	lea	bf_color_table_pointers(pc),a5
@@ -1731,7 +1731,7 @@ bf_copy_buffer_loop
 
 ; Wave-Effect
 	CNOP 0,4
-we_get_y_coords
+we_get_y_coordinates
 	move.w	we_radius_y_angle(a3),d2 ; 1st y radius angle
 	move.w	d2,d0		
 	move.w	we_y_angle(a3),d3	; 1st y angle
@@ -1741,9 +1741,9 @@ we_get_y_coords
 	addq.b	#we_y_angle_speed,d0
 	move.w	d0,we_y_angle(a3)	
 	lea	sine_table(pc),a0	
-	lea	we_y_coords(pc),a1
+	lea	we_y_coordinates(pc),a1
 	moveq	#cl2_display_width-1,d7	; number of columns
-we_get_y_coords_loop
+we_get_y_coordinates_loop
 	move.l	(a0,d2.w*4),d0		; sin(w)
 	MULUF.L we_y_radius*4,d0,d1	; yr'=(yr*sin(w))/2^15
 	swap	d0
@@ -1752,7 +1752,7 @@ we_get_y_coords_loop
 	move.w	d0,(a1)+		; y position
 	addq.b	#we_y_radius_angle_step,d2
 	addq.b	#we_y_angle_step,d3
-	dbf	d7,we_get_y_coords_loop
+	dbf	d7,we_get_y_coordinates_loop
 	rts
 
 
@@ -2022,7 +2022,7 @@ tb31612_bars_color_table
 	INCLUDE "RasterMaster:colortables/06_tb31612_Colorgradient.ct"
 
 	CNOP 0,4
-tb31612_yz_coords
+tb31612_yz_coordinates
 	DS.W tb31612_bars_number*cl2_display_width*2
 
 tb31612_fader_columns_mask
@@ -2044,9 +2044,9 @@ wcb_fader_columns_mask
 
 ; Wave-Effect
 	CNOP 0,2
-we_y_coords
+we_y_coordinates
 	DS.W cl2_display_width
-we_y_coords_end
+we_y_coordinates_end
 
 
 ; Sine-Scrolltext
@@ -2078,7 +2078,7 @@ bf_bitmap_lines_table
 	EVEN
 
 	CNOP 0,2
-bf_yz_coords
+bf_yz_coordinates
 	DC.W -900,3000			; z plane 1
 	DC.W 600,2600			; z plane 2
 	DC.W -300,2200			; z plane 3

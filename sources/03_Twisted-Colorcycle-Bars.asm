@@ -672,11 +672,11 @@ twisted_colorcycle_bars
 	move.w	d5,a7		
 	swap	d7 			; high word: overflow
 	move.w	#cl1_display_width-1,d7	; low word: loop counter
-tccb_get_y_coords_loop1
+tccb_get_y_coordinates_loop1
 	move.l	a5,a1			; BBPLAM table
 	swap	d7		 	; low word: overflow
 	moveq	#tccb_bars_number-1,d6
-tccb_get_y_coords_loop2
+tccb_get_y_coordinates_loop2
 	move.l	(a0,d4.w*4),d0		; sin(w)
 	MULUF.L tccb_y_radius*4,d0,d1	; yr'=(yr*sin(w))/2^15
 	swap	d0
@@ -747,14 +747,14 @@ tccb_get_y_coords_loop2
 	move.b	d3,cl1_extension1_size*28(a4)
 	swap	d3
 	move.b	d3,cl1_extension1_size*30(a4)
-	dbf	d6,tccb_get_y_coords_loop2
+	dbf	d6,tccb_get_y_coordinates_loop2
 	move.w	a7,d5			; y angle
 	addq.w	#tccb_y_angle_step,d5	; next column
 	and.w	d7,d5			; remove overflow
 	move.w	d5,a7		
 	swap	d7		 	; low word: loop counter
 	addq.w	#LONGWORD_SIZE,a2	; next column in cl
-	dbf	d7,tccb_get_y_coords_loop1
+	dbf	d7,tccb_get_y_coordinates_loop1
 	move.l	variables+save_a7(pc),a7
 	movem.l (a7)+,a3-a6
 	rts

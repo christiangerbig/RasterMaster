@@ -713,7 +713,7 @@ init_main
 	bsr.s	init_sprites
 	bsr	vss_convert_image_data
 	bsr	vss_init_bplam_table_mask
-	bsr	vss_init_xy_coords
+	bsr	vss_init_xy_coordinates
 	bsr	init_first_copperlist
 	bra	init_second_copperlist
 
@@ -764,17 +764,17 @@ vss_init_bplam_table_mask_loop3
 	rts
 
 	CNOP 0,4
-vss_init_xy_coords
+vss_init_xy_coordinates
 	move.l	#$0000ffff,d3
 	move.w	#vss_random_x_max,d4
 	move.w	#vss_random_y_max,d5
-	lea	vss_xy_coords(pc),a0
+	lea	vss_xy_coordinates(pc),a0
 	moveq	#vss_z_planes_number-1,d7
-vss_init_xy_coords_loop1
+vss_init_xy_coordinates_loop1
 	move.w	VHPOSR-DMACONR(a6),d1	; f(x)
 	move.w	VHPOSR-DMACONR(a6),d2	; f(y)
 	moveq	#vss_stars_per_plane_number-1,d6
-vss_init_xy_coords_loop2
+vss_init_xy_coordinates_loop2
 	mulu.w	VHPOSR-DMACONR(a6),d1	; f(x)*a
 	move.w	VHPOSR-DMACONR(a6),d0
 	swap	d0
@@ -799,9 +799,9 @@ vss_init_xy_coords_loop2
 	move.w	d0,(a0)+
 	swap	d2			; division remainder
 	move.w	d2,(a0)+		; y coordinate
-	dbf	d6,vss_init_xy_coords_loop2
+	dbf	d6,vss_init_xy_coordinates_loop2
 	subq.w	#16/BYTE_BITS,d4	; reduce x max
-	dbf	d7,vss_init_xy_coords_loop1
+	dbf	d7,vss_init_xy_coordinates_loop1
 	rts
 
 
@@ -933,7 +933,7 @@ vert_starscrolling
 	moveq	#vss_z_plane1_speed,d3
 	MOVEF.W vss_y_restart,d4
 	moveq	#vss_star_x_size,d5	; offset next star
-	lea	vss_xy_coords(pc),a0
+	lea	vss_xy_coordinates(pc),a0
 	move.l	vss_bplam_table(a3),a1
 	add.l	#(vss_z_planes_number-1)*vss_star_x_size,a1 ; last star
 	move.l	vss_bplam_table_mask(a3),a2 ; Maske
@@ -1443,7 +1443,7 @@ spr_pointers_display
 
 ; Vert-Starscrolling
 	CNOP 0,2
-vss_xy_coords
+vss_xy_coordinates
 	DS.W vss_z_planes_number*vss_stars_per_plane_number*2
 
 

@@ -801,7 +801,7 @@ init_first_copperlist
 	bsr	cl1_set_sprite_pointers
 	bsr	cl1_set_bitplane_pointers
 	clr.w	tb313_active(a3)
-	bsr	tb313_get_yz_coords
+	bsr	tb313_get_yz_coordinates
 	move.w	#FALSE,tb313_active(a3)
 	rts
 
@@ -880,8 +880,8 @@ beam_routines_skip
 	bsr	chunky_columns_fader_out
 	bsr	tb_set_background_bars
 	bsr	tb_set_foreground_bars
-	bsr	tb313_get_yz_coords
-	bsr	tb312_get_yz_coords
+	bsr	tb313_get_yz_coordinates
+	bsr	tb312_get_yz_coordinates
 	IFNE tb_quick_clear_enabled
 		bsr	restore_second_copperlist
 	ENDC
@@ -1009,7 +1009,7 @@ hst_horiz_scroll
 	CNOP 0,4
 tb_set_background_bars
 	movem.l a3-a6,-(a7)
-	lea	tb_yz_coords(pc),a0
+	lea	tb_yz_coordinates(pc),a0
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
 	move.w	#tb_bars_number*LONGWORD_SIZE,a3
@@ -1042,7 +1042,7 @@ tb_set_background_bars_skip3
 	CNOP 0,4
 tb_set_foreground_bars
 	movem.l a3-a6,-(a7)
-	lea	tb_yz_coords(pc),a0
+	lea	tb_yz_coordinates(pc),a0
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
 	move.w	#tb_bars_number*LONGWORD_SIZE,a3
@@ -1073,10 +1073,10 @@ tb_set_foreround_bars_skip3
 
 
 	CNOP 0,4
-tb313_get_yz_coords
+tb313_get_yz_coordinates
 	movem.l a4-a5,-(a7)
 	tst.w	tb313_active(a3)
-	bne.s	tb313_get_yz_coords_quit
+	bne.s	tb313_get_yz_coordinates_quit
 	moveq	#tb313_y_distance,d3
 	move.w	tb313_y_angle(a3),d4	; 1st y angle
 	move.w	d4,d0		
@@ -1087,14 +1087,14 @@ tb313_get_yz_coords
 	addq.b	#tb313_y_radius_speed,d0
 	move.w	d0,tb313_y_radius_angle(a3) 
 	lea	sine_table(pc),a0 
-	lea	tb_yz_coords(pc),a1
+	lea	tb_yz_coordinates(pc),a1
 	move.w	#tb313_y_center,a2
 	move.w	#tb313_y_radius_center,a4
 	moveq	#cl2_display_width-1,d7 ; number of columns
-tb313_get_yz_coords_loop1
+tb313_get_yz_coordinates_loop1
 	move.w	d4,d2			; y angle
 	moveq	#tb_bars_number-1,d6
-tb313_get_yz_coords_loop2
+tb313_get_yz_coordinates_loop2
 	move.l	(a0,d5.w*4),d0		; sin(w)
 	moveq	#-(sine_table_length/4),d1 ; - 90°
 	add.w	d2,d1			; y angle - 90°
@@ -1110,19 +1110,19 @@ tb313_get_yz_coords_loop2
 	move.w	d0,(a1)+
 	add.b	d3,d2			; y distance to next bar
 	addq.b	#tb313_y_radius_step,d5
-	dbf	d6,tb313_get_yz_coords_loop2
+	dbf	d6,tb313_get_yz_coordinates_loop2
 	addq.b	#tb313_y_angle_step,d4
-	dbf	d7,tb313_get_yz_coords_loop1
-tb313_get_yz_coords_quit
+	dbf	d7,tb313_get_yz_coordinates_loop1
+tb313_get_yz_coordinates_quit
 	movem.l (a7)+,a4-a5
 	rts
 
 
 	CNOP 0,4
-tb312_get_yz_coords
+tb312_get_yz_coordinates
 	movem.l a4-a5,-(a7)
 	tst.w	tb312_active(a3)
-	bne.s	tb312_get_yz_coords_quit
+	bne.s	tb312_get_yz_coordinates_quit
 	moveq	#tb312_y_distance,d3
 	move.w	tb312_y_angle(a3),d4	; 1st y angle
 	move.w	d4,d0		
@@ -1133,18 +1133,18 @@ tb312_get_yz_coords
 	addq.b	#tb312_y_radius_speed,d0
 	move.w	d0,tb312_y_radius_angle(a3) 
 	lea	sine_table(pc),a0 
-	lea	tb_yz_coords(pc),a1
+	lea	tb_yz_coordinates(pc),a1
 	move.w	#tb312_y_center,a2
 	move.w	#tb312_y_radius_center,a4
 	moveq	#cl2_display_width-1,d7	; number of columns
-tb312_get_yz_coords_loop1
+tb312_get_yz_coordinates_loop1
 	move.l	(a0,d5.w*4),d0		; sin(w)
 	MULUF.L tb312_y_radius*2,d0,d1
 	move.w	d4,d2			; y angle
 	swap	d0
 	add.w	a4,d0			; y' + y radius center
 	moveq	#tb_bars_number-1,d6
-tb312_get_yz_coords_loop2
+tb312_get_yz_coordinates_loop2
 	moveq	#-(sine_table_length/4),d1 ; - 90°
 	add.w	d2,d1			; y center - 90°
 	ext.w	d1
@@ -1156,11 +1156,11 @@ tb312_get_yz_coords_loop2
 	MULUF.W cl2_extension1_size/4,d1,a5 ; y offset in cl
 	move.w	d1,(a1)+
 	add.b	d3,d2			; y distance to next bar
-	dbf	d6,tb312_get_yz_coords_loop2
+	dbf	d6,tb312_get_yz_coordinates_loop2
 	addq.b	#tb312_y_angle_step,d4
 	addq.b	#tb312_y_radius_step,d5
-	dbf	d7,tb312_get_yz_coords_loop1
-tb312_get_yz_coords_quit
+	dbf	d7,tb312_get_yz_coordinates_loop1
+tb312_get_yz_coordinates_quit
 	movem.l (a7)+,a4-a5
 	rts
 
@@ -1522,7 +1522,7 @@ tb_sprm_table_foreground
 
 
 	CNOP 0,4
-tb_yz_coords
+tb_yz_coordinates
 	DS.W tb_bars_number*cl2_display_width*2
 
 

@@ -144,7 +144,7 @@ pf_pixel_per_datafetch		EQU 16	; 1x
 display_window_hstart		EQU HSTART_44_CHUNKY_PIXEL
 display_window_vstart		EQU MINROW
 display_window_hstop		EQU HSTOP_44_CHUNKY_PIXEL
-display_window_vstop		EQU MINROW+visible_lines_number
+display_window_vstop		EQU display_window_vstart+visible_lines_number
 
 pf1_plane_width			EQU pf1_x_size3/8
 data_fetch_width		EQU pixel_per_line/8
@@ -153,7 +153,7 @@ pf1_plane_moduli		EQU -(pf1_plane_width-(pf1_plane_width-data_fetch_width))
 	IFEQ open_border_enabled
 diwstrt_bits			EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)|(display_window_hstart&$ff)
 diwstop_bits			EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)|(display_window_hstop&$ff)
-bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|(BPLCON0F_COLOR)|((pf_depth&$07)*BPLCON0F_BPU0)
+bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|BPLCON0F_COLOR|((pf_depth&$07)*BPLCON0F_BPU0)
 bplcon3_bits1			EQU 0
 bplcon3_bits2			EQU bplcon3_bits1|BPLCON3F_LOCT
 bplcon4_bits			EQU 0
@@ -161,9 +161,9 @@ diwhigh_bits			EQU (((display_window_hstop&$100)>>8)*DIWHIGHF_HSTOP8)|(((display
 	ELSE
 diwstrt_bits			EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)|(display_window_hstart&$ff)
 diwstop_bits			EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)|(display_window_hstop&$ff)
-ddfstrt_bits			EQU DDFSTART_OVERSCAN_32_PIXEL
+ddfstrt_bits			EQU DDFSTRT_OVERSCAN_32_PIXEL
 ddfstop_bits			EQU DDFSTOP_OVERSCAN_32_PIXEL_MIN
-bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|(BPLCON0F_COLOR)|((pf_depth&$07)*BPLCON0F_BPU0)
+bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|BPLCON0F_COLOR|((pf_depth&$07)*BPLCON0F_BPU0)
 bplcon3_bits1			EQU 0
 bplcon3_bits2			EQU bplcon3_bits1|BPLCON3F_LOCT
 bplcon4_bits			EQU 0

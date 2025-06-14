@@ -148,9 +148,9 @@ pf1_plane_moduli		EQU (pf1_plane_width*(pf1_depth3-1))+pf1_plane_width-data_fetc
 
 diwstrt_bits			EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)|(display_window_hstart&$ff)
 diwstop_bits			EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)|(display_window_hstop&$ff)
-ddfstrt_bits			EQU DDFSTART_OVERSCAN_64_PIXEL
+ddfstrt_bits			EQU DDFSTRT_OVERSCAN_64_PIXEL
 ddfstop_bits			EQU DDFSTOP_OVERSCAN_16_PIXEL
-bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|(BPLCON0F_COLOR)|((pf_depth&$07)*BPLCON0F_BPU0)
+bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|BPLCON0F_COLOR|((pf_depth&$07)*BPLCON0F_BPU0)
 bplcon1_bits			EQU BPLCON1F_PF1H4|BPLCON1F_PF2H4|BPLCON1F_PF1H1|BPLCON1F_PF2H1 ;Damit die Bitplane die gleiche Startposition wie CWAIT hat
 bplcon2_bits			EQU 0
 bplcon3_bits1			EQU 0
@@ -237,7 +237,6 @@ ss_horiz_scroll_speed		EQU 4
 
 ss_text_char_x_restart		EQU ss_horiz_scroll_window_x_size-ss_text_char_x_size
 ss_text_char_y_restart		EQU ss_text_char_y_size/2
-ss_text_char_x_shift_max	EQU ss_text_char_x_size
 ss_text_chars_number		EQU ss_horiz_scroll_window_x_size/ss_text_char_x_size
 
 ss_text_x_position		EQU 32
@@ -885,42 +884,42 @@ bf_init_color_table
 	MOVEF.W (color_values_number4*segments_number4)-1,d7
 bf_init_color_table_loop1
 	move.l	(a0)+,(a1)		; COLOR01
-	add.l	#(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORD_SIZE,a1
+	ADDF.W	(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORD_SIZE,a1
 	dbf	d7,bf_init_color_table_loop1
 
 	lea	em_color_table2(a2),a1
 	MOVEF.W (color_values_number4*segments_number4)-1,d7
 bf_init_color_table_loop2
 	move.l	(a0)+,(a1)		; COLOR01
-	add.l	#(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORD_SIZE,a1
+	ADDF.W	(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORD_SIZE,a1
 	dbf	d7,bf_init_color_table_loop2
 
 	lea	em_color_table3(a2),a1
 	MOVEF.W (color_values_number4*segments_number4)-1,d7
 bf_init_color_table_loop3
 	move.l	(a0)+,(a1)		; COLOR01
-	add.l	#(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORD_SIZE,a1
+	ADDF.W	(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORD_SIZE,a1
 	dbf	d7,bf_init_color_table_loop3
 
 	lea	em_color_table4(a2),a1
 	MOVEF.W (color_values_number4*segments_number4)-1,d7
 bf_init_color_table_loop4
 	move.l	(a0)+,(a1)		; COLOR01
-	add.l	#(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORD_SIZE,a1
+	ADDF.W	(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORD_SIZE,a1
 	dbf	d7,bf_init_color_table_loop4
 
 	lea	em_color_table5(a2),a1
 	MOVEF.W (color_values_number4*segments_number4)-1,d7
 bf_init_color_table_loop5
 	move.l	(a0)+,(a1)		; COLOR01
-	add.l	#(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORD_SIZE,a1
+	ADDF.W	(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORD_SIZE,a1
 	dbf	d7,bf_init_color_table_loop5
 
 	lea	em_color_table6(a2),a1
 	MOVEF.W (color_values_number4*segments_number4)-1,d7
 bf_init_color_table_loop6
 	move.l	(a0)+,(a1)		; COLOR01
-	add.l	#(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORD_SIZE,a1
+	ADDF.W	(((bf_source_bar_y_size-bf_destination_bar_y_size)/2)+1)*LONGWORD_SIZE,a1
 	dbf	d7,bf_init_color_table_loop6
 	rts
 
@@ -1046,7 +1045,7 @@ init_first_copperlist
 cl1_init_copperlist_branch
 	COP_WAIT cl1_hstart,cl1_vstart
 	move.l	cl1_display(a3),d0 
-	add.l	#cl1_extension3_entry,d0 ; skip character blit
+	ADDF.L	cl1_extension3_entry,d0 ; skip character blit
 	swap	d0
 	COP_MOVE d0,COP1LCH
 	swap	d0		
@@ -1065,8 +1064,8 @@ cl1_init_copy_blit
 	COP_MOVEQ 0,BLTAPTH
 	COP_MOVEQ 0,BLTAPTL
 	move.l	extra_pf1(a3),a1
-	move.l	#(ss_text_char_x_restart/8)+(ss_text_char_y_restart*extra_pf1_plane_width*extra_pf1_depth),d0
-	add.l	(a1),d0
+	move.l	(a1),d0
+	ADDF.L	(ss_text_char_x_restart/8)+(ss_text_char_y_restart*extra_pf1_plane_width*extra_pf1_depth),d0
 	swap	d0
 	COP_MOVE d0,BLTDPTH
 	swap	d0		
@@ -1085,7 +1084,7 @@ cl1_init_horiz_scroll_blit
 	COP_MOVEQ 0,BLTCON1
 	move.l	extra_pf1(a3),a1
 	move.l	(a1),d0			; source
-	add.l	#ss_text_y_position*extra_pf1_plane_width*extra_pf1_depth,d0
+	ADDF.L	ss_text_y_position*extra_pf1_plane_width*extra_pf1_depth,d0
 	move.l	d0,d1			; 1st line
 	COP_MOVEQ -1,BLTAFWM
 	addq.l	#WORD_SIZE,d0		; 1st line, skip 16 pixel
@@ -1173,9 +1172,9 @@ cl2_init_sine_scroll_blits_const
 cl2_init_sine_scroll_blits
 	move.l	extra_pf1(a3),a1
 	move.l	(a1),d2			; source1
-	add.l	#visible_pixels_number/8,d2 ; end of line
-	move.l	d2,d3
-	add.l	#ss_text_y_position*extra_pf1_plane_width*extra_pf1_depth,d3 ; source2
+	ADDF.L	visible_pixels_number/8,d2 ; end of line
+	move.l	d2,d3			; source2
+	ADDF.L	ss_text_y_position*extra_pf1_plane_width*extra_pf1_depth,d3
 	moveq	#(visible_pixels_number/WORD_BITS)-1,d7
 cl2_init_sine_scroll_blits_loop1
 	COP_MOVEQ BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC,BLTCON0 ; minterm D=A
@@ -1338,13 +1337,13 @@ ss_horiz_scrolltext
 	MOVEF.L cl1_extension3_entry,d3	; jump in vertical scroll blit
 	move.l	cl1_display(a3),a2 
 	addq.w	#ss_horiz_scroll_speed,d2
-	cmp.w	#ss_text_char_x_shift_max,d2
+	cmp.w	#ss_text_char_x_size,d2
 	blt.s	ss_horiz_scrolltext_skip
 	bsr.s	ss_get_new_char_image
 	move.w	d0,cl1_extension2_entry+cl1_ext2_BLTAPTL+WORD_SIZE(a2) ; character image
 	swap	d0
-	moveq	#0,d2			; reset x shift
 	move.w	d0,cl1_extension2_entry+cl1_ext2_BLTAPTH+WORD_SIZE(a2)
+	moveq	#0,d2			; reset x shift
 	MOVEF.L cl1_extension2_entry,d3	; jump in character blit
 ss_horiz_scrolltext_skip
 	move.w	d2,ss_text_char_x_shift(a3) 
@@ -1363,7 +1362,7 @@ tb31612_clear_second_copperlist
 	move.l	cl2_construction1(a3),a0
 	ADDF.W	cl2_extension6_entry+WORD_SIZE,a0
 	move.l	cl2_construction2(a3),d0
-	add.l	#cl2_extension7_entry+cl2_ext7_WAIT+WORD_SIZE,d0
+	ADDF.L	cl2_extension7_entry+cl2_ext7_WAIT+WORD_SIZE,d0
 	move.w	d0,cl2_ext6_BLTDPTL(a0)
 	swap	d0
 	move.w	d0,cl2_ext6_BLTDPTH(a0)
@@ -1379,7 +1378,7 @@ ss_sine_scroll
 	lea	we_y_coordinates(pc),a0
 	move.l	pf1_construction2(a3),a1
 	move.l	(a1),a1			; destination1
-	add.l	#((visible_pixels_number+ss_text_x_position)-ss_text_char_x_size)/8,a1 ; end of line in destination1
+	ADDF.W	((visible_pixels_number+ss_text_x_position)-ss_text_char_x_size)/8,a1 ; end of line
 	lea	ss_text_y_position*pf1_plane_width*pf1_depth3(a1),a2 ; destination2
 	move.l	cl2_construction2(a3),a4
 	ADDF.W	cl2_extension2_entry+WORD_SIZE,a4
@@ -1468,7 +1467,7 @@ set_wave_center_bar
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension7_entry+cl2_ext7_BPLCON4_1+WORD_SIZE,a2
 	move.l	extra_memory(a3),a5
-	add.l	#em_bplam_table2,a5	; BPLAM table
+	add.l	#em_bplam_table2,a5
 	lea	wcb_fader_columns_mask(pc),a6
 	moveq	#cl2_display_width-1,d7	; number of columns
 set_center_bar_loop1
@@ -1761,9 +1760,9 @@ we_get_y_coordinates_loop
 		IFNE tb31612_cpu_restore_cl_enabled
 tb31612_restore_blit
 			move.l	cl2_construction1(a3),a0
-			add.l	#cl2_extension8_entry+cl2_ext8_BLTDPTH+WORD_SIZE,a0
+			ADDF.W	cl2_extension8_entry+cl2_ext8_BLTDPTH+WORD_SIZE,a0
 			move.l	cl2_construction2(a3),d0
-			add.l	#cl2_extension7_entry+cl2_ext7_WAIT+WORD_SIZE,d0
+			ADDF.L	cl2_extension7_entry+cl2_ext7_WAIT+WORD_SIZE,d0
 			move.w	d0,cl2_ext8_BLTDPTL-cl2_ext8_BLTDPTH(a0)
 			swap	d0
 			move.w	d0,(a0)	; BLTDPTH

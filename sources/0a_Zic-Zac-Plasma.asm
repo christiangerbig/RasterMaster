@@ -135,9 +135,9 @@ pf1_plane_moduli		EQU -pf1_plane_width+(pf1_plane_width-data_fetch_width)
 
 diwstrt_bits			EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)|(display_window_hstart&$ff)
 diwstop_bits			EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)|(display_window_hstop&$ff)
-ddfstrt_bits			EQU DDFSTART_OVERSCAN_32_PIXEL
+ddfstrt_bits			EQU DDFSTRT_OVERSCAN_32_PIXEL
 ddfstop_bits			EQU DDFSTOP_OVERSCAN_32_PIXEL_MIN
-bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|(BPLCON0F_COLOR)|((pf_depth&$07)*BPLCON0F_BPU0)
+bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|BPLCON0F_COLOR|((pf_depth&$07)*BPLCON0F_BPU0)
 bplcon1_bits			EQU 0
 bplcon2_bits			EQU 0
 bplcon3_bits1			EQU 0

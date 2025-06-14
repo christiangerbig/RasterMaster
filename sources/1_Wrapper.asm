@@ -170,7 +170,7 @@ ciab_tb_continuous_enabled	EQU FALSE
 
 beam_position			EQU $136
 
-bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|(BPLCON0F_COLOR)|((pf_depth&$07)*BPLCON0F_BPU0)
+bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|BPLCON0F_COLOR|((pf_depth&$07)*BPLCON0F_BPU0)
 bplcon3_bits1			EQU 0
 bplcon3_bits2			EQU bplcon3_bits1|BPLCON3F_LOCT
 bplcon4_bits			EQU 0

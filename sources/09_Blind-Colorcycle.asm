@@ -135,7 +135,7 @@ visible_lines_number		EQU 240
 MINROW				EQU VSTART_240_LINES
 
 pf_pixel_per_datafetch		EQU 16	; 1x
-ddfstrt_bits			EQU DDFSTART_320_PIXEL
+ddfstrt_bits			EQU DDFSTRT_320_PIXEL
 ddfstop_bits			EQU DDFSTOP_STANDARD_MIN
 
 display_window_hstart		EQU HSTART_40_CHUNKY_PIXEL
@@ -149,7 +149,7 @@ pf1_plane_width			EQU pf1_x_size3/8
 data_fetch_width		EQU pixel_per_line/8
 pf1_plane_moduli		EQU -(pf1_plane_width-(pf1_plane_width-data_fetch_width))
 
-bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|(BPLCON0F_COLOR)|((pf_depth&$07)*BPLCON0F_BPU0)
+bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|BPLCON0F_COLOR|((pf_depth&$07)*BPLCON0F_BPU0)
 bplcon3_bits1			EQU 0
 bplcon3_bits2			EQU bplcon3_bits1|BPLCON3F_LOCT
 bplcon4_bits			EQU 0
@@ -552,7 +552,7 @@ blind_colorcycle5242_loop3
 	move.l	(a5,d3.w*4),d0		; cos(w)
 	MULUF.L bcc_5242_step2_radius*2,d0 ; r'=r*cow(w)/2^15
 	swap	d0
-	add.w	a6,d0			; add centre
+	add.w	a6,d0			; add center
 	subq.b	#bcc_5242_step2_angle_step,d3
 	add.b	d0,d2			; increase table start
 	dbf	d6,blind_colorcycle5242_loop2

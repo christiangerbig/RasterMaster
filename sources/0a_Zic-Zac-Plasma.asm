@@ -615,7 +615,7 @@ zzp5_get_y_coordinates
 	and.w	d6,d0			; remove overflow
 	move.w	d0,zzp5_y_angle(a3) 
 	;MOVEF.W zzp5_y_radius,d4
-	move.w	#((zzp5_copy_blit_y_size)<<6)+(zzp5_copy_blit_x_size/WORD_BITS),d4 ; BLTSIZE
+	move.w	#((zzp5_copy_blit_y_size)<<6)|(zzp5_copy_blit_x_size/WORD_BITS),d4 ; BLTSIZE
 	moveq	#zzp5_y_angle_step,d5
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2

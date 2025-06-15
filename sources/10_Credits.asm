@@ -846,7 +846,7 @@ swap_extra_playfield
 vert_text_scroll
 	movem.l a4-a5,-(a7)
 	bsr.s	vert_text_scroll_init
-	MOVEF.W ((vts_copy_char_blit_y_size)<<6)+(vts_copy_char_blit_x_size/WORD_BITS),d3 ; BLTSIZE
+	MOVEF.W ((vts_copy_char_blit_y_size)<<6)|(vts_copy_char_blit_x_size/WORD_BITS),d3 ; BLTSIZE
 	MOVEF.W vts_text_char_y_restart,d4
 	lea	vts_chars_y_positions(pc),a1
 	lea	vts_chars_image_pointers(pc),a2
@@ -894,7 +894,7 @@ vert_text_scroll_init
 	move.l	#(BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC)<<16,BLTCON0-DMACONR(a6) ; minterm D=A
 	moveq	#-1,d0
 	move.l	d0,BLTAFWM-DMACONR(a6)
-	move.l	#((vts_image_plane_width-vts_text_char_width)<<16)+(vts_buffer_width-vts_text_char_width),BLTAMOD-DMACONR(a6) ; A&D moduli
+	move.l	#((vts_image_plane_width-vts_text_char_width)<<16)|(vts_buffer_width-vts_text_char_width),BLTAMOD-DMACONR(a6) ; A&D moduli
 	rts
 
 

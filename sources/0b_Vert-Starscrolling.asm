@@ -929,7 +929,7 @@ vert_starscrolling
 	movem.l a3-a5,-(a7)
 	move.l	a7,save_a7(a3)	
 	bsr	vert_starscrolling_init
-	move.l	#((vss_bplam_buffer_x_size-(vss_copy_blit_width+2))<<16)+(vss_image_x_size-(vss_copy_blit_width+2)),d2 ; Moduli
+	move.l	#((vss_bplam_buffer_x_size-(vss_copy_blit_width+2))<<16)|(vss_image_x_size-(vss_copy_blit_width+2)),d2 ; Moduli
 	moveq	#vss_z_plane1_speed,d3
 	MOVEF.W vss_y_restart,d4
 	moveq	#vss_star_x_size,d5	; offset next star
@@ -940,8 +940,8 @@ vert_starscrolling
 	add.l	#(vss_z_planes_number-1)*vss_star_x_size,a2 ; mask
 	move.l	vss_bplam_buffer_construction2(a3),a4 ; destination: buffer
 	move.w	#BC0F_SRCA|BC0F_SRCB|BC0F_SRCC|BC0F_DEST+NANBC|NABC|ABNC|ABC,a3 ; minterm D=A+B
-	move.w	#((vss_copy_blit_y_size)<<6)+((vss_copy_blit_x_size+16)/WORD_BITS),a5
-	move.w	#(16<<6)+(16/WORD_BITS),a7 ; addition value blit size
+	move.w	#((vss_copy_blit_y_size)<<6)|((vss_copy_blit_x_size+16)/WORD_BITS),a5
+	move.w	#(16<<6)|(16/WORD_BITS),a7 ; addition value blit size
 	moveq	#vss_z_planes_number-1,d7
 vert_starscrolling_loop1
 	WAITBLIT
@@ -1009,7 +1009,7 @@ vss_clear_bplam_buffer
 	moveq	#vss_bplam_buffer_x_size-cl2_display_width,d0
 	move.w	d0,BLTDMOD-DMACONR(a6)
 	move.w	#(bplcon4_bits&$ff00)+(bplcon4_bits>>8),BLTADAT-DMACONR(a6)
-	move.w	#((vss_clear_blit_y_size)<<6)+(vss_clear_blit_x_size/WORD_BITS),BLTSIZE-DMACONR(a6)
+	move.w	#((vss_clear_blit_y_size)<<6)|(vss_clear_blit_x_size/WORD_BITS),BLTSIZE-DMACONR(a6)
 	rts
 
 

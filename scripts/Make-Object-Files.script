@@ -1,18 +1,18 @@
-CD Daten:Asm-Sources.AGA/projects/RasterMaster/sources
-Programme:Programmieren/OMA_2.05/OMA Main.asm -o RAM:main.obj -c c -m
-Programme:Programmieren/OMA_2.05/OMA 0_Wrapper.asm -o RAM:0.obj -c c -m
-Programme:Programmieren/OMA_2.05/OMA 00_Title-Screen.asm -o RAM:00.obj -c c -m
-Programme:Programmieren/OMA_2.05/OMA 01_Vert-Colorscroll.asm -o RAM:01.obj -c c -m
-Programme:Programmieren/OMA_2.05/OMA 02_Twisted-Bars.asm -o RAM:02.obj -c c -m
-Programme:Programmieren/OMA_2.05/OMA 03_Twisted-Colorcycle-Bars.asm -o RAM:03.obj -c c -m
-Programme:Programmieren/OMA_2.05/OMA 04_Twisted-Space-Bars.asm -o RAM:04.obj -c c -m
-Programme:Programmieren/OMA_2.05/OMA 05_Greetings.asm -o RAM:05.obj -c c -m
-Programme:Programmieren/OMA_2.05/OMA 06_Blind-Colorcycle.asm -o RAM:06.obj -c c -m
-Programme:Programmieren/OMA_2.05/OMA 07_Vert-Colorscroll.asm -o RAM:07.obj -c c -m
-Programme:Programmieren/OMA_2.05/OMA 08_Blind-Colorcycle.asm -o RAM:08.obj -c c -m
-Programme:Programmieren/OMA_2.05/OMA 09_Blind-Colorcycle.asm -o RAM:09.obj -c c -m
-Programme:Programmieren/OMA_2.05/OMA 0a_Zic-Zac-Plasma.asm -o RAM:0a.obj -c c -m
-Programme:Programmieren/OMA_2.05/OMA 0b_Vert-Starscrolling.asm -o RAM:0b.obj -c c -m
-Programme:Programmieren/OMA_2.05/OMA 1_Wrapper.asm -o RAM:1.obj -c c -m
-Programme:Programmieren/OMA_2.05/OMA 10_Credits.asm -o RAM:10.obj -c c -m
+CD RasterMaster:sources
+OMA Main.asm -o RAM:main.obj -c c -m
+OMA 0_Wrapper.asm -o RAM:0.obj -c c -m
+OMA 00_Title-Screen.asm -o RAM:00.obj -c c -m
+OMA 01_Vert-Colorscroll.asm -o RAM:01.obj -c c -m
+OMA 02_Twisted-Bars.asm -o RAM:02.obj -c c -m
+OMA 03_Twisted-Colorcycle-Bars.asm -o RAM:03.obj -c c -m
+OMA 04_Twisted-Space-Bars.asm -o RAM:04.obj -c c -m
+OMA 05_Greetings.asm -o RAM:05.obj -c c -m
+OMA 06_Blind-Colorcycle.asm -o RAM:06.obj -c c -m
+OMA 07_Vert-Colorscroll.asm -o RAM:07.obj -c c -m
+OMA 08_Blind-Colorcycle.asm -o RAM:08.obj -c c -m
+OMA 09_Blind-Colorcycle.asm -o RAM:09.obj -c c -m
+OMA 0a_Zic-Zac-Plasma.asm -o RAM:0a.obj -c c -m
+OMA 0b_Vert-Starscrolling.asm -o RAM:0b.obj -c c -m
+OMA 1_Wrapper.asm -o RAM:1.obj -c c -m
+OMA 10_Credits.asm -o RAM:10.obj -c c -m
 CD /

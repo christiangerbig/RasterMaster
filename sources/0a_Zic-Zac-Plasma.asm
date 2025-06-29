@@ -632,7 +632,7 @@ zzp5_get_y_coordinates_loop
 	WAITBLIT
 	move.l	a2,(a4)			; destination: cl
 	lea	(a7,d0.w*2),a1		; offset in BPLAM table
-	move.l	a1,(a3)			; source: BPLAM table
+	move.l	a1,(a3)			; BPLAM table
 	move.w	d4,(a5)			; start blit operation
 	add.w	d5,d3			; next y angle
 	addq.w	#LONGWORD_SIZE,a2	; next column in cl

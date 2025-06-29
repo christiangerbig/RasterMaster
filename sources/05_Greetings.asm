@@ -1222,9 +1222,9 @@ cl2_init_clear_blit
 	COP_MOVEQ 0,BLTDPTL
 	COP_MOVEQ 2,BLTDMOD
 	IFEQ tb31612_quick_clear_enabled
-		COP_MOVEQ -2,BLTADAT	; source: BPLCON4
+		COP_MOVEQ -2,BLTADAT	; BPLCON4
 	ELSE
-		COP_MOVEQ bplcon4_bits,BLTADAT ; source: BPLCON4
+		COP_MOVEQ bplcon4_bits,BLTADAT ; BPLCON4
 	ENDC
 	COP_MOVEQ tb31612_clear_blit_y_size,BLTSIZV
 	COP_MOVEQ tb31612_clear_blit_x_size/WORD_BITS,BLTSIZH
@@ -1242,7 +1242,7 @@ cl2_init_restore_blit
 			COP_MOVEQ 0,BLTDPTH
 			COP_MOVEQ 0,BLTDPTL
 			COP_MOVEQ cl2_extension7_size-tb31612_restore_blit_width,BLTDMOD
-			COP_MOVEQ -2,BLTADAT ; source: 2nd word of CWAIT
+			COP_MOVEQ -2,BLTADAT ; 2nd word of CWAIT
 			COP_MOVEQ (tb31612_restore_blit_y_size)<<6)|(tb31612_restore_blit_x_size/WORD_BITS),BLTSIZE
 			rts
 		ENDC

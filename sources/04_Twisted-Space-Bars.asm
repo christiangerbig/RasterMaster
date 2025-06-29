@@ -1249,7 +1249,7 @@ sprite_fader_out_quit
 	RGB8_COLOR_FADER sprf
 
 
-	COPY_RGB8_COLORS_TO_COPPERLIST sprf,spr,cl1,cl1_COLOR17_high1,cl1_COLOR17_low1
+	COPY_RGB8_COLORS_TO_COPPERLIST sprf,spr,cl1,cl1_COLOR16_high1,cl1_COLOR16_low1
 
 
 	CNOP 0,4

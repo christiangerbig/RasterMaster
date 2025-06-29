@@ -561,7 +561,7 @@ init_main_variables
 init_main
 	bsr.s	init_colors
 	bsr	init_sprites
-	bsr	bg_copy_image_to_plane
+	bsr	bg_copy_image_to_bitplane
 	bsr	vts_init_chars_offsets
 	bsr	vts_init_chars_x_positions
 	bsr	vts_init_chars_y_positions
@@ -654,7 +654,7 @@ vts_init_sprites
 
 ; Background-Image
 	CNOP 0,4
-bg_copy_image_to_plane
+bg_copy_image_to_bitplane
 	movem.l a3-a6,-(a7)
 	move.l	#bg_image_data+(pf1_plane_x_offset/8),a1 ; offset bitplane 1
 	move.l	pf1_display(a3),a3	; destination
@@ -702,8 +702,8 @@ bg_copy_image_data_loop
 init_first_copperlist
 	move.l	cl1_display(a3),a0 
 	bsr.s	cl1_init_playfield_props
-	bsr.s	cl1_init_sprite_pointers
-	bsr.s	cl1_init_colors
+	bsr	cl1_init_sprite_pointers
+	bsr	cl1_init_colors
 	bsr	cl1_init_bitplane_pointers
 	bsr	cl1_init_bpldat
 	bsr	cl1_init_copper_interrupt
@@ -1008,7 +1008,7 @@ image_fader_out_quit
 	RGB8_COLOR_FADER if
 
 
-	COPY_RGB8_COLORS_TO_COPPERLIST if,pf1,cl1,cl1_COLOR01_high1,cl1_COLOR01_low1
+	COPY_RGB8_COLORS_TO_COPPERLIST if,pf1,cl1,cl1_COLOR00_high1,cl1_COLOR00_low1
 
 
 	CNOP 0,4

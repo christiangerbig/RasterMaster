@@ -741,7 +741,7 @@ cl2_init_bpldat
 	move.l	#$01000000,d6
 	MOVEF.W cl2_display_y_size-1,d7
 cl2_init_bpldat_loop
-	move.l	d0,(a0)+		; CWAIT x,y
+	move.l	d0,(a0)+		; CWAIT
 	COP_MOVEQ 0,BPLCON1
 	move.w	a5,(a0)+		; BPL7DAT
 	move.w	bg_image_plane_width*6(a1),(a0)+ ; 1st word bitplane 7

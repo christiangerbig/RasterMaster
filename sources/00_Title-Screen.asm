@@ -648,8 +648,8 @@ bg_copy_image_to_playfield
 	rts
 
 ;Input
-; a1.l	Pointer	source: image
-; a4.l	Pointer	destination: bitplane
+; a1.l		source: image
+; a4.l		destination: bitplane
 ; Result
 	CNOP 0,4
 bg_copy_image_data
@@ -845,8 +845,8 @@ fetch_channels_data
 ; Input
 ; d6.l	clock constant=PAL clock constant/PAL frequency
 ; d7.w	Number of samplebytes to fetch
-; a0.l	Pointer temporary audio channel structure
-; a2.l	Pointer table with channel amplitudes
+; a0.l	 temporary audio channel structure
+; a2.l	 table with channel amplitudes
 ; Result
 	CNOP 0,4
 fetch_sample_data
@@ -1167,8 +1167,8 @@ ipf_random_pixel_data_copy
 
 
 ; Input
-; a0.l	Pointer destination: sprite structure
-; a1.l	Pointer source: bitplanes
+; a0.l	 destination: sprite structure
+; a1.l	 source: bitplanes
 ; Result
 	CNOP 0,4
 init_sprite_bitmap
@@ -1275,7 +1275,7 @@ mouse_handler_skip
 	INCLUDE "int-autovectors-handlers.i"
 
 	CNOP 0,4
-nmi_int_server
+nmi_server
 	rts
 
 

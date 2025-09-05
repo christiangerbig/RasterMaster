@@ -370,14 +370,14 @@ pt_decrunch_audio_data
 	lea	pt_auddata,a0		; source: crunched data
 	lea	custom_memory_table(pc),a2
 	move.l	cme_memory_pointer(a2),a1 ; festination: decrunched data
-	move.l	a1,pt_SongDataPointer(a3)
+	move.l	a1,pt_Song(a3)
 	movem.l a2-a6,-(a7)
 	bsr	sc_start
 	movem.l (a7)+,a2-a6
 	ADDF.W	custom_memory_entry_size,a2 ; next custom memory block
 	lea	pt_audsmps,a0
 	move.l	cme_memory_pointer(a2),a1
-	move.l	a1,pt_SamplesDataPointer(a3)
+	move.l	a1,pt_Samples(a3)
 	movem.l a2-a6,-(a7)
 	bsr	sc_start
 	movem.l (a7)+,a2-a6
@@ -498,12 +498,12 @@ free_custom_memory_skip
 
 	IFEQ pt_ciatiming_enabled
 		CNOP 0,4
-ciab_ta_int_server
+ciab_ta_server
 	ENDC
 
 	IFNE pt_ciatiming_enabled
 		CNOP 0,4
-VERTB_int_server
+VERTB_server
 	ENDC
 
 
@@ -530,15 +530,15 @@ pt_SetSoftInterrupt
 	rts
 
 	CNOP 0,4
-ciab_tb_int_server
+ciab_tb_server
 	PT_TIMER_INTERRUPT_SERVER
 
 	CNOP 0,4
-EXTER_int_server
+EXTER_server
 	rts
 
 	CNOP 0,4
-nmi_int_server
+nmi_server
 	rts
 
 
@@ -547,8 +547,8 @@ nmi_int_server
 
 ; Stone-Cracker
 ; Input
-; a0.l	Pointer crunched data
-; a1.l	Pointer decrunched data
+; a0.l	 crunched data
+; a1.l	 decrunched data
 ; Result
 	CNOP 0,4
 sc_start

@@ -28,9 +28,9 @@
 ; V.1.4 Beta
 ; - Intro-Part: Overscan DIW values corrected
 ; - Credits-Part: Grass' font included
-;               text changed
-;               Overscan DIW values corrected. Sprites now displayed properly
-;               at left border
+;	 	    text changed
+;	 	    Overscan DIW values corrected. Sprites now displayed properly
+;	 	    at left border
 ; - Again all FX palettes now match the title screen palette
 
 ; V.1.5 Beta
@@ -74,9 +74,9 @@
 ; V.1.6 (A1200/060 with Indivision: Logo sometimes displayed with wrong colors)
 ; - compiled with new includes
 ; - Space-Bars: Chunky columns fader now triggered not at patternjposition 50
-;             alreday at pattern position 48, because otherwise 50 FPS are not
-;             guaranteed
-;             Beamp osition $133 changed to $136
+;   alreday at pattern position 48, because otherwise 50 FPS are not
+;   guaranteed
+;   Beamp osition $133 changed to $136
 ; - Nop copperliste2 is initialized only once in the main part and exported
 
 

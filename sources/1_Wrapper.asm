@@ -434,7 +434,7 @@ alloc_custom_memory_quit
 	rts
 	CNOP 0,4
 alloc_custom_memory_fail
-        move.w	#CUSTOM_MEMORY_NO_MEMORY,custom_error_code(a3)
+	move.w	#CUSTOM_MEMORY_NO_MEMORY,custom_error_code(a3)
 	moveq	#RETURN_ERROR,d0
 	rts
 

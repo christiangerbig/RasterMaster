@@ -584,7 +584,7 @@ vert_shade_bars_loop
 	addq.w	#vsb_y_radius_angle_step,d2
 	addq.b	#4,WORD_SIZE*12(a1,d0.w*2)
 	and.w	d6,d2			; remove overflow
-	addq.b	#3,WORD_SIZE*12(a1,d0.w*2)
+	addq.b	#3,WORD_SIZE*13(a1,d0.w*2)
 	add.w	d5,d3			; next y angle
 	addq.b	#2,WORD_SIZE*14(a1,d0.w*2)
 	and.w	d6,d3			; remove overflow

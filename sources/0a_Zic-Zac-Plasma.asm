@@ -570,25 +570,25 @@ vert_shade_bars_loop
 	swap	d0
 	add.w	a2,d0			; y' + y center
 	addq.b	#1,(a1,d0.w*2)		; increase color number
-	addq.b	#2,WORD_SIZE(a1,d0.w*2)
-	addq.b	#3,LONGWORD_SIZE(a1,d0.w*2)
-	addq.b	#4,6(a1,d0.w*2)
-	addq.b	#5,8(a1,d0.w*2)
-	addq.b	#6,10(a1,d0.w*2)
-	addq.b	#7,12(a1,d0.w*2)
-	addq.b	#8,14(a1,d0.w*2)
-	addq.b	#8,16(a1,d0.w*2)
-	addq.b	#7,18(a1,d0.w*2)
-	addq.b	#6,20(a1,d0.w*2)
-	addq.b	#5,22(a1,d0.w*2)
+	addq.b	#2,WORD_SIZE*1(a1,d0.w*2)
+	addq.b	#3,WORD_SIZE*2(a1,d0.w*2)
+	addq.b	#4,WORD_SIZE*3(a1,d0.w*2)
+	addq.b	#5,WORD_SIZE*4(a1,d0.w*2)
+	addq.b	#6,WORD_SIZE*5(a1,d0.w*2)
+	addq.b	#7,WORD_SIZE*6(a1,d0.w*2)
+	addq.b	#8,WORD_SIZE*7(a1,d0.w*2)
+	addq.b	#8,WORD_SIZE*8(a1,d0.w*2)
+	addq.b	#7,WORD_SIZE*9(a1,d0.w*2)
+	addq.b	#6,WORD_SIZE*10(a1,d0.w*2)
+	addq.b	#5,WORD_SIZE*11(a1,d0.w*2)
 	addq.w	#vsb_y_radius_angle_step,d2
-	addq.b	#4,24(a1,d0.w*2)
+	addq.b	#4,WORD_SIZE*12(a1,d0.w*2)
 	and.w	d6,d2			; remove overflow
-	addq.b	#3,26(a1,d0.w*2)
+	addq.b	#3,WORD_SIZE*12(a1,d0.w*2)
 	add.w	d5,d3			; next y angle
-	addq.b	#2,28(a1,d0.w*2)
+	addq.b	#2,WORD_SIZE*14(a1,d0.w*2)
 	and.w	d6,d3			; remove overflow
-	addq.b	#1,30(a1,d0.w*2)
+	addq.b	#1,WORD_SIZE*15(a1,d0.w*2)
 	dbf	d7,vert_shade_bars_loop
 vert_shade_bars_quit
 	rts

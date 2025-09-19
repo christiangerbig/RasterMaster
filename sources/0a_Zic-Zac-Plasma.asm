@@ -570,8 +570,8 @@ vert_shade_bars_loop
 	swap	d0
 	add.w	a2,d0			; y' + y center
 	addq.b	#1,(a1,d0.w*2)		; increase color number
-	addq.b	#2,2(a1,d0.w*2)
-	addq.b	#3,4(a1,d0.w*2)
+	addq.b	#2,WORD_SIZE(a1,d0.w*2)
+	addq.b	#3,LONGWORD_SIZE(a1,d0.w*2)
 	addq.b	#4,6(a1,d0.w*2)
 	addq.b	#5,8(a1,d0.w*2)
 	addq.b	#6,10(a1,d0.w*2)

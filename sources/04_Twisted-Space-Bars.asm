@@ -940,7 +940,7 @@ horiz_scrolltext_loop
 	move.l	a0,-(a7)
 	bsr.s	hst_get_new_char_image
 	move.l	(a7)+,a0
-	move.l	d0,-4(a1)		; new character
+	move.l	d0,-LONGWORD_SIZE(a1)		; new character
 	add.w	d5,d2			; reset x
 horiz_scrolltext_skip
 	move.w	d2,(a0)+		

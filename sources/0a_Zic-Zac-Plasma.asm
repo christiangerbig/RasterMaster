@@ -563,10 +563,10 @@ vert_shade_bars
 	move.w	#vsb_y_center,a2
 	moveq	#vsb_bars_number-1,d7
 vert_shade_bars_loop
-	move.w	2(a0,d2.w*4),d0		; cos(w)
+	move.w	WORD_SIZE(a0,d2.w*4),d0	; cos(w)
 	muls.w	d4,d0			; yr'=(yr*cos(w))/2*^15
 	swap	d0
-	muls.w	2(a0,d3.w*4),d0		; y'=(yr'*sin(w))/2*^15
+	muls.w	WORD_SIZE(a0,d3.w*4),d0	; y'=(yr'*sin(w))/2*^15
 	swap	d0
 	add.w	a2,d0			; y' + y center
 	addq.b	#1,(a1,d0.w*2)		; increase color number
@@ -603,7 +603,7 @@ zzp5_get_y_coordinates
 	move.w	zzp5_y_radius_angle(a3),d2 ; 1st radius y angle
 	move.w	d2,d0		
 	lea	sine_table_512,a0	
-	move.w	2(a0,d2.w*4),d2		; sin(w)
+	move.w	WORD_SIZE(a0,d2.w*4),d2	; sin(w)
 	asr.w	#8,d2			; yr'=(yr*sin(w))/2^15
 	addq.w	#zzp5_y_radius_angle_speed,d0
 	MOVEF.W sine_table_length-1,d6	; overflow 360°
@@ -626,7 +626,7 @@ zzp5_get_y_coordinates
 	moveq	#cl2_display_width-1,d7 ; number of columns
 zzp5_get_y_coordinates_loop
 	move.w	d2,d0
-	muls.w	2(a0,d3.w*4),d0		; y'=(yr'*sin(w))/2^15
+	muls.w	WORD_SIZE(a0,d3.w*4),d0	; y'=(yr'*sin(w))/2^15
 	swap	d0
 	add.w	d1,d0			; y' + y center
 	WAITBLIT

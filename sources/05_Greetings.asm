@@ -1734,7 +1734,7 @@ we_get_y_coordinates_loop
 	move.l	(a0,d2.w*4),d0		; sin(w)
 	MULUF.L we_y_radius*4,d0,d1	; yr'=(yr*sin(w))/2^15
 	swap	d0
-	muls.w	2(a0,d3.w*4),d0		; y'=(yr'*sin(w))/2^15
+	muls.w	WORD_SIZE(a0,d3.w*4),d0	; y'=(yr'*sin(w))/2^15
 	swap	d0
 	move.w	d0,(a1)+		; y position
 	addq.b	#we_y_radius_angle_step,d2

@@ -650,7 +650,7 @@ we_get_y_coordinates_loop
 	move.l	(a0,d2.w*4),d0	;sin(w)
 	MULUF.L we_y_radius*2,d0,d1
 	swap	d0			; yr'=(yr*sin(w))/2^15
-	muls.w	2(a0,d3.w*4),d0		; y'=(yr'*sin(w))/2^15
+	muls.w	WORD_SIZE(a0,d3.w*4),d0	; y'=(yr'*sin(w))/2^15
 	swap	d0
 	add.w	a2,d0			; y' + y center
 	addq.b	#we_y_radius_angle_step,d2

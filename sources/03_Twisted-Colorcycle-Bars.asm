@@ -680,7 +680,7 @@ tccb_get_y_coordinates_loop2
 	move.l	(a0,d4.w*4),d0		; sin(w)
 	MULUF.L tccb_y_radius*4,d0,d1	; yr'=(yr*sin(w))/2^15
 	swap	d0
-	muls.w	2(a0,d5.w*4),d0		; y'=(yr'*sin(w))/2^15
+	muls.w	WORD_SIZE(a0,d5.w*4),d0	; y'=(yr'*sin(w))/2^15
 	swap	d0
 	add.w	a6,d0			; y' + y center
 	MULUF.W cl1_extension1_size/4,d0,d1 ; y offset in cl

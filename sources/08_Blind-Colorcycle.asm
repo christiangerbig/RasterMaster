@@ -34,12 +34,12 @@
 	INCLUDE "hardware/intbits.i"
 
 
+	INCDIR "custom-includes-aga:"
+
+
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
-
-
-	INCDIR "custom-includes-aga:"
 
 
 	INCLUDE "macros.i"
@@ -64,7 +64,6 @@ dma_bits			EQU DMAF_COPPER|DMAF_SETCLR
 	ELSE
 dma_bits			EQU DMAF_COPPER|DMAF_RASTER|DMAF_SETCLR
 	ENDC
-
 intena_bits			EQU INTF_SETCLR
 
 ciaa_icr_bits			EQU CIAICRF_SETCLR
@@ -134,7 +133,7 @@ visible_pixels_number		EQU 320
 visible_lines_number		EQU 256
 MINROW				EQU VSTART_256_LINES
 
-pf_pixel_per_datafetch		EQU 32	; 2x
+pf_pixel_per_datafetch		EQU 16	; 1x
 
 display_window_hstart		EQU HSTART_40_CHUNKY_PIXEL
 display_window_vstart		EQU MINROW
@@ -484,12 +483,12 @@ init_first_copperlist
 	bsr.s	cl1_init_playfield_props
 	IFEQ open_border_enabled
 		COP_MOVEQ 0,COPJMP2
-		rts
 	ELSE
 		bsr.s	cl1_init_bitplane_pointers
 		COP_MOVEQ 0,COPJMP2
-		bra	cl1_set_bitplane_pointers
+		bsr	cl1_set_bitplane_pointers
 	ENDC
+	rts
 
 	IFEQ open_border_enabled
 		COP_INIT_PLAYFIELD_REGISTERS cl1,NOBITPLANES

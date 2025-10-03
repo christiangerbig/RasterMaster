@@ -33,12 +33,12 @@
 	INCLUDE "hardware/intbits.i"
 
 
+	INCDIR "custom-includes-aga:"
+
+
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
-
-
-	INCDIR "custom-includes-aga:"
 
 
 	INCLUDE "macros.i"

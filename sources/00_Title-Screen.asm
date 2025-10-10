@@ -762,7 +762,7 @@ cl2_init_bpldat_loop
 	bne.s   cl2_init_bpldat_skip
 	COP_WAIT CL_X_WRAPPING_7_BITPLANES_1X,CL_Y_WRAPPING ; patch cl
 cl2_init_bpldat_skip
-	add.l	d6,d0			; next line in cl
+	add.l	d6,d0			; next line
 	dbf	d7,cl2_init_bpldat_loop
 	movem.l (a7)+,a4-a5
 	rts
@@ -934,7 +934,7 @@ wobble_display_loop
 wobble_display_skip
 	ENDC
 	addq.w	#wd_x_step,d2
-	add.l	d4,a1			; next line in cl
+	add.l	d4,a1			; next line
 	and.w	d6,d2			; remove overflow
 	dbf	d7,wobble_display_loop
 wobble_display_quit

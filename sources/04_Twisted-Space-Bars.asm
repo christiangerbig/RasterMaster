@@ -1033,7 +1033,7 @@ tb_set_background_bars_loop2
 tb_set_background_bars_skip2
 	dbf	d6,tb_set_background_bars_loop2
 tb_set_background_bars_skip3
-	addq.w	#LONGWORD_SIZE,a2	; next column in cl
+	addq.w	#LONGWORD_SIZE,a2	; next column
 	dbf	d7,tb_set_background_bars_loop1
 	movem.l (a7)+,a3-a6
 	rts
@@ -1066,7 +1066,7 @@ tb_set_foreround_bars_loop2
 tb_set_foreround_bars_skip2
 	dbf	d6,tb_set_foreround_bars_loop2
 tb_set_foreround_bars_skip3
-	addq.w	#LONGWORD_SIZE,a2	; next line in cl
+	addq.w	#LONGWORD_SIZE,a2	; next line
 	dbf	d7,tb_set_foreround_bars_loop1
 	movem.l (a7)+,a3-a6
 	rts

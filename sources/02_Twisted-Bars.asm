@@ -687,7 +687,7 @@ tb315_set_background_bars_skip1
 	COPY_TWISTED_BAR.B tb315,cl2,extension1,bar_height
 tb315_set_background_bars_skip2
 	dbf	d6,tb315_set_background_bars_loop2
-	addq.w	#LONGWORD_SIZE,a2	; next column in cl
+	addq.w	#LONGWORD_SIZE,a2	; next column
 	dbf	d7,tb315_set_background_bars_loop1
 	movem.l (a7)+,a3-a6
 	rts
@@ -719,7 +719,7 @@ tb315_set_foreround_bars_skip1
 	COPY_TWISTED_BAR.B tb315,cl2,extension1,bar_height
 tb315_set_foreround_bars_skip2
 	dbf	d6,tb315_set_foreround_bars_loop2
-	addq.w	#4,a2			; next column in cl
+	addq.w	#4,a2			; next column
 	dbf	d7,tb315_set_foreround_bars_loop1
 	movem.l (a7)+,a3-a6
 	rts
@@ -765,15 +765,15 @@ blind_fader_in_loop2
 		move.w	(a0,d1.w*2),d0	; register address
 		IFNE cl2_size1
 			move.w	d0,(a1)
-			add.l	d4,a1	; next line in cl
+			add.l	d4,a1	; next line
 		ENDC
 		IFNE cl2_size2
 			move.w	d0,(a2)
-			add.l	d4,a2	; next line in cl
+			add.l	d4,a2	; next line
 		ENDC
 		move.w	d0,(a4)
 		addq.w	#bf_step1,d1	; next entry
-		add.l	d4,a4		; next line in cl
+		add.l	d4,a4		; next line
 		cmp.w	d3,d1		; end of table ?
 		blt.s	blind_fader_in_skip2
 		sub.w	d3,d1		; reset table start
@@ -823,15 +823,15 @@ blind_fader_out_loop2
 		move.w	(a0,d1.w*2),d0	; register address
 		IFNE cl2_size1
 			move.w	d0,(a1)
-			add.l	d4,a1	; next line in cl
+			add.l	d4,a1	; next line
 		ENDC
 		IFNE cl2_size2
 			move.w	d0,(a2)
-			add.l	d4,a2	; next line in cl
+			add.l	d4,a2	; next line
 		ENDC
 		move.w	d0,(a4)
 		addq.w	#bf_step1,d1	; next entry
-		add.l	d4,a4		; next line in cl
+		add.l	d4,a4		; next line
 		cmp.w	d3,d1		; end of table ?
 		blt.s	blind_fader_out_skip2
 		sub.w	d3,d1		; reset table start

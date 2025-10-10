@@ -635,7 +635,7 @@ zzp5_get_y_coordinates_loop
 	move.l	a1,(a3)			; BPLAM table
 	move.w	d4,(a5)			; start blit operation
 	add.w	d5,d3			; next y angle
-	addq.w	#LONGWORD_SIZE,a2	; next column in cl
+	addq.w	#LONGWORD_SIZE,a2	; next column
 	and.w	d6,d3			; remove overflow
 	dbf	d7,zzp5_get_y_coordinates_loop
 	move.w	#DMAF_BLITHOG,DMACON-DMACONR(a6)

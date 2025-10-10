@@ -1094,7 +1094,7 @@ vss_copy_bplam_buffer_loop
 	move.b	d2,LONGWORD_SIZE*36(a1)
 	swap	d2
 	move.b	d2,LONGWORD_SIZE*38(a1)
-	add.l	a2,a1			;next line in cl
+	add.l	a2,a1			;next line
 	move.b	d3,(LONGWORD_SIZE*43)-cl2_extension1_SIZE(a1)
 	swap	d3
 	move.b	d3,(LONGWORD_SIZE*41)-cl2_extension1_SIZE(a1)

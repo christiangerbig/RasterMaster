@@ -162,7 +162,7 @@ diwhigh_bits			EQU (((display_window_hstop&$100)>>8)*DIWHIGHF_HSTOP8)|(((display
 fmode_bits			EQU FMODEF_BPL32|FMODEF_BPAGEM
 
 cl1_hstart			EQU 0
-cl1_vstart			EQU $03	; Damit die CPU die Zeiger COP1LC in der CL für den Einsprung des Char-Blits vor dem Ausführen der CMOVE-Befehlen ändert
+cl1_vstart			EQU $03	; to avoid that the cpu operates on the copperlist during it is executed
 
 cl2_display_x_size		EQU 352
 cl2_display_width		EQU cl2_display_x_size/8
@@ -1439,7 +1439,7 @@ tb31612_set_background_bars_skip2
 tb31612_set_background_bars_skip3
 	dbf	d6,tb31612_set_background_bars_loop2
 tb31612_set_background_bars_skip4
-	addq.w	#LONGWORD_SIZE,a2	; next column in cl
+	addq.w	#LONGWORD_SIZE,a2	; next column
 	dbf	d7,tb31612_set_background_bars_loop1
 	move.l	variables+save_a7(pc),a7
 	movem.l	(a7)+,a3-a6
@@ -1544,7 +1544,7 @@ set_center_bar_loop2
 	move.b	d1,(cl2_extension7_size*38)-(cl2_extension7_size*40)(a4)
 	dbf	d6,set_center_bar_loop2
 set_center_bar_skip
-	addq.w	#LONGWORD_SIZE,a2	; next column in cl
+	addq.w	#LONGWORD_SIZE,a2	; next column
 	dbf	d7,set_center_bar_loop1
 	movem.l (a7)+,a4-a6
 	rts
@@ -1587,7 +1587,7 @@ tb31612_set_foreground_bars_skip2
 tb31612_set_foreground_bars_skip3
 	dbf	d6,tb31612_set_foreround_bars_loop2
 tb31612_set_foreground_bars_skip4
-	addq.w	#LONGWORD_SIZE,a2	; next column in cl
+	addq.w	#LONGWORD_SIZE,a2	; next column
 	dbf	d7,tb31612_set_foreround_bars_loop1
 	move.l	variables+save_a7(pc),a7
 	movem.l (a7)+,a3-a6
@@ -1703,7 +1703,7 @@ bf_copy_buffer_loop
 	ELSE
 		move.w	d2,cl2_ext7_COLOR00_low-cl2_ext7_COLOR00_high(a1) ; color low
 	ENDC
-	add.l	a5,a1			; next line in cl
+	add.l	a5,a1			; next line
 	IFEQ tb31612_quick_clear_enabled
 		move.w	a4,cl2_ext7_BPLCON3_2-cl2_ext7_COLOR31_high-cl2_extension7_size(a1) ; restore CMOVE
 	ELSE

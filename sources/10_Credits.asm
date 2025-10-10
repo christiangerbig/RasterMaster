@@ -778,7 +778,7 @@ cl1_init_bpldat_loop
 	bne.s   cl1_init_bpldat_skip
 	COP_WAIT CL_X_WRAPPING_7_BITPLANES_1X,CL_Y_WRAPPING ; patch cl
 cl1_init_bpldat_skip
-	add.l	d6,d0			; next line in cl
+	add.l	d6,d0			; next line
 	dbf	d7,cl1_init_bpldat_loop
 	movem.l (a7)+,a4-a5
 	rts

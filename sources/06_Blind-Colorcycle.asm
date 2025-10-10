@@ -620,7 +620,7 @@ blind_colorcycle512_loop3
 	move.b	d0,(a2)			; BPLCON4 high
 	sub.l	a6,a2			; 1st quadrant penultimate line in cl
 	move.b	d0,(a4)			; BPLCON4 high
-	add.l	a6,a4			; 3rd quadrant next line in cl
+	add.l	a6,a4			; 3rd quadrant next line
 	move.b	d0,(a5)			; BPLCON4 high
 	IFEQ bcc512_bplam_table_length_256
 		subq.b	#bcc512_step1,d1 ; next entry
@@ -628,7 +628,7 @@ blind_colorcycle512_loop3
 		subq.w	#bcc512_step1,d1 ; next entry
 		and.w	d7,d1		; remove overflow
 	ENDC
-	add.l	a6,a5			; 4th quadrant next line in cl
+	add.l	a6,a5			; 4th quadrant next line
 	dbf	d5,blind_colorcycle512_loop3
 	IFEQ bcc512_bplam_table_length_256
 		subq.b	#bcc512_step2,d2 ; next entry
@@ -706,7 +706,7 @@ blind_colorcycle514_loop3
 	move.b	d0,(a2)			; BPLCON4 high
 	sub.l	a6,a2			; 1st quadrant penultimate line in CL
 	move.b	d0,(a4)			; BPLCON4 high
-	add.l	a6,a4			; 3rd quadrant next line in cl
+	add.l	a6,a4			; 3rd quadrant next line
 	move.b	d0,(a5)			; BPLCON4 high
 	IFEQ bcc514_bplam_table_length_256
 		subq.b	#bcc514_step1,d1 ; next entry
@@ -714,7 +714,7 @@ blind_colorcycle514_loop3
 		subq.w	#bcc514_step1,d1 ; next entry
 		and.w	d7,d1		; remove overflow
 	ENDC
-	add.l	a6,a5			; 4th quadrant next line in cl
+	add.l	a6,a5			; 4th quadrant next line
 	dbf	d5,blind_colorcycle514_loop3
 	IFEQ bcc514_bplam_table_length_256
 		subq.b	#bcc514_step1,d2 ; next entry
@@ -781,15 +781,15 @@ blind_fader_in_loop2
 		move.w	(a0,d1.w*2),d0	; register address
 		IFNE cl2_size1
 			move.w	d0,(a1)
-			add.l	d4,a1	; next line in cl
+			add.l	d4,a1	; next line
 		ENDC
 		IFNE cl2_size2
 			move.w	d0,(a2)
-			add.l	d4,a2	; next line in cl
+			add.l	d4,a2	; next line
 		ENDC
 		move.w	d0,(a4)
 		addq.w	#bf_step1,d1	; next entry
-		add.l	d4,a4		; next line in cl
+		add.l	d4,a4		; next line
 		cmp.w	d3,d1		; end of table ?
 		blt.s	blind_fader_in_skip2
 		sub.w	d3,d1		; reset table start
@@ -840,15 +840,15 @@ blind_fader_out_loop2
 		move.w	(a0,d1.w*2),d0	; register address
 		IFNE cl2_size1
 			move.w	d0,(a1)
-			add.l	d4,a1	; next line in cl
+			add.l	d4,a1	; next line
 		ENDC
 		IFNE cl2_size2
 			move.w	d0,(a2)
-			add.l	d4,a2	; next line in cl
+			add.l	d4,a2	; next line
 		ENDC
 		move.w	d0,(a4)
 		addq.w	#bf_step1,d1	; next entry
-		add.l	d4,a4		; next line in cl
+		add.l	d4,a4		; next line
 		cmp.w	d3,d1		; end of table ?
 		blt.s	blind_fader_out_skip2
 		sub.w	d3,d1		; reset table start

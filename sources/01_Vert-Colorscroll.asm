@@ -659,9 +659,9 @@ vert_colorscroll3112_loop2
 	move.b	d0,(a2)			; BPLCON4 high
 	sub.l	a6,a2			; 1st quadrant penultimate line in cl
 	move.b	d0,(a4)			; BPLCON4 high
-	add.l	a6,a4			; 3rd quadrant next line in cl
+	add.l	a6,a4			; 3rd quadrant next line
 	move.b	d0,(a5)			; BPLCON4 high
-	add.l	a6,a5			; 4th quadrant next line in cl
+	add.l	a6,a5			; 4th quadrant next line
 	move.l	(a3,d4.w*4),d0		; sin(w)
 	MULUF.L vcs3112_step1_radius*2,d0 ; y'=(yr*sin(w))/2^15
 	addq.b	#vcs3112_step1_angle_step,d4
@@ -732,9 +732,9 @@ vert_colorscroll3121_loop2
 	move.b	d0,(a2)
 	sub.l	a6,a2			; 1st quadrant penultimate line in cl
 	move.b	d0,(a4)
-	add.l	a6,a4			; 3rd quadrant next line in cl
+	add.l	a6,a4			; 3rd quadrant next line
 	move.b	d0,(a5)
-	add.l	a6,a5			; 4th quadrant next line in cl
+	add.l	a6,a5			; 4th quadrant next line
 	move.l	(a3,d4.w*4),d0		; sin(w)
 	MULUF.L vcs3121_step1_radius*2,d0 ; y'=(yr*sin(w))/2^15
 	addq.b	#vcs3121_step1_angle_step,d4
@@ -805,7 +805,7 @@ vert_colorscroll3122_loop2
 	move.b	d0,(a2)
 	sub.l	a6,a2			; 1st quadrant penultimate line in cl
 	move.b	d0,(a4)
-	add.l	a6,a4			; 3rd quadrant next line in cl
+	add.l	a6,a4			; 3rd quadrant next line
 	move.b	d0,(a5)
 	IFEQ vcs3122_bplam_table_length_256
 		subq.b	#vcs3122_step1,d1 ; decrease table start
@@ -813,7 +813,7 @@ vert_colorscroll3122_loop2
 		subq.w	#vcs3122_step1,d1 ; decrease table start
 		and.w	d3,d1		; remove overflow
 	ENDC
-	add.l	a6,a5			; 4th quadrant next line in cl
+	add.l	a6,a5			; 4th quadrant next line
 	dbf	d6,vert_colorscroll3122_loop2
 	move.l	(a3,d4.w*4),d0		; sin(w)
 	MULUF.L vcs3122_step2*2,d0	; y'=(yr*sin(w))/2^15
@@ -878,7 +878,7 @@ vert_colorscroll_loop2
 	move.b	d0,(a2)
 	sub.l	a6,a2			; 1st quadrant penultimate line in cl
 	move.b	d0,(a4)
-	add.l	a6,a4			; 3rd quadrant next line in cl
+	add.l	a6,a4			; 3rd quadrant next line
 	move.b	d0,(a5)
 	IFEQ vcs3111_bplam_table_length_256
 		subq.b	#vcs3111_step1,d1 ; next entry
@@ -886,7 +886,7 @@ vert_colorscroll_loop2
 		subq.w	#vcs3111_step1,d1 ; next entry
 		and.w	d3,d1		; remove overflow
 	ENDC
-	add.l	a6,a5			; 4th quadrant next line in cl
+	add.l	a6,a5			; 4th quadrant next line
 	dbf	d6,vert_colorscroll_loop2
 	move.l	(a3,d4.w*4),d0		; sin(w)
 	MULUF.L vcs3111_step2_radius*2,d0 ; y'=(yr*sin(w))/2^15
@@ -945,15 +945,15 @@ blind_fader_in_loop2
 		move.w	(a0,d1.w*2),d0	; register address
 		IFNE cl2_size1
 			move.w	d0,(a1)
-			add.l	d4,a1	; next line in cl
+			add.l	d4,a1	; next line
 		ENDC
 		IFNE cl2_size2
 			move.w	d0,(a2)
-			add.l	d4,a2	; next line in cl
+			add.l	d4,a2	; next line
 		ENDC
 		move.w	d0,(a4)
 		addq.w	#bf_step1,d1	; next entry
-		add.l	d4,a4		; next line in cl
+		add.l	d4,a4		; next line
 		cmp.w	d3,d1		; end of table ?
 		blt.s	blind_fader_in_skip2
 		sub.w	d3,d1		; reset table start
@@ -1004,15 +1004,15 @@ blind_fader_out_loop2
 		move.w	(a0,d1.w*2),d0	; register address
 		IFNE cl2_size1
 			move.w	d0,(a1)
-			add.l	d4,a1	; next line in cl
+			add.l	d4,a1	; next line
 		ENDC
 		IFNE cl2_size2
 			move.w	d0,(a2)
-			add.l	d4,a2	; next line in cl
+			add.l	d4,a2	; next line
 		ENDC
 		move.w	d0,(a4)
 		addq.w	#bf_step1,d1	; next entry
-		add.l	d4,a4		; next line in cl
+		add.l	d4,a4		; next line
 		cmp.w	d3,d1		; end of table ?
 		blt.s	blind_fader_out_skip2
 		sub.w	d3,d1		; reset table start

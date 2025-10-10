@@ -579,14 +579,14 @@ vert_colorscroll_loop1
 vert_colorscroll_loop2
 	move.b	(a0,d1.w),d0		; BPLAM
 	move.b	d0,(a1)			; BPLCON4 high
-	add.l	d3,a1			; next line in cl
+	add.l	d3,a1			; next line
 	move.b	d0,(a4)			; BPLCON4 high
 	add.b	d2,d1			; next entry
-	add.l	d3,a4			; next line in cl
+	add.l	d3,a4			; next line
 	dbf	d6,vert_colorscroll_loop2
 	addq.b	#vcs4_step2,d1		; increase table start
 	addq.b	#vcs4_figures_number,d2 
-	addq.w	#LONGWORD_SIZE,a2	; next column in cl
+	addq.w	#LONGWORD_SIZE,a2	; next column
 	subq.w	#LONGWORD_SIZE,a5	; penultimate comumn in cl
 	dbf	d7,vert_colorscroll_loop1
 vert_colorscroll4_quit
@@ -618,7 +618,7 @@ vert_colorscroll5_even_loop2
 	move.b	d0,cl2_extension1_size*vcs5_twist_lines_number*5*2(a1)
 	addq.b	#vcs5_bplam_table_step,d1
 	move.b	d0,(cl2_extension1_size*vcs5_twist_lines_number*6*2,a1)
-	addq.w	#LONGWORD_SIZE,a1	; next column in cl
+	addq.w	#LONGWORD_SIZE,a1	; next column
 	move.b	d0,((cl2_extension1_size*vcs5_twist_lines_number*7*2)-LONGWORD_SIZE,a1)
 	dbf	d6,vert_colorscroll5_even_loop2
 	IFEQ open_border_enabled
@@ -654,7 +654,7 @@ vert_colorscroll5_odd_loop2
 	move.b	d0,cl2_extension1_size*vcs5_twist_lines_number*5*2(a1)
 	addq.b	#vcs5_bplam_table_step,d1 ; next entry
 	move.b	d0,(cl2_extension1_size*vcs5_twist_lines_number*6*2,a1)
-	addq.w	#LONGWORD_SIZE,a1	; next column in cl
+	addq.w	#LONGWORD_SIZE,a1	; next column
 	move.b	d0,((cl2_extension1_size*vcs5_twist_lines_number*7*2)-LONGWORD_SIZE,a1)
 	dbf	d6,vert_colorscroll5_odd_loop2
 	IFEQ open_border_enabled
@@ -701,15 +701,15 @@ blind_fader_in_loop2
 		move.w	(a0,d1.w*2),d0	; register address
 		IFNE cl2_size1
 			move.w	d0,(a1)
-			add.l	d4,a1	; next line in cl
+			add.l	d4,a1	; next line
 		ENDC
 		IFNE cl2_size2
 			move.w	d0,(a2)
-			add.l	d4,a2	; next line in cl
+			add.l	d4,a2	; next line
 		ENDC
 		move.w	d0,(a4)
 		addq.w	#bf_step1,d1	; next entry
-		add.l	d4,a4		; next line in cl
+		add.l	d4,a4		; next line
 		cmp.w	d3,d1		; end of table ?
 		blt.s	blind_fader_in_skip2
 		sub.w	d3,d1		; reset table start
@@ -759,15 +759,15 @@ blind_fader_out_loop2
 		move.w	(a0,d1.w*2),d0	; register addresss
 		IFNE cl2_size1
 			move.w	d0,(a1)
-			add.l	d4,a1	; next line in cl
+			add.l	d4,a1	; next line
 		ENDC
 		IFNE cl2_size2
 			move.w	d0,(a2)
-			add.l	d4,a2	; next line in cl
+			add.l	d4,a2	; next line
 		ENDC
 		move.w	d0,(a4)
 		addq.w	#bf_step1,d1	; next entry
-		add.l	d4,a4		; next line in cl
+		add.l	d4,a4		; next line
 		cmp.w	d3,d1		; end of table ?
 		blt.s	blind_fader_out_skip2
 		sub.w	d3,d1		; reset table start

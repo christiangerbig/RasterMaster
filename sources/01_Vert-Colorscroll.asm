@@ -663,7 +663,7 @@ vert_colorscroll3112_loop2
 	move.b	d0,(a5)			; BPLCON4 high
 	add.l	a6,a5			; 4th quadrant next line
 	move.l	(a3,d4.w*4),d0		; sin(w)
-	MULUF.L vcs3112_step1_radius*2,d0 ; y'=(yr*sin(w))/2^15
+	MULUF.L vcs3112_step1_radius*2,d0 ; y' = (yr*sin(w))/2^15
 	addq.b	#vcs3112_step1_angle_step,d4
 	swap	d0
 	add.w	#vcs3112_step1_center,d0
@@ -736,7 +736,7 @@ vert_colorscroll3121_loop2
 	move.b	d0,(a5)
 	add.l	a6,a5			; 4th quadrant next line
 	move.l	(a3,d4.w*4),d0		; sin(w)
-	MULUF.L vcs3121_step1_radius*2,d0 ; y'=(yr*sin(w))/2^15
+	MULUF.L vcs3121_step1_radius*2,d0 ; y' = (yr*sin(w))/2^15
 	addq.b	#vcs3121_step1_angle_step,d4
 	swap	d0
 	addq.w	#vcs3121_step1_center,d0
@@ -816,7 +816,7 @@ vert_colorscroll3122_loop2
 	add.l	a6,a5			; 4th quadrant next line
 	dbf	d6,vert_colorscroll3122_loop2
 	move.l	(a3,d4.w*4),d0		; sin(w)
-	MULUF.L vcs3122_step2*2,d0	; y'=(yr*sin(w))/2^15
+	MULUF.L vcs3122_step2*2,d0	; y' = (yr*sin(w))/2^15
 	addq.b	#vcs3122_step2_angle_step,d4
 	swap	d0
 	addq.w	#vcs3122_step2_center,d0
@@ -889,7 +889,7 @@ vert_colorscroll_loop2
 	add.l	a6,a5			; 4th quadrant next line
 	dbf	d6,vert_colorscroll_loop2
 	move.l	(a3,d4.w*4),d0		; sin(w)
-	MULUF.L vcs3111_step2_radius*2,d0 ; y'=(yr*sin(w))/2^15
+	MULUF.L vcs3111_step2_radius*2,d0 ; y' = (yr*sin(w))/2^15
 	addq.b	#vcs3111_step2_angle_step,d4
 	swap	d0
 	add.w	#vcs3111_step2_center,d0

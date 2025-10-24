@@ -891,7 +891,7 @@ vert_text_scroll_skip
 vert_text_scroll_init
 	move.w	#DMAF_BLITHOG|DMAF_SETCLR,DMACON-DMACONR(a6)
 	WAITBLIT
-	move.l	#(BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC)<<16,BLTCON0-DMACONR(a6) ; minterm D=A
+	move.l	#(BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC)<<16,BLTCON0-DMACONR(a6) ; minterm D = A
 	moveq	#-1,d0
 	move.l	d0,BLTAFWM-DMACONR(a6)
 	move.l	#((vts_image_plane_width-vts_text_char_width)<<16)|(vts_buffer_width-vts_text_char_width),BLTAMOD-DMACONR(a6) ; A&D moduli
@@ -947,7 +947,7 @@ image_fader_in_skip
 	MOVEF.W if_rgb8_colors_number*3,d6 ; RGB counter
 	lea	sine_table,a0	
 	move.l	(a0,d2.w*4),d0		; sin(w)
-	MULUF.L ifi_rgb8_fader_radius*2,d0,d1 ; y'=(yr*sin(w))/2^15
+	MULUF.L ifi_rgb8_fader_radius*2,d0,d1 ; y' = (yr*sin(w))/2^15
 	swap	d0
 	ADDF.W	ifi_rgb8_fader_center,d0
 	lea	pf1_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; colors buffer
@@ -984,7 +984,7 @@ image_fader_out_skip
 	MOVEF.W if_rgb8_colors_number*3,d6 ; RGB counter
 	lea	sine_table,a0	
 	move.l	(a0,d2.w*4),d0		; sin(w)
-	MULUF.L ifo_rgb8_fader_radius*2,d0,d1 ; y'=(yr*sin(w))/2^15
+	MULUF.L ifo_rgb8_fader_radius*2,d0,d1 ; y' = (yr*sin(w))/2^15
 	swap	d0
 	ADDF.W	ifo_rgb8_fader_center,d0
 	lea	pf1_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; colors buffer
@@ -1021,7 +1021,7 @@ scroll_logo_left_in
 	bgt.s	scroll_logo_left_in_quit
 	lea	sine_table,a0	
 	move.l	(a0,d2.w*4),d1		; sin(w)
-	MULUF.L sll_x_radius*2*4,d1,d0	; x'=xr*sin(w)/2^16
+	MULUF.L sll_x_radius*2*4,d1,d0	; x' = xr*sin(w)/2^16
 	swap	d1
 	add.w	#sll_x_center*4,d1
 	MOVEF.W lg_image_x_position*SHIRES_PIXEL_FACTOR,d0
@@ -1062,7 +1062,7 @@ scroll_logo_left_out
 	bgt.s	scroll_logo_left_out_quit
 	lea	sine_table,a0	
 	move.l	(a0,d2.w*4),d1		; cos(w)
-	MULUF.L sll_x_radius*2*4,d1,d0	; x'=xr*cos(w)/2^16
+	MULUF.L sll_x_radius*2*4,d1,d0	; x' = xr*cos(w)/2^16
 	swap	d1
 	add.w	#sll_x_center*4,d1
 	MOVEF.W lg_image_x_position*SHIRES_PIXEL_FACTOR,d0

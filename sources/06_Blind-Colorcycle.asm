@@ -576,7 +576,7 @@ blind_colorcycle512
 	move.w	d0,bcc512_step3_angle(a3)
 	lea	sine_table,a0	
 	move.l	(a0,d1.w*4),d4		; cos(w)
-	MULUF.L bcc512_step3_radius*2,d4,d0 ; r'=r*cow(w)/2^15
+	MULUF.L bcc512_step3_radius*2,d4,d0 ; r' = r*cow(w)/2^15
 	swap	d4
 	ADDF.W	bcc512_step3_center,d4
 	move.w	bcc512_bplam_table_start(a3),d3
@@ -616,9 +616,9 @@ blind_colorcycle512_loop2
 blind_colorcycle512_loop3
 	move.b	(a0,d1.w),d0		; BPLAM
 	move.b	d0,(a1)			; BPLCON4 high
-	sub.l	a6,a1			; 2nd quadrant penultimate line in cl
+	sub.l	a6,a1			; 2nd quadrant penultimate line
 	move.b	d0,(a2)			; BPLCON4 high
-	sub.l	a6,a2			; 1st quadrant penultimate line in cl
+	sub.l	a6,a2			; 1st quadrant penultimate line
 	move.b	d0,(a4)			; BPLCON4 high
 	add.l	a6,a4			; 3rd quadrant next line
 	move.b	d0,(a5)			; BPLCON4 high
@@ -702,9 +702,9 @@ blind_colorcycle514_loop2
 blind_colorcycle514_loop3
 	move.b	(a0,d1.w),d0		; BPLAM-Wert
 	move.b	d0,(a1)			; BPLCON4 high
-	sub.l	a6,a1			; 2nd quadrant penultimate line in CL
+	sub.l	a6,a1			; 2nd quadrant penultimate line
 	move.b	d0,(a2)			; BPLCON4 high
-	sub.l	a6,a2			; 1st quadrant penultimate line in CL
+	sub.l	a6,a2			; 1st quadrant penultimate line
 	move.b	d0,(a4)			; BPLCON4 high
 	add.l	a6,a4			; 3rd quadrant next line
 	move.b	d0,(a5)			; BPLCON4 high

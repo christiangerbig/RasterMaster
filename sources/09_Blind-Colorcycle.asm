@@ -550,7 +550,7 @@ blind_colorcycle5242_loop3
 	add.l	a4,a1			; next line
 	dbf	d5,blind_colorcycle5242_loop3
 	move.l	(a5,d3.w*4),d0		; cos(w)
-	MULUF.L bcc_5242_step2_radius*2,d0 ; r'=r*cow(w)/2^15
+	MULUF.L bcc_5242_step2_radius*2,d0 ; r' = r*cow(w)/2^15
 	swap	d0
 	add.w	a6,d0			; add center
 	subq.b	#bcc_5242_step2_angle_step,d3

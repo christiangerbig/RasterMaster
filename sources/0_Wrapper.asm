@@ -793,12 +793,12 @@ custom_memory_table
 ; PT-Replay
 	IFEQ pt_split_module_enabled
 pt_auddata			SECTION pt_audio,DATA
-		INCBIN "RasterMaster:modules/mod.Gone(re-remix).song.stc"
+		INCBIN "RasterMaster:trackermodules/mod.Gone(re-remix).song.stc"
 pt_audsmps			SECTION pt_audio2,DATA_C
-		INCBIN "RasterMaster:modules/mod.Gone(re-remix).smps.stc"
+		INCBIN "RasterMaster:trackermodules/mod.Gone(re-remix).smps.stc"
 	ELSE
 pt_auddata			SECTION pt_audio,DATA_C
-		INCBIN "RasterMaster:modules/mod.Gone(re-remix)"
+		INCBIN "RasterMaster:trackermodules/mod.Gone(re-remix)"
 	ENDC
 
 	END

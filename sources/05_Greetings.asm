@@ -983,7 +983,7 @@ bf_init_bitmap_lines_table
 	move.w	d5,d4			; destination height in pixel
 	move.l	d3,d2		 	; low longword: source height
 	moveq	#0,d6 			; high longword: source height
-	divu.l	d4,d6:d2		; F=source height/destination height
+	divu.l	d4,d6:d2		; F = source height/destination height
 	moveq	#0,d1
 	move.w	d4,d6			; destination height
 	subq.w	#1,d6			; loop until false
@@ -1045,7 +1045,7 @@ cl1_init_copperlist_branch
 	CNOP 0,4
 cl1_init_copy_blit
 	COP_WAITBLIT
-	COP_MOVEQ BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC,BLTCON0 ; minterm D=A
+	COP_MOVEQ BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC,BLTCON0 ; minterm D = A
 	COP_MOVEQ 0,BLTCON1
 	COP_MOVEQ -1,BLTAFWM
 	COP_MOVEQ -1,BLTALWM
@@ -1068,7 +1068,7 @@ cl1_init_copy_blit
 cl1_init_horiz_scroll_blit
 	COP_WAITBLIT
 	COP_MOVEQ DMAF_BLITHOG|DMAF_SETCLR,DMACON
-	COP_MOVEQ ((-ss_horiz_scroll_speed<<12)|BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC),BLTCON0 ; minterm D=A
+	COP_MOVEQ ((-ss_horiz_scroll_speed<<12)|BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC),BLTCON0 ; minterm D = A
 	COP_MOVEQ 0,BLTCON1
 	move.l	extra_pf1(a3),a1
 	move.l	(a1),d0			; source
@@ -1165,7 +1165,7 @@ cl2_init_sine_scroll_blits
 	ADDF.L	ss_text_y_position*extra_pf1_plane_width*extra_pf1_depth,d3
 	moveq	#(visible_pixels_number/WORD_BITS)-1,d7
 cl2_init_sine_scroll_blits_loop1
-	COP_MOVEQ BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC,BLTCON0 ; minterm D=A
+	COP_MOVEQ BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC,BLTCON0 ; minterm D = A
 	MOVEF.W $ff>>(8-ss_text_columns_x_size),d1 ; mask
 	COP_MOVE d1,BLTALWM
 	swap	d2
@@ -1176,7 +1176,7 @@ cl2_init_sine_scroll_blits_loop1
 	COP_MOVEQ 0,BLTDPTL
 	COP_MOVEQ ((ss_sine_char_y_size1*ss_sine_char_depth)<<6)|(ss_sine_char_x_size/WORD_BITS),BLTSIZE
 	COP_WAITBLIT
-	COP_MOVEQ BC0F_SRCA|BC0F_SRCB|BC0F_DEST|NABNC|NABC|ANBNC|ANBC|ABNC|ABC,BLTCON0 ; minterm D=A+B
+	COP_MOVEQ BC0F_SRCA|BC0F_SRCB|BC0F_DEST|NABNC|NABC|ANBNC|ANBC|ABNC|ABC,BLTCON0 ; minterm D = A+B
 	subq.l	#ss_sine_char_width,d2 ; next character in source1
 	moveq	#(ss_text_columns_per_word-1)-1,d6
 cl2_init_sine_scroll_blits_loop2
@@ -1216,7 +1216,7 @@ cl2_init_copperlist_branch
 	CNOP 0,4
 cl2_init_clear_blit
 	COP_MOVEQ DMAF_BLITHOG,DMACON
-	COP_MOVEQ BC0F_DEST|ANBNC|ANBC|ABNC|ABC,BLTCON0 ; minterm D=A
+	COP_MOVEQ BC0F_DEST|ANBNC|ANBC|ABNC|ABC,BLTCON0 ; minterm D = A
 	COP_MOVEQ -1,BLTALWM
 	COP_MOVEQ 0,BLTDPTH
 	COP_MOVEQ 0,BLTDPTL
@@ -1628,7 +1628,7 @@ bf_set_bars_loop2
 	MULSF.W bf_d,d0			; y*d
 	moveq	#bf_d,d2
 	add.w	d1,d2			; z+d
-	divs.w	d2,d0			; y'=(y*d)/(z+d)
+	divs.w	d2,d0			; y' = (y*d)/(z+d)
 	add.w	a6,d0			; y' + y center
 	bmi.s	bf_set_bars_skip3
 	cmp.w	d3,d0			; y max ?
@@ -1732,9 +1732,9 @@ we_get_y_coordinates
 	moveq	#cl2_display_width-1,d7	; number of columns
 we_get_y_coordinates_loop
 	move.l	(a0,d2.w*4),d0		; sin(w)
-	MULUF.L we_y_radius*4,d0,d1	; yr'=(yr*sin(w))/2^15
+	MULUF.L we_y_radius*4,d0,d1	; yr' = (yr*sin(w))/2^15
 	swap	d0
-	muls.w	WORD_SIZE(a0,d3.w*4),d0	; y'=(yr'*sin(w))/2^15
+	muls.w	WORD_SIZE(a0,d3.w*4),d0	; y' = (yr'*sin(w))/2^15
 	swap	d0
 	move.w	d0,(a1)+		; y position
 	addq.b	#we_y_radius_angle_step,d2

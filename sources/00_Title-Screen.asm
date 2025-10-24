@@ -843,7 +843,7 @@ fetch_channels_data
 
 
 ; Input
-; d6.l	clock constant=PAL clock constant/PAL frequency
+; d6.l	clock constant = PAL clock constant/PAL frequency
 ; d7.w	Number of samplebytes to fetch
 ; a0.l	 temporary audio channel structure
 ; a2.l	 table with channel amplitudes
@@ -865,7 +865,7 @@ fetch_sample_data_skip1
 	move.w	n_chandatapos(a0),d2
 	move.l	d2,d5			; position in sample data
 	move.l	d6,d3			; clock constant
-	divu.w	d0,d3			; samplebytes per frame=clock constant/note period
+	divu.w	d0,d3			; samplebytes per frame = clock constant/note period
 	moveq	#0,d4
 	ext.l	d3
 	move.w	n_currentlength(a0),d4
@@ -874,7 +874,7 @@ fetch_sample_data_skip1
 fetch_sample_data_loop
 	move.b	(a1,d2.l),d0		; fetch audio data
 	ext.w	d0
-	muls.w	d1,d0			; amplitude=(audio data*current volume)/volume max
+	muls.w	d1,d0			; amplitude = (audio data*current volume)/volume max
 	asr.w	#6,d0
 	move.w	d0,(a2)+
 	addq.w	#BYTE_SIZE,d2		; next audio data
@@ -957,7 +957,7 @@ image_fader_in_skip
 	MOVEF.W if_rgb8_colors_number*3,d6 ; RGB counter
 	lea	sine_table(pc),a0	
 	move.l	(a0,d2.w*4),d0		; sin(w)
-	MULUF.L ifi_rgb8_fader_radius*2,d0,d1	; y'=(yr*sin(w))/2^15
+	MULUF.L ifi_rgb8_fader_radius*2,d0,d1	; y' = (yr*sin(w))/2^15
 	swap	d0
 	ADDF.W	ifi_rgb8_fader_center,d0
 	lea	pf1_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; colors buffer
@@ -994,7 +994,7 @@ image_fader_out_skip
 	MOVEF.W if_rgb8_colors_number*3,d6 ; RGB counter
 	lea	sine_table(pc),a0	
 	move.l	(a0,d2.w*4),d0		; sin(w)
-	MULUF.L ifo_rgb8_fader_radius*2,d0,d1 ; y'=(yr*sin(w))/2^15
+	MULUF.L ifo_rgb8_fader_radius*2,d0,d1 ; y' = (yr*sin(w))/2^15
 	swap	d0
 	ADDF.W	ifo_rgb8_fader_center,d0
 	lea	pf1_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; colors buffer
@@ -1037,7 +1037,7 @@ image_pixel_fader_in_skip1
 	move.w	d0,ipfi_delay_angle(a3)
 	lea	sine_table(pc),a0 
 	move.l	(a0,d2.w*4),d0		; sin(w)
-	MULUF.L ipfi_delay_radius*2,d0,d1 ; delay'=(delay*sin(w))/2^16
+	MULUF.L ipfi_delay_radius*2,d0,d1 ; delay' = (delay*sin(w))/2^16
 	swap	d0
 	addq.w	#ipfi_delay_center,d0
 	move.w	d0,ipfi_delay_counter(a3)
@@ -1055,7 +1055,7 @@ image_pixel_fader_in_skip2
 	move.l	d3,d2		 	; low longword: size of source
 	moveq	#0,d7 			; high longword: size of source
 	moveq	#0,d5			; mask
-	divu.l	d4,d7:d2		; F=source width/destination width
+	divu.l	d4,d7:d2		; F = source width/destination width
 	move.w	d4,d7			; destination width
 	subq.w	#1,d7			; loopend at false
 image_pixel_fader_in_in_loop
@@ -1087,7 +1087,7 @@ image_pixel_fader_out_skip1
 	move.w	d0,ipfo_delay_angle(a3)
 	lea	sine_table(pc),a0	
 	move.l	(a0,d2.w*4),d0		; sin(w)
-	MULUF.L ipfo_delay_radius*2,d0,d1 ; delay'=(delay*sin(w))/2^16
+	MULUF.L ipfo_delay_radius*2,d0,d1 ; delay' = (delay*sin(w))/2^16
 	swap	d0
 	ADDF.W	ipfo_delay_center,d0
 	move.w	d0,ipfo_delay_counter(a3)

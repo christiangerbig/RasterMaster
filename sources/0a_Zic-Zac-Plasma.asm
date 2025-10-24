@@ -564,9 +564,9 @@ vert_shade_bars
 	moveq	#vsb_bars_number-1,d7
 vert_shade_bars_loop
 	move.w	WORD_SIZE(a0,d2.w*4),d0	; cos(w)
-	muls.w	d4,d0			; yr'=(yr*cos(w))/2*^15
+	muls.w	d4,d0			; yr' = (yr*cos(w))/2*^15
 	swap	d0
-	muls.w	WORD_SIZE(a0,d3.w*4),d0	; y'=(yr'*sin(w))/2*^15
+	muls.w	WORD_SIZE(a0,d3.w*4),d0	; y' = (yr'*sin(w))/2*^15
 	swap	d0
 	add.w	a2,d0			; y' + y center
 	addq.b	#1,(a1,d0.w*2)		; increase color number
@@ -604,7 +604,7 @@ zzp5_get_y_coordinates
 	move.w	d2,d0		
 	lea	sine_table_512,a0	
 	move.w	WORD_SIZE(a0,d2.w*4),d2	; sin(w)
-	asr.w	#8,d2			; yr'=(yr*sin(w))/2^15
+	asr.w	#8,d2			; yr' = (yr*sin(w))/2^15
 	addq.w	#zzp5_y_radius_angle_speed,d0
 	MOVEF.W sine_table_length-1,d6	; overflow 360°
 	move.w	zzp5_y_angle(a3),d3	; 1st y angle
@@ -626,7 +626,7 @@ zzp5_get_y_coordinates
 	moveq	#cl2_display_width-1,d7 ; number of columns
 zzp5_get_y_coordinates_loop
 	move.w	d2,d0
-	muls.w	WORD_SIZE(a0,d3.w*4),d0	; y'=(yr'*sin(w))/2^15
+	muls.w	WORD_SIZE(a0,d3.w*4),d0	; y' = (yr'*sin(w))/2^15
 	swap	d0
 	add.w	d1,d0			; y' + y center
 	WAITBLIT
@@ -646,7 +646,7 @@ zzp5_get_y_coordinates_loop
 zzp5_get_y_coordinates_init
 	move.w	#DMAF_BLITHOG|DMAF_SETCLR,DMACON-DMACONR(a6)
 	WAITBLIT
-	move.l	#(BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC)<<16,BLTCON0-DMACONR(a6) ; minterm D=A
+	move.l	#(BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC)<<16,BLTCON0-DMACONR(a6) ; minterm D = A
 	moveq	#-1,d0
 	move.l	d0,BLTAFWM-DMACONR(a6)
 	move.l	#cl2_extension1_size-zzp5_copy_blit_width,BLTAMOD-DMACONR(a6) ; A&D moduli
@@ -663,7 +663,7 @@ vert_border_fader_out
 	move.w	d0,vbf_fader_angle(a3) 
 	lea	sine_table_512,a0	
 	move.l	(a0,d1.w*4),d0		; sin(w)
-	MULUF.L vbfo_fader_radius*2,d0,d1 ; y'=(yr*sin(w))/2^15
+	MULUF.L vbfo_fader_radius*2,d0,d1 ; y' = (yr*sin(w))/2^15
 	swap	d0
 	add.w	#vbfo_fader_center,d0
 	move.w	vbf_display_window_vstart(a3),d2

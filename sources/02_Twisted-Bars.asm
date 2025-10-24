@@ -601,7 +601,7 @@ tb315_get_yz_coordinates
 	move.w	d0,tb315_y_angle_speed_angle(a3)
 	lea	sine_table(pc),a0 
 	move.l	(a0,d1.w*4),d1		; sin(w)
-	MULUF.L tb315_y_angle_speed*2,d1,d0 ; y'=(yr*sin(w))/2^15
+	MULUF.L tb315_y_angle_speed*2,d1,d0 ; y' = (yr*sin(w))/2^15
 	swap	d1
 	move.w	tb315_y_angle(a3),d2	; 1st y angle
 	move.w	d2,d0		
@@ -619,7 +619,7 @@ tb315_get_yz_coordinates_loop2
 	add.w	d2,d1			; y angle - 90°
 	ext.w	d1
 	move.w	d1,(a1)+		; z vector
-	MULUF.L tb315_y_radius*2,d0,d1	; y'=(yr*sin(w))/2^15
+	MULUF.L tb315_y_radius*2,d0,d1	; y' = (yr*sin(w))/2^15
 	swap	d0
 	add.w	a2,d0			; y' + y center
 	MULUF.W cl2_extension1_size/4,d0,d1 ; y offset in cl
@@ -649,8 +649,8 @@ we_get_y_coordinates
 we_get_y_coordinates_loop
 	move.l	(a0,d2.w*4),d0	;sin(w)
 	MULUF.L we_y_radius*2,d0,d1
-	swap	d0			; yr'=(yr*sin(w))/2^15
-	muls.w	WORD_SIZE(a0,d3.w*4),d0	; y'=(yr'*sin(w))/2^15
+	swap	d0			; yr' = (yr*sin(w))/2^15
+	muls.w	WORD_SIZE(a0,d3.w*4),d0	; y' = (yr'*sin(w))/2^15
 	swap	d0
 	add.w	a2,d0			; y' + y center
 	addq.b	#we_y_radius_angle_step,d2

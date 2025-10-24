@@ -559,12 +559,12 @@ custom_memory_table
 ; PT-Replay
 	IFEQ pt_split_module_enabled
 pt_auddata			SECTION pt_audio,DATA
-		INCBIN "RasterMaster:modules/mod.CR78-Song.song.stc"
+		INCBIN "RasterMaster:trackermodules/mod.CR78-Song.song.stc"
 pt_audsmps			SECTION pt_audio2,DATA_C
-		INCBIN "RasterMaster:modules/mod.CR78-Song.smps.stc"
+		INCBIN "RasterMaster:trackermodules/mod.CR78-Song.smps.stc"
 	ELSE
 pt_auddata			SECTION pt_audio,DATA_C
-		INCBIN "RasterMaster:modules/mod.CR78-Song"
+		INCBIN "RasterMaster:trackermodules/mod.CR78-Song"
 	ENDC
 
 	END

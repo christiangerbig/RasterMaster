@@ -570,11 +570,11 @@ vert_colorscroll4
 	move.l	extra_memory(a3),a0	; BPLAM table
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
-	lea	(cl2_display_width-1)*4(a2),a5 ; end of line in cl
+	lea	(cl2_display_width-1)*4(a2),a5 ; end of line
 	moveq	#(cl2_display_width/2)-1,d7 ; number of columns
 vert_colorscroll_loop1
-	move.l	a2,a1			; CL
-	move.l	a5,a4			; end of line in cl
+	move.l	a2,a1			; cl
+	move.l	a5,a4			; end of line
 	MOVEF.W cl2_display_y_size-1,d6
 vert_colorscroll_loop2
 	move.b	(a0,d1.w),d0		; BPLAM
@@ -587,7 +587,7 @@ vert_colorscroll_loop2
 	addq.b	#vcs4_step2,d1		; increase table start
 	addq.b	#vcs4_figures_number,d2 
 	addq.w	#LONGWORD_SIZE,a2	; next column
-	subq.w	#LONGWORD_SIZE,a5	; penultimate comumn in cl
+	subq.w	#LONGWORD_SIZE,a5	; penultimate comumn
 	dbf	d7,vert_colorscroll_loop1
 vert_colorscroll4_quit
 	movem.l (a7)+,a4-a5
@@ -622,9 +622,9 @@ vert_colorscroll5_even_loop2
 	move.b	d0,((cl2_extension1_size*vcs5_twist_lines_number*7*2)-LONGWORD_SIZE,a1)
 	dbf	d6,vert_colorscroll5_even_loop2
 	IFEQ open_border_enabled
-		addq.w	#QUADWORD_SIZE,a1 ; skip CWAIT+CMOVE in cl
+		addq.w	#QUADWORD_SIZE,a1 ; skip CWAIT+CMOVE
 	ELSE
-		addq.w	#LONGWORD_SIZE,a1 ; skip CWAIT in cl
+		addq.w	#LONGWORD_SIZE,a1 ; skip CWAIT
 	ENDC
 	dbf	d7,vert_colorscroll5_even_loop1
 	rts
@@ -658,9 +658,9 @@ vert_colorscroll5_odd_loop2
 	move.b	d0,((cl2_extension1_size*vcs5_twist_lines_number*7*2)-LONGWORD_SIZE,a1)
 	dbf	d6,vert_colorscroll5_odd_loop2
 	IFEQ open_border_enabled
-		addq.w	#QUADWORD_SIZE,a1 ; skip CWAIT+CMOVE in cl
+		addq.w	#QUADWORD_SIZE,a1 ; skip CWAIT+CMOVE
 	ELSE
-		addq.w	#LONGWORD_SIZE,a1 ; skip CWAIT in cl
+		addq.w	#LONGWORD_SIZE,a1 ; skip CWAIT
 	ENDC
 	dbf	d7,vert_colorscroll5_odd_loop1
 	rts

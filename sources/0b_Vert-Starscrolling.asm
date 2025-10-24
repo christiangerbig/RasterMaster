@@ -939,7 +939,7 @@ vert_starscrolling
 	move.l	vss_bplam_table_mask(a3),a2 ; Maske
 	add.l	#(vss_z_planes_number-1)*vss_star_x_size,a2 ; mask
 	move.l	vss_bplam_buffer_construction2(a3),a4 ; destination: buffer
-	move.w	#BC0F_SRCA|BC0F_SRCB|BC0F_SRCC|BC0F_DEST+NANBC|NABC|ABNC|ABC,a3 ; minterm D=A+B
+	move.w	#BC0F_SRCA|BC0F_SRCB|BC0F_SRCC|BC0F_DEST+NANBC|NABC|ABNC|ABC,a3 ; minterm D = A+B
 	move.w	#((vss_copy_blit_y_size)<<6)|((vss_copy_blit_x_size+16)/WORD_BITS),a5
 	move.w	#(16<<6)|(16/WORD_BITS),a7 ; addition value blit size
 	moveq	#vss_z_planes_number-1,d7
@@ -1001,7 +1001,7 @@ vert_starscrolling_init
 vss_clear_bplam_buffer
 	move.l	vss_bplam_buffer_construction1(a3),a0
 	WAITBLIT
-	move.l	#(BC0F_DEST|ANBNC|ANBC|ABNC|ABC)<<16,BLTCON0-DMACONR(a6) ; minterm D=A
+	move.l	#(BC0F_DEST|ANBNC|ANBC|ABNC|ABC)<<16,BLTCON0-DMACONR(a6) ; minterm D = A
 	moveq	#-1,d0
 	move.l	d0,BLTAFWM-DMACONR(a6)
 	add.l	#vss_bplam_buffer_x_size*vss_star_y_size3,a0 ; skip n lines
@@ -1122,7 +1122,7 @@ image_fader_in_skip
 	MOVEF.W if_rgb8_colors_number*3,d6 ; RGB counter
 	lea	sine_table,a0	
 	move.l	(a0,d2.w*4),d0		; sin(w)
-	MULUF.L ifi_rgb8_fader_radius*2,d0,d1 ; y'=(yr*sin(w))/2^15
+	MULUF.L ifi_rgb8_fader_radius*2,d0,d1 ; y' = (yr*sin(w))/2^15
 	swap	d0
 	addq.w	#ifi_rgb8_fader_center,d0
 	lea	pf1_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; colors buffer
@@ -1159,7 +1159,7 @@ image_fader_out_skip
 	MOVEF.W if_rgb8_colors_number*3,d6 ; RGB counter
 	lea	sine_table,a0	
 	move.l	(a0,d2.w*4),d0		; sin(w)
-	MULUF.L ifo_rgb8_fader_radius*2,d0,d1 ; y'=(yr*sin(w))/2^15
+	MULUF.L ifo_rgb8_fader_radius*2,d0,d1 ; y' = (yr*sin(w))/2^15
 	swap	d0
 	addq.w	#ifo_rgb8_fader_center,d0
 	lea	pf1_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; colors buffer
@@ -1202,7 +1202,7 @@ image_pixel_fader_in_skip1
 	move.w	d0,ipfi_delay_angle(a3)
 	lea	sine_table,a0
 	move.l	(a0,d2.w*4),d0		; sin(w)
-	MULUF.L	ipfi_delay_radius*2,d0,d1 ; delay'=(delay*sin(w))/2^16
+	MULUF.L	ipfi_delay_radius*2,d0,d1 ; delay' = (delay*sin(w))/2^16
 	swap	d0
 	addq.w	#ipfi_delay_center,d0
 	move.w	d0,ipfi_delay_counter(a3)
@@ -1220,7 +1220,7 @@ image_pixel_fader_in_skip2
 	move.l	d3,d2		 	; low longword: source size
 	moveq	#0,d7 			; high longword: source size
 	moveq	#0,d5			; mask
-	divu.l	d4,d7:d2		; F=source width/destination width
+	divu.l	d4,d7:d2		; F = source width/destination width
 	move.w	d4,d7			; destination width
 	subq.w	#1,d7			; loopend at false
 image_pixel_fader_in_in_loop
@@ -1252,7 +1252,7 @@ image_pixel_fader_skip1
 	move.w	d0,ipfo_delay_angle(a3)
 	lea	sine_table,a0
 	move.l	(a0,d2.w*4),d0		; sin(w)
-	MULUF.L	ipfo_delay_radius*2,d0,d1 ; delay'=(delay*sin(w))/2^16
+	MULUF.L	ipfo_delay_radius*2,d0,d1 ; delay' = (delay*sin(w))/2^16
 	swap	d0
 	ADDF.W	ipfo_delay_center,d0
 	move.w	d0,ipfo_delay_counter(a3)
@@ -1271,7 +1271,7 @@ image_pixel_fader_skip2
 	move.l	d3,d2		 	; low longword: source size
 	moveq	#0,d7 			; high longword: source size
 	moveq	#0,d5			; mask
-	divu.l	d4,d7:d2		; F=source width/destination width
+	divu.l	d4,d7:d2		; F = source width/destination width
 	move.w	d4,d7			; destination width
 	subq.w	#1,d7			; loopend at false
 image_pixel_fader_out_loop

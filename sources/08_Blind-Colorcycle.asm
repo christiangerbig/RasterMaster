@@ -182,7 +182,7 @@ sine_table_length		EQU 256
 bcc5212_bar_height		EQU 64
 bcc5212_bars_number		EQU 4
 bcc5212_lamella_height		EQU 16
-bcc5212_lamellas_number		EQU visible_lines_number/bcc5212_lamella_height
+bcc5212_lamellas_number		EQU cl2_display_y_size/bcc5212_lamella_height
 bcc5212_step1			EQU 1
 bcc5212_step2			EQU 1
 bcc5212_step3			EQU 4
@@ -198,7 +198,7 @@ bcc5212_speed_angle_step	EQU 1
 bcc523_bar_height		EQU 64
 bcc523_bars_number		EQU 4
 bcc523_lamella_height		EQU 16
-bcc523_lamellas_number		EQU visible_lines_number/bcc523_lamella_height
+bcc523_lamellas_number		EQU cl2_display_y_size/bcc523_lamella_height
 bcc523_step1			EQU 1
 bcc523_step2_min		EQU 1
 bcc523_step2_max		EQU 16
@@ -211,7 +211,7 @@ bcc523_speed			EQU 2
 
 ; Blind-Fader
 bf_lamella_height		EQU 16
-bf_lamellas_number		EQU visible_lines_number/bf_lamella_height
+bf_lamellas_number		EQU cl2_display_y_size/bf_lamella_height
 bf_step1			EQU 1
 bf_step2			EQU 1
 bf_speed			EQU 2

@@ -222,7 +222,7 @@ tb_restore_blit_y_size		EQU cl2_display_y_size
 
 ; Blind-Fader
 bf_lamella_height		EQU 16
-bf_lamellas_number		EQU visible_lines_number/bf_lamella_height
+bf_lamellas_number		EQU cl2_display_y_size/bf_lamella_height
 bf_step1			EQU 1
 bf_step2			EQU 1
 bf_speed			EQU 2

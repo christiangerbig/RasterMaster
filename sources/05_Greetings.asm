@@ -241,7 +241,7 @@ ss_text_chars_number		EQU ss_horiz_scroll_window_x_size/ss_text_char_x_size
 
 ss_text_x_position		EQU 32
 ss_text_y_position		EQU ss_text_char_y_size/2
-ss_text_y_center		EQU (visible_lines_number-ss_text_char_y_size)/2
+ss_text_y_center		EQU (cl2_display_y_size-ss_text_char_y_size)/2
 
 ss_text_columns_x_size		EQU 8
 ss_text_columns_per_word	EQU WORD_BITS/ss_text_columns_x_size
@@ -254,7 +254,7 @@ ss_colorrun_y_pos		EQU (wcb_bar_height-ss_text_char_y_size)/2
 bf_bars_planes_number		EQU 6
 bf_bars_per_plane		EQU 1
 bf_bar_height			EQU 40
-bf_y_center			EQU (visible_lines_number+bf_bar_height)/2
+bf_y_center			EQU (cl2_display_y_size+bf_bar_height)/2
 bf_z_speed			EQU 8
 
 bf_destination_bar_y_size	EQU 4
@@ -263,7 +263,7 @@ bf_source_bar_y_size		EQU 40
 bf_z_planes_number		EQU (bf_source_bar_y_size-bf_destination_bar_y_size)/2
 bf_z_plane1			EQU 30
 bf_y_min			EQU 0
-bf_y_max			EQU visible_lines_number+bf_bar_height
+bf_y_max			EQU cl2_display_y_size+bf_bar_height
 bf_z_min			EQU 0
 bf_d				EQU 64
 
@@ -1599,7 +1599,7 @@ bf_clear_buffer
 	move.l	#color255_bits,d0
 	move.l	extra_memory(a3),a0
 	add.l	#em_color_buffer+(bf_bar_height*LONGWORD_SIZE),a0
-	MOVEF.W visible_lines_number-1,d7
+	MOVEF.W cl2_display_y_size-1,d7
 bf_clear_buffer_loop
 	move.l	d0,(a0)+
 	dbf	d7,bf_clear_buffer_loop
@@ -1686,7 +1686,7 @@ bf_copy_buffer
 		move.w	#bplcon3_bits2,a4 ; Low-RGB-Werte
 	ENDC
 	move.w	#cl2_extension7_size,a5
-	MOVEF.W visible_lines_number-1,d7
+	MOVEF.W cl2_display_y_size-1,d7
 bf_copy_buffer_loop
 	move.l	(a0)+,d0		; RGB8
 	move.l	d0,d2		

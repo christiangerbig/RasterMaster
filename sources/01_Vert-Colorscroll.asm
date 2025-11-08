@@ -238,7 +238,7 @@ vcs3111_speed			EQU 4
 
 ; Blind-Fader
 bf_lamella_height		EQU 14
-bf_lamellas_number		EQU visible_lines_number/bf_lamella_height
+bf_lamellas_number		EQU cl2_display_y_size/bf_lamella_height
 bf_step1			EQU 1
 bf_step2			EQU 1
 bf_speed			EQU 2

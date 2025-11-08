@@ -171,8 +171,8 @@ zzp5_copy_blit_y_size		EQU cl2_display_y_size
 ; Vert-Shade-Bars
 vsb_bar_height			EQU 16
 vsb_bars_number			EQU 4
-vsb_y_radius			EQU ((visible_lines_number+(zzp5_y_radius*2))-vsb_bar_height)/2
-vsb_y_center			EQU ((visible_lines_number+(zzp5_y_radius*2))-vsb_bar_height)/2
+vsb_y_radius			EQU ((cl2_display_y_size+(zzp5_y_radius*2))-vsb_bar_height)/2
+vsb_y_center			EQU ((cl2_display_y_size+(zzp5_y_radius*2))-vsb_bar_height)/2
 vsb_y_radius_angle_speed	EQU 2
 vsb_y_radius_angle_step		EQU 1
 vsb_y_angle_speed		EQU 2
@@ -180,7 +180,7 @@ vsb_y_angle_step		EQU sine_table_length/vsb_bars_number
 
 ; Vert-Border-Fader
 vbf_FPS				EQU 50
-vbf_y_position_center		EQU display_window_vstart+(visible_lines_number/2)
+vbf_y_position_center		EQU display_window_vstart+(cl2_display_y_size/2)
 
 vbfo_fader_speed_max		EQU 4
 vbfo_fader_radius		EQU vbfo_fader_speed_max

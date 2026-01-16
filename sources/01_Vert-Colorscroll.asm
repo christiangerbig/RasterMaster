@@ -925,7 +925,7 @@ blind_fader_in
 blind_fader_in_skip1
 		move.w	d0,bf_registers_table_start(a3)
 		MOVEF.W bf_registers_table_length,d3
-		MOVEF.W cl2_extension1_size,d4
+		MOVEF.L cl2_extension1_size,d4
 		lea	bf_registers_table(pc),a0
 		IFNE cl2_size1
 			move.l	cl2_construction1(a3),a1
@@ -980,11 +980,13 @@ blind_fader_out
 		subq.w	#bf_speed,d0	; decrease table start
 		bpl.s	blind_fader_out_skip1
 		move.w	#FALSE,bfo_active(a3)
+		bra.s	blind_fader_out_skip2
+		CNOP 0,4
 blind_fader_out_skip1
 		move.w	d0,bf_registers_table_start(a3)
+blind_fader_out_skip2
 		MOVEF.W bf_registers_table_length,d3
-		MOVEF.W cl2_extension1_size,d4
-		moveq	#bf_step2,d5
+		MOVEF.L	cl2_extension1_size,d4
 		lea	bf_registers_table(pc),a0
 		IFNE cl2_size1
 			move.l	cl2_construction1(a3),a1
@@ -1014,15 +1016,15 @@ blind_fader_out_loop2
 		addq.w	#bf_step1,d1	; next entry
 		add.l	d4,a4		; next line
 		cmp.w	d3,d1		; end of table ?
-		blt.s	blind_fader_out_skip2
-		sub.w	d3,d1		; reset table start
-blind_fader_out_skip2
-		dbf	d6,blind_fader_out_loop2
-		add.w	d5,d2		; increase table start
-		cmp.w	d3,d2		; end of table ?
 		blt.s	blind_fader_out_skip3
-		sub.w	d3,d2		; reset table start
+		sub.w	d3,d1		; reset table start
 blind_fader_out_skip3
+		dbf	d6,blind_fader_out_loop2
+		addq.w	#bf_step2,d2	; increase table start
+		cmp.w	d3,d2		; end of table ?
+		blt.s	blind_fader_out_skip4
+		sub.w	d3,d2		; reset table start
+blind_fader_out_skip4
 		dbf	d7,blind_fader_out_loop1
 blind_fader_out_quit
 		move.l	(a7)+,a4

@@ -770,7 +770,8 @@ init_main
 	bsr	bf_init_color_table_pointers
 	bsr	bf_scale_bar_size
 	bsr	init_first_copperlist
-	bra	init_second_copperlist
+	bsr	init_second_copperlist
+	rts
 
 
 ; Twisted-Bars
@@ -1020,7 +1021,8 @@ init_first_copperlist
 	bsr	cl1_init_copy_blit
 	bsr	cl1_init_horiz_scroll_blit
 	COP_MOVEQ 0,COPJMP2
-	bra	cl1_set_bitplane_pointers
+	bsr	cl1_set_bitplane_pointers
+	rts
 
 
 	COP_INIT_PLAYFIELD_REGISTERS cl1
@@ -1144,7 +1146,8 @@ init_second_copperlist
 			bsr	tb31612_restore_second_copperlist
 		ENDC
 	ENDC
-	bra	ss_sine_scroll
+	bsr	ss_sine_scroll
+	rts
 
 
 	CNOP 0,4
@@ -1258,7 +1261,8 @@ cl2_init_restore_blit
 	CNOP 0,4
 main
 	bsr.s	no_sync_routines
-	bra.s	beam_routines
+	bsr.s	beam_routines
+	rts
 
 
 	CNOP 0,4

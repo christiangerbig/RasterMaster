@@ -600,7 +600,8 @@ init_main
 	bsr	init_sprites
 	bsr	bg_copy_image_to_playfield
 	bsr	init_first_copperlist
-	bra	init_second_copperlist
+	bsr	init_second_copperlist
+	rts
 
 
 	CNOP 0,4
@@ -616,7 +617,8 @@ init_colors
 	CNOP 0,4
 init_sprites
 	bsr.s	spr_init_pointers_table
-	bra.s	lg_init_attached_sprites_cluster
+	bsr.s	lg_init_attached_sprites_cluster
+	rts
 
 
 	INIT_SPRITE_POINTERS_TABLE
@@ -675,7 +677,8 @@ init_first_copperlist
 	bsr	cl1_init_bitplane_pointers
 	COP_MOVEQ 0,COPJMP2
 	bsr	cl1_set_sprite_pointers
-	bra	cl1_set_bitplane_pointers
+	bsr	cl1_set_bitplane_pointers
+	rts
 
 
 	COP_INIT_PLAYFIELD_REGISTERS cl1
@@ -722,7 +725,8 @@ init_second_copperlist
 	COP_LISTEND
 	bsr	copy_second_copperlist
 	bsr	swap_second_copperlist
-	bra	set_second_copperlist
+	bsr	set_second_copperlist
+	rts
 
 
 	CNOP 0,4
@@ -777,7 +781,8 @@ cl2_init_bpldat_skip
 	CNOP 0,4
 main
 	bsr.s	no_sync_routines
-	bra.s	beam_routines
+	bsr.s	beam_routines
+	rts
 
 
 	CNOP 0,4

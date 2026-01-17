@@ -450,7 +450,8 @@ init_main
 		ENDC
 	ENDC
 	bsr	tccb_init_mirror_bplam_table
-	bra	init_first_copperlist
+	bsr	init_first_copperlist
+	rts
 
 
 ; Twisted-Colorcycle-Bars
@@ -507,7 +508,8 @@ init_first_copperlist
 		COP_LISTEND
 		bsr	cl1_set_bitplane_pointers
 	ENDC
-	bra	copy_first_copperlist
+	bsr	copy_first_copperlist
+	rts
 	
 	IFEQ open_border_enabled
 		COP_INIT_PLAYFIELD_REGISTERS cl1,NOBITPLANES
@@ -559,7 +561,8 @@ cl1_init_colors
 	CNOP 0,4
 main
 	bsr.s	no_sync_routines
-	bra.s	beam_routines
+	bsr.s	beam_routines
+	rts
 
 
 	CNOP 0,4

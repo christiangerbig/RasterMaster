@@ -418,7 +418,8 @@ init_main_variables
 init_main
 	bsr.s	init_colors
 	bsr	init_first_copperlist
-	bra	init_second_copperlist
+	bsr	init_second_copperlist
+	rts
 
 
 	CNOP 0,4
@@ -465,7 +466,8 @@ init_first_copperlist
 	bsr.s	cl1_init_playfield_props
 	bsr	cl1_init_bitplane_pointers
 	COP_MOVEQ 0,COPJMP2
-	bra	cl1_set_bitplane_pointers
+	bsr	cl1_set_bitplane_pointers
+	rts
 
 
 	COP_INIT_PLAYFIELD_REGISTERS cl1
@@ -485,7 +487,8 @@ init_second_copperlist
 	COP_LISTEND
 	bsr	copy_second_copperlist
 	bsr	swap_second_copperlist
-	bra	set_second_copperlist
+	bsr	set_second_copperlist
+	rts
 
 
 	CNOP 0,4
@@ -508,7 +511,8 @@ cl2_init_bplcon4_chunky_loop
 	CNOP 0,4
 main
 	bsr.s	no_sync_routines
-	bra.s	beam_routines
+	bsr.s	beam_routines
+	rts
 
 
 	CNOP 0,4

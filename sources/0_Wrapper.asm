@@ -359,7 +359,8 @@ init_main
 	bsr	pt_InitFtuPeriodTableStarts
 	bsr	init_colors
 	bsr	init_CIA_timers
-	bra	init_first_copperlist
+	bsr	init_first_copperlist
+	rts
 
 
 ; PT-Replay
@@ -508,7 +509,8 @@ vertb_interrupt_server
 ; PT-Replay
 	IFEQ pt_music_fader_enabled
 		bsr.s	pt_music_fader
-		bra.s	pt_PlayMusic
+		bsr.s	pt_PlayMusic
+		rts
 
 		PT_FADE_OUT_VOLUME
 

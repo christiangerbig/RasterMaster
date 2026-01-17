@@ -566,7 +566,8 @@ init_main
 	bsr	vts_init_chars_x_positions
 	bsr	vts_init_chars_y_positions
 	bsr	vts_init_chars_images
-	bra	init_first_copperlist
+	bsr	init_first_copperlist
+	rts
 
 
 	CNOP 0,4
@@ -586,7 +587,8 @@ init_sprites
 	bsr.s	spr_init_pointers_table
 	bsr.s	lg_init_sprites
 	bsr	vts_init_sprites
-	bra	spr_copy_structures
+	bsr	spr_copy_structures
+	rts
 
 	INIT_SPRITE_POINTERS_TABLE
 
@@ -709,7 +711,8 @@ init_first_copperlist
 	bsr	cl1_init_copper_interrupt
 	COP_LISTEND
 	bsr	cl1_set_sprite_pointers
-	bra	cl1_set_bitplane_pointers
+	bsr	cl1_set_bitplane_pointers
+	rts
 
 
 	COP_INIT_PLAYFIELD_REGISTERS cl1
@@ -796,7 +799,8 @@ cl1_init_bpldat_skip
 	CNOP 0,4
 main
 	bsr.s	no_sync_routines
-	bra.s	beam_routines
+	bsr.s	beam_routines
+	rts
 
 
 	CNOP 0,4

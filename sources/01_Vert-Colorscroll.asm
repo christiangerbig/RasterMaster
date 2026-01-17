@@ -493,7 +493,8 @@ init_main
 	bsr	init_colors
 	bsr	vcs_init_bplam_table
 	bsr	init_first_copperlist
-	bra	init_second_copperlist
+	bsr	init_second_copperlist
+	rts
 
 
 	CNOP 0,4
@@ -544,12 +545,12 @@ init_first_copperlist
 	bsr.s	cl1_init_playfield_props
 	IFEQ open_border_enabled
 		COP_MOVEQ 0,COPJMP2
-	rts
 	ELSE
 		bsr.s	cl1_init_bitplane_pointers
 		COP_MOVEQ 0,COPJMP2
-		bra	cl1_set_bitplane_pointers
+		bsr	cl1_set_bitplane_pointers
 	ENDC
+	rts
 
 	IFEQ open_border_enabled
 		COP_INIT_PLAYFIELD_REGISTERS cl1,NOBITPLANES
@@ -568,7 +569,8 @@ init_second_copperlist
 	COP_LISTEND
 	bsr	copy_second_copperlist
 	bsr	swap_second_copperlist
-	bra	set_second_copperlist
+	bsr	set_second_copperlist
+	rts
 
 	COP_INIT_BPLCON4_CHUNKY cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,FALSE,FALSE,NOOP<<16
 
@@ -580,7 +582,8 @@ init_second_copperlist
 	CNOP 0,4
 main
 	bsr.s	no_sync_routines
-	bra.s	beam_routines
+	bsr.s	beam_routines
+	rts
 
 
 	CNOP 0,4

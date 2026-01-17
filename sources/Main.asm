@@ -320,7 +320,8 @@ init_main_variables
 init_main
 	bsr.s	init_colors
 	bsr	init_first_copperlist
-	bra	init_second_copperlist
+	bsr	init_second_copperlist
+	rts
 
 
 	CNOP 0,4

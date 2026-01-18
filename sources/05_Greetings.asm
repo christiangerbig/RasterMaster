@@ -7,6 +7,7 @@
 	MC68040
 
 
+; Imports
 	XREF color00_bits
 	XREF color00_high_bits
 	XREF color00_low_bits
@@ -14,6 +15,7 @@
 	XREF mouse_handler
 	XREF sine_table
 
+; Exports
 	XDEF start_05_greetings
 
 
@@ -43,6 +45,7 @@
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
+START_SECOND_COPPERLIST		SET 1
 
 
 	INCLUDE "macros.i"
@@ -688,6 +691,7 @@ eh_trigger_number		RS.W 1
 ; Main
 	RS_ALIGN_LONGWORD
 cl_end				RS.L 1
+
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
@@ -1110,8 +1114,10 @@ init_second_copperlist
 		ENDC
 	ENDC
 	bsr	cl2_init_copper_interrupt
-	COP_LISTEND SAVETAIL
+	COP_LISTEND
+	move.l	a0,cl_end(a3)
 	bsr	copy_second_copperlist
+
 	bsr	swap_playfield1
 	bsr	set_playfield1
 	clr.w	ss_active(a3)
@@ -1126,7 +1132,6 @@ init_second_copperlist
 	ENDC
 	bsr	ss_sine_scroll
 	bsr	swap_second_copperlist
-	bsr	set_second_copperlist
 	bsr	swap_playfield1
 	bsr	set_playfield1
 	bsr	tb31612_clear_second_copperlist
@@ -1137,7 +1142,6 @@ init_second_copperlist
 	ENDC
 	bsr	ss_sine_scroll
 	bsr	swap_second_copperlist
-	bsr	set_second_copperlist
 	bsr	swap_playfield1
 	bsr	set_playfield1
 	bsr	tb31612_clear_second_copperlist
@@ -1274,7 +1278,7 @@ no_sync_routines
 beam_routines
 	bsr	wait_copint
 	bsr.s	swap_second_copperlist
-	bsr.s	set_second_copperlist
+	bsr	set_second_copperlist
 	bsr	swap_playfield1
 	bsr	set_playfield1
 	bsr	effects_handler
@@ -1297,14 +1301,17 @@ beam_routines_skip
 	IFNE tb31612_quick_clear_enabled
 		bsr	restore_second_copperlist
 	ENDC
-	bsr	mouse_handler
+	jsr	mouse_handler
 	tst.l	d0			; exit ?
 	bne.s   beam_routines_exit
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
 beam_routines_exit
+	WAITBLIT
 	move.l	cl_end(a3),COP2LC-DMACONR(a6)
 	move.w	d0,COPJMP2-DMACONR(a6)
+	move.l	cl_end(a3),COP1LC-DMACONR(a6)
+	move.w	d0,COPJMP1-DMACONR(a6)
 	move.w	custom_error_code(a3),d1
 	rts
 
@@ -1731,7 +1738,7 @@ we_get_y_coordinates
 	move.w	d3,d0		
 	addq.b	#we_y_angle_speed,d0
 	move.w	d0,we_y_angle(a3)	
-	lea	sine_table(pc),a0	
+	lea	sine_table,a0
 	lea	we_y_coordinates(pc),a1
 	moveq	#cl2_display_width-1,d7	; number of columns
 we_get_y_coordinates_loop

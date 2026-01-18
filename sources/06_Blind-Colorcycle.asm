@@ -7,10 +7,12 @@
 	MC68040
 
 
+; Imports
 	XREF color00_bits
 	XREF mouse_handler
 	XREF sine_table
 
+; Exports
 	XDEF start_06_blind_colorcycle
 
 
@@ -40,6 +42,7 @@
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
+START_SECOND_COPPERLIST		SET 1
 
 
 	INCLUDE "macros.i"
@@ -398,6 +401,8 @@ bfo_active			RS.W 1
 eh_trigger_number		RS.W 1
 
 ; Main
+	RS_ALIGN_LONGWORD
+cl_end				RS.L 1
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
@@ -512,9 +517,8 @@ init_second_copperlist
 	bsr.s	cl2_init_bplcon4_chunky
 	bsr.s	cl2_init_copper_interrupt
 	COP_LISTEND
+	move.l	a0,cl_end(a3)
 	bsr	copy_second_copperlist
-	bsr	swap_second_copperlist
-	bsr	set_second_copperlist
 	rts
 
 
@@ -557,6 +561,10 @@ beam_routines
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
 beam_routines_exit
+	move.l	cl_end(a3),COP2LC-DMACONR(a6)
+	move.w	d0,COPJMP2-DMACONR(a6)
+	move.l	cl_end(a3),COP1LC-DMACONR(a6)
+	move.w	d0,COPJMP1-DMACONR(a6)
 	move.w	custom_error_code(a3),d1
 	rts
 

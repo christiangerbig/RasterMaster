@@ -7,10 +7,12 @@
 	MC68040
 
 
+; Imports
 	XREF color00_bits
 	XREF mouse_handler
 	XREF sine_table
 
+; Exports
 	XDEF start_04_twisted_space_bars
 
 
@@ -40,6 +42,7 @@
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
+START_SECOND_COPPERLIST		SET 1
 
 
 	INCLUDE "macros.i"
@@ -636,6 +639,8 @@ ccfo_delay_reset		RS.W 1
 eh_trigger_number		RS.W 1
 
 ; Main
+	RS_ALIGN_LONGWORD
+cl_end				RS.L 1
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
@@ -838,9 +843,8 @@ init_second_copperlist
 	bsr.s	cl2_init_bplcon4_chunky
 	bsr.s	cl2_init_copper_interrupt
 	COP_LISTEND
+	move.l	a0,cl_end(a3)
 	bsr	copy_second_copperlist
-	bsr	swap_second_copperlist
-	bsr	set_second_copperlist
 	rts
 
 
@@ -869,8 +873,8 @@ no_sync_routines
 beam_routines
 	bsr	wait_copint
 	bsr.s	swap_second_copperlist
-	bsr.s	set_second_copperlist
-	bsr.s	swap_playfield1
+	bsr	set_second_copperlist
+	bsr	swap_playfield1
 	bsr	set_playfield1
 	bsr	effects_handler
 	bsr	sprf_rgb8_copy_color_table
@@ -891,12 +895,16 @@ beam_routines_skip
 	ENDC
 	bsr	sprite_fader_in
 	bsr	sprite_fader_out
-	bsr	mouse_handler
+	jsr	mouse_handler
 	tst.l	d0			; exit ?
 	bne.s   beam_routines_exit
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
 beam_routines_exit
+	move.l	cl_end(a3),COP2LC-DMACONR(a6)
+	move.w	d0,COPJMP2-DMACONR(a6)
+	move.l	cl_end(a3),COP1LC-DMACONR(a6)
+	move.w	d0,COPJMP1-DMACONR(a6)
 	move.w	custom_error_code(a3),d1
 	rts
 
@@ -1090,7 +1098,7 @@ tb313_get_yz_coordinates
 	move.w	d5,d0
 	addq.b	#tb313_y_radius_speed,d0
 	move.w	d0,tb313_y_radius_angle(a3) 
-	lea	sine_table(pc),a0 
+	lea	sine_table,a0
 	lea	tb_yz_coordinates(pc),a1
 	move.w	#tb313_y_center,a2
 	move.w	#tb313_y_radius_center,a4
@@ -1136,7 +1144,7 @@ tb312_get_yz_coordinates
 	move.w	d5,d0
 	addq.b	#tb312_y_radius_speed,d0
 	move.w	d0,tb312_y_radius_angle(a3) 
-	lea	sine_table(pc),a0 
+	lea	sine_table,a0
 	lea	tb_yz_coordinates(pc),a1
 	move.w	#tb312_y_center,a2
 	move.w	#tb312_y_radius_center,a4
@@ -1189,7 +1197,7 @@ sprite_fader_in
 sprite_fader_in_skip
 	move.w	d0,sprfi_rgb8_fader_angle(a3) 
 	MOVEF.W sprf_rgb8_colors_number*3,d6 ; RGB counter
-	lea	sine_table(pc),a0	
+	lea	sine_table,a0
 	move.l	(a0,d2.w*4),d0		; sin(w)
 	MULUF.L sprfi_rgb8_fader_radius*2,d0,d1 ; y' = (yr*sin(w))/2^15
 	swap	d0
@@ -1227,7 +1235,7 @@ sprite_fader_out
 sprite_fader_out_skip
 	move.w	d0,sprfo_rgb8_fader_angle(a3) 
 	MOVEF.W sprf_rgb8_colors_number*3,d6 ; RGB counter
-	lea	sine_table(pc),a0	
+	lea	sine_table,a0
 	move.l	(a0,d2.w*4),d0		; sin(w)
 	MULUF.L sprfo_rgb8_fader_radius*2,d0,d1 ; y' = (yr*sin(w))/2^15
 	swap	d0

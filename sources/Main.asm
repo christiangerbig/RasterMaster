@@ -83,13 +83,15 @@
 	MC68040
 
 
+;Imports
+	XREF start_0_pt_replay
+	XREF start_1_pt_replay
+
+; Exports
 	XDEF color00_bits
 	XDEF color00_high_bits
 	XDEF color00_low_bits
 	XDEF color255_bits
-
-	XREF start_0_pt_replay
-	XREF start_1_pt_replay
 
 
 	INCDIR "include3.5:"
@@ -125,7 +127,7 @@
 
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
-SET_SECOND_COPPERLIST		SET 1
+START_SECOND_COPPERLIST		SET 1
 
 
 	INCLUDE "macros.i"
@@ -255,6 +257,7 @@ copperlist2_size		RS.B 0
 cl1_size1			EQU 0
 cl1_size2			EQU 0
 cl1_size3			EQU copperlist1_size
+
 cl2_size1			EQU 0
 cl2_size2			EQU 0
 cl2_size3			EQU copperlist2_size
@@ -358,10 +361,11 @@ init_second_copperlist
 
 	CNOP 0,4
 main
-	bsr	start_0_pt_replay
+	jsr	start_0_pt_replay
 	tst.l	d0			; any error ?
 	bne.s	main_quit
-	jmp	start_1_pt_replay
+	jsr	start_1_pt_replay
+	rts
 	CNOP 0,4
 main_quit
 	rts

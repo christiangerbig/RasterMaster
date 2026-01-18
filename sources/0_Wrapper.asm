@@ -7,6 +7,7 @@
 	MC68040
 
 
+; Imports
 	XREF color00_bits
 	XREF start_00_title_screen
 	XREF start_01_vert_colorscroll
@@ -21,6 +22,7 @@
 	XREF start_0a_zig_zag_plasma
 	XREF start_0b_vert_starscrolling
 
+; Exports
 	XDEF start_0_pt_replay
 	XDEF pt_track_notes_played_enabled
 	XDEF pt_track_volumes_enabled
@@ -248,6 +250,7 @@ copperlist1_size RS.B 0
 cl1_size1			EQU 0
 cl1_size2			EQU 0
 cl1_size3			EQU copperlist1_size
+
 cl2_size1			EQU 0
 cl2_size2			EQU 0
 cl2_size3			EQU 0
@@ -464,18 +467,19 @@ alloc_custom_memory_fail
 
 	CNOP 0,4
 main
-	bsr	start_00_title_screen
-	bsr	start_01_vert_colorscroll
-	bsr	start_02_twisted_bars
-	bsr	start_03_twisted_colorcycle_bars
-	bsr	start_04_twisted_space_bars
-	bsr	start_05_greetings
+	jsr	start_00_title_screen
+	jsr	start_01_vert_colorscroll
+	jsr	start_02_twisted_bars
+	jsr	start_03_twisted_colorcycle_bars
+	jsr	start_04_twisted_space_bars
+	jsr	start_05_greetings
 	jsr	start_06_blind_colorcycle
 	jsr	start_07_vert_colorscroll
 	jsr	start_08_blind_colorcycle
 	jsr	start_09_blind_colorcycle
 	jsr	start_0a_zig_zag_plasma
-	jmp	start_0b_vert_starscrolling
+	jsr	start_0b_vert_starscrolling
+	rts
 
 
 	CNOP 0,4

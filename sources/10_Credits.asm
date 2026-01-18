@@ -7,11 +7,13 @@
 	MC68040
 
 
+; Imports
 	XREF color00_bits
 	XREF mouse_handler
 	XREF sine_table
 	XREF bg_image_data
 
+; Exports
 	XDEF start_10_credits
 
 
@@ -41,7 +43,7 @@
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
-SET_SECOND_COPPERLIST		SET 1
+START_SECOND_COPPERLIST		SET 1
 
 
 	INCLUDE "macros.i"
@@ -297,6 +299,7 @@ copperlist1_size		RS.B 0
 cl1_size1			EQU 0
 cl1_size2			EQU 0
 cl1_size3			EQU copperlist1_size
+
 cl2_size1			EQU 0
 cl2_size2			EQU 0
 cl2_size3			EQU 0
@@ -503,6 +506,8 @@ sllo_x_angle			RS.W 1
 eh_trigger_number		RS.W 1
 
 ; Main
+	RS_ALIGN_LONGWORD
+cl_end				RS.L 1
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
@@ -710,6 +715,7 @@ init_first_copperlist
 	bsr	cl1_init_bpldat
 	bsr	cl1_init_copper_interrupt
 	COP_LISTEND
+	move.l	a0,cl_end(a3)
 	bsr	cl1_set_sprite_pointers
 	bsr	cl1_set_bitplane_pointers
 	rts
@@ -813,7 +819,7 @@ beam_routines
 	bsr	wait_copint
 	bsr.s	swap_sprite_structures
 	bsr.s	set_sprite_pointers
-	bsr.s	swap_extra_playfield
+	bsr	swap_extra_playfield
 	bsr	effects_handler
 	bsr	scroll_logo_left_in
 	bsr	scroll_logo_left_out
@@ -828,6 +834,10 @@ beam_routines
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
 beam_routines_exit
+	move.l	cl_end(a3),COP2LC-DMACONR(a6)
+	move.w	d0,COPJMP2-DMACONR(a6)
+	move.l	cl_end(a3),COP1LC-DMACONR(a6)
+	move.w	d0,COPJMP1-DMACONR(a6)
 	move.w	custom_error_code(a3),d1
 	rts
 

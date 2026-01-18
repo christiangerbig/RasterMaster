@@ -7,9 +7,11 @@
 	MC68040
 
 
+; Imports
 	XREF color00_bits
 	XREF mouse_handler
 
+; Exports
 	XDEF start_03_twisted_colorcycle_bars
 	XDEF sine_table_512
 
@@ -398,6 +400,8 @@ bfo_active			RS.W 1
 eh_trigger_number		RS.W 1
 
 ; Main
+	RS_ALIGN_LONGWORD
+cl_end				RS.L 1
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
@@ -501,11 +505,13 @@ init_first_copperlist
 		bsr	cl1_init_bplcon4_chunky
 		bsr	cl1_init_copper_interrupt
 		COP_LISTEND
+		move.l	a0,cl_end(a3)
 	ELSE
 		bsr	cl1_init_bitplane_pointers
 		bsr	cl1_init_bplcon4_chunky
 		bsr	cl1_init_copper_interrupt
 		COP_LISTEND
+		move.l	a0,cl_end(a3)
 		bsr	cl1_set_bitplane_pointers
 	ENDC
 	bsr	copy_first_copperlist
@@ -586,12 +592,16 @@ beam_routines
 		bsr	blind_fader_in
 		bsr	blind_fader_out
 	ENDC
-	bsr	mouse_handler
+	jsr	mouse_handler
 	tst.l	d0			; exit ?
 	bne.s	beam_routines_exit
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
 beam_routines_exit
+	move.l	cl_end(a3),COP2LC-DMACONR(a6)
+	move.w	d0,COPJMP2-DMACONR(a6)
+	move.l	cl_end(a3),COP1LC-DMACONR(a6)
+	move.w	d0,COPJMP1-DMACONR(a6)
 	move.w	custom_error_code(a3),d1
 	rts
 

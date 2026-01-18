@@ -7,10 +7,12 @@
 	MC68040
 
 
+; Imports
 	XREF color00_bits
 	XREF sc_start
 	XREF start_10_credits
 
+; Exports
 	XDEF start_1_pt_replay
 
 
@@ -230,6 +232,7 @@ copperlist1_size		RS.B 0
 cl1_size1			EQU 0
 cl1_size2			EQU 0
 cl1_size3			EQU copperlist1_size
+
 cl2_size1			EQU 0
 cl2_size2			EQU 0
 cl2_size3			EQU 0
@@ -442,7 +445,7 @@ alloc_custom_memory_fail
 
 	CNOP 0,4
 main
-	bsr	start_10_credits
+	jsr	start_10_credits
 	rts
 
 

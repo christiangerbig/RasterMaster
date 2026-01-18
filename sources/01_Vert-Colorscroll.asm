@@ -7,10 +7,12 @@
 	MC68040
 
 
+; Imports
 	XREF color00_bits
 	XREF mouse_handler
 	XREF sine_table
 
+; Exports
 	XDEF start_01_vert_colorscroll
 
 
@@ -40,6 +42,7 @@
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
+START_SECOND_COPPERLIST		SET 1
 
 
 	INCLUDE "macros.i"
@@ -433,6 +436,8 @@ bfo_active			RS.W 1
 eh_trigger_number		RS.W 1
 
 ; Main
+	RS_ALIGN_LONGWORD
+cl_end				RS.L 1
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
@@ -567,9 +572,8 @@ init_second_copperlist
 	bsr.s	cl2_init_bplcon4_chunky
 	bsr.s	cl2_init_copper_interrupt
 	COP_LISTEND
+	move.l	a0,cl_end(a3)
 	bsr	copy_second_copperlist
-	bsr	swap_second_copperlist
-	bsr	set_second_copperlist
 	rts
 
 	COP_INIT_BPLCON4_CHUNKY cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,FALSE,FALSE,NOOP<<16
@@ -605,12 +609,16 @@ beam_routines
 		bsr	blind_fader_in
 		bsr	blind_fader_out
 	ENDC
-	bsr	mouse_handler
+	jsr	mouse_handler
 	tst.l	d0			; exit ?
 	bne.s	beam_routines_exit
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
 beam_routines_exit
+	move.l	cl_end(a3),COP2LC-DMACONR(a6)
+	move.w	d0,COPJMP2-DMACONR(a6)
+	move.l	cl_end(a3),COP1LC-DMACONR(a6)
+	move.w	d0,COPJMP1-DMACONR(a6)
 	move.w	custom_error_code(a3),d1
 	rts
 
@@ -646,7 +654,7 @@ vert_colorscroll3112
 	move.l	cl2_construction2(a3),a1 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ; 2nd quadrant
 	lea	LONGWORD_SIZE(a1),a2	; 1st quadrant
-	lea	sine_table(pc),a3 
+	lea	sine_table,a3
 	lea	cl2_extension1_size(a1),a4 ; 3rd quadrant
 	lea	cl2_extension1_size(a2),a5 ; 4th quadrant
 	move.w	#cl2_extension1_size,a6
@@ -719,7 +727,7 @@ vert_colorscroll3121
 	move.l	cl2_construction2(a3),a1 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ; 2nd quadrant
 	lea	LONGWORD_SIZE(a1),a2 ; 1st quadrant
-	lea	sine_table(pc),a3	
+	lea	sine_table,a3
 	lea	cl2_extension1_size(a1),a4 ; 3rd quadrant
 	lea	cl2_extension1_size(a2),a5 ; 4th quadrant
 	move.w	#cl2_extension1_size,a6
@@ -792,7 +800,7 @@ vert_colorscroll3122
 	move.l	cl2_construction2(a3),a1 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ; 2nd quadrant
 	lea	LONGWORD_SIZE(a1),a2	; 1st quadrant
-	lea	sine_table(pc),a3	
+	lea	sine_table,a3
 	lea	cl2_extension1_size(a1),a4 ; 3rd quadrant
 	lea	cl2_extension1_size(a2),a5 ; 4th quadrant
 	move.w	#cl2_extension1_size,a6
@@ -865,7 +873,7 @@ vert_colorscroll3111
 	move.l	cl2_construction2(a3),a1 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE+(((cl2_display_width/2)-1)*LONGWORD_SIZE)+(((cl2_display_y_size/2)-1)*cl2_extension1_size),a1 ; 2nd quadrant
 	lea	LONGWORD_SIZE(a1),a2	; 1st quadrant
-	lea	sine_table(pc),a3 
+	lea	sine_table,a3
 	lea	cl2_extension1_size(a1),a4 ; 3rd quadrant
 	lea	cl2_extension1_size(a2),a5 ; 4th quadrant
 	move.w	#cl2_extension1_size,a6

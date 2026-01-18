@@ -7,12 +7,14 @@
 	MC68040
 
 
+; Imports
 	XREF color00_bits
 	XREF color00_high_bits
 	XREF color00_low_bits
 	XREF mouse_handler
 	XREF sine_table
 
+; Exports
 	XDEF start_02_twisted_bars
 
 
@@ -42,6 +44,7 @@
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
+START_SECOND_COPPERLIST		SET 1
 
 
 	INCLUDE "macros.i"
@@ -405,6 +408,8 @@ bfo_active			RS.W 1
 eh_trigger_number		RS.W 1
 
 ; Main
+	RS_ALIGN_LONGWORD
+cl_end				RS.L 1
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
@@ -531,9 +536,8 @@ init_second_copperlist
 	bsr.s	cl2_init_bplcon4_chunky
 	bsr.s	cl2_init_copper_interrupt
 	COP_LISTEND
+	move.l	a0,cl_end(a3)
 	bsr	copy_second_copperlist
-	bsr	swap_second_copperlist
-	bsr	set_second_copperlist
 	rts
 
 
@@ -576,12 +580,16 @@ beam_routines
 		bsr	blind_fader_in
 		bsr	blind_fader_out
 	ENDC
-	bsr	mouse_handler
+	jsr	mouse_handler
 	tst.l	d0			; exit ?
 	bne.s   beam_routines_exit
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
 beam_routines_exit
+	move.l	cl_end(a3),COP2LC-DMACONR(a6)
+	move.w	d0,COPJMP2-DMACONR(a6)
+	move.l	cl_end(a3),COP1LC-DMACONR(a6)
+	move.w	d0,COPJMP1-DMACONR(a6)
 	move.w	custom_error_code(a3),d1
 	rts
 
@@ -602,7 +610,7 @@ tb315_get_yz_coordinates
 	move.w	d1,d0
 	addq.b	#tb315_y_angle_speed2,d0
 	move.w	d0,tb315_y_angle_speed_angle(a3)
-	lea	sine_table(pc),a0 
+	lea	sine_table,a0
 	move.l	(a0,d1.w*4),d1		; sin(w)
 	MULUF.L tb315_y_angle_speed*2,d1,d0 ; y' = (yr*sin(w))/2^15
 	swap	d1
@@ -645,7 +653,7 @@ we_get_y_coordinates
 	move.w	d3,d0
 	addq.b	#we_y_angle_speed,d0
 	move.w	d0,we_y_angle(a3)	
-	lea	sine_table(pc),a0 
+	lea	sine_table,a0
 	lea	we_y_coordinates(pc),a1
 	move.w	#we_y_center,a2
 	moveq	#cl2_display_width-1,d7 ; number of columns

@@ -9,8 +9,8 @@
 
 ; Imports
 	XREF color00_bits
-	XREF sc_start
 	XREF start_10_credits
+	XREF sc_start
 
 ; Exports
 	XDEF start_1_pt_replay

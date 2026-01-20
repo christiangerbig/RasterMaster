@@ -24,6 +24,7 @@
 
 ; Exports
 	XDEF start_0_pt_replay
+	XDEF sc_start
 	XDEF pt_track_notes_played_enabled
 	XDEF pt_track_volumes_enabled
 	XDEF pt_track_periods_enabled
@@ -32,7 +33,6 @@
 	XDEF pt_audchan3temp
 	XDEF pt_audchan4temp
 	XDEF pt_oneshotlen
-	XDEF sc_start
 
 
 	INCDIR "include3.5:"
@@ -320,12 +320,12 @@ init_custom_memory_table
 	lea	custom_memory_table(pc),a0
 	move.l	#part_00_audio_memory_size1,(a0)+ ; memory size
 	moveq	#CUSTOM_MEMORY_FAST,d2
-	move.l	d2,(a0)+		; type: fast memory
+	move.l	d2,(a0)+		; memory_type
 	moveq	#0,d0
 	move.l	d0,(a0)+		; memory block
 	move.l	#part_00_audio_memory_size2,(a0)+ ; memory size
 	moveq	#CUSTOM_MEMORY_CHIP,d2
-	move.l	d2,(a0)+		; Speicherart: chip-memory
+	move.l	d2,(a0)+		; memory type
 	move.l	d0,(a0)			; memory block
 	rts
 

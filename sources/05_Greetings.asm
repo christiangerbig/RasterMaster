@@ -691,7 +691,6 @@ eh_trigger_number		RS.W 1
 ; Main
 	RS_ALIGN_LONGWORD
 cl_end				RS.L 1
-
 stop_fx_active			RS.W 1
 
 variables_size			RS.B 0
@@ -1303,10 +1302,10 @@ beam_routines_skip
 	ENDC
 	jsr	mouse_handler
 	tst.l	d0			; exit ?
-	bne.s   beam_routines_exit
+	bne.s   beam_routines quit
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
-beam_routines_exit
+beam_routines quit
 	WAITBLIT
 	move.l	cl_end(a3),COP2LC-DMACONR(a6)
 	move.w	d0,COPJMP2-DMACONR(a6)

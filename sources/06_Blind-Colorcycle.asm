@@ -557,10 +557,10 @@ beam_routines
 	ENDC
 	jsr	mouse_handler
 	tst.l	d0			; exit ?
-	bne.s	beam_routines quit
+	bne.s	beam_routines_quit
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
-beam_routines quit
+beam_routines_quit
 	move.l	cl_end(a3),COP2LC-DMACONR(a6)
 	move.w	d0,COPJMP2-DMACONR(a6)
 	move.l	cl_end(a3),COP1LC-DMACONR(a6)

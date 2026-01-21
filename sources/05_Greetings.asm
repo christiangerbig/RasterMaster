@@ -722,7 +722,7 @@ init_main_variables
 	move.w	d0,tb31612_y_angle(a3) ; 0°
 
 ; Wave-Effect
-	move.w	d0,we_radius_y_angle(a3) ; 0 °
+	move.w	d0,we_radius_y_angle(a3) ; 0°
 	move.w	d0,we_y_angle(a3) ; 0°
 
 ; Barfield
@@ -1302,10 +1302,10 @@ beam_routines_skip
 	ENDC
 	jsr	mouse_handler
 	tst.l	d0			; exit ?
-	bne.s   beam_routines quit
+	bne.s   beam_routines_quit
 	tst.w	stop_fx_active(a3)
 	bne.s	beam_routines
-beam_routines quit
+beam_routines_quit
 	WAITBLIT
 	move.l	cl_end(a3),COP2LC-DMACONR(a6)
 	move.w	d0,COPJMP2-DMACONR(a6)
@@ -1956,8 +1956,9 @@ eh_start_twisted_bars31612
 	lea	tb31612_fader_columns_mask(pc),a0
 	move.l	a0,ccf_fader_columns_mask(a3)
 	move.w	#ccfi_mode1,ccfi_current_mode(a3)
-	clr.w	ccfi_start(a3)
-	clr.w	ccfi_active(a3)
+	moveq	#TRUE,d0
+	move.w	d0,ccfi_start(a3)
+	move.w	d0,ccfi_active(a3)
 	move.w	#1,ccfi_columns_delay_counter(a3) ; activate counter
 	rts
 	CNOP 0,4
@@ -1979,8 +1980,9 @@ eh_stop_wave_center_bar
 eh_stop_twisted_bars31612
 	lea	tb31612_fader_columns_mask(pc),a0
 	move.l	a0,ccf_fader_columns_mask(a3)
-	clr.w	ccfo_start(a3)
-	clr.w	ccfo_active(a3)
+	moveq	#TRUE,d0
+	move.w	d0,ccfo_start(a3)
+	move.w	d0,ccfo_active(a3)
 	move.w	#1,ccfo_columns_delay_counter(a3) ; activate counter
 	rts
 	CNOP 0,4

@@ -1104,7 +1104,7 @@ init_second_copperlist
 	move.l	cl2_construction1(a3),a0 
 	bsr.s	cl2_init_sine_scroll_blits_const
 	bsr	cl2_init_sine_scroll_blits
-	bsr	cl2_init_copperlist_branch
+	bsr	cl2_reset_copperlist_pointer
 	bsr	cl2_init_clear_blit
 	bsr	cl2_init_bplcon4_chunky
 	IFNE tb31612_cpu_restore_cl_enabled
@@ -1213,7 +1213,7 @@ cl2_init_sine_scroll_blits_loop2
 
 
 	CNOP 0,4
-cl2_init_copperlist_branch
+cl2_reset_copperlist_pointer
 	COP_MOVE cl1_display(a3),COP1LCH
 	COP_MOVE cl1_display+WORD_SIZE(a3),COP1LCL
 	rts

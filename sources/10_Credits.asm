@@ -43,7 +43,6 @@
 SYS_TAKEN_OVER			SET 1
 PASS_GLOBAL_REFERENCES		SET 1
 PASS_RETURN_CODE		SET 1
-START_SECOND_COPPERLIST		SET 1
 
 
 	INCLUDE "macros.i"
@@ -107,8 +106,8 @@ spr_x_size1			EQU 64
 spr_x_size2			EQU 64
 spr_depth			EQU 2
 spr_colors_number		EQU 0	; 16*2
-spr_odd_color_table_select	EQU 8
-spr_even_color_table_select	EQU 9
+spr_odd_color_table_select	EQU 8	; logo: COLOR128..COLOR143
+spr_even_color_table_select	EQU 9	; vertical textscroll: COLOR144..COLOR159
 spr_used_number			EQU 8
 spr_swap_number			EQU 8
 
@@ -687,7 +686,7 @@ bg_copy_image_data
 	MOVEF.W bg_image_y_size-1,d7
 bg_copy_image_data_loop
 	REPT pixel_per_line/16
-		move.w	(a0)+,(a2)+	; copy 42 bytes
+	move.w	(a0)+,(a2)+	; copy 42 bytes
 	ENDR
 	ADDF.W	(bg_image_plane_width*(bg_image_depth-1))+WORD_SIZE,a0 ; next line in source
 	ADDF.W	(pf1_plane_width*(pf1_depth3-1))+6,a2 ; next line in destination
@@ -1190,36 +1189,36 @@ nmi_interrupt_server
 	CNOP 0,4
 pf1_rgb8_color_table
 	REPT pf1_colors_number
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 
 
 	CNOP 0,4
 spr_rgb8_color_table_logo
-; Sprite0/1
-	INCLUDE "RasterMaster:colortables/64x256x16-Resistance.ct"
+; Attached sprite0/1
+	INCLUDE "RasterMaster:colortables/64x256x16-Group-Logo.ct"
 
 
 	CNOP 0,4
 spr_rgb8_color_table_vert_text_scroll
 ; Sprite0
 	REPT 4
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 ; Sprite2
 	INCLUDE "RasterMaster:colortables/16x15x2-Font.ct"
 	REPT 2
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 ; Sprite4
 	INCLUDE "RasterMaster:colortables/16x15x2-Font.ct"
 	REPT 2
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 ; Sprite6
 	INCLUDE "RasterMaster:colortables/16x15x2-Font.ct"
 	REPT 2
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 
 
@@ -1259,12 +1258,12 @@ vts_chars_image_pointers
 ; Image-Fader
 	CNOP 0,4
 ifi_rgb8_color_table
-	INCLUDE "RasterMaster:colortables/352x256x128-RasterMaster.ct"
+	INCLUDE "RasterMaster:colortables/352x256x128-Title.ct"
 
 	CNOP 0,4
 ifo_rgb8_color_table
 	REPT pf1_colors_number
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 
 
@@ -1280,7 +1279,7 @@ ifo_rgb8_color_table
 ; Vert-Textscroll
 vts_text
 	REPT vts_text_chars_per_column*vts_text_chars_per_line
-		DC.B " "
+	DC.B " "
 	ENDR
 	DC.B  "RASTER      "
 	DC.B  "MASTER      "
@@ -1518,7 +1517,7 @@ vts_text
 
 ; Logo
 lg_image_data			SECTION lg_gfx,DATA
-	INCBIN "RasterMaster:graphics/64x256x16-Resistance.rawblit"
+	INCBIN "RasterMaster:graphics/64x256x16-Group-Logo.rawblit"
 
 ; Vert-Text-Scroll
 vts_image_data			SECTION vts_gfx,DATA_C

@@ -930,10 +930,10 @@ we_y_coordinates
 		CNOP 0,2
 bf_registers_table
 		REPT bf_registers_table_length/2
-			DC.W NOOP
+		DC.W NOOP
 		ENDR
 		REPT bf_registers_table_length/2
-			DC.W BPL1DAT
+		DC.W BPL1DAT
 		ENDR
 	ENDC
 

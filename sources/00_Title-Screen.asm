@@ -110,8 +110,8 @@ spr_x_size1			EQU 0
 spr_x_size2			EQU 64
 spr_depth			EQU 2
 spr_colors_number		EQU 0	; 16
-spr_odd_color_table_select	EQU 8
-spr_even_color_table_select	EQU 8
+spr_odd_color_table_select	EQU 8	; COLOR128..COLOR143
+spr_even_color_table_select	EQU 8	; COLOR128..COLOR143
 spr_used_number			EQU 8
 
 audio_memory_size		EQU 0
@@ -666,7 +666,7 @@ bg_copy_image_data
 	MOVEF.W bg_image_y_size-1,d7
 bg_copy_image_data_loop
 	REPT pixel_per_line/WORD_BITS
-		move.w	(a0)+,(a2)+	; copy 42 bytes
+	move.w	(a0)+,(a2)+	; copy 42 bytes
 	ENDR
 	ADDF.W	(bg_image_plane_width*(bg_image_depth-1))+WORD_SIZE,a0 ; next line in source
 	ADDF.W	(pf1_plane_width*(pf1_depth3-1))+6,a2 ; next line in destination
@@ -1302,13 +1302,13 @@ nmi_interrupt_server
 	CNOP 0,4
 pf1_rgb8_color_table
 	REPT pf1_colors_number
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 
 
 	CNOP 0,4
 spr_rgb8_color_table
-	INCLUDE "RasterMaster:colortables/256x75x16-Resistance.ct"
+	INCLUDE "RasterMaster:colortables/256x75x16-Group-Logo.ct"
 
 
 	CNOP 0,4
@@ -1330,12 +1330,12 @@ cs_audio_channel_data
 ; Image-Fader
 	CNOP 0,4
 ifi_rgb8_color_table
-	INCLUDE "RasterMaster:colortables/352x256x128-RasterMaster.ct"
+	INCLUDE "RasterMaster:colortables/352x256x128-Title.ct"
 
 	CNOP 0,4
 ifo_rgb8_color_table
 	REPT pf1_colors_number
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 
 
@@ -1352,10 +1352,10 @@ ifo_rgb8_color_table
 
 ; Background-Image
 bg_image_data			SECTION bg_gfx,DATA
-	INCBIN "RasterMaster:graphics/352x256x128-RasterMaster.rawblit"
+	INCBIN "RasterMaster:graphics/352x256x128-Title.rawblit"
 
 ; Logo
 lg_image_data			SECTION lg_gfx,DATA
-	INCBIN "RasterMaster:graphics/256x75x16-Resistance.rawblit"
+	INCBIN "RasterMaster:graphics/256x75x16-Group-Logo.rawblit"
 
 	END

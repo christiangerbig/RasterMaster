@@ -107,8 +107,8 @@ spr_x_size1			EQU 0
 spr_x_size2			EQU 64
 spr_depth			EQU 2
 spr_colors_number		EQU 16
-spr_odd_color_table_select	EQU 1
-spr_even_color_table_select	EQU 1
+spr_odd_color_table_select	EQU 1	; COLOR16..COLOR31
+spr_even_color_table_select	EQU 1	; COLOR16..COLOR31
 spr_used_number			EQU 8
 
 audio_memory_size		EQU 0
@@ -1503,7 +1503,7 @@ pf1_rgb8_color_table
 	CNOP 0,4
 spr_rgb8_color_table
 	REPT spr_colors_number
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR	
 
 
@@ -1563,7 +1563,7 @@ hst_chars_image_pointers
 ; Chunky-Columns-Fader
 ccf_columns_mask
 	REPT cl2_display_width
-		DC.B FALSE
+	DC.B FALSE
 	ENDR
 
 
@@ -1576,7 +1576,7 @@ sprfi_rgb8_color_table
 	CNOP 0,4
 sprfo_rgb8_color_table
 	REPT spr_colors_number
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 
 
@@ -1592,12 +1592,12 @@ sprfo_rgb8_color_table
 ; Horiz-Scrolltext
 hst_text
 	REPT hst_text_chars_number/(hst_origin_char_x_size/hst_text_char_x_size)
-		DC.B " "
+	DC.B " "
 	ENDR
 	DC.B "TWISTED BARS IN OUTER SPACE!  REAL AGA POWER..."
 hst_stop_text
 	REPT hst_text_chars_number/(hst_origin_char_x_size/hst_text_char_x_size)
-		DC.B " "
+	DC.B " "
 	ENDR
 	DC.B ASCII_CTRL_S," "
 	EVEN

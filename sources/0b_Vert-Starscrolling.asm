@@ -156,8 +156,6 @@ diwstop_bits			EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)|(display_window_hsto
 bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|BPLCON0F_COLOR|((pf_depth&$07)*BPLCON0F_BPU0) 
 bplcon3_bits1			EQU BPLCON3F_SPRES0
 bplcon3_bits2			EQU bplcon3_bits1|BPLCON3F_LOCT
-bplcon3_bits3			EQU bplcon3_bits1|BPLCON3F_BANK0|BPLCON3F_BANK1|BPLCON3F_BANK2
-bplcon3_bits4			EQU bplcon3_bits2|BPLCON3F_BANK0|BPLCON3F_BANK1|BPLCON3F_BANK2
 bplcon4_bits			EQU (BPLCON4F_OSPRM4*spr_odd_color_table_select)|(BPLCON4F_ESPRM4*spr_even_color_table_select)
 diwhigh_bits			EQU (((display_window_hstop&$100)>>8)*DIWHIGHF_HSTOP8)|(((display_window_vstop&$700)>>8)*DIWHIGHF_VSTOP8)|(((display_window_hstart&$100)>>8)*DIWHIGHF_HSTART8)|((display_window_vstart&$700)>>8)
 fmode_bits			EQU FMODEF_SPR32|FMODEF_SPAGEM
@@ -171,8 +169,6 @@ bplcon1_bits			EQU 0
 bplcon2_bits			EQU 0
 bplcon3_bits1			EQU BPLCON3F_SPRES0
 bplcon3_bits2			EQU bplcon3_bits1|BPLCON3F_LOCT
-bplcon3_bits3			EQU bplcon3_bits1|BPLCON3F_BANK0|BPLCON3F_BANK1|BPLCON3F_BANK2
-bplcon3_bits4			EQU bplcon3_bits2|BPLCON3F_BANK0|BPLCON3F_BANK1|BPLCON3F_BANK2
 bplcon4_bits			EQU (BPLCON4F_OSPRM4*spr_odd_color_table_select)|(BPLCON4F_ESPRM4*spr_even_color_table_select)
 diwhigh_bits			EQU (((display_window_hstop&$100)>>8)*DIWHIGHF_HSTOP8)|(((display_window_vstop&$700)>>8)*DIWHIGHF_VSTOP8)|(((display_window_hstart&$100)>>8)*DIWHIGHF_HSTART8)|((display_window_vstart&$700)>>8)
 fmode_bits			EQU FMODEF_SPR32|FMODEF_SPAGEM
@@ -1439,13 +1435,13 @@ nmi_interrupt_server
 	CNOP 0,4
 pf1_rgb8_color_table
 	REPT pf1_colors_number
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 
 
 	CNOP 0,4
 spr_rgb8_color_table
-	INCLUDE "RasterMaster:colortables/256x87x16-TheEnd.ct"
+	INCLUDE "RasterMaster:colortables/256x87x16-Endtitle.ct"
 
 
 	CNOP 0,4
@@ -1467,7 +1463,7 @@ ifi_rgb8_color_table
 	CNOP 0,4
 ifo_rgb8_color_table
 	REPT pf1_colors_number
-		DC.L color00_bits
+	DC.L color00_bits
 	ENDR
 
 
@@ -1490,6 +1486,6 @@ vss_image_mask
 
 ; Logo
 lg_image_data			SECTION lg_gfx,DATA
-	INCBIN "RasterMaster:graphics/256x87x16-TheEnd.rawblit"
+	INCBIN "RasterMaster:graphics/256x87x16-Endtitle.rawblit"
 
 	END

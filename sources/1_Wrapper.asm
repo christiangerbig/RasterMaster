@@ -390,6 +390,8 @@ init_colors
 
 	CNOP 0,4
 init_CIA_timers
+
+; PT-Replay
 	PT_INIT_TIMERS
 	rts
 

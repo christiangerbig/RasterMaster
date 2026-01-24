@@ -1025,6 +1025,9 @@ init_first_copperlist
 	bsr	cl1_init_horiz_scroll_blit
 	COP_MOVEQ 0,COPJMP2
 	bsr	cl1_set_bitplane_pointers
+	clr.w	ss_active(a3)
+	bsr	ss_horiz_scrolltext
+	move.w	#FALSE,ss_active(a3)
 	rts
 
 
@@ -1117,11 +1120,7 @@ init_second_copperlist
 	move.l	a0,cl_end(a3)
 	bsr	copy_second_copperlist
 
-	bsr	swap_playfield1
-	bsr	set_playfield1
-	clr.w	ss_active(a3)
-	bsr	ss_horiz_scrolltext
-	move.w	#FALSE,ss_active(a3)
+	bsr	swap_second_copperlist
 	bsr	tb31612_clear_second_copperlist
 	bsr	bf_clear_buffer
 	IFNE tb31612_quick_clear_enabled
@@ -1131,8 +1130,6 @@ init_second_copperlist
 	ENDC
 	bsr	ss_sine_scroll
 	bsr	swap_second_copperlist
-	bsr	swap_playfield1
-	bsr	set_playfield1
 	bsr	tb31612_clear_second_copperlist
 	IFNE tb31612_quick_clear_enabled
 		IFNE tb31612_cpu_restore_cl_enabled
@@ -2026,7 +2023,7 @@ tb31612_yz_coordinates
 
 tb31612_fader_columns_mask
 	REPT cl2_display_width
-		DC.B FALSE
+	DC.B FALSE
 	ENDR
 
 
@@ -2037,7 +2034,7 @@ wcb_bar_color_table
 
 wcb_fader_columns_mask
 	REPT cl2_display_width
-		DC.B FALSE
+	DC.B FALSE
 	ENDR
 
 

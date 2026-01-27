@@ -1595,7 +1595,7 @@ hst_text
 	DC.B " "
 	ENDR
 	DC.B "TWISTED BARS IN OUTER SPACE!  REAL AGA POWER..."
-hst_stop_text
+hst_text_stop
 	REPT hst_text_chars_number/(hst_origin_char_x_size/hst_text_char_x_size)
 	DC.B " "
 	ENDR

@@ -1443,8 +1443,9 @@ eh_start_sprite_fader_in
 	rts
 	CNOP 0,4
 eh_start_twisted_bars313
-	clr.w	tb313_active(a3)
-	clr.w	ccfi_active(a3)
+	moveq	#TRUE,d0
+	move.w	d0,tb313_active(a3)
+	move.w	d0,ccfi_active(a3)
 	move.w	#1,ccfi_delay_counter(a3) ; activate counter
 	rts
 	CNOP 0,4
@@ -1459,15 +1460,17 @@ eh_stop_twisted_bars313
 	CNOP 0,4
 eh_start_twisted_bars312
 	move.w	#FALSE,tb313_active(a3)
-	clr.w	tb312_active(a3)
-	clr.w	ccfi_start(a3)
-	clr.w	ccfi_active(a3)
+	moveq	#TRUE,d0
+	move.w	d0,tb312_active(a3)
+	move.w	d0,ccfi_start(a3)
+	move.w	d0,ccfi_active(a3)
 	move.w	#1,ccfi_delay_counter(a3) ; activate counter
 	rts
 	CNOP 0,4
 eh_stop_twisted_bars312
-	clr.w	ccfo_start(a3)
-	clr.w	ccfo_active(a3)
+	moveq	#TRUE,d0
+	move.w	d0,ccfo_start(a3)
+	move.w	d0,ccfo_active(a3)
 	move.w	#1,ccfo_delay_counter(a3) ; activate counter
 	rts
 	CNOP 0,4

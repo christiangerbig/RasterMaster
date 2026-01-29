@@ -1076,8 +1076,9 @@ effects_handler_quit
 	rts
 	CNOP 0,4
 eh_start_vert_colorscroll3112
-	clr.w	vcs3112_active(a3)
-	clr.w	bfi_active(a3)
+	moveq	#TRUE,d0
+	move.w	d0,vcs3112_active(a3)
+	move.w	d0,bfi_active(a3)
 	rts
 	CNOP 0,4
 eh_stop_vert_colorscroll3112
@@ -1086,8 +1087,9 @@ eh_stop_vert_colorscroll3112
 	CNOP 0,4
 eh_start_vert_colorscroll3121
 	move.w	#FALSE,vcs3112_active(a3)
-	clr.w	vcs3121_active(a3)
-	clr.w	bfi_active(a3)
+	moveq	#TRUE,d0
+	move.w	d0,vcs3121_active(a3)
+	move.w	d0,bfi_active(a3)
 	rts
 	CNOP 0,4
 eh_stop_vert_colorscroll3121
@@ -1096,8 +1098,9 @@ eh_stop_vert_colorscroll3121
 	CNOP 0,4
 eh_start_vert_colorscroll3122
 	move.w	#FALSE,vcs3121_active(a3)
-	clr.w	vcs3122_active(a3)
-	clr.w	bfi_active(a3)
+	moveq	#TRUE,d0
+	move.w	d0,vcs3122_active(a3)
+	move.w	d0,bfi_active(a3)
 	rts
 	CNOP 0,4
 eh_stop_vert_colorscroll3122
@@ -1106,8 +1109,9 @@ eh_stop_vert_colorscroll3122
 	CNOP 0,4
 eh_start_vert_colorscroll3111
 	move.w	#FALSE,vcs3122_active(a3)
-	clr.w	vcs3111_active(a3)
-	clr.w	bfi_active(a3)
+	moveq	#TRUE,d0
+	move.w	d0,vcs3111_active(a3)
+	move.w	d0,bfi_active(a3)
 	rts
 	CNOP 0,4
 eh_stop_vert_colorscroll3111

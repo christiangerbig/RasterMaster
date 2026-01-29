@@ -904,8 +904,9 @@ effects_handler_quit
 	rts
 	CNOP 0,4
 eh_start_blind_colorscroll512
-	clr.w	bcc512_active(a3)
-	clr.w	bfi_active(a3)
+	moveq	#TRUE,d0
+	move.w	d0,bcc512_active(a3)
+	move.w	d0,bfi_active(a3)
 	rts
 	CNOP 0,4
 eh_stop_blind_colorscroll512
@@ -914,8 +915,9 @@ eh_stop_blind_colorscroll512
 	CNOP 0,4
 eh_start_blind_colorscroll514
 	move.w	#FALSE,bcc512_active(a3)
-	clr.w	bcc514_active(a3)
-	clr.w	bfi_active(a3)
+	moveq	#TRUE,d0
+	move.w	d0,bcc514_active(a3)
+	move.w	d0,bfi_active(a3)
 	rts
 	CNOP 0,4
 eh_stop_blind_colorscroll514

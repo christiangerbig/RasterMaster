@@ -823,8 +823,9 @@ effects_handler_quit
 	rts
 	CNOP 0,4
 eh_start_vert_colorscroll4
-	clr.w	vcs4_active(a3)
-	clr.w	bfi_active(a3)
+	moveq	#TRUE,d0
+	move.w	d0,vcs4_active(a3)
+	move.w	d0,bfi_active(a3)
 	rts
 	CNOP 0,4
 eh_stop_vert_colorscroll4
@@ -833,8 +834,9 @@ eh_stop_vert_colorscroll4
 	CNOP 0,4
 eh_start_vert_colorscroll5
 	move.w	#FALSE,vcs4_active(a3)
-	clr.w	vcs5_active(a3)
-	clr.w	bfi_active(a3)
+	moveq	#TRUE,d0
+	move.w	d0,vcs5_active(a3)
+	move.w	d0,bfi_active(a3)
 	rts
 	CNOP 0,4
 eh_stop_vert_colorscroll5

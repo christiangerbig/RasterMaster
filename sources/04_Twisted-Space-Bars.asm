@@ -599,7 +599,7 @@ spr7_y_size2			EQU sprite7_size/(spr_pixel_per_datafetch/4)
 hst_image			RS.L 1
 hst_enabled			RS.W 1
 hst_text_table_start		RS.W 1
-hst_text_bltcon0_bits		RS.W 1
+hst_text_softscroll		RS.W 1
 hst_char_toggle_image		RS.W 1
 
 ; Twisted-Bars3.1.3
@@ -665,7 +665,7 @@ init_main_variables
 	move.w	d1,hst_enabled(a3)
 	moveq	#TRUE,d0
 	move.w	d0,hst_text_table_start(a3)
-	move.w	d0,hst_text_bltcon0_bits(a3)
+	move.w	d0,hst_text_softscroll(a3)
 	move.w	d0,hst_char_toggle_image(a3)
 
 ; Twisted-Bars3.1.3
@@ -975,9 +975,7 @@ horiz_scrolltext_init
 hst_get_text_softscroll
 	moveq	#hst_text_char_x_size-1,d0
 	and.w	(a0),d0			; x&$f
-	ror.w	#4,d0			; adjust bits
-	or.w	#BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC,d0 ; minterm D = A
-	move.w	d0,hst_text_bltcon0_bits(a3) 
+	move.w	d0,hst_text_softscroll(a3)
 	rts
 
 
@@ -1004,9 +1002,16 @@ hst_stop_horiz_scrolltext
 hst_horiz_scroll
 	move.l	pf1_construction2(a3),a0
 	move.l	(a0),a0
-	add.l	#(hst_text_x_position/8)+(hst_text_y_position*pf1_plane_width*pf1_depth3),a0 ; y centering, skip 32 pixel
+	ADDF.W	(hst_text_x_position/8)+(hst_text_y_position*pf1_plane_width*pf1_depth3),a0 ; y centering, skip 32 pixel
+	moveq	#0,d0
+	move.w	hst_text_softscroll(a3),d0
+	ror.w	#4,d0			; adjust bits
+	or.w	#BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC,d0 ; minterm D = A
+	swap	d0
 	WAITBLIT
-	move.w	hst_text_bltcon0_bits(a3),BLTCON0-DMACONR(a6)
+	move.l	d0,BLTCON0-DMACONR(a6)
+	moveq	#-1,d0
+	move.l	d0,BLTAFWM-DMACONR(a6)	; no mask
 	move.l	a0,BLTAPT-DMACONR(a6)	; source
 	addq.w	#WORD_SIZE,a0		; skip 16 pixel
 	move.l	a0,BLTDPT-DMACONR(a6)	; destination
@@ -1220,7 +1225,7 @@ sprite_fader_in_quit
 	rts
 
 
-; Hintergrundbild ausblenden
+; Fade out background image
 	CNOP 0,4
 sprite_fader_out
 	movem.l a4-a6,-(a7)

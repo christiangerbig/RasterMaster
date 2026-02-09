@@ -1138,8 +1138,8 @@ init_second_copperlist
 	ENDC
 	bsr	ss_sine_scroll
 	bsr	swap_second_copperlist
-	bsr	swap_playfield1
-	bsr	set_playfield1
+	bsr	pf1_swap_playfields
+	bsr	pf1_set_playfield
 	bsr	tb31612_clear_second_copperlist
 	IFNE tb31612_cpu_restore_cl_enabled
 		IFNE tb31612_quick_clear_enabled
@@ -1275,8 +1275,8 @@ beam_routines
 	bsr	wait_copint
 	bsr.s	swap_second_copperlist
 	bsr	set_second_copperlist
-	bsr	swap_playfield1
-	bsr	set_playfield1
+	bsr	pf1_swap_playfields
+	bsr	pf1_set_playfield
 	bsr	effects_handler
 	bsr	ss_horiz_scrolltext
 	bsr	tb31612_clear_second_copperlist
@@ -1318,7 +1318,7 @@ beam_routines_quit
 	SET_COPPERLIST cl2
 
 
-	SWAP_PLAYFIELD pf1,2
+	SWAP_PLAYFIELD_BUFFERS pf1,2
 
 
 	SET_PLAYFIELD pf1,pf1_depth3,pf1_plane_x_offset,pf1_plane_y_offset

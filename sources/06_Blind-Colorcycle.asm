@@ -4,6 +4,9 @@
 ; 3.0+
 
 
+; Code optimized for O.M.A. 2.0 Assembler
+
+
 	MC68040
 
 
@@ -453,8 +456,8 @@ init_main_variables
 init_main
 	bsr	init_colors
 	bsr	bcc_init_mirror_bplam_table
-	bsr	init_first_copperlist
-	bsr	init_second_copperlist
+	bsr	cl1_init_copperlist
+	bsr	cl2_init_copperlist
 	rts
 
 
@@ -489,7 +492,7 @@ init_colors
 
 
 	CNOP 0,4
-init_first_copperlist
+cl1_init_copperlist
 	move.l	cl1_display(a3),a0 
 	bsr.s	cl1_init_playfield_props
 	IFEQ open_border_enabled
@@ -512,7 +515,7 @@ init_first_copperlist
 
 
 	CNOP 0,4
-init_second_copperlist
+cl2_init_copperlist
 	move.l	cl2_construction2(a3),a0 
 	bsr.s	cl2_init_bplcon4_chunky
 	bsr.s	cl2_init_copper_interrupt
@@ -944,7 +947,7 @@ nmi_interrupt_server
 
 	CNOP 0,4
 pf1_rgb8_color_table
-	INCLUDE "RasterMaster:colortables/07_bcc512_Colorgradient.ct"
+	INCLUDE "RasterMaster:colorpalettes/07_bcc512_Colorgradient.ct"
 
 
 ; Blind-Fader

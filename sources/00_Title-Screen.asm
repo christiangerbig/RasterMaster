@@ -4,6 +4,9 @@
 ; 3.0+
 
 
+; Code optimized for O.M.A. 2.0 Assembler
+
+
 	MC68040
 
 
@@ -605,8 +608,8 @@ init_main
 	bsr.s	init_colors
 	bsr	init_sprites
 	bsr	bg_copy_image_to_playfield
-	bsr	init_first_copperlist
-	bsr	init_second_copperlist
+	bsr	cl1_init_copperlist
+	bsr	cl2_init_copperlist
 	rts
 
 
@@ -675,7 +678,7 @@ bg_copy_image_data_loop
 
 
 	CNOP 0,4
-init_first_copperlist
+cl1_init_copperlist
 	move.l	cl1_display(a3),a0 
 	bsr.s	cl1_init_playfield_props
 	bsr.s	cl1_init_sprite_pointers
@@ -724,7 +727,7 @@ cl1_init_colors
 
 
 	CNOP 0,4
-init_second_copperlist
+cl2_init_copperlist
 	move.l	cl2_construction2(a3),a0
 	bsr.s	cl2_init_bpldat
 	bsr	cl2_init_copper_interrupt
@@ -1308,7 +1311,7 @@ pf1_rgb8_color_table
 
 	CNOP 0,4
 spr_rgb8_color_table
-	INCLUDE "RasterMaster:colortables/256x75x16-Group-Logo.ct"
+	INCLUDE "RasterMaster:colorpalettes/256x75x16-Group-Logo.ct"
 
 
 	CNOP 0,4
@@ -1330,7 +1333,7 @@ cs_audio_channel_data
 ; Image-Fader
 	CNOP 0,4
 ifi_rgb8_color_table
-	INCLUDE "RasterMaster:colortables/352x256x128-Title.ct"
+	INCLUDE "RasterMaster:colorpalettes/352x256x128-Title.ct"
 
 	CNOP 0,4
 ifo_rgb8_color_table

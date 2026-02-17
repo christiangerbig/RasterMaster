@@ -4,6 +4,9 @@
 ; 3.0+
 
 
+; Code optimized for O.M.A. 2.0 Assembler
+
+
 	MC68040
 
 
@@ -718,8 +721,8 @@ init_main
 	bsr	hst_init_chars_offsets
 	bsr	hst_init_chars_x_positions
 	bsr	hst_init_chars_images
-	bsr	init_first_copperlist
-	bsr	init_second_copperlist
+	bsr	cl1_init_copperlist
+	bsr	cl2_init_copperlist
 	rts
 
 ; Twisted-Bars
@@ -798,7 +801,7 @@ init_sprites
 
 
 	CNOP 0,4
-init_first_copperlist
+cl1_init_copperlist
 	move.l	cl1_display(a3),a0 
 	bsr.s	cl1_init_playfield_props
 	bsr.s	cl1_init_sprite_pointers
@@ -838,7 +841,7 @@ cl1_init_colors
 
 
 	CNOP 0,4
-init_second_copperlist
+cl2_init_copperlist
 	move.l	cl2_construction1(a3),a0 
 	bsr.s	cl2_init_bplcon4_chunky
 	bsr.s	cl2_init_copper_interrupt
@@ -1505,7 +1508,7 @@ nmi_interrupt_server
 
 	CNOP 0,4
 pf1_rgb8_color_table
-	INCLUDE "RasterMaster:colortables/32x32x16-Font.ct"
+	INCLUDE "RasterMaster:colorpalettes/32x32x16-Font.ct"
 
 
 	CNOP 0,4
@@ -1523,7 +1526,7 @@ spr_pointers_display
 ; Twisted-Bars
 	CNOP 0,4
 tb_color_gradient
-	INCLUDE "RasterMaster:colortables/05_tb_Colorgradient.ct"
+	INCLUDE "RasterMaster:colorpalettes/05_tb_Colorgradient.ct"
 
 
 	CNOP 0,4
@@ -1578,7 +1581,7 @@ ccf_columns_mask
 ; Sprites-Fader
 	CNOP 0,4
 sprfi_rgb8_color_table
-	INCLUDE "RasterMaster:colortables/256x256x16-Nebula.ct"
+	INCLUDE "RasterMaster:colorpalettes/256x256x16-Nebula.ct"
 
 
 	CNOP 0,4

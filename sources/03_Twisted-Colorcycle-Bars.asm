@@ -4,6 +4,9 @@
 ; 3.0+
 
 
+; Code optimized for O.M.A. 2.0 Assembler
+
+
 	MC68040
 
 
@@ -454,7 +457,7 @@ init_main
 		ENDC
 	ENDC
 	bsr	tccb_init_mirror_bplam_table
-	bsr	init_first_copperlist
+	bsr	cl1_init_copperlist
 	rts
 
 
@@ -497,7 +500,7 @@ init_colors
 
 
 	CNOP 0,4
-init_first_copperlist
+cl1_init_copperlist
 	move.l	cl1_construction1(a3),a0 
 	bsr.s	cl1_init_playfield_props
 	bsr	cl1_init_colors
@@ -960,7 +963,7 @@ sine_table_512
 ; Twisted-Colorcycle-Bars
 	CNOP 0,4
 tccb_color_gradient
-	INCLUDE "RasterMaster:colortables/04_tcb_Colorgradient.ct"
+	INCLUDE "RasterMaster:colorpalettes/04_tcb_Colorgradient.ct"
 
 
 ; Blind-Fader

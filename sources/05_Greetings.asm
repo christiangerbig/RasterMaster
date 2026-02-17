@@ -4,6 +4,9 @@
 ; 3.0+
 
 
+; Code optimized for O.M.A. 2.0 Assembler
+
+
 	MC68040
 
 
@@ -772,8 +775,8 @@ init_main
 	bsr	bf_init_color_table
 	bsr	bf_init_color_table_pointers
 	bsr	bf_scale_bar_size
-	bsr	init_first_copperlist
-	bsr	init_second_copperlist
+	bsr	cl1_init_copperlist
+	bsr	cl2_init_copperlist
 	rts
 
 
@@ -1016,7 +1019,7 @@ bf_do_scale_bar_y_size_skip
 
 
 	CNOP 0,4
-init_first_copperlist
+cl1_init_copperlist
 	move.l	cl1_display(a3),a0 
 	bsr.s	cl1_init_playfield_props
 	bsr.s	cl1_init_bitplane_pointers
@@ -1103,7 +1106,7 @@ cl1_init_horiz_scroll_blit
 
 
 	CNOP 0,4
-init_second_copperlist
+cl2_init_copperlist
 	move.l	cl2_construction1(a3),a0 
 	bsr.s	cl2_init_sine_scroll_blits_const
 	bsr	cl2_init_sine_scroll_blits
@@ -2015,7 +2018,7 @@ pf1_rgb8_color_table
 ; Twisted-Bars3.16.1.2
 	CNOP 0,4
 tb31612_bars_color_table
-	INCLUDE "RasterMaster:colortables/06_tb31612_Colorgradient.ct"
+	INCLUDE "RasterMaster:colorpalettes/06_tb31612_Colorgradient.ct"
 
 	CNOP 0,4
 tb31612_yz_coordinates
@@ -2030,7 +2033,7 @@ tb31612_fader_columns_mask
 ; Wave-Center-Bar
 	CNOP 0,4
 wcb_bar_color_table
-	INCLUDE "RasterMaster:colortables/06_wcb_Colorgradient.ct"
+	INCLUDE "RasterMaster:colorpalettes/06_wcb_Colorgradient.ct"
 
 wcb_fader_columns_mask
 	REPT cl2_display_width
@@ -2048,7 +2051,7 @@ we_y_coordinates_end
 ; Sine-Scrolltext
 	CNOP 0,4
 ss_color_table
-	INCLUDE "RasterMaster:colortables/06_ss_Colorgradient.ct"
+	INCLUDE "RasterMaster:colorpalettes/06_ss_Colorgradient.ct"
 
 ss_ascii
 	DC.B "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.!?-'():\/ "
@@ -2063,7 +2066,7 @@ ss_chars_offsets
 ; Barfield
 	CNOP 0,4
 bf_color_table
-	INCLUDE "RasterMaster:colortables/06_bf_Colorgradient.ct"
+	INCLUDE "RasterMaster:colorpalettes/06_bf_Colorgradient.ct"
 
 	CNOP 0,4
 bf_color_table_pointers

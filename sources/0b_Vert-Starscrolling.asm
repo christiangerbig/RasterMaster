@@ -4,6 +4,9 @@
 ; 3.0+
 
 
+; Code optimized for O.M.A. 2.0 Assembler
+
+
 	MC68040
 
 
@@ -715,8 +718,8 @@ init_main
 	bsr	vss_convert_image_data
 	bsr	vss_init_bplam_table_mask
 	bsr	vss_init_xy_coordinates
-	bsr	init_first_copperlist
-	bsr	init_second_copperlist
+	bsr	cl1_init_copperlist
+	bsr	cl2_init_copperlist
 	rts
 
 
@@ -809,7 +812,7 @@ vss_init_xy_coordinates_loop2
 
 
 	CNOP 0,4
-init_first_copperlist
+cl1_init_copperlist
 	move.l	cl1_display(a3),a0 
 	bsr.s	cl1_init_playfield_props
 	bsr.s	cl1_init_sprite_pointers
@@ -855,7 +858,7 @@ cl1_init_colors
 
 
 	CNOP 0,4
-init_second_copperlist
+cl2_init_copperlist
 	move.l	cl2_construction1(a3),a0 
 	bsr.s	cl2_init_bplcon4_chunky
 	bsr.s	cl2_init_copper_interrupt
@@ -1441,7 +1444,7 @@ pf1_rgb8_color_table
 
 	CNOP 0,4
 spr_rgb8_color_table
-	INCLUDE "RasterMaster:colortables/256x87x16-Endtitle.ct"
+	INCLUDE "RasterMaster:colorpalettes/256x87x16-Endtitle.ct"
 
 
 	CNOP 0,4
@@ -1458,7 +1461,7 @@ vss_xy_coordinates
 ; Image-Fader
 	CNOP 0,4
 ifi_rgb8_color_table
-	INCLUDE "RasterMaster:colortables/0c_vss_Colorgradient.ct"
+	INCLUDE "RasterMaster:colorpalettes/0c_vss_Colorgradient.ct"
 
 	CNOP 0,4
 ifo_rgb8_color_table

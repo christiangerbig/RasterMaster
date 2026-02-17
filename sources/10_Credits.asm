@@ -4,6 +4,9 @@
 ; 3.0+
 
 
+; Code optimized for O.M.A. 2.0 Assembler
+
+
 	MC68040
 
 
@@ -570,7 +573,7 @@ init_main
 	bsr	vts_init_chars_x_positions
 	bsr	vts_init_chars_y_positions
 	bsr	vts_init_chars_images
-	bsr	init_first_copperlist
+	bsr	cl1_init_copperlist
 	rts
 
 
@@ -705,7 +708,7 @@ bg_copy_image_data_loop
 
 
 	CNOP 0,4
-init_first_copperlist
+cl1_init_copperlist
 	move.l	cl1_display(a3),a0 
 	bsr.s	cl1_init_playfield_props
 	bsr	cl1_init_sprite_pointers
@@ -1196,7 +1199,7 @@ pf1_rgb8_color_table
 	CNOP 0,4
 spr_rgb8_color_table_logo
 ; Attached sprite0/1
-	INCLUDE "RasterMaster:colortables/64x256x16-Group-Logo.ct"
+	INCLUDE "RasterMaster:colorpalettes/64x256x16-Group-Logo.ct"
 
 
 	CNOP 0,4
@@ -1206,17 +1209,17 @@ spr_rgb8_color_table_vert_text_scroll
 	DC.L color00_bits
 	ENDR
 ; Sprite2
-	INCLUDE "RasterMaster:colortables/16x15x2-Font.ct"
+	INCLUDE "RasterMaster:colorpalettes/16x15x2-Font.ct"
 	REPT 2
 	DC.L color00_bits
 	ENDR
 ; Sprite4
-	INCLUDE "RasterMaster:colortables/16x15x2-Font.ct"
+	INCLUDE "RasterMaster:colorpalettes/16x15x2-Font.ct"
 	REPT 2
 	DC.L color00_bits
 	ENDR
 ; Sprite6
-	INCLUDE "RasterMaster:colortables/16x15x2-Font.ct"
+	INCLUDE "RasterMaster:colorpalettes/16x15x2-Font.ct"
 	REPT 2
 	DC.L color00_bits
 	ENDR
@@ -1258,7 +1261,7 @@ vts_chars_image_pointers
 ; Image-Fader
 	CNOP 0,4
 ifi_rgb8_color_table
-	INCLUDE "RasterMaster:colortables/352x256x128-Title.ct"
+	INCLUDE "RasterMaster:colorpalettes/352x256x128-Title.ct"
 
 	CNOP 0,4
 ifo_rgb8_color_table

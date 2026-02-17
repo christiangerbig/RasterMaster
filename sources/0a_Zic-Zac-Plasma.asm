@@ -4,6 +4,9 @@
 ; 3.0+
 
 
+; Code optimized for O.M.A. 2.0 Assembler
+
+
 	MC68040
 
 
@@ -422,8 +425,8 @@ init_main_variables
 	CNOP 0,4
 init_main
 	bsr.s	init_colors
-	bsr	init_first_copperlist
-	bsr	init_second_copperlist
+	bsr	cl1_init_copperlist
+	bsr	cl2_init_copperlist
 	rts
 
 
@@ -466,7 +469,7 @@ init_colors
 
 
 	CNOP 0,4
-init_first_copperlist
+cl1_init_copperlist
 	move.l	cl1_display(a3),a0 
 	bsr.s	cl1_init_playfield_props
 	bsr	cl1_init_bitplane_pointers
@@ -485,7 +488,7 @@ init_first_copperlist
 
 
 	CNOP 0,4
-init_second_copperlist
+cl2_init_copperlist
 	move.l	cl2_construction2(a3),a0 
 	bsr.s	cl2_init_bplcon4_chunky
 	bsr.s	cl2_init_copper_interrupt
@@ -753,7 +756,7 @@ nmi_interrupt_server
 
 	CNOP 0,4
 pf1_rgb8_color_table
-	INCLUDE "RasterMaster:colortables/0b_zzp5_Colorgradient.ct"
+	INCLUDE "RasterMaster:colorpalettes/0b_zzp5_Colorgradient.ct"
 
 
 	INCLUDE "sys-variables.i"

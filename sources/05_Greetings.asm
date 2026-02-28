@@ -395,7 +395,7 @@ cl1_extension3_entry		RS.B cl1_extension3_size
 
 cl1_ext3_COPJMP2		RS.L 1
 
-copperlist1_size		RS.B 0
+cl1_copperlist_size		RS.B 0
 
 
 	RSRESET
@@ -584,16 +584,16 @@ cl2_INTREQ			RS.L 1
 
 cl2_end				RS.L 1
 
-copperlist2_size		RS.B 0
+cl2_copperlist_size		RS.B 0
 
 
 cl1_size1			EQU 0
 cl1_size2			EQU 0
-cl1_size3			EQU copperlist1_size
+cl1_size3			EQU cl1_copperlist_size
 
-cl2_size1			EQU copperlist2_size
-cl2_size2			EQU copperlist2_size
-cl2_size3			EQU copperlist2_size
+cl2_size1			EQU cl2_copperlist_size
+cl2_size2			EQU cl2_copperlist_size
+cl2_size3			EQU cl2_copperlist_size
 
 
 spr0_x_size1			EQU spr_x_size1
@@ -1022,12 +1022,13 @@ bf_do_scale_bar_y_size_skip
 cl1_init_copperlist
 	move.l	cl1_display(a3),a0 
 	bsr.s	cl1_init_playfield_props
-	bsr.s	cl1_init_bitplane_pointers
+	bsr.s	cl1_init_plane_pointers
 	bsr	cl1_init_copperlist_branch
 	bsr	cl1_init_copy_blit
 	bsr	cl1_init_horiz_scroll_blit
 	COP_MOVEQ 0,COPJMP2
-	bsr	cl1_set_bitplane_pointers
+	bsr	cl1_set_plane_pointers
+
 	clr.w	ss_active(a3)
 	bsr	ss_horiz_scrolltext
 	move.w	#FALSE,ss_active(a3)
@@ -1058,8 +1059,8 @@ cl1_init_copy_blit
 	COP_WAITBLIT
 	COP_MOVEQ BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC,BLTCON0 ; minterm D = A
 	COP_MOVEQ 0,BLTCON1
-	COP_MOVEQ -1,BLTAFWM
-	COP_MOVEQ -1,BLTALWM
+	COP_MOVEQ -1,BLTAFWM	; no mask
+	COP_MOVEQ -1,BLTALWM	; no mask
 	COP_MOVEQ 0,BLTAPTH
 	COP_MOVEQ 0,BLTAPTL
 	move.l	extra_pf1(a3),a1
@@ -1085,7 +1086,7 @@ cl1_init_horiz_scroll_blit
 	move.l	(a1),d0			; source
 	ADDF.L	ss_text_y_position*extra_pf1_plane_width*extra_pf1_depth,d0
 	move.l	d0,d1			; 1st line
-	COP_MOVEQ -1,BLTAFWM
+	COP_MOVEQ -1,BLTAFWM		; no mask
 	addq.l	#WORD_SIZE,d0		; 1st line, skip 16 pixel
 	COP_MOVEQ -1,BLTALWM
 	swap	d0
@@ -1121,32 +1122,31 @@ cl2_init_copperlist
 	bsr	cl2_init_copper_interrupt
 	COP_LISTEND
 	move.l	a0,cl_end(a3)
-	bsr	copy_second_copperlist
+	bsr	cl2_copy_copperlist
 
-	bsr	swap_second_copperlist
-	bsr	tb31612_clear_second_copperlist
+	bsr	tb31612_cl2_clear_copperlist
 	bsr	bf_clear_buffer
 	IFNE tb31612_quick_clear_enabled
 		IFNE tb31612_cpu_restore_cl_enabled
-			bsr	tb31612_restore_second_copperlist
+			bsr	tb31612_cl2_restore_copperlist
 		ENDC
 	ENDC
 	bsr	ss_sine_scroll
-	bsr	swap_second_copperlist
-	bsr	tb31612_clear_second_copperlist
+	bsr	cl2_swap_copperlist
+	bsr	tb31612_cl2_clear_copperlist
 	IFNE tb31612_quick_clear_enabled
 		IFNE tb31612_cpu_restore_cl_enabled
-			bsr	tb31612_restore_second_copperlist
+			bsr	tb31612_cl2_restore_copperlist
 		ENDC
 	ENDC
 	bsr	ss_sine_scroll
-	bsr	swap_second_copperlist
-	bsr	pf1_swap_playfields
+	bsr	cl2_swap_copperlist
+	bsr	pf1_swap_playfield
 	bsr	pf1_set_playfield
-	bsr	tb31612_clear_second_copperlist
+	bsr	tb31612_cl2_clear_copperlist
 	IFNE tb31612_cpu_restore_cl_enabled
 		IFNE tb31612_quick_clear_enabled
-			bsr	tb31612_restore_second_copperlist
+			bsr	tb31612_cl2_restore_copperlist
 		ENDC
 	ENDC
 	bsr	ss_sine_scroll
@@ -1276,13 +1276,13 @@ no_sync_routines
 	CNOP 0,4
 beam_routines
 	bsr	wait_copint
-	bsr.s	swap_second_copperlist
-	bsr	set_second_copperlist
-	bsr	pf1_swap_playfields
+	bsr.s	cl2_swap_copperlist
+	bsr	cl2_set_copperlist
+	bsr	pf1_swap_playfield
 	bsr	pf1_set_playfield
 	bsr	effects_handler
 	bsr	ss_horiz_scrolltext
-	bsr	tb31612_clear_second_copperlist
+	bsr	tb31612_cl2_clear_copperlist
 	bsr	ss_sine_scroll
 	bsr	chunky_columns_fader_in
 	bsr	chunky_columns_fader_out
@@ -1298,7 +1298,7 @@ beam_routines_skip
 	bsr	tb31612_get_yz_coordinates
 	bsr	we_get_y_coordinates
 	IFNE tb31612_quick_clear_enabled
-		bsr	restore_second_copperlist
+		bsr	cl2_restore_copperlist
 	ENDC
 	jsr	mouse_handler
 	tst.l	d0			; exit ?
@@ -1356,7 +1356,7 @@ ss_horiz_scrolltext_quit
 	GET_NEW_CHAR_IMAGE.W ss
 
 
-tb31612_clear_second_copperlist
+tb31612_cl2_clear_copperlist
 	move.l	cl2_construction1(a3),a0
 	ADDF.W	cl2_extension6_entry+WORD_SIZE,a0
 	move.l	cl2_construction2(a3),d0
@@ -1797,7 +1797,7 @@ ccfi_fader_mode_1
 	cmp.w	d2,d1			; finished ?
 	bgt.s	ccfi_fader_mode_skip
 	move.w	d1,ccfi_start(a3)
-	rts
+	bra.s	chunky_columns_fader_in_quit
 ; Fade in columns from right to left
 	CNOP 0,4
 ccfi_fader_mode_2
@@ -1808,7 +1808,7 @@ ccfi_fader_mode_2
 	cmp.w	d2,d1			; finished ?
 	bgt.s	ccfi_fader_mode_skip
 	move.w	d1,ccfi_start(a3)
-	rts
+	bra.s	chunky_columns_fader_in_quit
 ; Fade in columns from right and left to center
 	CNOP 0,4
 ccfi_fader_mode_3
@@ -1821,7 +1821,7 @@ ccfi_fader_mode_3
 	cmp.w	d2,d1			; finished ?
 	bgt.s	ccfi_fader_mode_skip
 	move.w	d1,ccfi_start(a3)
-	rts
+	bra.s	chunky_columns_fader_in_quit
 ; Fade in every 2nd column from left and right
 	CNOP 0,4
 ccfi_fader_mode_4
@@ -1833,11 +1833,11 @@ ccfi_fader_mode_4
 	cmp.w	d2,d1			; finished ?
 	bgt.s	ccfi_fader_mode_skip
 	move.w	d1,ccfi_start(a3)
-	rts
+	bra.s	chunky_columns_fader_in_quit
 	CNOP 0,4
 ccfi_fader_mode_skip
 	move.w	#FALSE,ccfi_active(a3)
-	rts
+	bra.s	chunky_columns_fader_in_quit
 
 
 	CNOP 0,4
@@ -1868,7 +1868,7 @@ ccfo_fader_mode_1
 	cmp.w	d2,d1			; finished ?
 	bgt.s	ccfo_fader_mode_skip
 	move.w	d1,ccfo_start(a3)
-	rts
+	bra.s	chunky_columns_fader_out_quit
 ; Fade out columns from right to left
 	CNOP 0,4
 ccfo_fader_mode_2
@@ -1879,7 +1879,7 @@ ccfo_fader_mode_2
 	cmp.w	d2,d1			; finished ?
 	bgt.s	ccfo_fader_mode_skip
 	move.w	d1,ccfo_start(a3)
-	rts
+	bra.s	chunky_columns_fader_out_quit
 ; Fade out columns from left and right
 	CNOP 0,4
 ccfo_fader_mode_3
@@ -1892,7 +1892,7 @@ ccfo_fader_mode_3
 	cmp.w	d2,d1			; finished ?
 	bgt.s	ccfo_fader_mode_skip
 	move.w	d1,ccfo_start(a3)
-	rts
+	bra.s	chunky_columns_fader_out_quit
 ; Fade out every 2nd column from left and right
 	CNOP 0,4
 ccfo_fader_mode_4
@@ -1904,11 +1904,11 @@ ccfo_fader_mode_4
 	cmp.w	d2,d1			; finished ?
 	bgt.s	ccfo_fader_mode_skip
 	move.w	d1,ccfo_start(a3)
-	rts
+	bra.s	chunky_columns_fader_out_quit
 	CNOP 0,4
 ccfo_fader_mode_skip
 	move.w	#FALSE,ccfo_active(a3)
-	rts
+	bra.s	chunky_columns_fader_out_quit
 
 
 	CNOP 0,4
@@ -1945,12 +1945,12 @@ effects_handler_quit
 	CNOP 0,4
 eh_start_barfield
 	clr.w	bf_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_wave_center_bar
 	clr.w	ccfi_active(a3)
 	move.w	#1,ccfi_columns_delay_counter(a3) ; activate counter
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_twisted_bars31612
 	lea	tb31612_fader_columns_mask(pc),a0
@@ -1960,22 +1960,22 @@ eh_start_twisted_bars31612
 	move.w	d0,ccfi_start(a3)
 	move.w	d0,ccfi_active(a3)
 	move.w	#1,ccfi_columns_delay_counter(a3) ; activate counter
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_horiz_scrolltext
 	clr.w	ss_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_stop_horiz_scrolltext
 	move.w	#FALSE,ss_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_stop_wave_center_bar
 	lea	wcb_fader_columns_mask(pc),a0
 	move.l	a0,ccf_fader_columns_mask(a3)
 	clr.w	ccfo_active(a3)
 	move.w	#1,ccfo_columns_delay_counter(a3) ; activate counter
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_stop_twisted_bars31612
 	lea	tb31612_fader_columns_mask(pc),a0
@@ -1984,18 +1984,19 @@ eh_stop_twisted_bars31612
 	move.w	d0,ccfo_start(a3)
 	move.w	d0,ccfo_active(a3)
 	move.w	#1,ccfo_columns_delay_counter(a3) ; activate counter
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_disable_barfield_z_restart
 	move.w	#FALSE,bf_z_restart_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_stop_all
 	clr.w	stop_fx_active(a3)
-	rts
+	bra	effects_handler_quit
 
 
 	INCLUDE "int-autovectors-handlers.i"
+
 
 	CNOP 0,4
 nmi_interrupt_server

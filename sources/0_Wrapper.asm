@@ -27,7 +27,7 @@
 
 ; Exports
 	XDEF start_0_pt_replay
-	XDEF sc_start
+	XDEF decrunch_data
 	XDEF pt_track_notes_played_enabled
 	XDEF pt_track_volumes_enabled
 	XDEF pt_track_periods_enabled
@@ -247,12 +247,12 @@ cl1_INTREQ			RS.L 1
 
 cl1_end				RS.L 1
 
-copperlist1_size RS.B 0
+cl1_copperlist_size RS.B 0
 
 
 cl1_size1			EQU 0
 cl1_size2			EQU 0
-cl1_size3			EQU copperlist1_size
+cl1_size3			EQU cl1_copperlist_size
 
 cl2_size1			EQU 0
 cl2_size2			EQU 0
@@ -379,14 +379,14 @@ pt_decrunch_audio_data
 	move.l	cme_memory_pointer(a2),a1 ; festination: decrunched data
 	move.l	a1,pt_Song(a3)
 	movem.l a2-a6,-(a7)
-	bsr	sc_start
+	bsr	decrunch_data
 	movem.l (a7)+,a2-a6
 	ADDF.W	custom_memory_entry_size,a2 ; next custom memory block
 	lea	pt_audsmps,a0
 	move.l	cme_memory_pointer(a2),a1
 	move.l	a1,pt_Samples(a3)
 	movem.l a2-a6,-(a7)
-	bsr	sc_start
+	bsr	decrunch_data
 	movem.l (a7)+,a2-a6
 	rts
 
@@ -465,7 +465,7 @@ alloc_custom_memory_quit
 alloc_custom_memory_fail
 	move.w	#CUSTOM_MEMORY_NO_MEMORY,custom_error_code(a3)
 	moveq	#RETURN_ERROR,d0
-	rts
+	bra.s	alloc_custom_memory_quit
 
 
 	CNOP 0,4
@@ -504,6 +504,7 @@ free_custom_memory_skip
 
 	INCLUDE "int-autovectors-handlers.i"
 
+
 	IFEQ pt_ciatiming_enabled
 		CNOP 0,4
 ciab_ta_interrupt_server
@@ -536,13 +537,16 @@ pt_SetSoftInterrupt
 	move.w	#INTF_SOFTINT|INTF_SETCLR,_CUSTOM+INTREQ
 	rts
 
+
 	CNOP 0,4
 ciab_tb_interrupt_server
 	PT_TIMER_INTERRUPT_SERVER
 
+
 	CNOP 0,4
 exter_interrupt_server
 	rts
+
 
 	CNOP 0,4
 nmi_interrupt_server
@@ -558,193 +562,8 @@ nmi_interrupt_server
 ; a1.l	 decrunched data
 ; Result
 	CNOP 0,4
-sc_start
-	addq.w	#QUADWORD_SIZE,a0	; skip ID string & security length
-	move.l	a1,a5
-	add.l	(a0)+,a1
-	moveq	#0,d4
-	add.l	(a0),a0
-	moveq	#16,d5
-	movem.w (a0),d2/d6/d7
-	not.w	d4
-	lea	sc_off6(pc),a3
-	lea	sc_len5a(pc),a4
-	moveq	#1,d0
-	moveq	#-1,d3
-	bra.s	sc_test1
-	CNOP 0,4
-sc_ins
-	subq.w	#QUADWORD_SIZE,d7
-	bpl.s	sc_ins2
-sc_ins1
-	move.w	d7,d1
-	addq.w	#QUADWORD_SIZE,d7
-	lsl.l	d7,d6
-	move.w	-(a0),d6
-	neg.w	d1
-	lsl.l	d1,d6
-	addq.w	#QUADWORD_SIZE,d7
-	swap	d6
-	move.b	d6,-(a1)
-	swap	d6
-	cmp.l	a1,a5
-	dbhs	d7,sc_main
-	bra.s	sc_exma
-	CNOP 0,4
-sc_ins2
-	rol.w	#8,d6
-	move.b	d6,-(a1)
-sc_test1
-	cmp.l	a1,a5
-	dbhs	d7,sc_main
-sc_exma
-	bhs.s	sc_exit
-
-sc_main1
-	move.w	-(a0),d6
-	moveq	#16-1,d7
-sc_main
-	add.w	d6,d6
-	bcc.s	sc_ins
-	dbf	d7,sc_len1
-	move.w	-(a0),d6
-	moveq	#16-1,d7
-sc_len1
-	add.w	d6,d6
-	bcs.s	sc_len6
-	dbf	d7,sc_len2
-	move.w	-(a0),d6
-	moveq	#16-1,d7
-sc_len2
-	moveq	#2,d1
-	moveq	#2,d3
-	add.w	d6,d6
-	bcs.s	sc_len5
-	dbf	d7,sc_len3
-	move.w	-(a0),d6
-	moveq	#16-1,d7
-sc_len3
-	add.w	d6,d6
-	bcc.s	sc_len4
-	moveq	#4,d1
-	moveq	#6,d3
-	lea	sc_len3a(pc),a6
-	bra.s	sc_bits
-	CNOP 0,4
-sc_len3a
-	add.w	d1,d3
-	cmp.w	#15,d1
-	blo.s	sc_off1
-	moveq	#5,d1
-	moveq	#14,d3
-	lea	sc_len3b(pc),a6
-	bra.s	sc_bits
-	CNOP 0,4
-sc_len4
-	moveq	#21,d3
-sc_loop
-	moveq	#8,d1
-sc_len5
-	move.l	a4,a6
-	bra.s	sc_bits
-	CNOP 0,4
-sc_len5a
-	add.w	d1,d3
-	not.b	d1
-	dbeq	d7,sc_off2
-	bne.s	sc_off2a
-	beq.s	sc_loop
-
-sc_off6
-	add.w	d1,a2
-	move.b	(a2),-(a1)
-sc_copy
-	move.b	-(a2),-(a1)
-	dbf	d3,sc_copy
-sc_test
-	cmp.l	a1,a5
-	dbhs	d7,sc_main
-	blo.s	sc_main1
-sc_exit
-	CALLEXECQ CacheClearU
-
-	CNOP 0,4
-sc_len6
-	dbf	d7,sc_len7
-	move.w	-(a0),d6
-	moveq	#16-1,d7
-sc_len7
-	add.w	d6,d6
-	addx.w	d0,d3
-sc_off1
-	dbf	d7,sc_off2
-sc_off2a
-	move.w	-(a0),d6
-	moveq	#16-1,d7
-sc_off2
-	add.w	d6,d6
-	bcs.s	sc_off3
-	dbf	d7,sc_off4
-	move.w	-(a0),d6
-	moveq	#16-1,d7
-sc_off4
-	moveq	#9,d1
-	lea	32(a1),a2
-	add.w	d6,d6
-	bcc.s	sc_off5
-	moveq	#5,d1
-	move.l	a1,a2
-	bra.s	sc_off5
-	CNOP 0,4
-sc_off3
-	lea	544(a1),a2
-	move.w	d2,d1
-sc_off5
-	move.l	a3,a6
-
-sc_bits
-	and.l	d4,d6
-	sub.w	d1,d7
-	bpl.s	sc_bits2
-	add.w	d7,d1
-	lsl.l	d1,d6
-	move.w	d7,d1
-	move.w	-(a0),d6
-	neg.w	d1
-	add.w	d5,d7
-sc_bits2
-	lsl.l	d1,d6
-	move.l	d6,d1
-	swap.w	d1
-	jmp	(a6)
-	CNOP	0,4
-sc_pins2
-	moveq	#-1,d3
-	bra.w	sc_ins2
-	CNOP 0,4
-sc_2ins2
-	rol.w	#8,d6
-	move.b	d6,-(a1)
-sc_2ins1
-	lsl.l	d7,d6
-	move.w	-(a0),d6
-	lsl.l	d1,d6
-	swap	d6
-	move.b	d6,-(a1)
-	swap	d6
-	subq.w	#2,d3
-	bgt.s	sc_2ins2
-	beq.s	sc_pins2
-	addq.w	#QUADWORD_SIZE,d7
-	bra	sc_test
-	CNOP 0,4
-sc_len3b
-	add.w	d1,d3
-	move.b	sc_newd1(pc,d7),d1
-	bpl.s	sc_2ins1
-	subq.w	#QUADWORD_SIZE,d7
-	dbf	d3,sc_2ins2
-	rts
+decrunch_data
+	STONECRACKER_DECRUNCH
 
 
 	INCLUDE "sys-structures.i"

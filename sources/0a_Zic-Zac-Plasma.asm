@@ -225,7 +225,7 @@ cl1_begin			RS.B 0
 
 cl1_COPJMP2			RS.L 1
 
-copperlist1_size		RS.B 0
+cl1_copperlist_size		RS.B 0
 
 
 	RSRESET
@@ -304,16 +304,16 @@ cl2_INTREQ			RS.L 1
 
 cl2_end				RS.L 1
 
-copperlist2_size		RS.B 0
+cl2_copperlist_size		RS.B 0
 
 
 cl1_size1			EQU 0
 cl1_size2			EQU 0
-cl1_size3			EQU copperlist1_size
+cl1_size3			EQU cl1_copperlist_size
 
 cl2_size1			EQU 0
-cl2_size2			EQU copperlist2_size
-cl2_size3			EQU copperlist2_size
+cl2_size2			EQU cl2_copperlist_size
+cl2_size3			EQU cl2_copperlist_size
 
 
 spr0_x_size1			EQU spr_x_size1
@@ -472,9 +472,9 @@ init_colors
 cl1_init_copperlist
 	move.l	cl1_display(a3),a0 
 	bsr.s	cl1_init_playfield_props
-	bsr	cl1_init_bitplane_pointers
+	bsr	cl1_init_plane_pointers
 	COP_MOVEQ 0,COPJMP2
-	bsr	cl1_set_bitplane_pointers
+	bsr	cl1_set_plane_pointers
 	rts
 
 
@@ -494,7 +494,7 @@ cl2_init_copperlist
 	bsr.s	cl2_init_copper_interrupt
 	COP_LISTEND
 	move.l	a0,cl_end(a3)
-	bsr	copy_second_copperlist
+	bsr	cl2_copy_copperlist
 	rts
 
 
@@ -530,8 +530,8 @@ no_sync_routines
 	CNOP 0,4
 beam_routines
 	bsr	wait_copint
-	bsr.s	swap_second_copperlist
-	bsr.s	set_second_copperlist
+	bsr.s	cl2_swap_copperlist
+	bsr.s	cl2_set_copperlist
 	bsr	effects_handler
 	bsr	vert_border_fader_out
 	bsr	vert_shade_bars
@@ -730,18 +730,19 @@ effects_handler_quit
 	CNOP 0,4
 eh_start_vert_shade_bars
 	clr.w	vsb_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_vert_border_fader_out
 	clr.w	vbfo_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_stop_all
 	clr.w	stop_fx_active(a3)
-	rts
+	bra.s	effects_handler_quit
 
 
 	INCLUDE "int-autovectors-handlers.i"
+
 
 	CNOP 0,4
 nmi_interrupt_server

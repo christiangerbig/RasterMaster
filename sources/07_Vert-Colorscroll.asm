@@ -239,7 +239,7 @@ cl1_begin			RS.B 0
 
 cl1_COPJMP2			RS.L 1
 
-copperlist1_size		RS.B 0
+cl1_copperlist_size		RS.B 0
 
 
 	RSRESET
@@ -309,16 +309,16 @@ cl2_INTREQ			RS.L 1
 
 cl2_end				RS.L 1
 
-copperlist2_size		RS.B 0
+cl2_copperlist_size		RS.B 0
 
 
 cl1_size1			EQU 0
 cl1_size2			EQU 0
-cl1_size3			EQU copperlist1_size
+cl1_size3			EQU cl1_copperlist_size
 
 cl2_size1			EQU 0
-cl2_size2			EQU copperlist2_size
-cl2_size3			EQU copperlist2_size
+cl2_size2			EQU cl2_copperlist_size
+cl2_size3			EQU cl2_copperlist_size
 
 
 spr0_x_size1			EQU spr_x_size1
@@ -490,9 +490,9 @@ cl1_init_copperlist
 	IFEQ open_border_enabled
 		COP_MOVEQ 0,COPJMP2
 	ELSE
-		bsr.s	cl1_init_bitplane_pointers
+		bsr.s	cl1_init_plane_pointers
 		COP_MOVEQ 0,COPJMP2
-		bsr	cl1_set_bitplane_pointers
+		bsr	cl1_set_plane_pointers
 	ENDC
 	rts
 
@@ -512,7 +512,7 @@ cl2_init_copperlist
 	bsr.s	cl2_init_copper_interrupt
 	COP_LISTEND
 	move.l	a0,cl_end(a3)
-	bsr	copy_second_copperlist
+	bsr	cl2_copy_copperlist
 	rts
 
 	COP_INIT_BPLCON4_CHUNKY cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,FALSE,FALSE,NOOP<<16
@@ -537,8 +537,8 @@ no_sync_routines
 	CNOP 0,4
 beam_routines
 	bsr	wait_copint
-	bsr.s	swap_second_copperlist
-	bsr.s	set_second_copperlist
+	bsr.s	cl2_swap_copperlist
+	bsr.s	cl2_set_copperlist
 	bsr	effects_handler
 	bsr	vert_colorscroll4
 	tst.w	vcs5_active(a3)
@@ -829,29 +829,30 @@ eh_start_vert_colorscroll4
 	moveq	#TRUE,d0
 	move.w	d0,vcs4_active(a3)
 	move.w	d0,bfi_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_stop_vert_colorscroll4
 	clr.w	bfo_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_vert_colorscroll5
 	move.w	#FALSE,vcs4_active(a3)
 	moveq	#TRUE,d0
 	move.w	d0,vcs5_active(a3)
 	move.w	d0,bfi_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_stop_vert_colorscroll5
 	clr.w	bfo_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_stop_all
 	clr.w	stop_fx_active(a3)
-	rts
+	bra.s	effects_handler_quit
 
 
 	INCLUDE "int-autovectors-handlers.i"
+
 
 	CNOP 0,4
 nmi_interrupt_server

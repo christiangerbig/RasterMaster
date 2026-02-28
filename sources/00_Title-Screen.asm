@@ -263,7 +263,7 @@ cl1_begin			RS.B 0
 
 cl1_COPJMP2			RS.L 1
 
-copperlist1_size		RS.B 0
+cl1_copperlist_size		RS.B 0
 
 
 	RSRESET
@@ -294,16 +294,16 @@ cl2_INTREQ			RS.L 1
 
 cl2_end				RS.L 1
 
-copperlist2_size		RS.B 0
+cl2_copperlist_size		RS.B 0
 
 
 cl1_size1			EQU 0
 cl1_size2			EQU 0
-cl1_size3			EQU copperlist1_size
+cl1_size3			EQU cl1_copperlist_size
 
 cl2_size1			EQU 0
-cl2_size2			EQU copperlist2_size
-cl2_size3			EQU copperlist2_size
+cl2_size2			EQU cl2_copperlist_size
+cl2_size3			EQU cl2_copperlist_size
 
 
 ; Sprite0 additional structure
@@ -683,10 +683,10 @@ cl1_init_copperlist
 	bsr.s	cl1_init_playfield_props
 	bsr.s	cl1_init_sprite_pointers
 	bsr	cl1_init_colors
-	bsr	cl1_init_bitplane_pointers
+	bsr	cl1_init_plane_pointers
 	COP_MOVEQ 0,COPJMP2
 	bsr	cl1_set_sprite_pointers
-	bsr	cl1_set_bitplane_pointers
+	bsr	cl1_set_plane_pointers
 	rts
 
 
@@ -733,7 +733,7 @@ cl2_init_copperlist
 	bsr	cl2_init_copper_interrupt
 	COP_LISTEND
 	move.l	a0,cl_end(a3)
-	bsr	copy_second_copperlist
+	bsr	cl2_copy_copperlist
 	rts
 
 
@@ -801,8 +801,8 @@ no_sync_routines
 	CNOP 0,4
 beam_routines
 	bsr	wait_copint
-	bsr.s	swap_second_copperlist
-	bsr.s	set_second_copperlist
+	bsr.s	cl2_swap_copperlist
+	bsr.s	cl2_set_copperlist
 	bsr	effects_handler
 	bsr	ipf_random_pixel_data_copy
 	bsr	fetch_channels_data
@@ -1246,31 +1246,31 @@ eh_start_image_fader_in
 	clr.w	ifi_rgb8_active(a3)
 	move.w	#if_rgb8_colors_number*3,if_rgb8_colors_counter(a3)
 	clr.w	if_rgb8_copy_colors_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_wobble_display
 	clr.w	wd_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_image_pixel_fader_in
 	clr.w	ipfi_active(a3)
 	move.w	#1,ipfi_delay_counter(a3) ; activate counter
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_image_pixel_fader_out
 	clr.w	ipfo_active(a3)
 	move.w	#1,ipfo_delay_counter(a3) ; activate counter
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_image_fader_out
 	clr.w	ifo_rgb8_active(a3)
 	move.w	#if_rgb8_colors_number*3,if_rgb8_colors_counter(a3)
 	clr.w	if_rgb8_copy_colors_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_stop_all
 	clr.w	stop_fx_active(a3)
-	rts
+	bra.s	effects_handler_quit
 
 
 
@@ -1282,14 +1282,16 @@ mouse_handler
 	btst	#CIAB_GAMEPORT0,CIAPRA(a4) ; LMB pressed ?
 	bne.s	mouse_handler_skip
 	moveq	#RETURN_WARN,d0
+mouse_handler_quit
 	rts
 	CNOP 0,4
 mouse_handler_skip
 	moveq	#RETURN_OK,d0
-	rts
+	bra.s	mouse_handler_quit
 
 
 	INCLUDE "int-autovectors-handlers.i"
+
 
 	CNOP 0,4
 nmi_interrupt_server

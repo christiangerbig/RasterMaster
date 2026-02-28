@@ -211,11 +211,13 @@ tccb_clear_blit_y_size		EQU cl1_display_y_size*(cl1_display_width+2)
 	ELSE
 tccb_clear_blit_y_size		EQU cl1_display_y_size*(cl1_display_width+1)
 	ENDC
+tccb_bplcon4_bits		EQU bplcon4_bits
 
 ; Restore-Blit
 tccb_restore_blit_x_size	EQU 16
 tccb_restore_blit_width		EQU tccb_restore_blit_x_size/8
 tccb_restore_blit_y_size	EQU cl1_display_y_size
+tccb_display_size		EQU cl1_display_y_size
 
 ; Colorcycle
 cc_speed			EQU 4
@@ -323,12 +325,12 @@ cl1_INTREQ			RS.L 1
 
 cl1_end				RS.L 1
 
-copperlist1_size		RS.B 0
+cl1_copperlist_size		RS.B 0
 
 
-cl1_size1			EQU copperlist1_size
-cl1_size2			EQU copperlist1_size
-cl1_size3			EQU copperlist1_size
+cl1_size1			EQU cl1_copperlist_size
+cl1_size2			EQU cl1_copperlist_size
+cl1_size3			EQU cl1_copperlist_size
 
 cl2_size1			EQU 0
 cl2_size2			EQU 0
@@ -510,14 +512,14 @@ cl1_init_copperlist
 		COP_LISTEND
 		move.l	a0,cl_end(a3)
 	ELSE
-		bsr	cl1_init_bitplane_pointers
+		bsr	cl1_init_plane_pointers
 		bsr	cl1_init_bplcon4_chunky
 		bsr	cl1_init_copper_interrupt
 		COP_LISTEND
 		move.l	a0,cl_end(a3)
-		bsr	cl1_set_bitplane_pointers
+		bsr	cl1_set_plane_pointers
 	ENDC
-	bsr	copy_first_copperlist
+	bsr	cl1_copy_copperlist
 	rts
 	
 	IFEQ open_border_enabled
@@ -582,10 +584,10 @@ no_sync_routines
 	CNOP 0,4
 beam_routines
 	bsr	wait_copint
-	bsr.s	swap_first_copperlist
-	bsr.s	set_first_copperlist
+	bsr.s	cl1_swap_copperlist
+	bsr.s	cl1_set_copperlist
 	bsr	effects_handler
-	bsr	tccb_clear_first_copperlist
+	bsr	tccb_cl1_clear_copperlist
 	bsr	colorcycle
 	bsr	twisted_colorcycle_bars
 	IFNE tccb_quick_clear_enabled
@@ -925,18 +927,19 @@ effects_handler_quit
 	CNOP 0,4
 eh_start_blind_fader_in
 	clr.w	bfi_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_blind_fader_out
 	clr.w	bfo_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_stop_all
 	clr.w	stop_fx_active(a3)
-	rts
+	bra.s	effects_handler_quit
 
 
 	INCLUDE "int-autovectors-handlers.i"
+
 
 	CNOP 0,4
 nmi_interrupt_server

@@ -220,11 +220,13 @@ tb_clear_blit_y_size		EQU cl2_display_y_size*(cl2_display_width+2)
 	ELSE
 tb_clear_blit_y_size		EQU cl2_display_y_size*(cl2_display_width+1)
 	ENDC
+tb_bplcon4_bits			EQU bplcon4_bits
 
 ; Restore-Blit
 tb_restore_blit_x_size		EQU 16
 tb_restore_blit_width		EQU tb_restore_blit_x_size/8
 tb_restore_blit_y_size		EQU cl2_display_y_size
+tb_display_y_size		EQU cl2_display_y_size
 
 ; Blind-Fader
 bf_lamella_height		EQU 16
@@ -267,7 +269,7 @@ cl1_begin			RS.B 0
 
 cl1_COPJMP2			RS.L 1
 
-copperlist1_size		RS.B 0
+cl1_copperlist_size		RS.B 0
 
 
 	RSRESET
@@ -337,16 +339,16 @@ cl2_INTREQ			RS.L 1
 
 cl2_end				RS.L 1
 
-copperlist2_size		RS.B 0
+cl2_copperlist_size		RS.B 0
 
 
 cl1_size1			EQU 0
 cl1_size2			EQU 0
-cl1_size3			EQU copperlist1_size
+cl1_size3			EQU cl1_copperlist_size
 
-cl2_size1			EQU copperlist2_size
-cl2_size2			EQU copperlist2_size
-cl2_size3			EQU copperlist2_size
+cl2_size1			EQU cl2_copperlist_size
+cl2_size2			EQU cl2_copperlist_size
+cl2_size3			EQU cl2_copperlist_size
 
 
 spr0_x_size1			EQU spr_x_size1
@@ -518,9 +520,9 @@ cl1_init_copperlist
 	IFEQ open_border_enabled
 		COP_MOVEQ 0,COPJMP2
 	ELSE
-		bsr.s	cl1_init_bitplane_pointers
+		bsr.s	cl1_init_plane_pointers
 		COP_MOVEQ 0,COPJMP2
-		bsr	cl1_set_bitplane_pointers
+		bsr	cl1_set_plane_pointers
 	ENDC
 	rts
 
@@ -540,7 +542,7 @@ cl2_init_copperlist
 	bsr.s	cl2_init_copper_interrupt
 	COP_LISTEND
 	move.l	a0,cl_end(a3)
-	bsr	copy_second_copperlist
+	bsr	cl2_copy_copperlist
 	rts
 
 
@@ -568,16 +570,16 @@ no_sync_routines
 	CNOP 0,4
 beam_routines
 	bsr	wait_copint
-	bsr.s	swap_second_copperlist
-	bsr.s	set_second_copperlist
+	bsr.s	cl2_swap_copperlist
+	bsr.s	cl2_set_copperlist
 	bsr	effects_handler
-	bsr	tb_clear_second_copperlist
+	bsr	tb_cl2_clear_copperlist
 	bsr	tb315_get_yz_coordinates
 	bsr	we_get_y_coordinates
 	bsr	tb315_set_background_bars
 	bsr	tb315_set_foreground_bars
 	IFNE tb_quick_clear_enabled
-		bsr	tb_restore_second_copperlist
+		bsr	tb_cl2_restore_copperlist
 	ENDC
 	IFEQ open_border_enabled
 		bsr	blind_fader_in
@@ -887,18 +889,19 @@ effects_handler_quit
 	CNOP 0,4
 eh_start_blind_fader_in
 	clr.w	bfi_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_blind_fader_out
 	clr.w	bfo_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_stop_all
 	clr.w	stop_fx_active(a3)
-	rts
+	bra.s	effects_handler_quit
 
 
 	INCLUDE "int-autovectors-handlers.i"
+
 
 	CNOP 0,4
 nmi_interrupt_server

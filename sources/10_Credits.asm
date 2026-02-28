@@ -295,12 +295,12 @@ cl1_INTREQ			RS.L 1
 
 cl1_end				RS.L 1
 
-copperlist1_size		RS.B 0
+cl1_copperlist_size		RS.B 0
 
 
 cl1_size1			EQU 0
 cl1_size2			EQU 0
-cl1_size3			EQU copperlist1_size
+cl1_size3			EQU cl1_copperlist_size
 
 cl2_size1			EQU 0
 cl2_size2			EQU 0
@@ -713,13 +713,13 @@ cl1_init_copperlist
 	bsr.s	cl1_init_playfield_props
 	bsr	cl1_init_sprite_pointers
 	bsr	cl1_init_colors
-	bsr	cl1_init_bitplane_pointers
+	bsr	cl1_init_plane_pointers
 	bsr	cl1_init_bpldat
 	bsr	cl1_init_copper_interrupt
 	COP_LISTEND
 	move.l	a0,cl_end(a3)
 	bsr	cl1_set_sprite_pointers
-	bsr	cl1_set_bitplane_pointers
+	bsr	cl1_set_plane_pointers
 	rts
 
 
@@ -1143,40 +1143,41 @@ eh_start_image_fader_in
 	clr.w	ifi_rgb8_active(a3)
 	move.w	#if_rgb8_colors_number*3,if_rgb8_colors_counter(a3)
 	clr.w	if_rgb8_copy_colors_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_scroll_logo_left_in
 	clr.w	slli_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_stop_image_fader_in
 	move.w	#FALSE,ifi_rgb8_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_vert_text_scroll
 	move.w	#vts_vert_scroll_speed2,vts_vert_scroll_speed(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_stop_vert_text_scroll
 	clr.w	vts_vert_scroll_speed(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_image_fader_out
 	clr.w	ifo_rgb8_active(a3)
 	move.w	#if_rgb8_colors_number*3,if_rgb8_colors_counter(a3)
 	clr.w	if_rgb8_copy_colors_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_scroll_logo_left_out
 	clr.w	sllo_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_stop_all
 	clr.w	stop_fx_active(a3)
-	rts
+	bra.s	effects_handler_quit
 
 
 	INCLUDE "int-autovectors-handlers.i"
+
 
 	CNOP 0,4
 nmi_interrupt_server

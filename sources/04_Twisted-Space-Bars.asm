@@ -220,11 +220,13 @@ tb_clear_blit_y_size		EQU cl2_display_y_size*(cl2_display_width+2)
 	ELSE
 tb_clear_blit_y_size		EQU cl2_display_y_size*(cl2_display_width+1)
 	ENDC
+tb_bplcon4_bits			EQU bplcon4_bits
 
 ; Restore-Blit
 tb_restore_blit_x_size		EQU 16
 tb_restore_blit_width		EQU tb_restore_blit_x_size/8
 tb_restore_blit_y_size		EQU cl2_display_y_size
+tb_display_y_size		EQU cl2_display_y_size
 
 ; Horiz-Scrolltext
 hst_image_x_size		EQU 320
@@ -311,7 +313,7 @@ cl1_begin			RS.B 0
 
 cl1_COPJMP2			RS.L 1
 
-copperlist1_size		RS.B 0
+cl1_copperlist_size		RS.B 0
 
 
 	RSRESET
@@ -377,16 +379,16 @@ cl2_INTREQ			RS.L 1
 
 cl2_end				RS.L 1
 
-copperlist2_size		RS.B 0
+cl2_copperlist_size		RS.B 0
 
 
 cl1_size1			EQU 0
 cl1_size2			EQU 0
-cl1_size3			EQU copperlist1_size
+cl1_size3			EQU cl1_copperlist_size
 
-cl2_size1			EQU copperlist2_size
-cl2_size2			EQU copperlist2_size
-cl2_size3			EQU copperlist2_size
+cl2_size1			EQU cl2_copperlist_size
+cl2_size2			EQU cl2_copperlist_size
+cl2_size3			EQU cl2_copperlist_size
 
 
 ; Sprite0 additional structure
@@ -806,10 +808,10 @@ cl1_init_copperlist
 	bsr.s	cl1_init_playfield_props
 	bsr.s	cl1_init_sprite_pointers
 	bsr	cl1_init_colors
-	bsr	cl1_init_bitplane_pointers
+	bsr	cl1_init_plane_pointers
 	COP_MOVEQ 0,COPJMP2
 	bsr	cl1_set_sprite_pointers
-	bsr	cl1_set_bitplane_pointers
+	bsr	cl1_set_plane_pointers
 	clr.w	tb313_active(a3)
 	bsr	tb313_get_yz_coordinates
 	move.w	#FALSE,tb313_active(a3)
@@ -847,7 +849,7 @@ cl2_init_copperlist
 	bsr.s	cl2_init_copper_interrupt
 	COP_LISTEND
 	move.l	a0,cl_end(a3)
-	bsr	copy_second_copperlist
+	bsr	cl2_copy_copperlist
 	rts
 
 
@@ -875,9 +877,9 @@ no_sync_routines
 	CNOP 0,4
 beam_routines
 	bsr	wait_copint
-	bsr.s	swap_second_copperlist
-	bsr	set_second_copperlist
-	bsr	pf1_swap_playfields
+	bsr.s	cl2_swap_copperlist
+	bsr	cl2_set_copperlist
+	bsr	pf1_swap_playfield
 	bsr	pf1_set_playfield
 	bsr	effects_handler
 	bsr	sprf_rgb8_copy_color_table
@@ -886,7 +888,7 @@ beam_routines
 	bsr	horiz_scrolltext
 	bsr	hst_horiz_scroll
 beam_routines_skip
-	bsr	tb_clear_second_copperlist
+	bsr	tb_cl2_clear_copperlist
 	bsr	chunky_columns_fader_in
 	bsr	chunky_columns_fader_out
 	bsr	tb_set_background_bars
@@ -894,7 +896,7 @@ beam_routines_skip
 	bsr	tb313_get_yz_coordinates
 	bsr	tb312_get_yz_coordinates
 	IFNE tb_quick_clear_enabled
-		bsr	restore_second_copperlist
+		bsr	tb_cl2_restore_copperlist
 	ENDC
 	bsr	sprite_fader_in
 	bsr	sprite_fader_out
@@ -969,7 +971,7 @@ horiz_scrolltext_init
 	WAITBLIT
 	move.l	#(BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC)<<16,BLTCON0-DMACONR(a6) ; minterm D = A
 	moveq	#-1,d0
-	move.l	d0,BLTAFWM-DMACONR(a6)
+	move.l	d0,BLTAFWM-DMACONR(a6)	; no mask
 	move.l	#((hst_image_plane_width-hst_text_char_width)<<16)|(pf1_plane_width-hst_text_char_width),BLTAMOD-DMACONR(a6) ; A&D moduli
 	rts
 
@@ -993,12 +995,13 @@ hst_get_text_softscroll
 hst_check_control_codes
 	cmp.b	#ASCII_CTRL_S,d0
 	beq.s	hst_stop_horiz_scrolltext
+hst_check_control_codes_quit
 	rts
 	CNOP 0,4
 hst_stop_horiz_scrolltext
 	move.w	#FALSE,hst_enabled(a3)
 	moveq	#RETURN_OK,d0
-	rts
+	bra.s	hst_check_control_codes_quit
 
 
 	CNOP 0,4
@@ -1448,23 +1451,23 @@ eh_start_sprite_fader_in
 	clr.w	sprfi_rgb8_active(a3)
 	move.w	#sprf_rgb8_colors_number*3,sprf_rgb8_colors_counter(a3)
 	clr.w	sprf_rgb8_copy_colors_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_twisted_bars313
 	moveq	#TRUE,d0
 	move.w	d0,tb313_active(a3)
 	move.w	d0,ccfi_active(a3)
 	move.w	#1,ccfi_delay_counter(a3) ; activate counter
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_horiz_scrolltext
 	clr.w	hst_enabled(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_stop_twisted_bars313
 	clr.w	ccfo_active(a3)
 	move.w	#1,ccfo_delay_counter(a3) ; activate counter
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_twisted_bars312
 	move.w	#FALSE,tb313_active(a3)
@@ -1473,27 +1476,28 @@ eh_start_twisted_bars312
 	move.w	d0,ccfi_start(a3)
 	move.w	d0,ccfi_active(a3)
 	move.w	#1,ccfi_delay_counter(a3) ; activate counter
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_stop_twisted_bars312
 	moveq	#TRUE,d0
 	move.w	d0,ccfo_start(a3)
 	move.w	d0,ccfo_active(a3)
 	move.w	#1,ccfo_delay_counter(a3) ; activate counter
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_sprite_fader_out
 	clr.w	sprfo_rgb8_active(a3)
 	move.w	#sprf_rgb8_colors_number*3,sprf_rgb8_colors_counter(a3)
 	clr.w	sprf_rgb8_copy_colors_active(a3)
-	rts
+	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_stop_all
 	clr.w	stop_fx_active(a3)
-	rts
+	bra	effects_handler_quit
 
 
 	INCLUDE "int-autovectors-handlers.i"
+
 
 	CNOP 0,4
 nmi_interrupt_server

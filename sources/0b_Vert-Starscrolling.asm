@@ -581,21 +581,21 @@ spr7_x_size1			EQU spr_x_size1
 spr7_y_size1			EQU 0
 
 spr0_x_size2			EQU spr_x_size2
-spr0_y_size2			EQU sprite0_size/(spr_x_size2/4)
+spr0_y_size2			EQU sprite0_size/(spr_x_size2/LONGWORD_SIZE)
 spr1_x_size2			EQU spr_x_size2
-spr1_y_size2			EQU sprite1_size/(spr_x_size2/4)
+spr1_y_size2			EQU sprite1_size/(spr_x_size2/LONGWORD_SIZE)
 spr2_x_size2			EQU spr_x_size2
-spr2_y_size2			EQU sprite2_size/(spr_x_size2/4)
+spr2_y_size2			EQU sprite2_size/(spr_x_size2/LONGWORD_SIZE)
 spr3_x_size2			EQU spr_x_size2
-spr3_y_size2			EQU sprite3_size/(spr_x_size2/4)
+spr3_y_size2			EQU sprite3_size/(spr_x_size2/LONGWORD_SIZE)
 spr4_x_size2			EQU spr_x_size2
-spr4_y_size2			EQU sprite4_size/(spr_x_size2/4)
+spr4_y_size2			EQU sprite4_size/(spr_x_size2/LONGWORD_SIZE)
 spr5_x_size2			EQU spr_x_size2
-spr5_y_size2			EQU sprite5_size/(spr_x_size2/4)
+spr5_y_size2			EQU sprite5_size/(spr_x_size2/LONGWORD_SIZE)
 spr6_x_size2			EQU spr_x_size2
-spr6_y_size2			EQU sprite6_size/(spr_x_size2/4)
+spr6_y_size2			EQU sprite6_size/(spr_x_size2/LONGWORD_SIZE)
 spr7_x_size2			EQU spr_x_size2
-spr7_y_size2			EQU sprite7_size/(spr_x_size2/4)
+spr7_y_size2			EQU sprite7_size/(spr_x_size2/LONGWORD_SIZE)
 
 
 	RSRESET

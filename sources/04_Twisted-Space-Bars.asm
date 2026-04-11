@@ -1283,7 +1283,7 @@ chunky_columns_fader_in
 	bne.s	chunky_columns_fader_in_quit
 	move.w	#ccfi_delay,ccfi_delay_counter(a3)
 	move.w	ccfi_start(a3),d1
-	moveq	#cl2_display_width-1,d2 ; number of colors
+	moveq	#cl2_display_width-1,d2 ; number of colours
 	lea	ccf_columns_mask(pc),a0
 	move.w	ccfi_current_mode(a3),d0
 	beq.s	ccfi_fader_mode_1

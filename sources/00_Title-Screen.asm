@@ -659,9 +659,10 @@ bg_copy_image_to_playfield
 	rts
 
 ;Input
-; a1.l		source: image
-; a4.l		destination: bitplane
+; a1.l	Source: image
+; a4.l	Destination: bitplane
 ; Result
+; no return value
 	CNOP 0,4
 bg_copy_image_data
 	move.l	a1,a0			; source
@@ -862,9 +863,10 @@ fetch_channels_data
 ; Input
 ; d6.l	clock constant = PAL clock constant/PAL frequency
 ; d7.w	Number of samplebytes to fetch
-; a0.l	 temporary audio channel structure
-; a2.l	 table with channel amplitudes
+; a0.l	Pointert structure temporary audio channel
+; a2.l	Pointer table channel amplitudes
 ; Result
+; no return value
 	CNOP 0,4
 fetch_sample_data
 	tst.b	n_notetrigger(a0)	; new note ?
@@ -1184,9 +1186,10 @@ ipf_random_pixel_data_copy
 
 
 ; Input
-; a0.l	 destination: sprite structure
-; a1.l	 source: bitplanes
+; a0.l	 Pointer structure destination sprite data
+; a1.l	 Source: bitplanes
 ; Result
+; no return value
 	CNOP 0,4
 init_sprite_bitmap
 	move.w	#lg_image_plane_width-8,a2

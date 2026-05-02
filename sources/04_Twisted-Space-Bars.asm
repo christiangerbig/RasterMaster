@@ -63,8 +63,6 @@ workbench_start_enabled		EQU FALSE
 screen_fader_enabled		EQU FALSE
 text_output_enabled		EQU FALSE
 
-open_border_enabled		EQU FALSE ; always FALSE because bitplane DMA opens border
-
 ; Twisted-Bars
 tb_quick_clear_enabled		EQU FALSE ; always FALSE, because COLOR255 is not the background color
 tb_restore_cl_cpu_enabled	EQU TRUE
@@ -166,11 +164,7 @@ fmode_bits			EQU FMODEF_BPL32|FMODEF_BPAGEM|FMODEF_SPR32|FMODEF_SPAGEM|FMODEF_SS
 cl2_display_x_size		EQU 320
 cl2_display_width		EQU cl2_display_x_size/8
 cl2_display_y_size		EQU visible_lines_number
-	IFEQ open_border_enabled
-cl2_hstart1			EQU display_window_hstart-(1*CMOVE_SLOT_PERIOD)-4
-	ELSE
 cl2_hstart1			EQU display_window_hstart-4
-	ENDC
 cl2_vstart1			EQU MINROW
 cl2_hstart2			EQU 0
 cl2_vstart2			EQU beam_position&CL_Y_WRAPPING
@@ -178,12 +172,12 @@ cl2_vstart2			EQU beam_position&CL_Y_WRAPPING
 sine_table_length		EQU 256
 
 ; Background-Image
+bg_image_x_position		EQU 0
+bg_image_y_position		EQU MINROW
 bg_image_x_size			EQU 256
 bg_image_plane_width		EQU bg_image_x_size/8
 bg_image_y_size			EQU 256
-bg_image_depth			EQU 16
-bg_image_x_position		EQU 0
-bg_image_y_position		EQU MINROW
+bg_image_depth			EQU 4
 
 ; Twisted-Bars
 tb_bars_number			EQU 6
@@ -215,11 +209,7 @@ tb312_y_distance		EQU sine_table_length/tb_bars_number
 
 ; Clear-Blit
 tb_clear_blit_x_size		EQU 16
-	IFEQ open_border_enabled
-tb_clear_blit_y_size		EQU cl2_display_y_size*(cl2_display_width+2)
-	ELSE
 tb_clear_blit_y_size		EQU cl2_display_y_size*(cl2_display_width+1)
-	ENDC
 tb_bplcon4_bits			EQU bplcon4_bits
 
 ; Restore-Blit
@@ -321,9 +311,6 @@ cl1_copperlist_size		RS.B 0
 cl2_extension1			RS.B 0
 
 cl2_ext1_WAIT			RS.L 1
-	IFEQ open_border_enabled 
-cl2_ext1_BPL1DAT		RS.L 1
-	ENDC
 cl2_ext1_BPLCON4_1		RS.L 1
 cl2_ext1_BPLCON4_2		RS.L 1
 cl2_ext1_BPLCON4_3		RS.L 1
@@ -817,12 +804,9 @@ cl1_init_copperlist
 	move.w	#FALSE,tb313_active(a3)
 	rts
 
-
 	COP_INIT_PLAYFIELD_REGISTERS cl1
 
-
 	COP_INIT_SPRITE_POINTERS cl1
-
 
 	CNOP 0,4
 cl1_init_colors
@@ -832,12 +816,9 @@ cl1_init_colors
 	COP_INIT_COLOR_LOW COLOR16,spr_colors_number,spr_rgb8_color_table
 	rts
 
-
 	COP_INIT_BITPLANE_POINTERS cl1
 
-
 	COP_SET_SPRITE_POINTERS cl1,display,spr_number
-
 
 	COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
 
@@ -852,12 +833,9 @@ cl2_init_copperlist
 	bsr	cl2_copy_copperlist
 	rts
 
-
-	COP_INIT_BPLCON4_CHUNKY cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,tb_quick_clear_enabled,FALSE
-
+	COP_INIT_BPLCON4_CHUNKY cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,FALSE,tb_quick_clear_enabled,FALSE
 
 	COP_INIT_COPINT cl2,cl2_hstart2,cl2_vstart2
-
 
 	COPY_COPPERLIST cl2,3
 

@@ -63,13 +63,7 @@ workbench_start_enabled		EQU FALSE
 screen_fader_enabled		EQU FALSE
 text_output_enabled		EQU FALSE
 
-open_border_enabled		EQU TRUE
-
-	IFEQ open_border_enabled
 dma_bits			EQU DMAF_COPPER|DMAF_SETCLR
-	ELSE
-dma_bits			EQU DMAF_COPPER|DMAF_RASTER|DMAF_SETCLR
-	ENDC
 
 intena_bits			EQU INTF_SETCLR
 
@@ -84,15 +78,9 @@ pf1_depth1			EQU 0
 pf1_x_size2			EQU 0
 pf1_y_size2			EQU 0
 pf1_depth2			EQU 0
-	IFEQ open_border_enabled
 pf1_x_size3			EQU 0
 pf1_y_size3			EQU 0
 pf1_depth3			EQU 0
-	ELSE
-pf1_x_size3			EQU 32
-pf1_y_size3			EQU 1
-pf1_depth3			EQU 1
-	ENDC
 pf1_colors_number		EQU 0	; 129
 
 pf2_x_size1			EQU 0
@@ -164,11 +152,7 @@ diwhigh_bits			EQU (((display_window_hstop&$100)>>8)*DIWHIGHF_HSTOP8)|(((display
 cl2_display_x_size		EQU 320
 cl2_display_width		EQU cl2_display_x_size/8
 cl2_display_y_size		EQU visible_lines_number
-	IFEQ open_border_enabled
 cl2_hstart1			EQU display_window_hstart-(1*CMOVE_SLOT_PERIOD)-4
-	ELSE
-cl2_hstart1			EQU display_window_hstart-4
-	ENDC
 
 cl2_vstart1			EQU MINROW
 cl2_hstart2			EQU 0
@@ -240,9 +224,7 @@ cl1_copperlist_size		RS.B 0
 cl2_extension1			RS.B 0
 
 cl2_ext1_WAIT			RS.L 1
-	IFEQ open_border_enabled 
 cl2_ext1_BPL1DAT		RS.L 1
-	ENDC
 cl2_ext1_BPLCON4_1		RS.L 1
 cl2_ext1_BPLCON4_2		RS.L 1
 cl2_ext1_BPLCON4_3		RS.L 1
@@ -354,13 +336,11 @@ bcc_5242_bplam_table_start	RS.W 1
 bcc_5242_step2_angle		RS.W 1
 
 ; Blind-Fader
-	IFEQ open_border_enabled
 bf_registers_table_start	RS.W 1
 
 bfi_active			RS.W 1
 
 bfo_active			RS.W 1
-	ENDC
 
 ; Effects-Handler
 eh_trigger_number		RS.W 1
@@ -392,13 +372,11 @@ init_main_variables
 	moveq	#FALSE,d1
 
 ; Blind-Fader
-	IFEQ open_border_enabled
-		move.w	d0,bf_registers_table_start(a3)
+	move.w	d0,bf_registers_table_start(a3)
 
-		move.w	d1,bfi_active(a3)
+	move.w	d1,bfi_active(a3)
 
-		move.w	d1,bfo_active(a3)
-	ENDC
+	move.w	d1,bfo_active(a3)
 
 ; Effects-Handler
 	move.w	d0,eh_trigger_number(a3)
@@ -451,23 +429,10 @@ init_colors
 cl1_init_copperlist
 	move.l	cl1_display(a3),a0 
 	bsr.s	cl1_init_playfield_props
-	IFEQ open_border_enabled
-		COP_MOVEQ 0,COPJMP2
-	ELSE
-		bsr.s	cl1_init_plane_pointers
-		COP_MOVEQ 0,COPJMP2
-		bsr	cl1_set_plane_pointers
-	ENDC
+	COP_MOVEQ 0,COPJMP2
 	rts
 
-
-	IFEQ open_border_enabled
-		COP_INIT_PLAYFIELD_REGISTERS cl1,NOBITPLANES
-	ELSE
-		COP_INIT_PLAYFIELD_REGISTERS cl1
-		COP_INIT_BITPLANE_POINTERS cl1
-		COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
-	ENDC
+	COP_INIT_PLAYFIELD_REGISTERS cl1
 
 
 	CNOP 0,4
@@ -480,12 +445,9 @@ cl2_init_copperlist
 	bsr	cl2_copy_copperlist
 	rts
 
-
-	COP_INIT_BPLCON4_CHUNKY cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,FALSE,FALSE,NOOP<<16
-
+	COP_INIT_BPLCON4_CHUNKY cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,TRUE,FALSE,FALSE,NOOP<<16
 
 	COP_INIT_COPINT cl2,cl2_hstart2,cl2_vstart2
-
 
 	COPY_COPPERLIST cl2,2
 
@@ -509,10 +471,8 @@ beam_routines
 	bsr.s	cl2_set_copperlist
 	bsr	effects_handler
 	bsr.s	blind_colorcycle5242
-	IFEQ open_border_enabled
-		bsr	blind_fader_in
-		bsr	blind_fader_out
-	ENDC
+	bsr	blind_fader_in
+	bsr	blind_fader_out
 	jsr	mouse_handler
 	tst.l	d0			; exit ?
 	bne.s	beam_routines_quit
@@ -577,126 +537,124 @@ blind_colorcycle5242_loop3
 	rts
 
 
-	IFEQ open_border_enabled
-		CNOP 0,4
+	CNOP 0,4
 blind_fader_in
-		move.l	a4,-(a7)
-		tst.w	bfi_active(a3)
-		bne.s	blind_fader_in_quit
-		move.w	bf_registers_table_start(a3),d2
-		move.w	d2,d0
-		addq.w	#bf_speed,d0	; increase table start
-		cmp.w	#bf_registers_table_length/2,d0 ; end of table ?
-		ble.s	blind_fader_in_skip1
-		move.w	#FALSE,bfi_active(a3)
+	move.l	a4,-(a7)
+	tst.w	bfi_active(a3)
+	bne.s	blind_fader_in_quit
+	move.w	bf_registers_table_start(a3),d2
+	move.w	d2,d0
+	addq.w	#bf_speed,d0		; increase table start
+	cmp.w	#bf_registers_table_length/2,d0 ; end of table ?
+	ble.s	blind_fader_in_skip1
+	move.w	#FALSE,bfi_active(a3)
 blind_fader_in_skip1
-		move.w	d0,bf_registers_table_start(a3)
-		MOVEF.W bf_registers_table_length,d3
-		MOVEF.L cl2_extension1_size,d4
-		lea	bf_registers_table(pc),a0
-		IFNE cl2_size1
-			move.l	cl2_construction1(a3),a1
-			ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a1
-		ENDC
-		IFNE cl2_size2
-			move.l	cl2_construction2(a3),a2
-			ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a2
-		ENDC
-		move.l	cl2_display(a3),a4
-		ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a4
-		moveq	#bf_lamellas_number-1,d7
-blind_fader_in_loop1
-		move.w	d2,d1		; table start
-		moveq	#bf_lamella_height-1,d6
-blind_fader_in_loop2
-		move.w	(a0,d1.w*2),d0	; register address
-		IFNE cl2_size1
-			move.w	d0,(a1)
-			add.l	d4,a1	; next line
-		ENDC
-		IFNE cl2_size2
-			move.w	d0,(a2)
-			add.l	d4,a2	; next line
-		ENDC
-		move.w	d0,(a4)
-		addq.w	#bf_step1,d1	; next entry
-		add.l	d4,a4		; next line
-		cmp.w	d3,d1		; end of table ?
-		blt.s	blind_fader_in_skip2
-		sub.w	d3,d1		; reset table start
-blind_fader_in_skip2
-		dbf	d6,blind_fader_in_loop2
-		addq.w	#bf_step2,d2	; increase table start
-		cmp.w	d3,d2		; end of table ?
-		blt.s	blind_fader_in_skip3
-		sub.w	d3,d2		; reset table start
-blind_fader_in_skip3
-		dbf	d7,blind_fader_in_loop1
-blind_fader_in_quit
-		move.l	(a7)+,a4
-		rts
-
-
-		CNOP 0,4
-blind_fader_out
-		move.l	a4,-(a7)
-		tst.w	bfo_active(a3)
-		bne.s	blind_fader_out_quit
-		move.w	bf_registers_table_start(a3),d2
-		move.w	d2,d0
-		subq.w	#bf_speed,d0	; decrease table start
-		bpl.s	blind_fader_out_skip1
-		move.w	#FALSE,bfo_active(a3)
-		bra.s	blind_fader_out_skip2
-		CNOP 0,4
-blind_fader_out_skip1
-		move.w	d0,bf_registers_table_start(a3)
-blind_fader_out_skip2
-		MOVEF.W bf_registers_table_length,d3
-		MOVEF.L cl2_extension1_size,d4
-		lea	bf_registers_table(pc),a0
-		IFNE cl2_size1
-			move.l	cl2_construction1(a3),a1
-			ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a1
-		ENDC
-		IFNE cl2_size2
-			move.l	cl2_construction2(a3),a2
-			ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a2
-		ENDC
-		move.l	cl2_display(a3),a4
-		ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a4
-		moveq	#bf_lamellas_number-1,d7
-blind_fader_out_loop1
-		move.w	d2,d1		; table start
-		moveq	#bf_lamella_height-1,d6
-blind_fader_out_loop2
-		move.w	(a0,d1.w*2),d0	; register addess
-		IFNE cl2_size1
-			move.w	d0,(a1)
-			add.l	d4,a1	; next line
-		ENDC
-		IFNE cl2_size2
-			move.w	d0,(a2)
-			add.l	d4,a2	; next line
-		ENDC
-		move.w	d0,(a4)
-		addq.w	#bf_step1,d1	; next entry
-		add.l	d4,a4		; next line
-		cmp.w	d3,d1		; end of table ?
-		blt.s	blind_fader_out_skip3
-		sub.w	d3,d1		; reset table start
-blind_fader_out_skip3
-		dbf	d6,blind_fader_out_loop2
-		addq.w	#bf_step2,d2	; increase table start
-		cmp.w	d3,d2		; end of table ?
-		blt.s	blind_fader_out_skip4
-		sub.w	d3,d2		; reset table start
-blind_fader_out_skip4
-		dbf	d7,blind_fader_out_loop1
-blind_fader_out_quit
-		move.l	(a7)+,a4
-		rts
+	move.w	d0,bf_registers_table_start(a3)
+	MOVEF.W bf_registers_table_length,d3
+	MOVEF.L cl2_extension1_size,d4
+	lea	bf_registers_table(pc),a0
+	IFNE cl2_size1
+		move.l	cl2_construction1(a3),a1
+		ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a1
 	ENDC
+	IFNE cl2_size2
+		move.l	cl2_construction2(a3),a2
+		ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a2
+	ENDC
+	move.l	cl2_display(a3),a4
+	ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a4
+	moveq	#bf_lamellas_number-1,d7
+Blind_fader_in_loop1
+	move.w	d2,d1			; table start
+	moveq	#bf_lamella_height-1,d6
+blind_fader_in_loop2
+	move.w	(a0,d1.w*2),d0		; register address
+	IFNE cl2_size1
+		move.w	d0,(a1)
+		add.l	d4,a1		; next line
+	ENDC
+	IFNE cl2_size2
+		move.w	d0,(a2)
+		add.l	d4,a2		; next line
+	ENDC
+	move.w	d0,(a4)
+	addq.w	#bf_step1,d1		; next entry
+	add.l	d4,a4			; next line
+	cmp.w	d3,d1			; end of table ?
+	blt.s	blind_fader_in_skip2
+	sub.w	d3,d1			; reset table start
+blind_fader_in_skip2
+	dbf	d6,blind_fader_in_loop2
+	addq.w	#bf_step2,d2		; increase table start
+	cmp.w	d3,d2			; end of table ?
+	blt.s	blind_fader_in_skip3
+	sub.w	d3,d2			; reset table start
+blind_fader_in_skip3
+	dbf	d7,blind_fader_in_loop1
+blind_fader_in_quit
+	move.l	(a7)+,a4
+	rts
+
+
+	CNOP 0,4
+blind_fader_out
+	move.l	a4,-(a7)
+	tst.w	bfo_active(a3)
+	bne.s	blind_fader_out_quit
+	move.w	bf_registers_table_start(a3),d2
+	move.w	d2,d0
+	subq.w	#bf_speed,d0		; decrease table start
+	bpl.s	blind_fader_out_skip1
+	move.w	#FALSE,bfo_active(a3)
+	bra.s	blind_fader_out_skip2
+	CNOP 0,4
+blind_fader_out_skip1
+	move.w	d0,bf_registers_table_start(a3)
+blind_fader_out_skip2
+	MOVEF.W bf_registers_table_length,d3
+	MOVEF.L cl2_extension1_size,d4
+	lea	bf_registers_table(pc),a0
+	IFNE cl2_size1
+		move.l	cl2_construction1(a3),a1
+		ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a1
+	ENDC
+	IFNE cl2_size2
+		move.l	cl2_construction2(a3),a2
+		ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a2
+	ENDC
+	move.l	cl2_display(a3),a4
+	ADDF.W	cl2_extension1_entry+cl2_ext1_BPL1DAT,a4
+	moveq	#bf_lamellas_number-1,d7
+blind_fader_out_loop1
+	move.w	d2,d1			; table start
+	moveq	#bf_lamella_height-1,d6
+blind_fader_out_loop2
+	move.w	(a0,d1.w*2),d0		; register addess
+	IFNE cl2_size1
+		move.w	d0,(a1)
+		add.l	d4,a1		; next line
+	ENDC
+	IFNE cl2_size2
+		move.w	d0,(a2)
+		add.l	d4,a2		; next line
+	ENDC
+	move.w	d0,(a4)
+	addq.w	#bf_step1,d1		; next entry
+	add.l	d4,a4			; next line
+	cmp.w	d3,d1			; end of table ?
+	blt.s	blind_fader_out_skip3
+	sub.w	d3,d1			; reset table start
+blind_fader_out_skip3
+	dbf	d6,blind_fader_out_loop2
+	addq.w	#bf_step2,d2		; increase table start
+	cmp.w	d3,d2			; end of table ?
+	blt.s	blind_fader_out_skip4
+	sub.w	d3,d2			; reset table start
+blind_fader_out_skip4
+	dbf	d7,blind_fader_out_loop1
+blind_fader_out_quit
+	move.l	(a7)+,a4
+	rts
 
 
 	CNOP 0,4
@@ -751,17 +709,15 @@ pf1_rgb8_color_table
 	INCLUDE "RasterMaster:colorpalettes/0a_bcc5242_Colorgradient.ct"
 
 
-	IFEQ open_border_enabled
 ; Blind-Fader
 	CNOP 0,2
 bf_registers_table
-		REPT bf_registers_table_length/2
-		DC.W NOOP
-		ENDR
-		REPT bf_registers_table_length/2
-		DC.W BPL1DAT
-		ENDR
-	ENDC
+	REPT bf_registers_table_length/2
+	DC.W NOOP
+	ENDR
+	REPT bf_registers_table_length/2
+	DC.W BPL1DAT
+	ENDR
 
 
 	INCLUDE "sys-variables.i"

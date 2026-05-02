@@ -66,8 +66,6 @@ workbench_start_enabled		EQU FALSE
 screen_fader_enabled		EQU FALSE
 text_output_enabled		EQU FALSE
 
-open_border_enabled		EQU FALSE ; always FALSE because of overscan playfield
-
 ; Twisted-Bars
 tb31612_quick_clear_enabled	EQU TRUE ; always TRUE because of enabled background effect
 tb31612_cpu_restore_cl_enabled	EQU FALSE
@@ -173,11 +171,7 @@ cl1_vstart			EQU $03	; to avoid that the cpu operates on the copperlist during i
 cl2_display_x_size		EQU 352
 cl2_display_width		EQU cl2_display_x_size/8
 cl2_display_y_size		EQU visible_lines_number
-	IFEQ open_border_enabled
-cl2_hstart1			EQU display_window_hstart-(5*CMOVE_SLOT_PERIOD)-4
-	ELSE
 cl2_hstart1			EQU display_window_hstart-(4*CMOVE_SLOT_PERIOD)-4
-	ENDC
 cl2_vstart1			EQU MINROW
 cl2_hstart2			EQU 0
 cl2_vstart2			EQU beam_position&CL_Y_WRAPPING
@@ -195,11 +189,7 @@ tb31612_y_distance		EQU sine_table_length/tb31612_bars_number
 
 ; Clear-Blit
 tb31612_clear_blit_x_size	EQU 16
-	IFEQ open_border_enabled
-tb31612_clear_blit_y_size	EQU cl2_display_y_size*(cl2_display_width+6)
-	ELSE
 tb31612_clear_blit_y_size	EQU cl2_display_y_size*(cl2_display_width+5)
-	ENDC
 
 ; Restore-Blit
 tb31612_restore_blit_x_size	EQU 16
@@ -494,9 +484,6 @@ cl2_ext7_BPLCON3_1		RS.L 1
 cl2_ext7_COLOR00_high RS.L 1
 cl2_ext7_BPLCON3_2		RS.L 1
 cl2_ext7_COLOR00_low		RS.L 1
-	ENDC
-	IFEQ open_border_enabled 
-cl2_ext7_BPL1DAT		RS.L 1
 	ENDC
 cl2_ext7_BPLCON4_1		RS.L 1
 cl2_ext7_BPLCON4_2		RS.L 1
@@ -918,7 +905,6 @@ bf_init_color_table_loop6
 	dbf	d7,bf_init_color_table_loop6
 	rts
 
-
 	CNOP 0,4
 bf_init_color_table_pointers
 	move.l	extra_memory(a3),a0
@@ -936,7 +922,6 @@ bf_init_color_table_pointers
 	lea	(em_color_table6,a0),a2
 	move.l	a2,(a1)
 	rts
-
 
 	CNOP 0,4
 bf_scale_bar_size
@@ -969,7 +954,6 @@ bf_scale_bar_size_loop2
 	movem.l (a7)+,a4-a6
 	rts
 
-
 	CNOP 0,4
 bf_refresh_bitmap_table
 	moveq	#0,d0
@@ -979,7 +963,6 @@ bf_refresh_bitmap_table_loop
 	move.l	d0,(a0)+
 	dbf	d6,bf_refresh_bitmap_table_loop
 	rts
-
 
 	CNOP 0,4
 bf_init_bitmap_lines_table
@@ -1001,7 +984,6 @@ bf_init_bitmap_lines_table_loop
 	addq.b	#1,(a0,d0.w)		; set pixel in table
 	dbf	d6,bf_init_bitmap_lines_table_loop
 	rts
-
 
 	CNOP 0,4
 bf_do_scale_bar_y_size
@@ -1034,12 +1016,9 @@ cl1_init_copperlist
 	move.w	#FALSE,ss_active(a3)
 	rts
 
-
 	COP_INIT_PLAYFIELD_REGISTERS cl1
 
-
 	COP_INIT_BITPLANE_POINTERS cl1
-
 
 	CNOP 0,4
 cl1_init_copperlist_branch
@@ -1052,7 +1031,6 @@ cl1_init_copperlist_branch
 	COP_MOVE d0,COP1LCL
 	COP_MOVEQ 0,COPJMP1
 	rts
-
 
 	CNOP 0,4
 cl1_init_copy_blit
@@ -1074,7 +1052,6 @@ cl1_init_copy_blit
 	COP_MOVEQ extra_pf1_plane_width-ss_text_char_width,BLTDMOD
 	COP_MOVEQ ((ss_text_char_y_size*ss_text_char_depth)<<6)|(ss_text_char_x_size/WORD_BITS),BLTSIZE
 	rts
-
 
 	CNOP 0,4
 cl1_init_horiz_scroll_blit
@@ -1101,7 +1078,6 @@ cl1_init_horiz_scroll_blit
 	COP_MOVEQ extra_pf1_plane_width-ss_horiz_scroll_window_width,BLTDMOD
 	COP_MOVEQ ((ss_horiz_scroll_window_y_size*ss_horiz_scroll_window_depth)<<6)|(ss_horiz_scroll_window_x_size/WORD_BITS),BLTSIZE
 	rts
-
 
 	COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
 
@@ -1152,7 +1128,6 @@ cl2_init_copperlist
 	bsr	ss_sine_scroll
 	rts
 
-
 	CNOP 0,4
 cl2_init_sine_scroll_blits_const
 	COP_WAITBLIT
@@ -1160,7 +1135,6 @@ cl2_init_sine_scroll_blits_const
 	COP_MOVEQ extra_pf1_plane_width-ss_text_char_width,BLTAMOD
 	COP_MOVEQ pf1_plane_width-ss_text_char_width,BLTDMOD
 	rts
-
 
 	CNOP 0,4
 cl2_init_sine_scroll_blits
@@ -1211,13 +1185,11 @@ cl2_init_sine_scroll_blits_loop2
 	dbf	d7,cl2_init_sine_scroll_blits_loop1
 	rts
 
-
 	CNOP 0,4
 cl2_reset_copperlist_pointer
 	COP_MOVE cl1_display(a3),COP1LCH
 	COP_MOVE cl1_display+WORD_SIZE(a3),COP1LCL
 	rts
-
 
 	CNOP 0,4
 cl2_init_clear_blit
@@ -1236,9 +1208,7 @@ cl2_init_clear_blit
 	COP_MOVEQ tb31612_clear_blit_x_size/WORD_BITS,BLTSIZH
 	rts
 
-
-	COP_INIT_BPLCON4_CHUNKY cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,tb31612_quick_clear_enabled,TRUE
-
+	COP_INIT_BPLCON4_CHUNKY cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,FALSE,tb31612_quick_clear_enabled,TRUE
 
 	IFNE tb31612_cpu_restore_cl_enabled
 		IFNE tb31612_quick_clear_enabled
@@ -1254,9 +1224,7 @@ cl2_init_restore_blit
 		ENDC
 	ENDC
 
-
 	COP_INIT_COPINT cl2,cl2_hstart2,cl2_vstart2
-
 
 	COPY_COPPERLIST cl2,3
 

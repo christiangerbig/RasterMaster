@@ -63,13 +63,7 @@ workbench_start_enabled		EQU FALSE
 screen_fader_enabled		EQU FALSE
 text_output_enabled		EQU FALSE
 
-open_border_enabled		EQU TRUE
-
-	IFEQ open_border_enabled
 dma_bits			EQU DMAF_SPRITE|DMAF_BLITTER|DMAF_COPPER|DMAF_SETCLR
-	ELSE
-dma_bits			EQU DMAF_SPRITE|DMAF_BLITTER|DMAF_COPPER|DMAF_RASTER|DMAF_SETCLR
-	ENDC
 
 intena_bits			EQU INTF_SETCLR
 
@@ -84,15 +78,9 @@ pf1_depth1			EQU 0
 pf1_x_size2			EQU 0
 pf1_y_size2			EQU 0
 pf1_depth2			EQU 0
-	IFEQ open_border_enabled
 pf1_x_size3			EQU 0
 pf1_y_size3			EQU 0
 pf1_depth3			EQU 0
-	ELSE
-pf1_x_size3			EQU 32
-pf1_y_size3			EQU 1
-pf1_depth3			EQU 1
-	ENDC
 pf1_colors_number		EQU 61
 
 pf2_x_size1			EQU 0
@@ -149,11 +137,6 @@ display_window_vstart		EQU MINROW
 display_window_hstop		EQU HSTOP_44_CHUNKY_PIXEL
 display_window_vstop		EQU VSTOP_256_LINES
 
-pf1_plane_width			EQU pf1_x_size3/8
-data_fetch_width		EQU pixel_per_line/8
-pf1_plane_moduli		EQU -(pf1_plane_width-(pf1_plane_width-data_fetch_width))
-
-	IFEQ open_border_enabled
 diwstrt_bits			EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)|(display_window_hstart&$ff)
 diwstop_bits			EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)|(display_window_hstop&$ff)
 bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|BPLCON0F_COLOR|((pf_depth&$07)*BPLCON0F_BPU0) 
@@ -162,30 +145,12 @@ bplcon3_bits2			EQU bplcon3_bits1|BPLCON3F_LOCT
 bplcon4_bits			EQU (BPLCON4F_OSPRM4*spr_odd_color_table_select)|(BPLCON4F_ESPRM4*spr_even_color_table_select)
 diwhigh_bits			EQU (((display_window_hstop&$100)>>8)*DIWHIGHF_HSTOP8)|(((display_window_vstop&$700)>>8)*DIWHIGHF_VSTOP8)|(((display_window_hstart&$100)>>8)*DIWHIGHF_HSTART8)|((display_window_vstart&$700)>>8)
 fmode_bits			EQU FMODEF_SPR32|FMODEF_SPAGEM
-	ELSE
-diwstrt_bits			EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)|(display_window_hstart&$ff)
-diwstop_bits			EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)|(display_window_hstop&$ff)
-ddfstrt_bits			EQU DDFSTRT_OVERSCAN_32_PIXEL
-ddfstop_bits			EQU DDFSTOP_OVERSCAN_32_PIXEL_MIN
-bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|BPLCON0F_COLOR|((pf_depth&$07)*BPLCON0F_BPU0) 
-bplcon1_bits			EQU 0
-bplcon2_bits			EQU 0
-bplcon3_bits1			EQU BPLCON3F_SPRES0
-bplcon3_bits2			EQU bplcon3_bits1|BPLCON3F_LOCT
-bplcon4_bits			EQU (BPLCON4F_OSPRM4*spr_odd_color_table_select)|(BPLCON4F_ESPRM4*spr_even_color_table_select)
-diwhigh_bits			EQU (((display_window_hstop&$100)>>8)*DIWHIGHF_HSTOP8)|(((display_window_vstop&$700)>>8)*DIWHIGHF_VSTOP8)|(((display_window_hstart&$100)>>8)*DIWHIGHF_HSTART8)|((display_window_vstart&$700)>>8)
-fmode_bits			EQU FMODEF_SPR32|FMODEF_SPAGEM
-	ENDC
 
 cl2_display_x_size		EQU 352
 cl2_display_width		EQU cl2_display_x_size/8
 cl2_display_y_size		EQU visible_lines_number
 
-	IFEQ open_border_enabled
 cl2_hstart1			EQU display_window_hstart-(1*CMOVE_SLOT_PERIOD)-4
-	ELSE
-cl2_hstart1			EQU display_window_hstart-4
-	ENDC
 cl2_vstart1			EQU MINROW
 cl2_hstart2			EQU 0
 cl2_vstart2			EQU beam_position&CL_Y_WRAPPING
@@ -321,9 +286,7 @@ cl1_copperlist_size		RS.B 0
 cl2_extension1			RS.B 0
 
 cl2_ext1_WAIT			RS.L 1
-	IFEQ open_border_enabled 
 cl2_ext1_BPL1DAT		RS.L 1
-	ENDC
 cl2_ext1_BPLCON4_1		RS.L 1
 cl2_ext1_BPLCON4_2		RS.L 1
 cl2_ext1_BPLCON4_3		RS.L 1
@@ -817,29 +780,13 @@ cl1_init_copperlist
 	bsr.s	cl1_init_playfield_props
 	bsr.s	cl1_init_sprite_pointers
 	bsr.s	cl1_init_colors
-	IFEQ open_border_enabled
-		COP_MOVEQ 0,COPJMP2
-		bsr	cl1_set_sprite_pointers
-	ELSE
-		bsr	cl1_init_plane_pointers
-		COP_MOVEQ 0,COPJMP2
-		bsr	cl1_set_sprite_pointers
-		bsr	cl1_set_plane_pointers
-	ENDC
+	COP_MOVEQ 0,COPJMP2
+	bsr	cl1_set_sprite_pointers
 	rts
 
-
-	IFEQ open_border_enabled
-		COP_INIT_PLAYFIELD_REGISTERS cl1,NOBITPLANESSPR
-	ELSE
-		COP_INIT_PLAYFIELD_REGISTERS cl1
-		COP_INIT_BITPLANE_POINTERS cl1
-		COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
-	ENDC
-
+	COP_INIT_PLAYFIELD_REGISTERS cl1
 
 	COP_INIT_SPRITE_POINTERS cl1
-
 
 	CNOP 0,4
 cl1_init_colors
@@ -852,7 +799,6 @@ cl1_init_colors
 	COP_SELECT_COLOR_LOW_BANK 1
 	COP_INIT_COLOR_LOW COLOR00,29
 	rts
-
 
 	COP_SET_SPRITE_POINTERS cl1,display,spr_number
 
@@ -867,12 +813,9 @@ cl2_init_copperlist
 	bsr	cl2_copy_copperlist
 	rts
 
-
-	COP_INIT_BPLCON4_CHUNKY cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,open_border_enabled,FALSE,FALSE
-
+	COP_INIT_BPLCON4_CHUNKY cl2,cl2_hstart1,cl2_vstart1,cl2_display_x_size,cl2_display_y_size,TRUE,FALSE,FALSE
 
 	COP_INIT_COPINT cl2,cl2_hstart2,cl2_vstart2
-
 
 	COPY_COPPERLIST cl2,3
 

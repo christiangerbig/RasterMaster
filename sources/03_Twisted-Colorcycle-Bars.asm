@@ -63,16 +63,10 @@ workbench_start_enabled		EQU FALSE
 screen_fader_enabled		EQU FALSE
 text_output_enabled		EQU FALSE
 
-open_border_enabled		EQU TRUE
-
 ; Twisted-Colorcycle-Bars
 tccb_quick_clear_enabled	EQU TRUE
 
-	IFEQ open_border_enabled
 dma_bits			EQU DMAF_BLITTER|DMAF_COPPER|DMAF_SETCLR
-	ELSE
-dma_bits			EQU DMAF_BLITTER|DMAF_COPPER|DMAF_RASTER+MAF_SETCLR
-	ENDC
 
 intena_bits			EQU INTF_SETCLR
 
@@ -87,15 +81,9 @@ pf1_depth1			EQU 0
 pf1_x_size2			EQU 0
 pf1_y_size2			EQU 0
 pf1_depth2			EQU 0
-	IFEQ open_border_enabled
 pf1_x_size3			EQU 0
 pf1_y_size3			EQU 0
 pf1_depth3			EQU 0
-	ELSE
-pf1_x_size3			EQU 32
-pf1_y_size3			EQU 1
-pf1_depth3			EQU 1
-	ENDC
 pf1_colors_number		EQU 161
 
 pf2_x_size1			EQU 0
@@ -151,11 +139,6 @@ display_window_vstart		EQU MINROW
 display_window_hstop		EQU HSTOP_44_CHUNKY_PIXEL
 display_window_vstop		EQU VSTOP_256_LINES
 
-pf1_plane_width			EQU pf1_x_size3/8
-data_fetch_width		EQU pixel_per_line/8
-pf1_plane_moduli		EQU -(pf1_plane_width-(pf1_plane_width-data_fetch_width))
-
-	IFEQ open_border_enabled
 diwstrt_bits			EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)|(display_window_hstart&$ff)
 diwstop_bits			EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)|(display_window_hstop&$ff)
 bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|BPLCON0F_COLOR|((pf_depth&$07)*BPLCON0F_BPU0) 
@@ -165,28 +148,11 @@ bplcon3_bits3			EQU bplcon3_bits1|BPLCON3F_BANK0|BPLCON3F_BANK1|BPLCON3F_BANK2
 bplcon3_bits4			EQU bplcon3_bits2|BPLCON3F_BANK0|BPLCON3F_BANK1|BPLCON3F_BANK2
 bplcon4_bits			EQU 0
 diwhigh_bits			EQU (((display_window_hstop&$100)>>8)*DIWHIGHF_HSTOP8)|(((display_window_vstop&$700)>>8)*DIWHIGHF_VSTOP8)|(((display_window_hstart&$100)>>8)*DIWHIGHF_HSTART8)|((display_window_vstart&$700)>>8)
-	ELSE
-diwstrt_bits			EQU ((display_window_vstart&$ff)*DIWSTRTF_V0)|(display_window_hstart&$ff)
-diwstop_bits			EQU ((display_window_vstop&$ff)*DIWSTOPF_V0)|(display_window_hstop&$ff)
-ddfstrt_bits			EQU DDFSTRT_OVERSCAN_32_PIXEL
-ddfstop_bits			EQU DDFSTOP_OVERSCAN_32_PIXEL_MIN
-bplcon0_bits			EQU BPLCON0F_ECSENA|((pf_depth>>3)*BPLCON0F_BPU3)|BPLCON0F_COLOR|((pf_depth&$07)*BPLCON0F_BPU0)
-bplcon3_bits1			EQU 0
-bplcon3_bits2			EQU bplcon3_bits1|BPLCON3F_LOCT
-bplcon3_bits3			EQU bplcon3_bits1|BPLCON3F_BANK0|BPLCON3F_BANK1|BPLCON3F_BANK2
-bplcon3_bits4			EQU bplcon3_bits2|BPLCON3F_BANK0|BPLCON3F_BANK1|BPLCON3F_BANK2
-bplcon4_bits			EQU 0
-diwhigh_bits			EQU (((display_window_hstop&$100)>>8)*DIWHIGHF_HSTOP8)|(((display_window_vstop&$700)>>8)*DIWHIGHF_VSTOP8)|(((display_window_hstart&$100)>>8)*DIWHIGHF_HSTART8)|((display_window_vstart&$700)>>8)
-	ENDC
 
 cl1_display_x_size		EQU 352
 cl1_display_width		EQU cl1_display_x_size/8
 cl1_display_y_size		EQU visible_lines_number
-	IFEQ open_border_enabled
 cl1_hstart1			EQU display_window_hstart-(1*CMOVE_SLOT_PERIOD)-4
-	ELSE
-cl1_hstart1			EQU display_window_hstart-4
-	ENDC
 cl1_vstart1			EQU MINROW
 cl1_hstart2			EQU 0
 cl1_vstart2			EQU beam_position&CL_Y_WRAPPING
@@ -206,11 +172,7 @@ tccb_y_distance			EQU 16
 
 ; Clear-Blit
 tccb_clear_blit_x_size		EQU 16
-	IFEQ open_border_enabled
 tccb_clear_blit_y_size		EQU cl1_display_y_size*(cl1_display_width+2)
-	ELSE
-tccb_clear_blit_y_size		EQU cl1_display_y_size*(cl1_display_width+1)
-	ENDC
 tccb_bplcon4_bits		EQU bplcon4_bits
 
 ; Restore-Blit
@@ -261,9 +223,7 @@ tccb_bplam_table_size		EQU tccb_bar_height*tccb_bars_number
 cl1_extension1			RS.B 0
 
 cl1_ext1_WAIT			RS.L 1
-	IFEQ open_border_enabled 
 cl1_ext1_BPL1DAT		RS.L 1
-	ENDC
 cl1_ext1_BPLCON4_1		RS.L 1
 cl1_ext1_BPLCON4_2		RS.L 1
 cl1_ext1_BPLCON4_3		RS.L 1
@@ -393,13 +353,11 @@ tccb_y_angle			RS.W 1
 tccb_y_radius_angle		RS.W 1
 
 ; Blind-Fader
-	IFEQ open_border_enabled
 bf_registers_table_start	RS.W 1
 
 bfi_active			RS.W 1
 
 bfo_active			RS.W 1
-	ENDC
 
 ; Effects-Handler
 eh_trigger_number		RS.W 1
@@ -434,13 +392,11 @@ init_main_variables
 	move.w	d0,tccb_y_radius_angle(a3) ; 0°
 
 ; Blind-Fader
-	IFEQ open_border_enabled
-		move.w	d0,bf_registers_table_start(a3)
+	move.w	d0,bf_registers_table_start(a3)
 
-		move.w	d1,bfi_active(a3)
+	move.w	d1,bfi_active(a3)
 
-		move.w	d1,bfo_active(a3)
-	ENDC
+	move.w	d1,bfo_active(a3)
 
 ; Effects-Handler
 	move.w	d0,eh_trigger_number(a3)
@@ -506,30 +462,14 @@ cl1_init_copperlist
 	move.l	cl1_construction1(a3),a0 
 	bsr.s	cl1_init_playfield_props
 	bsr	cl1_init_colors
-	IFEQ open_border_enabled
-		bsr	cl1_init_bplcon4_chunky
-		bsr	cl1_init_copper_interrupt
-		COP_LISTEND
-		move.l	a0,cl_end(a3)
-	ELSE
-		bsr	cl1_init_plane_pointers
-		bsr	cl1_init_bplcon4_chunky
-		bsr	cl1_init_copper_interrupt
-		COP_LISTEND
-		move.l	a0,cl_end(a3)
-		bsr	cl1_set_plane_pointers
-	ENDC
+	bsr	cl1_init_bplcon4_chunky
+	bsr	cl1_init_copper_interrupt
+	COP_LISTEND
+	move.l	a0,cl_end(a3)
 	bsr	cl1_copy_copperlist
 	rts
-	
-	IFEQ open_border_enabled
-		COP_INIT_PLAYFIELD_REGISTERS cl1,NOBITPLANES
-	ELSE
-		COP_INIT_PLAYFIELD_REGISTERS cl1
-		COP_INIT_BITPLANE_POINTERS cl1
-		COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
-	ENDC
 
+	COP_INIT_PLAYFIELD_REGISTERS cl1
 
 	CNOP 0,4
 cl1_init_colors
@@ -559,12 +499,9 @@ cl1_init_colors
 	COP_INIT_COLOR_LOW COLOR00,1
 	rts
 
-
-	COP_INIT_BPLCON4_CHUNKY cl1,cl1_hstart1,cl1_vstart1,cl1_display_x_size,cl1_display_y_size,open_border_enabled,tccb_quick_clear_enabled,FALSE,NOOP<<16
-
+	COP_INIT_BPLCON4_CHUNKY cl1,cl1_hstart1,cl1_vstart1,cl1_display_x_size,cl1_display_y_size,TRUE,tccb_quick_clear_enabled,FALSE,NOOP<<16
 
 	COP_INIT_COPINT cl1,cl1_hstart2,cl1_vstart2
-
 
 	COPY_COPPERLIST cl1,3
 
@@ -593,10 +530,8 @@ beam_routines
 	IFNE tccb_quick_clear_enabled
 		bsr	tccb_restore_first_copperlist
 	ENDC
-	IFEQ open_border_enabled
-		bsr	blind_fader_in
-		bsr	blind_fader_out
-	ENDC
+	bsr	blind_fader_in
+	bsr	blind_fader_out
 	jsr	mouse_handler
 	tst.l	d0			; exit ?
 	bne.s	beam_routines_quit
@@ -783,126 +718,124 @@ tccb_get_y_coordinates_loop2
 	ENDC
 
 
-	IFEQ open_border_enabled
-		CNOP 0,4
+	CNOP 0,4
 blind_fader_in
-		move.l	a4,-(a7)
-		tst.w	bfi_active(a3)
-		bne.s	blind_fader_in_quit
-		move.w	bf_registers_table_start(a3),d2
-		move.w	d2,d0
-		addq.w	#bf_speed,d0	; increase table start
-		cmp.w	#bf_registers_table_length/WORD_SIZE,d0 ; end of table ?
-		ble.s	blind_fader_in_skip1
-		move.w	#FALSE,bfi_active(a3)
+	move.l	a4,-(a7)
+	tst.w	bfi_active(a3)
+	bne.s	blind_fader_in_quit
+	move.w	bf_registers_table_start(a3),d2
+	move.w	d2,d0
+	addq.w	#bf_speed,d0		; increase table start
+	cmp.w	#bf_registers_table_length/WORD_SIZE,d0 ; end of table ?
+	ble.s	blind_fader_in_skip1
+	move.w	#FALSE,bfi_active(a3)
 blind_fader_in_skip1
-		move.w	d0,bf_registers_table_start(a3)
-		MOVEF.W bf_registers_table_length,d3
-		MOVEF.L cl1_extension1_size,d4
-		lea	bf_registers_table(pc),a0
-		IFNE cl1_size1
-			move.l	cl1_construction1(a3),a1
-			ADDF.W	cl1_extension1_entry+cl1_ext1_BPL1DAT,a1
-		ENDC
-		IFNE cl1_size2
-			move.l	cl1_construction2(a3),a2
-			ADDF.W	cl1_extension1_entry+cl1_ext1_BPL1DAT,a2
-		ENDC
-		move.l	cl1_display(a3),a4
-		ADDF.W	cl1_extension1_entry+cl1_ext1_BPL1DAT,a4
-		moveq	#bf_lamellas_number-1,d7
-blind_fader_in_loop1
-		move.w	d2,d1		; table start
-		moveq	#bf_lamella_height-1,d6
-blind_fader_in_loop2
-		move.w	(a0,d1.w*2),d0	; register address
-		IFNE cl1_size1
-			move.w	d0,(a1)
-			add.l	d4,a1	; next line
-		ENDC
-		IFNE cl1_size2
-			move.w	d0,(a2)
-			add.l	d4,a2	; next line
-		ENDC
-		move.w	d0,(a4)
-		addq.w	#bf_step1,d1	; next entry
-		add.l	d4,a4		; next line
-		cmp.w	d3,d1		; end of table ?
-		blt.s	blind_fader_in_skip2
-		sub.w	d3,d1		; reset table start
-blind_fader_in_skip2
-		dbf	d6,blind_fader_in_loop2
-		addq.w	#bf_step2,d2	; increase table start
-		cmp.w	d3,d2		; end of table ?
-		blt.s	blind_fader_in_skip3
-		sub.w	d3,d2		; reset table start
-blind_fader_in_skip3
-		dbf	d7,blind_fader_in_loop1
-blind_fader_in_quit
-		move.l	(a7)+,a4
-		rts
-
-
-		CNOP 0,4
-blind_fader_out
-		move.l	a4,-(a7)
-		tst.w	bfo_active(a3)
-		bne.s	blind_fader_out_quit
-		move.w	bf_registers_table_start(a3),d2
-		move.w	d2,d0
-		subq.w	#bf_speed,d0	; decrease table start
-		bpl.s	blind_fader_out_skip1
-		move.w	#FALSE,bfo_active(a3)
-		bra.s	blind_fader_out_skip2
-		CNOP 0,4
-blind_fader_out_skip1
-		move.w	d0,bf_registers_table_start(a3)
-blind_fader_out_skip2
-		MOVEF.W bf_registers_table_length,d3
-		MOVEF.L cl1_extension1_size,d4
-		lea	bf_registers_table(pc),a0
-		IFNE cl1_size1
-			move.l	cl1_construction1(a3),a1
-			ADDF.W	cl1_extension1_entry+cl1_ext1_BPL1DAT,a1
-		ENDC
-		IFNE cl1_size2
-			move.l	cl1_construction2(a3),a2
-			ADDF.W	cl1_extension1_entry+cl1_ext1_BPL1DAT,a2
-		ENDC
-		move.l	cl1_display(a3),a4
-		ADDF.W	cl1_extension1_entry+cl1_ext1_BPL1DAT,a4
-		moveq	#bf_lamellas_number-1,d7
-blind_fader_out_loop1
-		move.w	d2,d1		; table start
-		moveq	#bf_lamella_height-1,d6
-blind_fader_out_loop2
-		move.w	(a0,d1.w*2),d0	; register address
-		IFNE cl1_size1
-			move.w	d0,(a1)
-			add.l	d4,a1	; next line
-		ENDC
-		IFNE cl1_size2
-			move.w	d0,(a2)
-			add.l	d4,a2	; next line
-		ENDC
-		move.w	d0,(a4)
-		addq.w	#bf_step1,d1	; next entry
-		add.l	d4,a4		; next line
-		cmp.w	d3,d1		; end of table ?
-		blt.s	blind_fader_out_skip3
-		sub.w	d3,d1		; reset table start
-blind_fader_out_skip3
-		dbf	d6,blind_fader_out_loop2
-		addq.w	#bf_step2,d2	; increase table start
-		cmp.w	d3,d2		; end of table ?
-		blt.s	blind_fader_out_skip4
-		sub.w	d3,d2		; reset table start
-blind_fader_out_skip4
-		dbf	d7,blind_fader_out_loop1
-blind_fader_out_quit
-		move.l	(a7)+,a4
-		rts
+	move.w	d0,bf_registers_table_start(a3)
+	MOVEF.W bf_registers_table_length,d3
+	MOVEF.L cl1_extension1_size,d4
+	lea	bf_registers_table(pc),a0
+	IFNE cl1_size1
+		move.l	cl1_construction1(a3),a1
+		ADDF.W	cl1_extension1_entry+cl1_ext1_BPL1DAT,a1
 	ENDC
+	IFNE cl1_size2
+		move.l	cl1_construction2(a3),a2
+		ADDF.W	cl1_extension1_entry+cl1_ext1_BPL1DAT,a2
+	ENDC
+	move.l	cl1_display(a3),a4
+	ADDF.W	cl1_extension1_entry+cl1_ext1_BPL1DAT,a4
+	moveq	#bf_lamellas_number-1,d7
+blind_fader_in_loop1
+	move.w	d2,d1			; table start
+	moveq	#bf_lamella_height-1,d6
+blind_fader_in_loop2
+	move.w	(a0,d1.w*2),d0		; register address
+	IFNE cl1_size1
+		move.w	d0,(a1)
+		add.l	d4,a1		; next line
+	ENDC
+	IFNE cl1_size2
+		move.w	d0,(a2)
+		add.l	d4,a2		; next line
+	ENDC
+	move.w	d0,(a4)
+	addq.w	#bf_step1,d1		; next entry
+	add.l	d4,a4			; next line
+	cmp.w	d3,d1			; end of table ?
+	blt.s	blind_fader_in_skip2
+	sub.w	d3,d1			; reset table start
+blind_fader_in_skip2
+	dbf	d6,blind_fader_in_loop2
+	addq.w	#bf_step2,d2		; increase table start
+	cmp.w	d3,d2			; end of table ?
+	blt.s	blind_fader_in_skip3
+	sub.w	d3,d2			; reset table start
+blind_fader_in_skip3
+	dbf	d7,blind_fader_in_loop1
+blind_fader_in_quit
+	move.l	(a7)+,a4
+	rts
+
+
+	CNOP 0,4
+blind_fader_out
+	move.l	a4,-(a7)
+	tst.w	bfo_active(a3)
+	bne.s	blind_fader_out_quit
+	move.w	bf_registers_table_start(a3),d2
+	move.w	d2,d0
+	subq.w	#bf_speed,d0		; decrease table start
+	bpl.s	blind_fader_out_skip1
+	move.w	#FALSE,bfo_active(a3)
+	bra.s	blind_fader_out_skip2
+	CNOP 0,4
+blind_fader_out_skip1
+	move.w	d0,bf_registers_table_start(a3)
+blind_fader_out_skip2
+	MOVEF.W bf_registers_table_length,d3
+	MOVEF.L cl1_extension1_size,d4
+	lea	bf_registers_table(pc),a0
+	IFNE cl1_size1
+		move.l	cl1_construction1(a3),a1
+		ADDF.W	cl1_extension1_entry+cl1_ext1_BPL1DAT,a1
+	ENDC
+	IFNE cl1_size2
+		move.l	cl1_construction2(a3),a2
+		ADDF.W	cl1_extension1_entry+cl1_ext1_BPL1DAT,a2
+	ENDC
+	move.l	cl1_display(a3),a4
+	ADDF.W	cl1_extension1_entry+cl1_ext1_BPL1DAT,a4
+	moveq	#bf_lamellas_number-1,d7
+blind_fader_out_loop1
+	move.w	d2,d1			; table start
+	moveq	#bf_lamella_height-1,d6
+blind_fader_out_loop2
+	move.w	(a0,d1.w*2),d0		; register address
+	IFNE cl1_size1
+		move.w	d0,(a1)
+		add.l	d4,a1		; next line
+	ENDC
+	IFNE cl1_size2
+		move.w	d0,(a2)
+		add.l	d4,a2		; next line
+	ENDC
+	move.w	d0,(a4)
+	addq.w	#bf_step1,d1		; next entry
+	add.l	d4,a4			; next line
+	cmp.w	d3,d1			; end of table ?
+	blt.s	blind_fader_out_skip3
+	sub.w	d3,d1			; reset table start
+blind_fader_out_skip3
+	dbf	d6,blind_fader_out_loop2
+	addq.w	#bf_step2,d2		; increase table start
+	cmp.w	d3,d2			; end of table ?
+	blt.s	blind_fader_out_skip4
+	sub.w	d3,d2			; reset table start
+blind_fader_out_skip4
+	dbf	d7,blind_fader_out_loop1
+blind_fader_out_quit
+	move.l	(a7)+,a4
+	rts
 
 
 	CNOP 0,4
@@ -970,17 +903,15 @@ tccb_color_gradient
 
 
 ; Blind-Fader
-	IFEQ open_border_enabled
 ; Tabelle mit Registeradressen
-		CNOP 0,2
+	CNOP 0,2
 bf_registers_table
-		REPT bf_registers_table_length/2
-		DC.W NOOP
-		ENDR
-		REPT bf_registers_table_length/2
-		DC.W BPL1DAT
-		ENDR
-	ENDC
+	REPT bf_registers_table_length/2
+	DC.W NOOP
+	ENDR
+	REPT bf_registers_table_length/2
+	DC.W BPL1DAT
+	ENDR
 
 
 	INCLUDE "sys-variables.i"

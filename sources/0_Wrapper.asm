@@ -427,9 +427,7 @@ cl1_init_copperlist
 	COP_LISTEND
 	rts
 
-
 	COP_INIT_PLAYFIELD_REGISTERS cl1,BLANK
-
 
 	COP_INIT_COPINT cl1,cl1_hstart,cl1_vstart,YWRAP
 
@@ -521,8 +519,9 @@ vertb_interrupt_server
 		rts
 
 		PT_FADE_OUT_VOLUME
-
-		CNOP 0,4
+	ELSE
+		bsr.s	pt_PlayMusic
+		rts
 	ENDC
 
 	IFD PROTRACKER_VERSION_2 

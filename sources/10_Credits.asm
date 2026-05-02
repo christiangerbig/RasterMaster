@@ -112,7 +112,7 @@ spr_colors_number		EQU 0	; 16*2
 spr_odd_color_table_select	EQU 8	; logo: COLOR128..COLOR143
 spr_even_color_table_select	EQU 9	; vertical textscroll: COLOR144..COLOR159
 spr_used_number			EQU 8
-spr_swap_number			EQU 8
+spr_swap_number			EQU 6
 
 audio_memory_size		EQU 0
 
@@ -182,13 +182,12 @@ bg_image_y_size			EQU 256
 bg_image_depth			EQU 7
 
 ; Logo
+lg_image_x_position		EQU HSTART_320_PIXEL
+lg_image_y_position		EQU display_window_vstart
 lg_image_x_size			EQU 64
 lg_image_plane_width		EQU lg_image_x_size/8
 lg_image_y_size			EQU 256
 lg_image_depth			EQU 16
-
-lg_image_x_position		EQU HSTART_320_PIXEL
-lg_image_y_position		EQU display_window_vstart
 
 ; Vert-Text-Scroll
 vts_image_x_size		EQU 320
@@ -197,7 +196,7 @@ vts_image_depth			EQU 1
 vts_image_colors_number		EQU 2
 
 vts_buffer_x_size		EQU 192
-vts_buffer_width		EQU vts_buffer_x_size/8
+vts_buffer_plane_width		EQU vts_buffer_x_size/8
 vts_buffer_y_size		EQU 256
 vts_buffer_depth		EQU vts_image_depth
 vts_buffer_x_position		EQU HSTOP_320_PIXEL-vts_buffer_x_size
@@ -215,10 +214,10 @@ vts_text_char_depth		EQU vts_image_depth
 vts_vert_scroll_speed1		EQU 0
 vts_vert_scroll_speed2		EQU 1
 
-vts_text_char_y_restart		EQU visible_lines_number+vts_text_char_y_size
-vts_text_chars_per_line	EQU vts_buffer_x_size/vts_text_char_x_size
-vts_text_chars_per_column	EQU (visible_lines_number+vts_text_char_y_size)/vts_text_char_y_size
-vts_text_chars_number	EQU vts_text_chars_per_line*vts_text_chars_per_column
+vts_text_char_y_restart		EQU vts_buffer_y_size+vts_text_char_y_size
+vts_text_chars_per_line		EQU vts_buffer_x_size/vts_text_char_x_size
+vts_text_chars_per_column	EQU (vts_buffer_y_size+vts_text_char_y_size)/vts_text_char_y_size
+vts_text_chars_number		EQU vts_text_chars_per_line*vts_text_chars_per_column
 
 vts_copy_char_blit_x_size	EQU vts_text_char_x_size
 vts_copy_char_blit_y_size	EQU vts_text_char_y_size*vts_text_char_depth
@@ -611,14 +610,14 @@ lg_init_sprites
 	lea	lg_image_data,a2
 	MOVEF.W lg_image_y_size-1,d7
 lg_init_sprites_loop
-	move.l	(a2)+,(a0)+ 		; quadword bitplane 1
-	move.l	(a2)+,(a0)+
-	move.l	(a2)+,(a0)+ 		; quadword bitplane 2
-	move.l	(a2)+,(a0)+
-	move.l	(a2)+,(a1)+ 		; quadword bitplane 3
-	move.l	(a2)+,(a1)+
-	move.l	(a2)+,(a1)+ 		; quadword bitplane 4
-	move.l	(a2)+,(a1)+
+	move.l	(a2)+,(a0)+ 		; high longword: bitplane 1
+	move.l	(a2)+,(a0)+		; low longword: bitplane 1
+	move.l	(a2)+,(a0)+ 		; high longword:  bitplane 2
+	move.l	(a2)+,(a0)+		; low longword: bitplane 2
+	move.l	(a2)+,(a1)+ 		; high longword: bitplane 3
+	move.l	(a2)+,(a1)+		; low longword: bitplane 3
+	move.l	(a2)+,(a1)+ 		; high longword: bitplane 4
+	move.l	(a2)+,(a1)+		; low longword: bitplane 4
 	dbf	d7,lg_init_sprites_loop
 	rts
 
@@ -664,9 +663,9 @@ vts_init_sprites
 ; Background-Image
 	CNOP 0,4
 bg_copy_image_to_bitplane
-	movem.l a3-a6,-(a7)
+	move.l	a4,-(a7)
 	move.l	#bg_image_data+(pf1_plane_x_offset/8),a1 ; offset bitplane 1
-	move.l	pf1_display(a3),a3	; destination
+	move.l	pf1_display(a3),a4	; destination
 	bsr.s	bg_copy_image_data
 	add.l	#bg_image_plane_width,a1 ; offset bitplane 2
 	bsr.s	bg_copy_image_data
@@ -680,20 +679,27 @@ bg_copy_image_to_bitplane
 	bsr.s	bg_copy_image_data
 	add.l	#bg_image_plane_width,a1 ; offset bitplane 7
 	bsr.s	bg_copy_image_data
-	movem.l (a7)+,a3-a6
+	move.l	(a7)+,a4
 	rts
+
+; Input
+; a1.l	Source: image
+; a4.l	Destination: bitplane
+; Result
+; no return value
 	CNOP 0,4
 bg_copy_image_data
 	move.l	a1,a0			; source
-	move.l	(a3)+,a2		; destination
+	move.l	(a4)+,a2		; destination
 	MOVEF.W bg_image_y_size-1,d7
-bg_copy_image_data_loop
-	REPT pixel_per_line/16
-	move.w	(a0)+,(a2)+	; copy 42 bytes
-	ENDR
+bg_copy_image_data_loop1
+	MOVEF.W	(pixel_per_line/WORD_BITS)-1,d6
+bg_copy_image_data_loop2
+	move.w	(a0)+,(a2)+		; copy image data
+	dbf	d6,bg_copy_image_data_loop2
 	ADDF.W	(bg_image_plane_width*(bg_image_depth-1))+WORD_SIZE,a0 ; next line in source
 	ADDF.W	(pf1_plane_width*(pf1_depth3-1))+6,a2 ; next line in destination
-	dbf	d7,bg_copy_image_data_loop
+	dbf	d7,bg_copy_image_data_loop1
 	rts
 
 
@@ -722,12 +728,9 @@ cl1_init_copperlist
 	bsr	cl1_set_plane_pointers
 	rts
 
-
 	COP_INIT_PLAYFIELD_REGISTERS cl1
 
-
 	COP_INIT_SPRITE_POINTERS cl1
-
 
 	CNOP 0,4
 cl1_init_colors
@@ -749,9 +752,7 @@ cl1_init_colors
 	COP_INIT_COLOR_LOW COLOR00,32
 	rts
 
-
 	COP_INIT_BITPLANE_POINTERS cl1
-
 
 	CNOP 0,4
 cl1_init_bpldat
@@ -766,7 +767,7 @@ cl1_init_bpldat
 	move.w	#BPL3DAT,d3
 	move.w	#BPL4DAT,d4
 	move.l	#(((CL_Y_WRAPPING<<24)|(((cl1_hstart1/4)*2)<<16))|$10000)|$fffe,d5 ; CWAIT
-	move.l	#$01000000,d6
+	move.l	#1<<24,d6		; next line
 	MOVEF.W cl1_display_y_size-1,d7
 cl1_init_bpldat_loop
 	move.l	d0,(a0)+		; CWAIT
@@ -794,12 +795,9 @@ cl1_init_bpldat_skip
 	movem.l (a7)+,a4-a5
 	rts
 
-
 	COP_INIT_COPINT cl1,cl1_hstart2,cl1_vstart2
 
-
 	COP_SET_SPRITE_POINTERS cl1,display,spr_number
-
 
 	COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
 
@@ -844,10 +842,10 @@ beam_routines_quit
 	rts
 
 
-	SWAP_SPRITES spr_swap_number
+	SWAP_SPRITES spr_swap_number,2	; index 2
 
 
-	SET_SPRITES spr_swap_number
+	SET_SPRITES cl1,spr_swap_number,2 ; index 2
 
 
 	CNOP 0,4
@@ -868,7 +866,7 @@ vert_text_scroll
 	lea	vts_chars_image_pointers(pc),a2
 	move.l	extra_pf1(a3),a4
 	move.l	(a4),a4
-	move.w	#vts_text_chars_per_line*4,a5
+	move.w	#vts_text_chars_per_line*LONGWORD_SIZE,a5
 	moveq	#vts_text_chars_per_column-1,d7
 vert_text_scroll_loop1
 	moveq	#0,d1
@@ -910,7 +908,7 @@ vert_text_scroll_init
 	move.l	#(BC0F_SRCA|BC0F_DEST|ANBNC|ANBC|ABNC|ABC)<<16,BLTCON0-DMACONR(a6) ; minterm D = A
 	moveq	#-1,d0
 	move.l	d0,BLTAFWM-DMACONR(a6)
-	move.l	#((vts_image_plane_width-vts_text_char_width)<<16)|(vts_buffer_width-vts_text_char_width),BLTAMOD-DMACONR(a6) ; A&D moduli
+	move.l	#((vts_image_plane_width-vts_text_char_width)<<16)|(vts_buffer_plane_width-vts_text_char_width),BLTAMOD-DMACONR(a6) ; A&D moduli
 	rts
 
 
@@ -1029,10 +1027,9 @@ image_fader_out_quit
 
 	CNOP 0,4
 scroll_logo_left_in
-	movem.l a4-a5,-(a7)
 	tst.w	slli_active(a3)
 	bne	scroll_logo_left_in_quit
-	move.w	slli_x_angle(a3),d2 ;X-Winkel
+	move.w	slli_x_angle(a3),d2
 	cmp.w	#sine_table_length/4,d2	; 90° ?
 	bgt.s	scroll_logo_left_in_quit
 	lea	sine_table,a0	
@@ -1047,30 +1044,21 @@ scroll_logo_left_in
 	moveq	#lg_image_y_position,d1 ; y
 	MOVEF.W lg_image_y_size,d2
 	add.w	d1,d2			; VSTOP
-	lea	spr_pointers_construction(pc),a2
+	lea	spr_pointers_display(pc),a2
 	move.l	(a2)+,a0		; 1st sprite structure
 	move.l	(a2),a1			; 2nd sprite structure
-	lea	spr_pointers_display(pc),a2
-	move.l	(a2)+,a4		; 1st sprite structure
-	move.l	(a2),a5			; 2nd sprite structure
 	SET_SPRITE_POSITION d0,d1,d2
 	move.w	d1,(a0)			; SPR0POS
-	move.w	d1,(a4)
 	move.w	d1,(a1)			; SPR1POS
-	move.w	d1,(a5)
 	move.w	d2,spr_pixel_per_datafetch/8(a0) ; SPR0CTL
-	move.w	d2,spr_pixel_per_datafetch/8(a4)
 	or.b	#SPRCTLF_ATT,d2
 	move.w	d2,spr_pixel_per_datafetch/8(a1) ; SPR1CTL
-	move.w	d2,spr_pixel_per_datafetch/8(a5)
 scroll_logo_left_in_quit
-	movem.l (a7)+,a4-a5
 	rts
 
 
 	CNOP 0,4
 scroll_logo_left_out
-	movem.l a4-a5,-(a7)
 	tst.w	sllo_active(a3)
 	bne	scroll_logo_left_out_quit
 	move.w	sllo_x_angle(a3),d2
@@ -1088,24 +1076,16 @@ scroll_logo_left_out
 	moveq	#lg_image_y_position,d1 ; Y
 	MOVEF.W lg_image_y_size,d2
 	add.w	d1,d2			; VSTOP
-	lea	spr_pointers_construction(pc),a2
+	lea	spr_pointers_display(pc),a2
 	move.l	(a2)+,a0		; 1st sprite structure
 	move.l	(a2),a1			; 2nd sprite structure
-	lea	spr_pointers_display(pc),a2
-	move.l	(a2)+,a4		; 1st sprite structure
-	move.l	(a2),a5			; 2nd sprite structure
 	SET_SPRITE_POSITION d0,d1,d2
 	move.w	d1,(a0)			; SPR0POS
-	move.w	d1,(a4)
 	move.w	d1,(a1)			; SPR1POS
-	move.w	d1,(a5)
 	move.w	d2,spr_pixel_per_datafetch/8(a0) ; SPR0CTL
-	move.w	d2,spr_pixel_per_datafetch/8(a4)
 	or.b	#SPRCTLF_ATT,d2
 	move.w	d2,spr_pixel_per_datafetch/8(a1) ; SPR1CTL
-	move.w	d2,spr_pixel_per_datafetch/8(a5)
 scroll_logo_left_out_quit
-	movem.l (a7)+,a4-a5
 	rts
 
 

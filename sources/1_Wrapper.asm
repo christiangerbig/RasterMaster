@@ -158,7 +158,7 @@ ciaa_ta_time			EQU 0
 ciaa_tb_time			EQU 0
 	IFEQ pt_ciatiming_enabled
 ciab_ta_time			EQU 14187 ; = 0.709379 MHz * [20000 µs = 50 Hz duration for one frame on a PAL machine]
-;ciab_ta_time			EQU 14318 ; = 0.715909 MHz * [20000 µs = 50 Hz duration for one frame on a NTSC machine]
+; ciab_ta_time			EQU 14318 ; = 0.715909 MHz * [20000 µs = 50 Hz duration for one frame on a NTSC machine]
 	ELSE
 ciab_ta_time			EQU 0
 	ENDC
@@ -407,9 +407,7 @@ cl1_init_copperlist
 	COP_LISTEND
 	rts
 
-
 	COP_INIT_PLAYFIELD_REGISTERS cl1,BLANK
-
 
 	COP_INIT_COPINT cl1,cl1_hstart,cl1_vstart,YWRAP
 
@@ -490,8 +488,9 @@ vertb_interrupt_server
 		rts
 
 		PT_FADE_OUT_VOLUME
-
-		CNOP 0,4
+	ELSE
+		bsr.s	pt_PlayMusic
+		rts
 	ENDC
 
 	IFD PROTRACKER_VERSION_2 

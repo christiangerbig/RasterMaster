@@ -658,7 +658,7 @@ bg_copy_image_to_playfield
 	move.l	(a7)+,a4
 	rts
 
-;Input
+; Input
 ; a1.l	Source: image
 ; a4.l	Destination: bitplane
 ; Result
@@ -668,13 +668,14 @@ bg_copy_image_data
 	move.l	a1,a0			; source
 	move.l	(a4)+,a2		; destination
 	MOVEF.W bg_image_y_size-1,d7
-bg_copy_image_data_loop
-	REPT pixel_per_line/WORD_BITS
-	move.w	(a0)+,(a2)+	; copy 42 bytes
-	ENDR
+bg_copy_image_data_loop1
+	MOVEF.W	(pixel_per_line/WORD_BITS)-1,d6
+bg_copy_image_data_loop2
+	move.w	(a0)+,(a2)+		; copy image data
+	dbf	d6,bg_copy_image_data_loop2
 	ADDF.W	(bg_image_plane_width*(bg_image_depth-1))+WORD_SIZE,a0 ; next line in source
 	ADDF.W	(pf1_plane_width*(pf1_depth3-1))+6,a2 ; next line in destination
-	dbf	d7,bg_copy_image_data_loop
+	dbf	d7,bg_copy_image_data_loop1
 	rts
 
 
@@ -690,12 +691,9 @@ cl1_init_copperlist
 	bsr	cl1_set_plane_pointers
 	rts
 
-
 	COP_INIT_PLAYFIELD_REGISTERS cl1
 
-
 	COP_INIT_SPRITE_POINTERS cl1
-
 
 	CNOP 0,4
 cl1_init_colors
@@ -717,12 +715,9 @@ cl1_init_colors
 	COP_INIT_COLOR_LOW COLOR00,32
 	rts
 
-
 	COP_INIT_BITPLANE_POINTERS cl1
 
-
 	COP_SET_SPRITE_POINTERS cl1,display,spr_number
-
 
 	COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
 
@@ -737,7 +732,6 @@ cl2_init_copperlist
 	bsr	cl2_copy_copperlist
 	rts
 
-
 	CNOP 0,4
 cl2_init_bpldat
 	movem.l a4-a5,-(a7)
@@ -750,8 +744,8 @@ cl2_init_bpldat
 	move.w	#BPL2DAT,d2
 	move.w	#BPL3DAT,d3
 	move.w	#BPL4DAT,d4
-	move.l	#(((CL_Y_WRAPPING<<24)|(((cl2_hstart1/4)*2)<<16))|$10000)|$fffe,d5 ; CWAIT
-	move.l	#$01000000,d6
+	move.l	#(((CL_Y_WRAPPING<<24)|(((cl2_hstart1/4)*2)<<16))|$10000)|$fffe,d5 ; y wrap
+	move.l	#1<<24,d6		; next line
 	MOVEF.W cl2_display_y_size-1,d7
 cl2_init_bpldat_loop
 	move.l	d0,(a0)+		; CWAIT
@@ -771,7 +765,7 @@ cl2_init_bpldat_loop
 	move.w	d1,(a0)+		; BPL1DAT
 	move.w	(a1),(a0)+		; 1st word bitplane 1
 	ADDF.W	bg_image_plane_width*bg_image_depth,a1 ; next line in source
-	cmp.l	d5,d0			; rasterline $ff ?
+	cmp.l	d5,d0			; y wrap ?
 	bne.s   cl2_init_bpldat_skip
 	COP_WAIT CL_X_WRAPPING_7_BITPLANES_1X,CL_Y_WRAPPING ; patch cl
 cl2_init_bpldat_skip
@@ -780,9 +774,7 @@ cl2_init_bpldat_skip
 	movem.l (a7)+,a4-a5
 	rts
 
-
 	COP_INIT_COPINT cl2,cl2_hstart2,cl2_vstart2
-
 
 	COPY_COPPERLIST cl2,2
 
@@ -859,7 +851,6 @@ fetch_channels_data
 	bsr.s	fetch_sample_data
 	rts
 
-
 ; Input
 ; d6.l	clock constant = PAL clock constant/PAL frequency
 ; d7.w	Number of samplebytes to fetch
@@ -935,7 +926,7 @@ wobble_display
 	MOVEF.W $ff,d3			; scrolling mask H0-H7
 	moveq	#cl2_extension1_size,d4
 	IFGE visible_lines_number-212
-		move.w	#(cl2_display_y_size-(CL_Y_WRAPPING-cl2_vstart1))-1,d5
+		move.w	#(cl2_display_y_size-(CL_Y_WRAPPING-cl2_vstart1))-1,d5 ; y wrap
 	ENDC
 	MOVEF.W wd_table_length-1,d6	; overflow 360°
 	lea	cs_audio_channel_data(pc),a0
@@ -947,7 +938,7 @@ wobble_display_loop
 	PF_SOFTSCROLL_64PIXEL_LORES d0,d1,d3
 	move.w	d0,(a1)			; BPLCON1
 	IFGE visible_lines_number-212
-		cmp.w	d5,d7		; line $ff ?
+		cmp.w	d5,d7		; y wrap ?
 		bne.s	wobble_display_skip
 		addq.w	#LONGWORD_SIZE,a1 ; skip CWAIT
 wobble_display_skip
@@ -976,7 +967,7 @@ image_fader_in_skip
 	MOVEF.W if_rgb8_colors_number*3,d6 ; RGB counter
 	lea	sine_table(pc),a0	
 	move.l	(a0,d2.w*4),d0		; sin(w)
-	MULUF.L ifi_rgb8_fader_radius*2,d0,d1	; y' = (yr*sin(w))/2^15
+	MULUF.L ifi_rgb8_fader_radius*2,d0,d1 ; y' = (yr*sin(w))/2^15
 	swap	d0
 	ADDF.W	ifi_rgb8_fader_center,d0
 	lea	pf1_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; colors buffer
@@ -1149,41 +1140,40 @@ ipf_random_pixel_data_copy
 	move.l	(a5)+,a0		; Sprite0 structure
 	ADDF.W	(spr_pixel_per_datafetch/8)*2,a0 ; skip header
 	lea	lg_image_data,a1	; 1st quadword bitplane 1
-	bsr	init_sprite_bitmap
+	bsr	ipf_init_sprite_bitmap
 	move.l	(a5)+,a0		; Sprite1 structure
 	ADDF.W	(spr_pixel_per_datafetch/8)*2,a0 ; skip header
 	lea	lg_image_data+(lg_image_plane_width*2),a1 ; 1st quadword bitplane 3
-	bsr	init_sprite_bitmap
+	bsr	ipf_init_sprite_bitmap
 
 	move.l	(a5)+,a0		; Sprite2 structure
 	ADDF.W	(spr_pixel_per_datafetch/8)*2,a0 ; skip header
 	lea	lg_image_data+QUADWORD_SIZE,a1	; 2nd quadword bitplane 1
-	bsr	init_sprite_bitmap
+	bsr	ipf_init_sprite_bitmap
 	move.l	(a5)+,a0		; Sprite3 structure
 	ADDF.W	(spr_pixel_per_datafetch/8)*2,a0 ; skip header
 	lea	lg_image_data+QUADWORD_SIZE+(lg_image_plane_width*2),a1 ; 2nd quadword bitplane 3
-	bsr	init_sprite_bitmap
+	bsr	ipf_init_sprite_bitmap
 
 	move.l	(a5)+,a0		; Sprite4 structure
 	ADDF.W	(spr_pixel_per_datafetch/8)*2,a0 ; skip header
 	lea	lg_image_data+(QUADWORD_SIZE*2),a1 ; 3rd quadword
-	bsr	init_sprite_bitmap
+	bsr	ipf_init_sprite_bitmap
 	move.l	(a5)+,a0		; Sprite5 structure
 	ADDF.W	(spr_pixel_per_datafetch/8)*2,a0 ; skip header
 	lea	lg_image_data+(QUADWORD_SIZE*2)+(lg_image_plane_width*2),a1 ; 3rd quadword bitplane 1
-	bsr.s	init_sprite_bitmap
+	bsr.s	ipf_init_sprite_bitmap
 
 	move.l	(a5)+,a0		; Sprite6 structure
 	ADDF.W	(spr_pixel_per_datafetch/8)*2,a0 ; skip header
 	lea	lg_image_data+(QUADWORD_SIZE*3),a1 ; 4th quadword bitplane 3 bitplane 1
-	bsr.s	init_sprite_bitmap
+	bsr.s	ipf_init_sprite_bitmap
 	move.l	(a5),a0			; Sprite7 structure
 	ADDF.W	(spr_pixel_per_datafetch/8)*2,a0 ; skip header
 	lea	lg_image_data+(QUADWORD_SIZE*3)+(lg_image_plane_width*2),a1 ; 4th quadword bitplane 3
-	bsr.s	init_sprite_bitmap
+	bsr.s	ipf_init_sprite_bitmap
 	movem.l (a7)+,a4-a5
 	rts
-
 
 ; Input
 ; a0.l	 Pointer structure destination sprite data
@@ -1191,11 +1181,11 @@ ipf_random_pixel_data_copy
 ; Result
 ; no return value
 	CNOP 0,4
-init_sprite_bitmap
+ipf_init_sprite_bitmap
 	move.w	#lg_image_plane_width-8,a2
 	move.w	#(lg_image_plane_width*3)-8,a4
 	MOVEF.W lg_image_y_size-1,d7
-init_sprite_bitmap_loop
+ipf_init_sprite_bitmap_loop
 	move.l	(a1)+,d0 		; high longword: bitplane 1
 	and.l	d1,d0			; link with mask
 	move.l	d0,(a0)+
@@ -1215,7 +1205,7 @@ init_sprite_bitmap_loop
 	ror.l	d2,d1
 	move.w	VHPOSR-DMACONR(a6),d2
 	rol.w	d2,d1
-	dbf	d7,init_sprite_bitmap_loop
+	dbf	d7,ipf_init_sprite_bitmap_loop
 	rts
 
 

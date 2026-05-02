@@ -477,12 +477,9 @@ cl1_init_copperlist
 	bsr	cl1_set_plane_pointers
 	rts
 
-
 	COP_INIT_PLAYFIELD_REGISTERS cl1
 
-
 	COP_INIT_BITPLANE_POINTERS cl1
-
 
 	COP_SET_BITPLANE_POINTERS cl1,display,pf1_depth3
 
@@ -497,7 +494,6 @@ cl2_init_copperlist
 	bsr	cl2_copy_copperlist
 	rts
 
-
 	CNOP 0,4
 cl2_init_bplcon4_chunky
 	move.l	#(BPLCON4<<16)|bplcon4_bits,d0
@@ -508,9 +504,7 @@ cl2_init_bplcon4_chunky_loop
 	dbf	d7,cl2_init_bplcon4_chunky_loop
 	rts
 
-
 	COP_INIT_COPINT cl2
-
 
 	COPY_COPPERLIST cl2,2
 

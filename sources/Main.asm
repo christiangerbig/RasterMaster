@@ -348,9 +348,7 @@ cl1_init_copperlist
 	COP_LISTEND
 	rts
 
-
-	COP_INIT_PLAYFIELD_REGISTERS cl1,BLANK
-
+	COP_INIT_PLAYFIELD_REGISTERS cl1
 
 	COP_INIT_COPINT cl1,cl1_hstart,cl1_vstart,YWRAP
 

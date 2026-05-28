@@ -182,6 +182,7 @@ bg_image_depth			EQU 4
 ; Twisted-Bars
 tb_bars_number			EQU 6
 tb_bar_height			EQU 14
+tb_color_tables_number		EQU 15
 
 ; Twisted-Bars3.1.3
 tb313_y_radius_min		EQU (tb_bar_height+2)*4
@@ -724,7 +725,7 @@ tb_init_color_table
 tb_init_color_table_loop1
 	move.l	(a0)+,d0		; RGB8
 	move.l	d1,(a1)+		; COLOR00
-	moveq	#(spr_colors_number-1)-1,d6
+	moveq	#tb_color_tables_number-1,d6
 tb_init_color_table_loop2
 	move.l	d0,(a1)+		; RGB8
 	dbf	d6,tb_init_color_table_loop2
@@ -735,38 +736,38 @@ tb_init_color_table_loop2
 	CNOP 0,4
 init_colors
 	CPU_SELECT_COLOR_HIGH_BANK 0
-	CPU_INIT_COLOR_HIGH COLOR00,16,pf1_rgb8_color_table
+	CPU_LOAD_COLORMAP_HIGH COLOR00,16,pf1_rgb8_color_table
 	CPU_SELECT_COLOR_HIGH_BANK 1
-	CPU_INIT_COLOR_HIGH COLOR00,32,tb_color_table
+	CPU_LOAD_COLORMAP_HIGH COLOR00,32,tb_color_table
 	CPU_SELECT_COLOR_HIGH_BANK 2
-	CPU_INIT_COLOR_HIGH COLOR00,32
+	CPU_LOAD_COLORMAP_HIGH COLOR00,32
 	CPU_SELECT_COLOR_HIGH_BANK 3
-	CPU_INIT_COLOR_HIGH COLOR00,32
+	CPU_LOAD_COLORMAP_HIGH COLOR00,32
 	CPU_SELECT_COLOR_HIGH_BANK 4
-	CPU_INIT_COLOR_HIGH COLOR00,32
+	CPU_LOAD_COLORMAP_HIGH COLOR00,32
 	CPU_SELECT_COLOR_HIGH_BANK 5
-	CPU_INIT_COLOR_HIGH COLOR00,32
+	CPU_LOAD_COLORMAP_HIGH COLOR00,32
 	CPU_SELECT_COLOR_HIGH_BANK 6
-	CPU_INIT_COLOR_HIGH COLOR00,32
+	CPU_LOAD_COLORMAP_HIGH COLOR00,32
 	CPU_SELECT_COLOR_HIGH_BANK 7
-	CPU_INIT_COLOR_HIGH COLOR00,32
+	CPU_LOAD_COLORMAP_HIGH COLOR00,32
 
 	CPU_SELECT_COLOR_LOW_BANK 0
-	CPU_INIT_COLOR_LOW COLOR00,16,pf1_rgb8_color_table
+	CPU_LOAD_COLORMAP_LOW COLOR00,16,pf1_rgb8_color_table
 	CPU_SELECT_COLOR_LOW_BANK 1
-	CPU_INIT_COLOR_LOW COLOR00,32,tb_color_table
+	CPU_LOAD_COLORMAP_LOW COLOR00,32,tb_color_table
 	CPU_SELECT_COLOR_LOW_BANK 2
-	CPU_INIT_COLOR_LOW COLOR00,32
+	CPU_LOAD_COLORMAP_LOW COLOR00,32
 	CPU_SELECT_COLOR_LOW_BANK 3
-	CPU_INIT_COLOR_LOW COLOR00,32
+	CPU_LOAD_COLORMAP_LOW COLOR00,32
 	CPU_SELECT_COLOR_LOW_BANK 4
-	CPU_INIT_COLOR_LOW COLOR00,32
+	CPU_LOAD_COLORMAP_LOW COLOR00,32
 	CPU_SELECT_COLOR_LOW_BANK 5
-	CPU_INIT_COLOR_LOW COLOR00,32
+	CPU_LOAD_COLORMAP_LOW COLOR00,32
 	CPU_SELECT_COLOR_LOW_BANK 6
-	CPU_INIT_COLOR_LOW COLOR00,32
+	CPU_LOAD_COLORMAP_LOW COLOR00,32
 	CPU_SELECT_COLOR_LOW_BANK 7
-	CPU_INIT_COLOR_LOW COLOR00,32
+	CPU_LOAD_COLORMAP_LOW COLOR00,32
 	rts
 
 
@@ -810,10 +811,10 @@ cl1_init_copperlist
 
 	CNOP 0,4
 cl1_init_colors
-	COP_INIT_COLOR_HIGH COLOR16,spr_colors_number,spr_rgb8_color_table
+	COP_LOAD_COLORMAP_HIGH COLOR16,spr_colors_number,spr_rgb8_color_table
 
 	COP_SELECT_COLOR_LOW_BANK 0
-	COP_INIT_COLOR_LOW COLOR16,spr_colors_number,spr_rgb8_color_table
+	COP_LOAD_COLORMAP_LOW COLOR16,spr_colors_number,spr_rgb8_color_table
 	rts
 
 	COP_INIT_BITPLANE_POINTERS cl1
@@ -1014,7 +1015,7 @@ tb_set_background_bars
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
 	move.w	#tb_bars_number*LONGWORD_SIZE,a3
-	lea	tb_sprm_table_background(pc),a5
+	lea	tb_bplam_table_background(pc),a5
 	lea	ccf_columns_mask(pc),a6
 	moveq	#cl2_display_width-1,d7	; number of columns
 tb_set_background_bars_loop1
@@ -1047,7 +1048,7 @@ tb_set_foreground_bars
 	move.l	cl2_construction2(a3),a2 
 	ADDF.W	cl2_extension1_entry+cl2_ext1_BPLCON4_1+WORD_SIZE,a2
 	move.w	#tb_bars_number*LONGWORD_SIZE,a3
-	lea	tb_sprm_table_foreground(pc),a5
+	lea	tb_bplam_table_foreground(pc),a5
 	lea	ccf_columns_mask(pc),a6
 	moveq	#cl2_display_width-1,d7 ; number of columns
 tb_set_foreround_bars_loop1
@@ -1517,12 +1518,12 @@ tb_color_table
 
 
 	CNOP 0,4
-tb_sprm_table_background
+tb_bplam_table_background
 	DC.W $0022,$0033,$0044,$0055,$0066,$0077,$0088,$0099,$00aa,$00bb,$00cc,$00dd,$00ee,$00ff
 
 
 	CNOP 0,4
-tb_sprm_table_foreground
+tb_bplam_table_foreground
 	DC.W $2022,$3033,$4044,$5055,$6066,$7077,$8088,$9099,$a0aa,$b0bb,$c0cc,$d0dd,$e0ee,$f0ff
 
 

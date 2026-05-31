@@ -619,13 +619,13 @@ sprfo_rgb8_fader_angle		RS.W 1
 ccfi_active			RS.W 1
 ccfi_current_mode		RS.W 1
 ccfi_start			RS.W 1
-ccfi_delay_counter		RS.W 1
+ccfi_counter		RS.W 1
 ccfi_delay_reset		RS.W 1
 
 ccfo_active			RS.W 1
 ccfo_current_mode		RS.W 1
 ccfo_start			RS.W 1
-ccfo_delay_counter		RS.W 1
+ccfo_counter		RS.W 1
 ccfo_delay_reset		RS.W 1
 
 ; Effects-Handler
@@ -686,13 +686,13 @@ init_main_variables
 	move.w	d1,ccfi_active(a3)
 	move.w	#ccfi_mode2,ccfi_current_mode(a3)
 	move.w	d0,ccfi_start(a3)
-	move.w	d0,ccfi_delay_counter(a3)
+	move.w	d0,ccfi_counter(a3)
 	move.w	#ccfi_delay,ccfi_delay_reset(a3)
 
 	move.w	d1,ccfo_active(a3)
 	move.w	#ccfo_mode2,ccfo_current_mode(a3)
 	move.w	d0,ccfo_start(a3)
-	move.w	d0,ccfo_delay_counter(a3)
+	move.w	d0,ccfo_counter(a3)
 	move.w	#ccfo_delay,ccfo_delay_reset(a3)
 
 ; Effects-Handler
@@ -1258,9 +1258,9 @@ sprite_fader_out_quit
 chunky_columns_fader_in
 	tst.w	ccfi_active(a3)
 	bne.s	chunky_columns_fader_in_quit
-	subq.w	#ccfi_delay_speed,ccfi_delay_counter(a3)
+	subq.w	#ccfi_delay_speed,ccfi_counter(a3)
 	bne.s	chunky_columns_fader_in_quit
-	move.w	#ccfi_delay,ccfi_delay_counter(a3)
+	move.w	#ccfi_delay,ccfi_counter(a3)
 	move.w	ccfi_start(a3),d1
 	moveq	#cl2_display_width-1,d2 ; number of colours
 	lea	ccf_columns_mask(pc),a0
@@ -1329,9 +1329,9 @@ ccfi_fader_mode_skip
 chunky_columns_fader_out
 	tst.w	ccfo_active(a3)
 	bne.s	chunky_columns_fader_out_quit
-	subq.w	#ccfo_delay_speed,ccfo_delay_counter(a3)
+	subq.w	#ccfo_delay_speed,ccfo_counter(a3)
 	bne.s	chunky_columns_fader_out_quit
-	move.w	#ccfo_delay,ccfo_delay_counter(a3)
+	move.w	#ccfo_delay,ccfo_counter(a3)
 	move.w	ccfo_start(a3),d1
 	moveq	#cl2_display_width-1,d2 ; number of columns
 	lea	ccf_columns_mask(pc),a0
@@ -1436,7 +1436,7 @@ eh_start_twisted_bars313
 	moveq	#TRUE,d0
 	move.w	d0,tb313_active(a3)
 	move.w	d0,ccfi_active(a3)
-	move.w	#1,ccfi_delay_counter(a3) ; activate counter
+	move.w	#1,ccfi_counter(a3) ; activate counter
 	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_horiz_scrolltext
@@ -1445,7 +1445,7 @@ eh_start_horiz_scrolltext
 	CNOP 0,4
 eh_stop_twisted_bars313
 	clr.w	ccfo_active(a3)
-	move.w	#1,ccfo_delay_counter(a3) ; activate counter
+	move.w	#1,ccfo_counter(a3) ; activate counter
 	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_twisted_bars312
@@ -1454,14 +1454,14 @@ eh_start_twisted_bars312
 	move.w	d0,tb312_active(a3)
 	move.w	d0,ccfi_start(a3)
 	move.w	d0,ccfi_active(a3)
-	move.w	#1,ccfi_delay_counter(a3) ; activate counter
+	move.w	#1,ccfi_counter(a3) ; activate counter
 	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_stop_twisted_bars312
 	moveq	#TRUE,d0
 	move.w	d0,ccfo_start(a3)
 	move.w	d0,ccfo_active(a3)
-	move.w	#1,ccfo_delay_counter(a3) ; activate counter
+	move.w	#1,ccfo_counter(a3) ; activate counter
 	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_sprite_fader_out

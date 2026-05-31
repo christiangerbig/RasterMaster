@@ -593,12 +593,12 @@ ipf_destination_size		RS.W 1
 
 ; Image-Pixel-Fader-In
 ipfi_active			RS.W 1
-ipfi_delay_counter		RS.W 1
+ipfi_counter		RS.W 1
 ipfi_delay_angle		RS.W 1
 
 ; Image-Pixel-Fader-Out
 ipfo_active			RS.W 1
-ipfo_delay_counter		RS.W 1
+ipfo_counter		RS.W 1
 ipfo_delay_angle		RS.W 1
 
 ; Effects-Handler
@@ -658,12 +658,12 @@ init_main_variables
 
 ; Image-Pixel-Fader-In
 	move.w	d1,ipfi_active(a3)
-	move.w	d0,ipfi_delay_counter(a3)
+	move.w	d0,ipfi_counter(a3)
 	move.w	d2,ipfi_delay_angle(a3) ; 90°
 
 ; Image-Pixel-Fader-Out
 	move.w	d1,ipfo_active(a3)
-	move.w	d0,ipfo_delay_counter(a3)
+	move.w	d0,ipfo_counter(a3)
 	move.w	d2,ipfo_delay_angle(a3) ; 90°
 
 ; Effects-Handler
@@ -1144,7 +1144,7 @@ image_fader_out_quit
 image_pixel_fader_in
 	tst.w	ipfi_active(a3)
 	bne.s	image_pixel_fader_in_quit
-	subq.w	#1,ipfi_delay_counter(a3)
+	subq.w	#1,ipfi_counter(a3)
 	bgt.s	image_pixel_fader_in_quit
 	move.w	ipfi_delay_angle(a3),d2
 	move.w	d2,d0
@@ -1159,7 +1159,7 @@ image_pixel_fader_in_skip1
 	MULUF.L	ipfi_delay_radius*2,d0,d1 ; delay' = (delay*sin(w))/2^16
 	swap	d0
 	addq.w	#ipfi_delay_center,d0
-	move.w	d0,ipfi_delay_counter(a3)
+	move.w	d0,ipfi_counter(a3)
 	moveq	#ipf_source_size,d3
 	moveq	#0,d4
 	swap	d3			; *2^16
@@ -1194,7 +1194,7 @@ image_pixel_fader_in_quit
 image_pixel_fader_out
 	tst.w	ipfo_active(a3)
 	bne.s	image_pixel_fader_quit
-	subq.w	#1,ipfo_delay_counter(a3)
+	subq.w	#1,ipfo_counter(a3)
 	bgt.s	image_pixel_fader_quit
 	move.w	ipfo_delay_angle(a3),d2
 	move.w	d2,d0
@@ -1209,7 +1209,7 @@ image_pixel_fader_skip1
 	MULUF.L	ipfo_delay_radius*2,d0,d1 ; delay' = (delay*sin(w))/2^16
 	swap	d0
 	ADDF.W	ipfo_delay_center,d0
-	move.w	d0,ipfo_delay_counter(a3)
+	move.w	d0,ipfo_counter(a3)
 	moveq	#ipf_source_size,d3
 	moveq	#0,d4
 	swap	d3			; *2^16
@@ -1346,14 +1346,14 @@ eh_start_image_fader_in
 	CNOP 0,4
 eh_start_image_pixel_fader_in
 	clr.w	ipfi_active(a3)
-	move.w	#1,ipfi_delay_counter(a3) ; activate counter
+	move.w	#1,ipfi_counter(a3) ; activate counter
 	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_image_fader_out
 	clr.w	ifo_rgb8_active(a3)
 	move.w	#if_rgb8_colors_number*3,if_rgb8_colors_counter(a3)
 	clr.w	if_rgb8_copy_colors_active(a3)
-	move.w	#1,ipfo_delay_counter(a3) ; activate counter
+	move.w	#1,ipfo_counter(a3) ; activate counter
 	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_image_pixel_fader_out

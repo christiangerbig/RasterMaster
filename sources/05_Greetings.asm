@@ -666,13 +666,13 @@ ccf_fader_columns_mask		RS.L 1
 ccfi_active			RS.W 1
 ccfi_current_mode		RS.W 1
 ccfi_start			RS.W 1
-ccfi_columns_delay_counter	RS.W 1
+ccfi_columns_counter	RS.W 1
 ccfi_columns_delay_reset	RS.W 1
 
 ccfo_active			RS.W 1
 ccfo_current_mode		RS.W 1
 ccfo_start			RS.W 1
-ccfo_columns_delay_counter	RS.W 1
+ccfo_columns_counter	RS.W 1
 ccfo_columns_delay_reset	RS.W 1
 
 ; Effects-Handler
@@ -728,7 +728,7 @@ init_main_variables
 	moveq	#ccfi_mode2,d2
 	move.w	d2,ccfi_current_mode(a3)
 	move.w	d0,ccfi_start(a3)
-	move.w	d0,ccfi_columns_delay_counter(a3)
+	move.w	d0,ccfi_columns_counter(a3)
 	moveq	#ccfi_columns_delay1,d2
 	move.w	d2,ccfi_columns_delay_reset(a3)
 
@@ -737,7 +737,7 @@ init_main_variables
 	moveq	#ccfo_mode2,d2
 	move.w	d2,ccfo_current_mode(a3)
 	move.w	d0,ccfo_start(a3)
-	move.w	d0,ccfo_columns_delay_counter(a3)
+	move.w	d0,ccfo_columns_counter(a3)
 	moveq	#ccfo_columns_delay,d2
 	move.w	d2,ccfo_columns_delay_reset(a3)
 
@@ -1741,9 +1741,9 @@ tb31612_restore_blit
 chunky_columns_fader_in
 	tst.w	ccfi_active(a3)
 	bne.s	chunky_columns_fader_in_quit
-	subq.w	#ccfi_delay_speed,ccfi_columns_delay_counter(a3)
+	subq.w	#ccfi_delay_speed,ccfi_columns_counter(a3)
 	bgt.s	chunky_columns_fader_in_quit
-	move.w	ccfi_columns_delay_reset(a3),ccfi_columns_delay_counter(a3)
+	move.w	ccfi_columns_delay_reset(a3),ccfi_columns_counter(a3)
 	move.w	ccfi_start(a3),d1
 	moveq	#cl2_display_width-1,d2 ; number of columns
 	move.l	ccf_fader_columns_mask(a3),a0
@@ -1812,9 +1812,9 @@ ccfi_fader_mode_skip
 chunky_columns_fader_out
 	tst.w	ccfo_active(a3)
 	bne.s	chunky_columns_fader_out_quit
-	subq.w	#ccfo_delay_speed,ccfo_columns_delay_counter(a3)
+	subq.w	#ccfo_delay_speed,ccfo_columns_counter(a3)
 	bgt.s	chunky_columns_fader_out_quit
-	move.w	ccfo_columns_delay_reset(a3),ccfo_columns_delay_counter(a3)
+	move.w	ccfo_columns_delay_reset(a3),ccfo_columns_counter(a3)
 	move.w	ccfo_start(a3),d1
 	moveq	#cl2_display_width-1,d2 ; number of columns
 	move.l	ccf_fader_columns_mask(a3),a0
@@ -1917,7 +1917,7 @@ eh_start_barfield
 	CNOP 0,4
 eh_start_wave_center_bar
 	clr.w	ccfi_active(a3)
-	move.w	#1,ccfi_columns_delay_counter(a3) ; activate counter
+	move.w	#1,ccfi_columns_counter(a3) ; activate counter
 	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_twisted_bars31612
@@ -1927,7 +1927,7 @@ eh_start_twisted_bars31612
 	moveq	#TRUE,d0
 	move.w	d0,ccfi_start(a3)
 	move.w	d0,ccfi_active(a3)
-	move.w	#1,ccfi_columns_delay_counter(a3) ; activate counter
+	move.w	#1,ccfi_columns_counter(a3) ; activate counter
 	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_start_horiz_scrolltext
@@ -1942,7 +1942,7 @@ eh_stop_wave_center_bar
 	lea	wcb_fader_columns_mask(pc),a0
 	move.l	a0,ccf_fader_columns_mask(a3)
 	clr.w	ccfo_active(a3)
-	move.w	#1,ccfo_columns_delay_counter(a3) ; activate counter
+	move.w	#1,ccfo_columns_counter(a3) ; activate counter
 	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_stop_twisted_bars31612
@@ -1951,7 +1951,7 @@ eh_stop_twisted_bars31612
 	moveq	#TRUE,d0
 	move.w	d0,ccfo_start(a3)
 	move.w	d0,ccfo_active(a3)
-	move.w	#1,ccfo_columns_delay_counter(a3) ; activate counter
+	move.w	#1,ccfo_columns_counter(a3) ; activate counter
 	bra.s	effects_handler_quit
 	CNOP 0,4
 eh_disable_barfield_z_restart

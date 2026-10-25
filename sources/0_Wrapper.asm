@@ -363,8 +363,8 @@ init_main
 	bsr	pt_InitAudTempStrucs
 	bsr	pt_ExamineSongStruc
 	bsr	pt_InitFtuPeriodTableStarts
-	bsr	init_colors
 	bsr	init_CIA_timers
+	bsr	init_colors
 	bsr	cl1_init_copperlist
 	rts
 
@@ -402,20 +402,20 @@ pt_decrunch_audio_data
 
 
 	CNOP 0,4
+init_CIA_timers
+
+; PT-Replay
+	PT_INIT_TIMERS
+	rts
+
+
+	CNOP 0,4
 init_colors
 	CPU_SELECT_COLOR_HIGH_BANK 0
 	CPU_LOAD_COLORMAP_HIGH COLOR00,1,pf1_rgb8_color_table
 
 	CPU_SELECT_COLOR_LOW_BANK 0
 	CPU_LOAD_COLORMAP_LOW COLOR00,1,pf1_rgb8_color_table
-	rts
-
-
-	CNOP 0,4
-init_CIA_timers
-
-; PT-Replay
-	PT_INIT_TIMERS
 	rts
 
 

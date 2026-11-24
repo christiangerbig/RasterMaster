@@ -1076,7 +1076,7 @@ image_fader_in_skip
 	MOVEF.W if_rgb8_colors_number*3,d6 ; RGB counter
 	lea	sine_table,a0	
 	move.l	(a0,d2.w*4),d0		; sin(w)
-	MULUF.L ifi_rgb8_fader_radius*2,d0,d1 ; y' = (yr*sin(w))/2^15
+	MULUF.L ifi_rgb8_fader_radius*2,d0 ; y' = (yr*sin(w))/2^15
 	swap	d0
 	addq.w	#ifi_rgb8_fader_center,d0
 	lea	pf1_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; colors buffer
@@ -1206,7 +1206,7 @@ image_pixel_fader_skip1
 	move.w	d0,ipfo_delay_angle(a3)
 	lea	sine_table,a0
 	move.l	(a0,d2.w*4),d0		; sin(w)
-	MULUF.L	ipfo_delay_radius*2,d0,d1 ; delay' = (delay*sin(w))/2^16
+	MULUF.L	ipfo_delay_radius*2,d0	; delay' = (delay*sin(w))/2^16
 	swap	d0
 	ADDF.W	ipfo_delay_center,d0
 	move.w	d0,ipfo_counter(a3)

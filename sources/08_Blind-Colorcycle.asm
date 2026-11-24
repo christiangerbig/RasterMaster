@@ -533,7 +533,7 @@ blind_colorcycle5212
 	move.w	d0,bcc5212_speed_angle(a3)
 	lea	sine_table,a0
 	move.l	(a0,d1.w*4),d3		; cos(w)
-	MULUF.L bcc5212_speed_radius*2,d3,d1 ; r' = r*cow(w)/2^15
+	MULUF.L bcc5212_speed_radius*2,d3 ; r' = r*cow(w)/2^15
 	swap	d3
 	move.w	bcc5212_bplam_table_start(a3),d4
 	move.w	d4,d0		

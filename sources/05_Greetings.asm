@@ -1353,7 +1353,7 @@ ss_sine_scroll_loop1
 	moveq	#0,d0
 	move.w	(a0)+,d0		; y
 	add.w	d2,d0			; add y center
-	MULUF.L pf1_plane_width*pf1_depth3,d0,d1 ; y offset in destination1
+	MULUF.L pf1_plane_width*pf1_depth3,d0 ; y offset in destination1
 	add.l	a1,d0			; add destination1 address
 	subq.w	#ss_sine_char_width,a1	; next character in destination1
 	move.w	d0,cl2_ext2_BLTDPTL(a4) ; playfield write
@@ -1365,7 +1365,7 @@ ss_sine_scroll_loop1
 	moveq	#0,d0
 	move.w	(a0)+,d0		; y
 	add.w	d2,d0			; add y center
-	MULUF.L pf1_plane_width*pf1_depth3,d0,d1 ; y offset in destination2
+	MULUF.L pf1_plane_width*pf1_depth3,d0 ; y offset in destination2
 	add.l	a2,d0			; add destination2 address
 	move.w	d0,cl2_ext4_BLTBPTL(a4) ; playfield read
 	subq.w	#ss_sine_char_width,a2	; next chatacter in destination2

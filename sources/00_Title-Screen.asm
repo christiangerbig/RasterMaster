@@ -967,7 +967,7 @@ image_fader_in_skip
 	MOVEF.W if_rgb8_colors_number*3,d6 ; RGB counter
 	lea	sine_table(pc),a0	
 	move.l	(a0,d2.w*4),d0		; sin(w)
-	MULUF.L ifi_rgb8_fader_radius*2,d0,d1 ; y' = (yr*sin(w))/2^15
+	MULUF.L ifi_rgb8_fader_radius*2,d0 ; y' = (yr*sin(w))/2^15
 	swap	d0
 	ADDF.W	ifi_rgb8_fader_center,d0
 	lea	pf1_rgb8_color_table+(if_rgb8_color_table_offset*LONGWORD_SIZE)(pc),a0 ; colors buffer

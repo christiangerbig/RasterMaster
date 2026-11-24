@@ -578,7 +578,7 @@ tb315_get_yz_coordinates_loop2
 	add.w	d2,d1			; y angle - 90°
 	ext.w	d1
 	move.w	d1,(a1)+		; z vector
-	MULUF.L tb315_y_radius*2,d0,d1	; y' = (yr*sin(w))/2^15
+	MULUF.L tb315_y_radius*2,d0	; y' = (yr*sin(w))/2^15
 	swap	d0
 	add.w	a2,d0			; y' + y center
 	MULUF.W cl2_extension1_size/4,d0,d1 ; y offset in cl

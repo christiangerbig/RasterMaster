@@ -672,7 +672,7 @@ vert_border_fader_out
 	move.w	d0,vbf_fader_angle(a3) 
 	lea	sine_table_512,a0	
 	move.l	(a0,d1.w*4),d0		; sin(w)
-	MULUF.L vbfo_fader_radius*2,d0,d1 ; y' = (yr*sin(w))/2^15
+	MULUF.L vbfo_fader_radius*2,d0	; y' = (yr*sin(w))/2^15
 	swap	d0
 	add.w	#vbfo_fader_center,d0
 	move.w	vbf_display_window_vstart(a3),d2
